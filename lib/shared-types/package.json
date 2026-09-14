@@ -1,0 +1,26 @@
+{
+  "name": "@islamic-academy/shared-types",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "files": ["dist"],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./dto": "./dist/lib/dto/index.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json && node scripts/add-js-extensions.cjs",
+    "tsc": "tsc --noEmit -p tsconfig.lib.json"
+  },
+  "dependencies": {
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.2",
+    "mongoose": "^8.16.3",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "typescript": "~5.9.2"
+  }
+}

@@ -1,0 +1,55 @@
+# === Node Modules ===
+node_modules/
+*/node_modules/
+
+# === Build Artifacts ===
+dist/
+*/dist/
+.next/
+*/.next/
+out/
+build/
+
+# === Environment Variables ===
+.env
+.env.*.local
+*/.env
+*/.env.*.local
+.env.production
+
+# === Logs ===
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# === OS Artifacts ===
+.DS_Store
+Thumbs.db
+
+# === IDEs/Editors ===
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# === Nx specific ===
+nx-report.html
+.cache/
+tmp/
+coverage/
+*.tsbuildinfo
+
+# === Optional: Docker ===
+docker-compose.override.yml
+docker-compose.local.yml
+.docker/
+*/.docker/
+
+# === Optional: Testing ===
+jest*.config.js
+coverage/
+*.log
+*.tgz
+
+/.nx

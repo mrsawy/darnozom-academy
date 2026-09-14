@@ -1,0 +1,150 @@
+{
+  "Metadata": {
+    "siteName": "Islamic Academy",
+    "homeTitle": "Islamic Academy",
+    "homeDescription": "Islamic academy management platform for students, teachers, and parents.",
+    "loginTitle": "Login",
+    "signupTitle": "Sign Up",
+    "orgDashboardTitle": "Organization Dashboard",
+    "verificationTitle": "Account Review"
+  },
+  "auth": {
+    "login": {
+      "title": "Welcome back",
+      "subtitle": "Sign in to continue to your account",
+      "identifierLabel": "Email or username",
+      "identifierPlaceholder": "Enter your email",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "forgotPassword": "Forgot password?",
+      "submit": "Sign in",
+      "submitting": "Signing in...",
+      "orContinueWith": "Or continue with",
+      "continueWithGoogle": "Continue with Google",
+      "noAccount": "Don't have an account?",
+      "signUp": "Sign up",
+      "validation": {
+        "required": "Please fill in all fields",
+        "invalidCredentials": "Invalid credentials"
+      }
+    },
+    "signup": {
+      "title": "Create your account",
+      "subtitle": "Sign up to get started",
+      "firstNameLabel": "First name",
+      "lastNameLabel": "Last name",
+      "usernameLabel": "Username",
+      "emailLabel": "Email",
+      "passwordLabel": "Password",
+      "organizationNameLabel": "Organization name",
+      "organizationSlugLabel": "Organization slug",
+      "submit": "Sign up",
+      "submitting": "Creating account...",
+      "haveAccount": "Already have an account?",
+      "signIn": "Sign in",
+      "validation": {
+        "somethingWentWrong": "Something went wrong, please try again"
+      }
+    },
+    "forgotPassword": {
+      "title": "Reset your password",
+      "subtitle": "Enter your email and we'll send you a reset link",
+      "emailLabel": "Email",
+      "submit": "Send link",
+      "submitting": "Sending...",
+      "sent": "If that email is registered, a reset link has been sent.",
+      "error": "Could not send the link, please try again"
+    },
+    "resetPassword": {
+      "title": "Set a new password",
+      "subtitle": "Enter your new password",
+      "newPasswordLabel": "New password",
+      "submit": "Save",
+      "submitting": "Saving...",
+      "error": "Could not reset the password, please try again"
+    },
+    "oauth": {
+      "signingIn": "Signing you in...",
+      "missingCode": "Invalid sign-in link",
+      "failed": "Could not sign in with Google"
+    }
+  },
+  "organizationVerification": {
+    "title": "Your account is under review",
+    "description": "Our team is reviewing your organization's details. You'll be notified as soon as your account is approved and you can access the dashboard."
+  },
+  "onboarding": {
+    "title": "Complete your profile",
+    "subtitle": "Tell us a bit more about yourself to continue",
+    "roleLabel": "Role",
+    "phoneLabel": "Phone number",
+    "organizationNameLabel": "Organization name",
+    "organizationSlugLabel": "Organization slug",
+    "submit": "Continue",
+    "submitting": "Saving...",
+    "roles": {
+      "SUPER_ADMIN": "Organization Owner",
+      "TEACHER": "Teacher",
+      "STUDENT": "Student",
+      "PARENT": "Parent"
+    },
+    "validation": {
+      "somethingWentWrong": "Something went wrong, please try again"
+    }
+  },
+  "dashboard": {
+    "sidebar": {
+      "brand": "Academy",
+      "dashboard": "Dashboard",
+      "account": "Account",
+      "users": "Users",
+      "settings": "Settings"
+    },
+    "header": {
+      "title": "Organization Dashboard"
+    },
+    "home": {
+      "title": "Welcome",
+      "description": "This is your organization's dashboard."
+    },
+    "account": {
+      "title": "Account",
+      "comingSoon": "Coming soon"
+    },
+    "users": {
+      "title": "Users",
+      "comingSoon": "Coming soon"
+    },
+    "settings": {
+      "title": "Settings",
+      "comingSoon": "Coming soon"
+    }
+  },
+  "home": {
+    "hero": {
+      "title": "Manage your Islamic academy with ease",
+      "subtitle": "An all-in-one platform to manage students, teachers, and classes in one place.",
+      "ctaPrimary": "Get started",
+      "ctaSecondary": "Sign in"
+    },
+    "features": {
+      "classes": {
+        "title": "Class management",
+        "description": "Organize your classes and study circles with ease."
+      },
+      "people": {
+        "title": "Students & teachers",
+        "description": "Track students, teachers, and parents in one place."
+      },
+      "trust": {
+        "title": "Trusted & secure",
+        "description": "Your data is protected to the highest security standards."
+      }
+    },
+    "cta": {
+      "title": "Ready to get started?",
+      "description": "Create your organization's account now and begin your journey.",
+      "button": "Sign up"
+    }
+  }
+}

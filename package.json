@@ -1,0 +1,45 @@
+{
+  "name": "islamic-academy",
+  "version": "1.0.0",
+  "description": "Islamic Academy management system - NX/pnpm monorepo",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "lint": "nx run-many -t lint --exclude=islamic-academy",
+    "type-check": "nx run-many -t tsc --exclude=islamic-academy",
+    "tsc": "nx run-many -t tsc --exclude=islamic-academy",
+    "dev:server": "pnpm --filter server dev",
+    "dev:client": "pnpm --filter client dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "UNLICENSED",
+  "packageManager": "pnpm@10.26.2",
+  "devDependencies": {
+    "@eslint/js": "~8.57.0",
+    "@nestjs/cli": "^11.0.7",
+    "@nx/eslint": "^22.4.3",
+    "@nx/eslint-plugin": "22.4.3",
+    "@nx/js": "22.4.3",
+    "eslint-config-prettier": "^10.0.0",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-prettier": "^5.5.1",
+    "jsonc-eslint-parser": "^2.1.0",
+    "nx": "21.2.2",
+    "prettier": "^3.6.2",
+    "tslib": "^2.3.0",
+    "typescript": "~5.9.2",
+    "typescript-eslint": "^8.46.2"
+  },
+  "nx": {},
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@nestjs/core",
+      "@swc/core",
+      "bcrypt",
+      "esbuild",
+      "nx",
+      "sharp"
+    ]
+  }
+}

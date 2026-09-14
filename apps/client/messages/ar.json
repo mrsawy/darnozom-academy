@@ -1,0 +1,150 @@
+{
+  "Metadata": {
+    "siteName": "الأكاديمية الإسلامية",
+    "homeTitle": "الأكاديمية الإسلامية",
+    "homeDescription": "منصة إدارة الأكاديمية الإسلامية للطلاب والمعلمين وأولياء الأمور.",
+    "loginTitle": "تسجيل الدخول",
+    "signupTitle": "إنشاء حساب",
+    "orgDashboardTitle": "لوحة تحكم المؤسسة",
+    "verificationTitle": "مراجعة الحساب"
+  },
+  "auth": {
+    "login": {
+      "title": "مرحباً بعودتك",
+      "subtitle": "سجّل الدخول للمتابعة إلى حسابك",
+      "identifierLabel": "البريد الإلكتروني أو اسم المستخدم",
+      "identifierPlaceholder": "أدخل بريدك الإلكتروني",
+      "passwordLabel": "كلمة المرور",
+      "passwordPlaceholder": "أدخل كلمة المرور",
+      "forgotPassword": "نسيت كلمة المرور؟",
+      "submit": "تسجيل الدخول",
+      "submitting": "جارٍ تسجيل الدخول...",
+      "orContinueWith": "أو تابع باستخدام",
+      "continueWithGoogle": "المتابعة باستخدام جوجل",
+      "noAccount": "ليس لديك حساب؟",
+      "signUp": "إنشاء حساب",
+      "validation": {
+        "required": "يرجى تعبئة جميع الحقول",
+        "invalidCredentials": "بيانات الدخول غير صحيحة"
+      }
+    },
+    "signup": {
+      "title": "إنشاء حساب جديد",
+      "subtitle": "أنشئ حسابك للبدء",
+      "firstNameLabel": "الاسم الأول",
+      "lastNameLabel": "اسم العائلة",
+      "usernameLabel": "اسم المستخدم",
+      "emailLabel": "البريد الإلكتروني",
+      "passwordLabel": "كلمة المرور",
+      "organizationNameLabel": "اسم المؤسسة",
+      "organizationSlugLabel": "معرّف المؤسسة",
+      "submit": "إنشاء حساب",
+      "submitting": "جارٍ الإنشاء...",
+      "haveAccount": "لديك حساب بالفعل؟",
+      "signIn": "تسجيل الدخول",
+      "validation": {
+        "somethingWentWrong": "حدث خطأ ما، حاول مرة أخرى"
+      }
+    },
+    "forgotPassword": {
+      "title": "استعادة كلمة المرور",
+      "subtitle": "أدخل بريدك الإلكتروني وسنرسل لك رابط الاستعادة",
+      "emailLabel": "البريد الإلكتروني",
+      "submit": "إرسال الرابط",
+      "submitting": "جارٍ الإرسال...",
+      "sent": "تم إرسال رابط الاستعادة إذا كان البريد مسجلاً لدينا.",
+      "error": "تعذر إرسال الرابط، حاول مرة أخرى"
+    },
+    "resetPassword": {
+      "title": "تعيين كلمة مرور جديدة",
+      "subtitle": "أدخل كلمة المرور الجديدة",
+      "newPasswordLabel": "كلمة المرور الجديدة",
+      "submit": "حفظ",
+      "submitting": "جارٍ الحفظ...",
+      "error": "تعذر تعيين كلمة المرور، حاول مرة أخرى"
+    },
+    "oauth": {
+      "signingIn": "جارٍ تسجيل الدخول...",
+      "missingCode": "رابط الدخول غير صالح",
+      "failed": "تعذر تسجيل الدخول عبر جوجل"
+    }
+  },
+  "organizationVerification": {
+    "title": "حسابك قيد المراجعة",
+    "description": "يقوم فريقنا بمراجعة بيانات مؤسستك. سيتم إعلامك فور اعتماد الحساب لتتمكن من الوصول إلى لوحة التحكم."
+  },
+  "onboarding": {
+    "title": "إكمال الملف الشخصي",
+    "subtitle": "أخبرنا المزيد عن نفسك للمتابعة",
+    "roleLabel": "الدور",
+    "phoneLabel": "رقم الهاتف",
+    "organizationNameLabel": "اسم المؤسسة",
+    "organizationSlugLabel": "معرّف المؤسسة",
+    "submit": "متابعة",
+    "submitting": "جارٍ الحفظ...",
+    "roles": {
+      "SUPER_ADMIN": "مالك المؤسسة",
+      "TEACHER": "أستاذ",
+      "STUDENT": "طالب",
+      "PARENT": "ولي أمر"
+    },
+    "validation": {
+      "somethingWentWrong": "حدث خطأ ما، حاول مرة أخرى"
+    }
+  },
+  "dashboard": {
+    "sidebar": {
+      "brand": "الأكاديمية",
+      "dashboard": "الرئيسية",
+      "account": "الحساب",
+      "users": "المستخدمون",
+      "settings": "الإعدادات"
+    },
+    "header": {
+      "title": "لوحة تحكم المؤسسة"
+    },
+    "home": {
+      "title": "مرحباً بك",
+      "description": "هذه لوحة تحكم مؤسستك."
+    },
+    "account": {
+      "title": "الحساب",
+      "comingSoon": "قريباً"
+    },
+    "users": {
+      "title": "المستخدمون",
+      "comingSoon": "قريباً"
+    },
+    "settings": {
+      "title": "الإعدادات",
+      "comingSoon": "قريباً"
+    }
+  },
+  "home": {
+    "hero": {
+      "title": "إدارة أكاديميتك الإسلامية بسهولة",
+      "subtitle": "منصة متكاملة لإدارة الطلاب والمعلمين والفصول في مكان واحد.",
+      "ctaPrimary": "ابدأ الآن",
+      "ctaSecondary": "تسجيل الدخول"
+    },
+    "features": {
+      "classes": {
+        "title": "إدارة الفصول",
+        "description": "نظّم فصولك وحلقاتك الدراسية بسهولة."
+      },
+      "people": {
+        "title": "الطلاب والمعلمون",
+        "description": "تابع الطلاب والأساتذة وأولياء الأمور في مكان واحد."
+      },
+      "trust": {
+        "title": "موثوقية وأمان",
+        "description": "بياناتك محمية وفق أعلى معايير الأمان."
+      }
+    },
+    "cta": {
+      "title": "جاهز للبدء؟",
+      "description": "أنشئ حساب مؤسستك الآن وابدأ رحلتك معنا.",
+      "button": "إنشاء حساب"
+    }
+  }
+}

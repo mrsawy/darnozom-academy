@@ -1,0 +1,11 @@
+export enum Subjects {
+  USER = 'USER',
+  ORGANIZATION = 'ORGANIZATION',
+  ROLE = 'ROLE',
+  CLASS = 'CLASS',
+  ENROLLMENT = 'ENROLLMENT',
+  ATTENDANCE = 'ATTENDANCE',
+  SETTING = 'SETTING',
+  REPORT = 'REPORT',
+  ALL = '*',
+}

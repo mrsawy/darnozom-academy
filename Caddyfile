@@ -1,0 +1,13 @@
+# Islamic Academy – Caddy reverse proxy
+# Caddy obtains and renews TLS certificates from Let's Encrypt automatically.
+# Replace the placeholder domains below with the real production domains.
+
+# ── Client (Next.js) ─────────────────────────────────────────────────
+academy.example.com, www.academy.example.com {
+	reverse_proxy client:3000
+}
+
+# ── API (NestJS) ─────────────────────────────────────────────────────
+api.academy.example.com {
+	reverse_proxy server:3000
+}
