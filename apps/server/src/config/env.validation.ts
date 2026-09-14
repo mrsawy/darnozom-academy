@@ -4,8 +4,12 @@ import { getMongoUri } from './mongo.config';
 
 class EnvironmentVariables {
   @IsString()
-  @IsNotEmpty()
-  MONGODB_URI!: string;
+  @IsOptional()
+  MONGODB_URI_DEV?: string;
+
+  @IsString()
+  @IsOptional()
+  MONGODB_URI_PROD?: string;
 
   @IsString()
   @IsNotEmpty()

@@ -3,16 +3,16 @@ import { Roles } from '../../types/role/role/roles.enum';
 
 export class CreateUserDto {
   @IsString()
-  firstName: string;
+  firstName!: string;
 
   @IsString()
-  lastName: string;
+  lastName!: string;
 
   @IsEmail()
-  email: string;
+  email!: string;
 
   @IsString()
-  username: string;
+  username!: string;
 
   @IsOptional()
   @IsString()
@@ -23,5 +23,5 @@ export class CreateUserDto {
   password?: string;
 
   @IsEnum(Roles)
-  roleName: Roles;
+  roleName!: Roles;
 }

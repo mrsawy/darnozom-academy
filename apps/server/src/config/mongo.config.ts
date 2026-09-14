@@ -7,10 +7,12 @@ export const MONGO_CONNECTION_OPTIONS: MongooseModuleOptions = {
 };
 
 export function getMongoUri(env: Record<string, unknown> = process.env): string {
-  const uri = env.MONGODB_URI;
+  const isProd = env.NODE_ENV === 'production';
+  const uri = isProd ? env.MONGODB_URI_PROD : env.MONGODB_URI_DEV;
 
   if (typeof uri !== 'string' || uri.length === 0) {
-    throw new Error('MONGODB_URI is not set. Provide a MongoDB connection string.');
+    const varName = isProd ? 'MONGODB_URI_PROD' : 'MONGODB_URI_DEV';
+    throw new Error(`${varName} is not set. Provide a MongoDB connection string.`);
   }
 
   return uri;
