@@ -459,6 +459,10 @@ The rename is low-risk — the alias appears only in `import`/`from` positions a
 files — but it inflates the port's diff considerably. Either choice is compatible with every
 other phase. Recorded as Phase 4 step 8.
 
+**Decision: rename to `@darnozom/shared-types`.** This is a full rebrand; leaving the prior
+project's name embedded in 382 import statements contradicts that goal, and the rename is
+mechanical and build-verified (§8).
+
 ---
 
 ## 11. Recorded requirements for the next spec: native book module
@@ -531,11 +535,13 @@ enrollment).
 | **WhatsApp channel** | Zero hits. Messages, alerts, automated follow-ups |
 | **Renewal pipeline** | Student renewal and transfer into the next session. The 10 `renewal` hits are subscription renewals, a different thing |
 
-### Known sequencing conflict
+### Known sequencing conflict — resolved
 
-The ERP document's own MVP **postpones the content store to a later phase**, while §11's book
-module is currently queued as the next spec. These two priorities disagree and the order is an
-open decision — see §13.
+The ERP document's own MVP postpones the content store to a later phase, while §11's book
+module was queued as the next spec. **Decision: the book module goes next**, ahead of
+groups/cohorts and the rest of the ERP roadmap. It is already fully scoped (§11), is bounded in
+size, and has no dependency on the ERP subsystems in the table above — unlike nearly everything
+else in that table, which depends on groups/sessions existing first.
 
 ---
 
@@ -544,8 +550,5 @@ open decision — see §13.
 - Real secrets for the rebranded `.env` files (payment keys, Agora credentials, AI provider keys,
   SMTP, S3/CloudFront).
 - Production hostnames for `Caddyfile` and `.env.production`.
-- **Spec order after this port:** the native book module (§11) or the ERP's groups/cohorts &
-  session lifecycle (§12) first. The ERP document postpones the store; the book module is
-  currently queued next. Needs a decision before the next design cycle starts.
 - Whether the Medusa instance the storefront points at (`localhost:9010`) stays available to
   academy for the transitional period, given Medusa now lives in the sibling website project.
