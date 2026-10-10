@@ -1,0 +1,8 @@
+export enum PaymentProvider {
+  PAYMOB = 'PAYMOB',
+  PAYPAL = 'PAYPAL',
+  KASHIER = 'KASHIER',
+  STRIPE = 'STRIPE',
+  PADDLE = 'PADDLE',
+  LEMON_SQUEEZY = 'LEMON_SQUEEZY',
+}

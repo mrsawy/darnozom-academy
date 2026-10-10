@@ -1,38 +1,45 @@
-import { Controller } from '@nestjs/common';
+import { Controller, UseGuards } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
+import { RpcValidationPipe } from 'src/utils/RpcValidationPipe';
+import { ApplyRpcErrorHandling } from 'src/utils/docerators/error-handeling/class/ApplyRpcErrorHandling.decorator';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { PlatformAdminGuard } from 'src/admin-review/guards/platform-admin.guard';
 import { RoleService } from '../../role.service';
 import { CreateRoleDto } from '../../dto/create-role.dto';
 import { UpdateRoleDto } from '../../dto/update-role.dto';
-import { RpcValidationPipe } from '../../../utils/RpcValidationPipe';
-import { ApplyRpcErrorHandling } from '../../../utils/decorators/apply-rpc-error-handling.decorator';
 
-@ApplyRpcErrorHandling
 @Controller()
+@ApplyRpcErrorHandling
 export class RoleControllerMessage {
   constructor(private readonly roleService: RoleService) {}
 
-  @MessagePattern('role.create')
-  create(@Payload(new RpcValidationPipe()) createRoleDto: CreateRoleDto) {
-    return this.roleService.create(createRoleDto);
-  }
-
+  @UseGuards(AuthGuard, PlatformAdminGuard)
   @MessagePattern('role.findAll')
-  findAll() {
+  async findAll() {
     return this.roleService.findAll();
   }
 
+  @UseGuards(AuthGuard, PlatformAdminGuard)
   @MessagePattern('role.findOne')
-  findOne(@Payload('name') name: string) {
-    return this.roleService.findOne(name);
+  async findOne(@Payload(new RpcValidationPipe()) payload: { id: string }) {
+    return this.roleService.findOne(payload.id);
   }
 
+  @UseGuards(AuthGuard, PlatformAdminGuard)
+  @MessagePattern('role.create')
+  async create(@Payload(new RpcValidationPipe()) payload: CreateRoleDto) {
+    return this.roleService.create(payload);
+  }
+
+  @UseGuards(AuthGuard, PlatformAdminGuard)
   @MessagePattern('role.update')
-  update(@Payload() payload: { name: string; updateRoleDto: UpdateRoleDto }) {
-    return this.roleService.update(payload.name, payload.updateRoleDto);
+  async update(@Payload(new RpcValidationPipe()) payload: { id: string; data: UpdateRoleDto }) {
+    return this.roleService.update(payload.id, payload.data);
   }
 
-  @MessagePattern('role.remove')
-  remove(@Payload('name') name: string) {
-    return this.roleService.remove(name);
+  @UseGuards(AuthGuard, PlatformAdminGuard)
+  @MessagePattern('role.delete')
+  async remove(@Payload(new RpcValidationPipe()) payload: { id: string }) {
+    return this.roleService.remove(payload.id);
   }
 }

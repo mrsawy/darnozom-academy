@@ -1,0 +1,1 @@
+export * from './multipart-file-upload.config';

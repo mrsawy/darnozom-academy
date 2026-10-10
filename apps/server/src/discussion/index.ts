@@ -1,0 +1,13 @@
+export * from './discussion.module';
+export * from './discussion.service';
+export * from './discussion.controller.http';
+export * from './discussion.controller.message';
+export * from './entities/discussion.entity';
+export * from './entities/course-discussion.entity';
+export * from './entities/module-discussion.entity';
+export * from './entities/content-discussion.entity';
+export * from './dto/create-discussion.dto';
+export * from './dto/update-discussion.dto';
+export * from './dto/get-discussions.dto';
+export { default as DiscussionType } from './enum/discussion-type.enum';
+export { DiscussionType as DiscussionTypeEnum } from './enum/discussion-type.enum';

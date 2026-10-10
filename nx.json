@@ -1,8 +1,9 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
-  "defaultBase": "main",
-  "name": "islamic-academy",
+  "defaultBase": "master",
+  "name": "lms-organization",
   "version": "1.0.0",
+  "packageManager": "pnpm@8.15.4",
   "targetDefaults": {
     "@nx/js:tsc": {
       "cache": true,

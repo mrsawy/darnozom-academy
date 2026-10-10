@@ -1,73 +1,129 @@
-import { ConflictException, ForbiddenException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { ClientSession, Model, Types } from 'mongoose';
-import { ApprovalStatus, OrganizationErrors } from '@islamic-academy/shared-types';
-import { Organization } from './entities/organization.entity';
+import { BadRequestException, ConflictException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
-import { UpdateOrganizationDto } from './dto/update-organization.dto';
-import { ReviewOrganizationDto } from './dto/review-organization.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { Organization } from './entities/organization.entity';
+import mongoose, { ClientSession, PaginateModel } from 'mongoose';
+import { SubscriptionTypeDef } from 'src/utils/types/Subscription.interface';
+import { SubscriptionService } from 'src/subscription/services/subscription.service';
+import { CreateSubscriptionDto } from 'src/subscription/dto/create-subscription.dto';
+import { BillingCycle } from 'src/utils/enums/billingCycle.enum';
 
 @Injectable()
 export class OrganizationService {
-  private readonly logger = new Logger(OrganizationService.name);
+  constructor(
+    @InjectModel(Organization.name)
+    private readonly organizationModel: PaginateModel<Organization>,
+    private readonly subscriptionService: SubscriptionService
+  ) {}
 
-  constructor(@InjectModel(Organization.name) private readonly organizationModel: Model<Organization>) {}
-
-  async create(createOrganizationDto: CreateOrganizationDto, session?: ClientSession) {
+  async create(
+    createOrganizationDto: CreateOrganizationDto & Partial<Pick<Organization, 'verification' | 'approvalStatus'>>,
+    session?: ClientSession
+  ) {
     try {
-      const organization = new this.organizationModel(createOrganizationDto);
-      return await organization.save({ session });
+      const createdOrg = new this.organizationModel(createOrganizationDto);
+      await createdOrg.save({ session });
+
+      return {
+        message: 'Organization created successfully',
+        organization: createdOrg,
+      };
     } catch (error: unknown) {
-      this.logger.error(error instanceof Error ? (error.stack ?? error.message) : error);
       if (error && typeof error === 'object' && 'code' in error && error.code === 11_000) {
-        throw new ConflictException(OrganizationErrors.SLUG_TAKEN);
+        const errorObj = error as { keyValue?: Record<string, unknown> };
+        if (errorObj.keyValue) {
+          const field = Object.keys(errorObj.keyValue)[0];
+          const fieldValue = errorObj.keyValue[field];
+          const valueString = typeof fieldValue === 'string' ? fieldValue : typeof fieldValue === 'number' ? String(fieldValue) : '';
+          throw new ConflictException(`${field} "${valueString}" already exists.`);
+        }
       }
-      throw new InternalServerErrorException(OrganizationErrors.ORGANIZATION_NOT_FOUND);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      throw new InternalServerErrorException(`Failed to create organization: ${errorMessage}`);
     }
   }
 
-  findAll() {
-    return this.organizationModel.find().exec();
+  async filterOne(filters: mongoose.RootFilterQuery<Organization>) {
+    const organization = await this.organizationModel.findOne(filters);
+    if (!organization) throw new NotFoundException('Organization Not Found');
+    return organization;
   }
 
   async findOne(id: string) {
-    const organization = await this.organizationModel.findById(id).exec();
-    if (!organization) throw new NotFoundException(OrganizationErrors.ORGANIZATION_NOT_FOUND);
+    const organization = await this.organizationModel.findById(id);
+    if (!organization) throw new NotFoundException('Organization Not Found');
     return organization;
   }
 
-  async findBySlug(slug: string) {
-    const organization = await this.organizationModel.findOne({ slug }).exec();
-    if (!organization) throw new NotFoundException(OrganizationErrors.ORGANIZATION_NOT_FOUND);
-    return organization;
-  }
-
-  async update(id: string, updateOrganizationDto: UpdateOrganizationDto) {
-    const organization = await this.organizationModel.findByIdAndUpdate(id, updateOrganizationDto, { new: true }).exec();
-    if (!organization) throw new NotFoundException(OrganizationErrors.ORGANIZATION_NOT_FOUND);
-    return organization;
-  }
-
-  async remove(id: string) {
-    const organization = await this.organizationModel.findByIdAndDelete(id).exec();
-    if (!organization) throw new NotFoundException(OrganizationErrors.ORGANIZATION_NOT_FOUND);
-    return organization;
-  }
-
-  /** SUPER_ADMIN only — approve or reject a pending organization. */
-  async review(id: string, reviewDto: ReviewOrganizationDto, reviewedById: string) {
-    const organization = await this.organizationModel.findById(id).exec();
-    if (!organization) throw new NotFoundException(OrganizationErrors.ORGANIZATION_NOT_FOUND);
-
-    if (organization.approvalStatus !== ApprovalStatus.PENDING && organization.approvalStatus !== ApprovalStatus.PENDING_UPDATE) {
-      throw new ForbiddenException(OrganizationErrors.ALREADY_REVIEWED);
+  async createOrganizationSubscription(organizationId: string, planId: string, subscriptionData: SubscriptionTypeDef) {
+    try {
+      const createDto: CreateSubscriptionDto = {
+        organizationId,
+        planId,
+        billingCycle: subscriptionData.billing?.billingCycle ?? BillingCycle.ONE_TIME,
+        startsAt: typeof subscriptionData.starts_at === 'string' ? new Date(subscriptionData.starts_at) : subscriptionData.starts_at,
+        endsAt: subscriptionData.ends_at
+          ? typeof subscriptionData.ends_at === 'string'
+            ? new Date(subscriptionData.ends_at)
+            : subscriptionData.ends_at
+          : null,
+        nextBillingAt: subscriptionData.next_billing
+          ? typeof subscriptionData.next_billing === 'string'
+            ? new Date(subscriptionData.next_billing)
+            : subscriptionData.next_billing
+          : null,
+        transactionId: subscriptionData.transaction_id ?? null,
+        billing: subscriptionData.billing
+          ? {
+              email: subscriptionData.billing.email,
+              firstName: subscriptionData.billing.first_name,
+              lastName: subscriptionData.billing.last_name,
+              phoneNumber: subscriptionData.billing.phone_number,
+              amount: subscriptionData.billing.amount,
+              currency: subscriptionData.billing.currency,
+              billingCycle: subscriptionData.billing.billingCycle,
+            }
+          : undefined,
+      };
+      await this.subscriptionService.create(createDto);
+      return this.findOne(organizationId);
+    } catch (error: unknown) {
+      throw new BadRequestException(error instanceof Error ? error.message : 'Validation failed');
     }
+  }
 
-    organization.approvalStatus = reviewDto.approvalStatus;
-    organization.approvalComment = reviewDto.approvalComment ?? null;
-    organization.approvalReviewedBy = new Types.ObjectId(reviewedById);
-    organization.approvalReviewedAt = new Date();
+  async renewOrganizationSubscription(organizationId: string, subscriptionData: Partial<SubscriptionTypeDef>) {
+    try {
+      const organization = await this.findOne(organizationId);
+      const subscriptionId = organization.subscriptionId;
+      if (!subscriptionId) {
+        throw new BadRequestException('Organization has no subscription to renew.');
+      }
+      const currentSubscription = await this.subscriptionService.findOne(subscriptionId.toString());
 
-    return organization.save();
+      const renewDto: Parameters<typeof this.subscriptionService.expireCurrentAndCreateNewPeriod>[1] = {};
+      if (subscriptionData.ends_at !== undefined) {
+        renewDto.endsAt = typeof subscriptionData.ends_at === 'string' ? new Date(subscriptionData.ends_at) : subscriptionData.ends_at;
+      }
+      if (subscriptionData.next_billing !== undefined) {
+        renewDto.nextBillingAt =
+          typeof subscriptionData.next_billing === 'string' ? new Date(subscriptionData.next_billing) : subscriptionData.next_billing;
+      }
+      if (subscriptionData.billing) {
+        renewDto.billing = {
+          email: subscriptionData.billing.email,
+          firstName: subscriptionData.billing.first_name,
+          lastName: subscriptionData.billing.last_name,
+          phoneNumber: subscriptionData.billing.phone_number,
+          amount: subscriptionData.billing.amount,
+          currency: subscriptionData.billing.currency,
+          billingCycle: subscriptionData.billing.billingCycle,
+        };
+      }
+      await this.subscriptionService.expireCurrentAndCreateNewPeriod(currentSubscription, renewDto);
+      return this.findOne(organizationId);
+    } catch (error: unknown) {
+      throw new BadRequestException(error instanceof Error ? error.message : 'Validation failed');
+    }
   }
 }

@@ -1,12 +1,6 @@
-import { ValidationError, ValidationPipe, ValidationPipeOptions } from '@nestjs/common';
+import { ValidationPipe, ValidationPipeOptions } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
-
-function formatValidationErrors(errors: ValidationError[]): string {
-  return errors
-    .map((error) => Object.values(error.constraints ?? {}).join(', '))
-    .filter(Boolean)
-    .join('; ');
-}
+import formatValidationErrors from './validators/error-message-formatter';
 
 export class RpcValidationPipe extends ValidationPipe {
   constructor(options?: ValidationPipeOptions) {

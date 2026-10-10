@@ -23,6 +23,6 @@ export class AppService implements OnModuleInit {
   }
 
   getHello(): string {
-    return 'Islamic Academy API';
+    return 'Hello World!';
   }
 }

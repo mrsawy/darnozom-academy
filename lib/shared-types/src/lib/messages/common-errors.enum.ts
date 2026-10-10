@@ -1,6 +1,15 @@
+/**
+ * Common error message keys. Use these values as translation keys on both
+ * backend (e.g. in exception messages) and frontend (e.g. t(`Errors.${code}`)).
+ */
 export enum CommonErrors {
-  SOMETHING_WENT_WRONG = 'Something went wrong',
-  NOT_FOUND = 'Resource not found',
-  FORBIDDEN = 'You do not have permission to perform this action',
-  VALIDATION_FAILED = 'Validation failed',
+  SOMETHING_WENT_WRONG = 'somethingWentWrong',
+  NOT_FOUND = 'notFound',
+  UNAUTHORIZED = 'unauthorized',
+  FORBIDDEN = 'forbidden',
+  BAD_REQUEST = 'badRequest',
+  CONFLICT = 'conflict',
+  INTERNAL_SERVER_ERROR = 'internalServerError',
+  /** Wire: `tooManyRequests|30` → `{seconds}` */
+  TOO_MANY_REQUESTS = 'tooManyRequests',
 }

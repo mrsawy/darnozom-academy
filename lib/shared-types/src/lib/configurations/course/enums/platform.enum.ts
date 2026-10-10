@@ -1,0 +1,7 @@
+export enum Platform {
+  ZOOM = 'ZOOM',
+  GOOGLE_MEET = 'GOOGLE_MEET',
+  MICROSOFT_TEAMS = 'MICROSOFT_TEAMS',
+  AGORA = 'AGORA',
+  OTHER = 'OTHER',
+}

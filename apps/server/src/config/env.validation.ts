@@ -3,6 +3,7 @@ import { IsString, IsNotEmpty, IsOptional, validateSync } from 'class-validator'
 import { getMongoUri } from './mongo.config';
 
 class EnvironmentVariables {
+  // Only the URI matching the current NODE_ENV is required; getMongoUri() enforces that below.
   @IsString()
   @IsOptional()
   MONGODB_URI_DEV?: string;
@@ -37,19 +38,47 @@ class EnvironmentVariables {
 
   @IsString()
   @IsOptional()
+  REDIS_URL?: string;
+
+  @IsString()
+  @IsOptional()
   PORT?: string;
 
   @IsString()
   @IsOptional()
-  GOOGLE_CLIENT_ID?: string;
+  AGORA_APP_ID?: string;
 
   @IsString()
   @IsOptional()
-  GOOGLE_CLIENT_SECRET?: string;
+  AGORA_APP_CERTIFICATE?: string;
 
   @IsString()
   @IsOptional()
-  GOOGLE_CALLBACK_URL?: string;
+  AGORA_REST_KEY?: string;
+
+  @IsString()
+  @IsOptional()
+  AGORA_REST_SECRET?: string;
+
+  @IsString()
+  @IsOptional()
+  AGORA_CHAT_APP_KEY?: string;
+
+  @IsString()
+  @IsOptional()
+  AGORA_CHAT_ORG_NAME?: string;
+
+  @IsString()
+  @IsOptional()
+  AGORA_CHAT_APP_NAME?: string;
+
+  @IsString()
+  @IsOptional()
+  AGORA_CHAT_REST_URL?: string;
+
+  @IsString()
+  @IsOptional()
+  AGORA_CHAT_WS_URL?: string;
 }
 
 export function validateEnv(config: Record<string, unknown>): EnvironmentVariables {

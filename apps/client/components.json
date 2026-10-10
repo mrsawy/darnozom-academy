@@ -14,8 +14,17 @@
   "aliases": {
     "components": "@/components",
     "utils": "@/lib/utils",
-    "ui": "@/components/ui",
+    "ui": "@/components/atoms",
     "lib": "@/lib",
     "hooks": "@/lib/hooks"
+  },
+  "registries": {
+    "@react-bits": "https://reactbits.dev/r/{name}.json",
+    "@diceui": "https://diceui.com/r/{name}.json",
+    "@magicui": "https://magicui.design/r/{name}.json",
+    "@kibo-ui": "https://www.kibo-ui.com/r/{name}.json",
+    "@shadcn-studio": "https://shadcnstudio.com/r/{name}.json",
+    "@ncdai": "https://chanhdai.com/r/{name}.json",
+    "@nexus-ui": "https://nexus-ui.dev/r/{name}.json"
   }
 }

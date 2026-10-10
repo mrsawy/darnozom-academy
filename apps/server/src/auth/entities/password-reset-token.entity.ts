@@ -1,8 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { PasswordResetChannel, PASSWORD_RESET } from '@lms-organization/shared-types';
 import mongoose, { Document, Types } from 'mongoose';
-
-/** How long a password-reset token stays valid before Mongo TTL-expires it (1 hour). */
-const PASSWORD_RESET_TTL_SECONDS = 60 * 60;
 
 @Schema({ timestamps: true })
 export class PasswordResetToken extends Document<Types.ObjectId> {
@@ -15,6 +13,10 @@ export class PasswordResetToken extends Document<Types.ObjectId> {
   @Prop({ required: true, type: String })
   hashedToken: string;
 
+  /** `otp` = mobile 6-digit code; `link` = web reset token (also used after OTP exchange). */
+  @Prop({ type: String, enum: PasswordResetChannel, default: PasswordResetChannel.LINK })
+  channel: PasswordResetChannel;
+
   @Prop({ type: Number, default: 0 })
   failedAttempts: number;
 
@@ -23,4 +25,4 @@ export class PasswordResetToken extends Document<Types.ObjectId> {
 
 export const PasswordResetTokenSchema = SchemaFactory.createForClass(PasswordResetToken);
 
-PasswordResetTokenSchema.index({ createdAt: 1 }, { expireAfterSeconds: PASSWORD_RESET_TTL_SECONDS });
+PasswordResetTokenSchema.index({ createdAt: 1 }, { expireAfterSeconds: PASSWORD_RESET.TTL_SECONDS });

@@ -1,16 +1,35 @@
-import { Actions, ConditionKeys, Subjects, Roles } from '@islamic-academy/shared-types';
-import { RoleSeedEntry } from './role.types';
+import { Actions, Roles, Subjects } from '@lms-organization/shared-types';
+import { RolePermissionRule, RoleSeedEntry } from './role.types';
 
-const SELF = { key: ConditionKeys.SELF, value: '_id' };
-const OWN = { key: ConditionKeys.OWN, value: 'userId' };
+export const STUDENT_PERMISSIONS: RolePermissionRule[] = [
+  { action: Actions.READ, subject: Subjects.COURSE },
+  { action: Actions.READ, subject: Subjects.CONTENT },
+  { action: Actions.READ, subject: Subjects.CATEGORY },
+  { action: Actions.READ, subject: Subjects.USER },
+  { action: Actions.CREATE, subject: Subjects.ENROLLMENT },
+  { action: Actions.READ, subject: Subjects.ENROLLMENT },
+  { action: Actions.CREATE, subject: Subjects.REVIEW },
+  { action: Actions.UPDATE, subject: Subjects.REVIEW },
+  { action: Actions.DELETE, subject: Subjects.REVIEW },
+  { action: Actions.CREATE, subject: Subjects.FILE },
+  { action: Actions.READ, subject: Subjects.WALLET },
+  { action: Actions.CREATE, subject: Subjects.WITHDRAWAL_REQUEST },
+  { action: Actions.READ, subject: Subjects.WITHDRAWAL_REQUEST },
+  { action: Actions.UPDATE, subject: Subjects.WITHDRAWAL_REQUEST },
+  { action: Actions.DELETE, subject: Subjects.WITHDRAWAL_REQUEST },
+  { action: Actions.READ, subject: Subjects.DISCUSSION },
+  { action: Actions.CREATE, subject: Subjects.DISCUSSION },
+  { action: Actions.UPDATE, subject: Subjects.DISCUSSION },
+  { action: Actions.DELETE, subject: Subjects.DISCUSSION },
+  { action: Actions.READ, subject: Subjects.PRIVATE_SESSION },
+  { action: Actions.CREATE, subject: Subjects.SESSION_BOOKING },
+  { action: Actions.READ, subject: Subjects.SESSION_BOOKING },
+  { action: Actions.UPDATE, subject: Subjects.SESSION_BOOKING },
+  { action: Actions.READ, subject: Subjects.STUDENT_REPORT },
+  { action: Actions.READ, subject: Subjects.ORGANIZATION_MEMBER_REPORT },
+];
 
-/** Student: read-only access to their own records. */
 export const STUDENT_SEED: RoleSeedEntry = {
   name: Roles.STUDENT,
-  permissions: [
-    { action: Actions.READ, subject: Subjects.USER, conditions: SELF },
-    { action: Actions.READ, subject: Subjects.CLASS, conditions: OWN },
-    { action: Actions.READ, subject: Subjects.ENROLLMENT, conditions: OWN },
-    { action: Actions.READ, subject: Subjects.ATTENDANCE, conditions: OWN },
-  ],
+  permissions: STUDENT_PERMISSIONS,
 };

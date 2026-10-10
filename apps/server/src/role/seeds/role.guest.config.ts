@@ -1,8 +1,18 @@
-import { Roles } from '@islamic-academy/shared-types';
-import { RoleSeedEntry } from './role.types';
+import { Actions, Roles, Subjects } from '@lms-organization/shared-types';
+import { RolePermissionRule, RoleSeedEntry } from './role.types';
 
-/** Guest: no permissions until onboarding assigns a real role. */
+/**
+ * GUEST role -- assigned to new OAuth users before they complete onboarding.
+ * Intentionally minimal: only course enrollment is allowed so a GUEST can
+ * purchase a course and be promoted to STUDENT without going through the
+ * onboarding wizard first.
+ */
+export const GUEST_PERMISSIONS: RolePermissionRule[] = [
+  { action: Actions.CREATE, subject: Subjects.ENROLLMENT },
+  { action: Actions.READ, subject: Subjects.ORGANIZATION_MEMBER_REPORT },
+];
+
 export const GUEST_SEED: RoleSeedEntry = {
   name: Roles.GUEST,
-  permissions: [],
+  permissions: GUEST_PERMISSIONS,
 };

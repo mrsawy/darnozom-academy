@@ -1,0 +1,88 @@
+/* BEM: line-chart, line-chart__element */
+.line-chart {
+  inline-size: 100%;
+}
+
+.line-chart__tooltip {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--spacing) * 2);
+  min-inline-size: 120px;
+  background-color: var(--card);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: calc(var(--spacing) * 2);
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.25rem;
+  text-align: start;
+  text-wrap: wrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  max-block-size: 100%;
+  max-inline-size: 100%;
+}
+
+.line-chart__tooltip-date {
+  color: var(--muted-foreground);
+  margin-block-end: calc(var(--spacing) * 1);
+  font-size: 0.75rem;
+  font-weight: 400;
+}
+
+.line-chart__tooltip-content {
+  display: flex;
+  flex-direction: row;
+  gap: calc(var(--spacing) * 1);
+}
+
+.line-chart__tooltip-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.line-chart__tooltip-indicator {
+  inline-size: 8px;
+  block-size: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.line-chart__tooltip-value {
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.line-chart__tooltip-series {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--muted-foreground);
+}
+
+.line-chart__tooltip-date-container {
+  display: flex;
+  flex-direction: row-reverse;
+  gap: calc(var(--spacing) * 1);
+}
+
+.line-chart__legend-item-text {
+  color: var(--muted-foreground) !important;
+  margin-inline: 4px;
+}
+
+@media (max-width: 1200px) {
+  .line-chart__legend-item-text {
+    margin-block-start: -30px;
+  }
+}
+
+@media (width <= 1400px) {
+  .line-chart__legend-item-text {
+    font-size: 12px;
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "skills": {
+    "nexus-ui": {
+      "source": "victorcodess/nexus-ui",
+      "sourceType": "github",
+      "computedHash": "5a860d921f38d647dd9580766932ef2c383a01732b32b9c9ae0c751495a48e8e"
+    }
+  }
+}

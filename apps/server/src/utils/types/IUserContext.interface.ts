@@ -1,6 +1,6 @@
 import { NatsContext } from '@nestjs/microservices';
-import { UserDocument } from '../../user/entities/user.entity';
-import { AppAbility } from '../../role/permissions.factory';
+import { UserDocument } from 'src/user/entities/user.entity';
+import { AppAbility } from 'src/role/permissions.factory';
 
 export interface IUserContext extends NatsContext {
   userPayload: UserDocument & { ability: AppAbility };

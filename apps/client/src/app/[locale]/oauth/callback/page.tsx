@@ -1,67 +1,59 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/navigation';
-import { Loader2 } from 'lucide-react';
-import { api } from '@/lib/api/axios';
-import { getDashboardUrl } from '@/lib/utils/routes/getDashboardUrl';
+import { useTranslations } from 'next-intl';
+import { handleOAuthCallback } from '@/lib/actions/auth/auth.action';
+import useUserStore from '@/lib/store/userStore';
 import { ROUTE_ONBOARDING, ROUTE_LOGIN } from '@/lib/data/constants/routes.constants';
-import { IUser } from '@/types/user/user.interface';
+import { getDashboardUrl } from '@/lib/utils/routes/getDashboardUrl';
+import { Loader2 } from 'lucide-react';
+import { toast } from 'react-toastify';
 
 /**
- * Landing page the NestJS server redirects to after a successful Google
- * OAuth flow: `GET /auth/google/callback` -> this page with a one-time code
- * in the query string.
+ * Landing page that the NestJS server redirects to after a successful Google
+ * OAuth flow: `GET /auth/google/callback` → this page with tokens in the query-string.
  *
- * URL shape (ASSUMPTION, matching the reference pattern):
- *   /oauth/callback?oauth_code=...
- *
- * The code is exchanged server-side via `POST /api/auth/oauth/exchange`
- * (this app's own Route Handler), which sets httpOnly cookies.
+ * URL shape (set by the server):
+ *   /oauth/callback?access_token=...&refresh_token=...&sid=...&onboarding_required=true
  */
 export default function OAuthCallbackPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const t = useTranslations('auth.oauth');
   const handled = useRef(false);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (handled.current) return;
     handled.current = true;
 
-    const oauthCode = searchParams.get('oauth_code') ?? '';
+    // Server now issues a short-lived one-time code instead of tokens in the URL.
+    const oauth_code = searchParams.get('oauth_code') ?? '';
 
     void (async () => {
-      if (!oauthCode) {
-        setError(t('missingCode'));
+      const result = await handleOAuthCallback({ oauth_code });
+
+      if ('err' in result) {
+        toast.error(result.err.message);
         router.replace(ROUTE_LOGIN);
         return;
       }
 
-      try {
-        const { data: user } = await api.post<IUser>('/auth/oauth/exchange', {
-          oauth_code: oauthCode,
-        });
+      useUserStore.getState().setUser(result.user);
 
-        if (user.onboardingComplete === false) {
-          router.replace(ROUTE_ONBOARDING);
-        } else {
-          router.replace(getDashboardUrl(user.roleName));
-        }
-      } catch {
-        setError(t('failed'));
-        router.replace(ROUTE_LOGIN);
+      if (result.user.onboardingComplete === false) {
+        router.replace(ROUTE_ONBOARDING);
+      } else {
+        router.replace(getDashboardUrl(result.user.roleName));
       }
     })();
   }, [searchParams, router, t]);
 
   return (
     <div className="flex min-h-svh flex-col items-center justify-center gap-4">
-      <Loader2 className="h-10 w-10 animate-spin text-primary" />
-      <p className="text-sm text-muted-foreground">{error ?? t('signingIn')}</p>
+      <Loader2 className="text-primary h-10 w-10 animate-spin" />
+      <p className="text-muted-foreground text-sm">{t('signingIn')}</p>
     </div>
   );
 }

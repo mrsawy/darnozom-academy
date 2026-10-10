@@ -1,4 +1,4 @@
-/** Public HTTP API base (NestJS server). Used for OAuth redirects and REST calls from the client. */
+/** Public HTTP API base (Nest). Used for OAuth redirects and REST calls from the client. */
 export function getPublicApiUrl(): string {
-  return process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5500';
+  return process.env.NEXT_PUBLIC_API_URL ?? 'https://v7156w3b-5000.uks1.devtunnels.ms';
 }

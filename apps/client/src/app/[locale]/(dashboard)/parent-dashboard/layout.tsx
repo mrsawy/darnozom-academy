@@ -1,9 +1,11 @@
 import type { Metadata } from 'next';
+import { redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
-import { Roles } from '@islamic-academy/shared-types';
-import { requireDashboardUser } from '@/lib/utils/routes/requireDashboardUser';
-import { ParentSidebar } from './__components/parent-sidebar';
-import { SiteHeader } from '../__components/site-header';
+import { SiteHeader } from '@/components/molecules/site-header';
+import { SidebarInset, SidebarProvider } from '@/components/atoms/sidebar';
+import { ParentSidebar } from './__components/ParentSidebar';
+import { getAuthUser } from '@/lib/actions/user/user.action';
+import { Roles } from '@lms-organization/shared-types';
 
 export async function generateMetadata({
   params,
@@ -16,16 +18,26 @@ export async function generateMetadata({
 }
 
 export default async function ParentDashboardLayout({ children }: { children: React.ReactNode }) {
-  const user = await requireDashboardUser([Roles.PARENT]);
-  const t = await getTranslations('parentDashboard.header');
+  const initialUser = await getAuthUser();
+  if (!initialUser || initialUser.roleName?.toLowerCase() !== Roles.PARENT.toLowerCase()) {
+    redirect('/');
+  }
 
   return (
-    <div className="flex min-h-svh">
-      <ParentSidebar user={user} />
-      <div className="flex flex-1 flex-col">
-        <SiteHeader title={t('title')} />
-        <main className="flex-1 p-6">{children}</main>
-      </div>
+    <div>
+      <SidebarProvider
+        style={
+          {
+            '--sidebar-width': 'calc(var(--spacing) * 72)',
+            '--header-height': 'calc(var(--spacing) * 12)',
+          } as React.CSSProperties
+        }>
+        <ParentSidebar user={initialUser} />
+        <SidebarInset>
+          <SiteHeader />
+          <div className="p-base lg:p-12">{children}</div>
+        </SidebarInset>
+      </SidebarProvider>
     </div>
   );
 }

@@ -1,0 +1,63 @@
+export interface HeroSectionProps {
+  eyebrow?: string;
+  title?: string;
+  titleSize?: string;
+  subtitle?: string;
+  subtitleSize?: string;
+  ctaText?: string;
+  ctaLink?: string;
+  buttonStyle?: string;
+  buttonSize?: string;
+  secondaryCtaText?: string;
+  secondaryCtaLink?: string;
+  backgroundImage?: string;
+  backgroundStyle?: 'solid' | 'gradient' | 'image';
+  backgroundColor?: string;
+  gradientFrom?: string;
+  gradientTo?: string;
+  textColor?: string;
+  accentColor?: string;
+  alignment?: 'left' | 'center' | 'right';
+  overlayOpacity?: number;
+  height?: string;
+  showScrollIndicator?: string;
+  animation?: string;
+  badgeText?: string;
+  badgeIcon?: string;
+  paddingTop?: string;
+  paddingBottom?: string;
+  marginTop?: string;
+  marginBottom?: string;
+  sectionBackgroundImage?: string;
+  sectionBackgroundSize?: string;
+  sectionBackgroundPosition?: string;
+}
+
+export interface HeroWithVideoProps {
+  eyebrow?: string;
+  title?: string;
+  titleSize?: string;
+  subtitle?: string;
+  subtitleSize?: string;
+  videoUrl?: string;
+  ctaText?: string;
+  ctaLink?: string;
+  buttonStyle?: string;
+  buttonSize?: string;
+  secondaryCtaText?: string;
+  secondaryCtaLink?: string;
+  overlayOpacity?: number;
+  backgroundColor?: string;
+  textColor?: string;
+  accentColor?: string;
+  layout?: 'left' | 'right' | 'background';
+  videoAspectRatio?: string;
+  showPlayBadge?: string;
+  paddingTop?: string;
+  paddingBottom?: string;
+  marginTop?: string;
+  marginBottom?: string;
+  sectionBackgroundImage?: string;
+  sectionBackgroundSize?: string;
+  sectionBackgroundPosition?: string;
+}

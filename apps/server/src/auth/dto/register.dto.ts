@@ -1,8 +1,8 @@
 import { Type } from 'class-transformer';
-import { IsNotEmpty, ValidateNested, ValidateIf, IsOptional, IsBoolean, Equals } from 'class-validator';
+import { IsNotEmpty, ValidateNested, ValidateIf, IsOptional, IsArray, IsMongoId, IsBoolean, Equals } from 'class-validator';
 import { CreateOrganizationDto } from '../../organization/dto/create-organization.dto';
-import { Roles } from '@islamic-academy/shared-types';
-import { CreateUserDto } from '@islamic-academy/shared-types/dto';
+import { AuthErrors, Roles } from '@lms-organization/shared-types';
+import { CreateUserDto } from '@lms-organization/shared-types/dto';
 
 /** True only for organization (SUPER_ADMIN) registrations — not students/parents. */
 function isOrganizationRegistration(o: RegisterDto): boolean {
@@ -21,10 +21,17 @@ export class RegisterDto {
   @Type(() => CreateOrganizationDto)
   organizationDto?: CreateOrganizationDto;
 
-  /** Rules & privacy acceptance — required (must be true) for organization signups. Not persisted. */
+  /**
+   * Rules & privacy acceptance — required (must be true) for organization
+   * signups. Enforced here, not persisted.
+   */
   @ValidateIf(isOrganizationRegistration)
-  @IsOptional()
   @IsBoolean()
-  @Equals(true, { message: 'You must accept the terms and conditions' })
+  @Equals(true, { message: AuthErrors.TERMS_NOT_ACCEPTED })
   acceptedTerms?: boolean;
+
+  @IsOptional()
+  @IsArray()
+  @IsMongoId({ each: true })
+  wishlistCourseIds?: string[];
 }

@@ -1,0 +1,55 @@
+/* BEM: progress-chart, progress-chart__element */
+.progress-chart {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  block-size: 100%;
+  gap: calc(var(--spacing) * 3);
+}
+
+.progress-chart__item {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--spacing) * 1);
+}
+
+.progress-chart__label-container {
+  display: flex;
+  justify-content: flex-start;
+  gap: calc(var(--spacing) * 2);
+  align-items: center;
+}
+
+.progress-chart__label {
+  color: var(--foreground);
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.progress-chart__percentage {
+  color: var(--foreground);
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.progress-chart__progress-container {
+  inline-size: 100%;
+}
+
+.progress-chart__track {
+  position: relative;
+  inline-size: 100%;
+  block-size: 0.5rem;
+  border-radius: 9999px;
+  background-color: color-mix(in oklch, var(--primary) 20%, transparent);
+  overflow: hidden;
+}
+
+.progress-chart__fill {
+  block-size: 100%;
+  border-radius: 9999px;
+  transition: width 0.2s ease;
+  min-width: 0;
+}

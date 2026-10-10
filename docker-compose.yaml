@@ -1,52 +1,57 @@
 services:
   server:
     build:
-      context: .
-      dockerfile: apps/server/Dockerfile
+      context: apps/server
+      dockerfile: DockerFile
     ports:
       - '3000:3000'
-    # apps/server/.env supplies secrets (Mongo URI, JWT secrets, Google OAuth, etc).
+    # MongoDB is hosted on Atlas: MONGODB_URI_DEV comes from apps/server/.env.
+    # Values under environment: win over env_file, so the Docker-network URLs below stick.
     env_file:
       - apps/server/.env
     environment:
       - NODE_ENV=development
       - PORT=3000
       - NATS_URLS=nats://nats:4222
+      - REDIS_URL_DEV=redis://redis:6379
+      - REDIS_URL=redis://redis:6379
     volumes:
       - ./apps/server:/app
       - /app/node_modules
     command: ['pnpm', 'start']
     depends_on:
       - nats
-      - mongo
+      - redis
 
   client:
     build:
-      context: .
-      dockerfile: apps/client/Dockerfile
+      context: apps/client
+      dockerfile: DockerFile
     ports:
-      - '5550:5550'
+      - '3001:3000'
     environment:
       - NATS_URLS=nats://nats:4222
-      - INTERNAL_API_URL=http://server:3000
     volumes:
       - ./apps/client:/app
       - /app/node_modules
     command: ['pnpm', 'dev']
     depends_on:
-      - server
+      - nats
 
-  mongo:
-    image: mongo:7
-    container_name: islamic-academy-mongo
+  redis:
+    image: redis:7-alpine
+    container_name: lms-redis
     ports:
-      - '127.0.0.1:27017:27017'
+      # Host publishes 6380 so Nest/Next on the machine can use redis://127.0.0.1:6380
+      # (container still listens on 6379 inside the Docker network)
+      - '127.0.0.1:6380:6379'
+    command: redis-server --save 60 1 --loglevel warning
     volumes:
-      - mongodata:/data/db
+      - redisdata:/data
     healthcheck:
-      test: ['CMD', 'mongosh', '--eval', 'db.adminCommand("ping")']
-      interval: 10s
-      timeout: 5s
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
       retries: 5
 
   nats:
@@ -62,4 +67,4 @@ services:
       retries: 5
 
 volumes:
-  mongodata:
+  redisdata:

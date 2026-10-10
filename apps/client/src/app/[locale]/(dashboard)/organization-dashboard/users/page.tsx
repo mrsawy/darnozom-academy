@@ -1,12 +1,9 @@
-import { getTranslations } from 'next-intl/server';
+import UserDataTable from './__components/user-data-table';
 
-export default async function UsersPage() {
-  const t = await getTranslations('dashboard.users');
-
+export default function UsersPage() {
   return (
     <div>
-      <h1 className="text-xl font-bold">{t('title')}</h1>
-      <p className="mt-2 text-sm text-muted-foreground">{t('comingSoon')}</p>
+      <UserDataTable />
     </div>
   );
 }

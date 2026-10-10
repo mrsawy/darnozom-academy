@@ -1,0 +1,22 @@
+node_modules
+**/node_modules
+dist
+**/dist
+.next
+**/.next
+.git
+*.log
+.env
+.env.*
+
+# The mobile app is never built in these images, but the root package.json
+# points a pnpm override at its shim package, so that folder must stay.
+apps/lms-mobile/**
+!apps/lms-mobile/package.json
+!apps/lms-mobile/shims/**
+
+**/.expo
+**/.nx
+**/coverage
+**/.turbo
+.github

@@ -1,3 +1,10 @@
-export default function AuthLayout({ children }: { children: React.ReactNode }) {
-  return <div>{children}</div>;
+import HomeNave from '@/components/organs/home-nav';
+
+export default function LocaleLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <>
+      <HomeNave />
+      {children}
+    </>
+  );
 }

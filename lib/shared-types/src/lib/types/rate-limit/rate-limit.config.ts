@@ -1,0 +1,30 @@
+export const RATE_LIMIT = {
+  GLOBAL: {
+    TTL_SECONDS: 60,
+    MAX_REQUESTS: 10,
+  },
+  OTP_SEND: {
+    TTL_SECONDS: 60,
+    MAX_REQUESTS: 3,
+  },
+  OTP_VERIFY: {
+    TTL_SECONDS: 60,
+    MAX_REQUESTS: 5,
+  },
+  OTP_BRUTE_FORCE: {
+    MAX_FAILED_ATTEMPTS: 5,
+    LOCKOUT_DURATION_MS: 30 * 60 * 1000, // 30 minutes
+  },
+  PASSWORD_RESET_SEND: {
+    TTL_SECONDS: 60,
+    MAX_REQUESTS: 3,
+  },
+  PASSWORD_RESET_VERIFY: {
+    TTL_SECONDS: 60,
+    MAX_REQUESTS: 5,
+  },
+  PASSWORD_RESET_BRUTE_FORCE: {
+    MAX_FAILED_ATTEMPTS: 5,
+    LOCKOUT_DURATION_MS: 30 * 60 * 1000, // 30 minutes
+  },
+} as const;

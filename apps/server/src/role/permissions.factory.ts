@@ -1,8 +1,8 @@
 import { AbilityBuilder, createMongoAbility, MongoAbility } from '@casl/ability';
-import { Actions, ConditionKeys, Subjects, type ICondition } from '@islamic-academy/shared-types';
+import { Actions, ConditionKeys, Subjects, type ICondition } from '@lms-organization/shared-types';
 import { Injectable } from '@nestjs/common';
 import { Role } from './entities/role.entity';
-import { UserDocument } from '../user/entities/user.entity';
+import { UserDocument } from 'src/user/entities/user.entity';
 
 export type AppAbility = MongoAbility;
 
@@ -64,7 +64,7 @@ export class CaslAbilityFactory {
         conditionQuery[ConditionKeys.SELF] = user._id;
       }
 
-      /** Pass `undefined` when there are no field rules — `can(act, sub, {})` breaks CASL mongo internals. */
+      /** Pass `undefined` when there are no field rules — `can(act, sub, {})` breaks CASL mongo internals (`.includes` on undefined). */
       const fieldConditions = Object.keys(conditionQuery).length > 0 ? conditionQuery : undefined;
 
       // Handle specific action and subject
@@ -77,6 +77,7 @@ export class CaslAbilityFactory {
       if (subject === Subjects.ALL && action !== Actions.MANAGE) {
         for (const sub of Object.values(Subjects)) {
           if (sub !== Subjects.ALL) {
+            // Skip ALL to avoid recursion
             addPermission(can, action, sub, fieldConditions);
           }
         }
@@ -87,6 +88,7 @@ export class CaslAbilityFactory {
       if (action === Actions.MANAGE && subject !== Subjects.ALL) {
         for (const act of Object.values(Actions)) {
           if (act !== Actions.MANAGE) {
+            // Skip MANAGE to avoid recursion
             addPermission(can, act, subject, fieldConditions);
           }
         }
@@ -97,8 +99,10 @@ export class CaslAbilityFactory {
       if (action === Actions.MANAGE && subject === Subjects.ALL) {
         for (const act of Object.values(Actions)) {
           if (act !== Actions.MANAGE) {
+            // Skip MANAGE to avoid recursion
             for (const sub of Object.values(Subjects)) {
               if (sub !== Subjects.ALL) {
+                // Skip ALL to avoid recursion
                 addPermission(can, act, sub, fieldConditions);
               }
             }
@@ -110,6 +114,7 @@ export class CaslAbilityFactory {
 
     const ability = build({
       detectSubjectType: (item) => {
+        // Make sure this returns a string, not undefined
         if (typeof item === 'string') {
           return item;
         }

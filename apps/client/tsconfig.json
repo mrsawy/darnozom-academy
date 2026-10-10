@@ -15,8 +15,10 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "incremental": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "plugins": [
       {
         "name": "next"
@@ -24,11 +26,17 @@
     ],
     "baseUrl": ".",
     "paths": {
+      "@/assets/*": [
+        "./public/*"
+      ],
       "@/*": [
         "./src/*"
       ],
-      "@islamic-academy/shared-types": [
+      "@lms-organization/shared-types": [
         "../../lib/shared-types/src/index.ts"
+      ],
+      "@lms-organization/shared-types/dto": [
+        "../../lib/shared-types/src/lib/dto/index.ts"
       ]
     }
   },
@@ -36,7 +44,9 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    ".next\\dev/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"

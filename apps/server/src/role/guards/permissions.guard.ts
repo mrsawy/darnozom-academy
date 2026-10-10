@@ -3,7 +3,7 @@ import { Reflector } from '@nestjs/core';
 import { RpcException } from '@nestjs/microservices';
 import { CaslAbilityFactory, AppAbility } from '../permissions.factory';
 import { PERMISSIONS_KEY } from '../decorators/permissions.decorator';
-import { UserDocument } from '../../user/entities/user.entity';
+import { UserDocument } from 'src/user/entities/user.entity';
 import { Role } from '../entities/role.entity';
 
 interface RequiredPermission {
@@ -92,8 +92,13 @@ export class PermissionsGuard implements CanActivate {
     return true;
   }
 
+  // Helper method for checking specific resource instances
+  // Use this when you have the actual resource object
   canAccessResource(ability: AppAbility, action: string, subject: string, resource: unknown): boolean {
     try {
+      // CASL's can method: can(action, subject, field?)
+      // For resource instances, pass the resource as the subject
+      // The detectSubjectType function will determine the subject type from the resource
       return ability.can(action, resource as string | object);
     } catch {
       return false;

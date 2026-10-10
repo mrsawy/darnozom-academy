@@ -1,0 +1,173 @@
+/* BEM: donut-chart, donut-chart__element */
+.donut-chart {
+  inline-size: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.donut-chart .recharts-legend-wrapper {
+  margin-block-start: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.donut-chart .recharts-legend-item {
+  margin-inline: 8px;
+}
+
+.donut-chart__legend-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  padding-block: 10px;
+  inline-size: 100%;
+  max-inline-size: 80%;
+  gap: 8px 30px;
+}
+
+@media (min-width: 1600px) {
+  .donut-chart__legend-grid {
+    gap: 8px 40px;
+  }
+}
+
+@media (width <= 1550px) {
+  .donut-chart__legend-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    column-gap: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .donut-chart__legend-grid {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    max-inline-size: 100%;
+    gap: 8px 10px;
+  }
+}
+
+.donut-chart__legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-start;
+}
+
+.donut-chart__legend-icon {
+  inline-size: 8px;
+  block-size: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.donut-chart__legend-text {
+  color: var(--muted-foreground);
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  justify-content: space-between;
+  inline-size: 80%;
+}
+
+@media (max-width: 768px) {
+  .donut-chart__legend-text {
+    font-size: 12px;
+    gap: 2px;
+  }
+}
+
+.donut-chart__legend-text-value {
+  font-size: 14px;
+  font-weight: 400;
+}
+
+@media (max-width: 768px) {
+  .donut-chart__legend-text-value {
+    font-size: 12px;
+  }
+}
+
+.donut-chart__legend-text-percentage {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+@media (max-width: 768px) {
+  .donut-chart__legend-text-percentage {
+    font-size: 10px;
+  }
+}
+
+.donut-chart__tooltip {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--spacing) * 2);
+  min-inline-size: 160px;
+  background-color: var(--card);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px;
+}
+
+.donut-chart__tooltip-header {
+  color: var(--foreground);
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: var(--tracking-normal, 0);
+}
+
+.donut-chart__tooltip-content {
+  display: flex;
+  flex-direction: row;
+  gap: calc(var(--spacing) * 1);
+  justify-content: space-between;
+  align-items: center;
+}
+
+.donut-chart__tooltip-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted-foreground);
+}
+
+.donut-chart__tooltip-dot {
+  flex-shrink: 0;
+  border-radius: 9999px;
+}
+
+.donut-chart__tooltip-series-name {
+  font-size: 14px;
+}
+
+.donut-chart__tooltip-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.donut-chart__center-annotation {
+  pointer-events: none;
+}
+
+.donut-chart__center-value-tspan {
+  font-size: 24px;
+  fill: var(--muted-foreground);
+  font-weight: 600;
+}
+
+.donut-chart__center-label-tspan {
+  font-size: 14px;
+  fill: var(--foreground);
+  font-weight: 400;
+}

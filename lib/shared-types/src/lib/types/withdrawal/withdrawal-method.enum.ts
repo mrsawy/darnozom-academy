@@ -1,0 +1,5 @@
+export enum WithdrawalMethod {
+  MOBILE_WALLET = 'MOBILE_WALLET',
+  BANK_TRANSFER = 'BANK_TRANSFER',
+  CREDIT_CARD = 'CREDIT_CARD',
+}

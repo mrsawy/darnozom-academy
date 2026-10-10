@@ -1,13 +1,15 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
-import { ApprovalStatus, Roles } from '@islamic-academy/shared-types';
-import { requireDashboardUser } from '@/lib/utils/routes/requireDashboardUser';
-import { OrgSidebar } from './__components/org-sidebar';
-import { SiteHeader } from '../__components/site-header';
+import { ApprovalStatus } from '@lms-organization/shared-types';
+import { SiteHeader } from '@/components/molecules/site-header';
+import { SidebarInset, SidebarProvider } from '@/components/atoms/sidebar';
+import { OrgSidebar } from './__components/OrgSidebar';
+import { VerificationSuccessAlert } from './__components/verification-success-alert/verification-success-alert';
+import { OrganizationDashboardOnboardingHost } from './__components/organization-dashboard-onboarding-host';
+import { getAuthUser } from '@/lib/actions/user/user.action';
+import { getVerificationStatus } from '@/lib/actions/verification/verification.action';
 import { ROUTE_ORGANIZATION_VERIFICATION } from '@/lib/data/constants/routes.constants';
-
-const ORG_DASHBOARD_ROLES = [Roles.SUPER_ADMIN, Roles.ORGANIZATION_ADMIN, Roles.TEACHER];
 
 export async function generateMetadata({
   params,
@@ -20,24 +22,37 @@ export async function generateMetadata({
 }
 
 export default async function OrgDashboardLayout({ children }: { children: React.ReactNode }) {
-  const user = await requireDashboardUser(ORG_DASHBOARD_ROLES);
-  const t = await getTranslations('dashboard.header');
+  const initialUser = await getAuthUser();
 
   // Account-approval gate: an org cannot reach the dashboard until a platform
-  // admin approves it. Pending/rejected orgs are sent to the verification page.
-  // Fail open when the status can't be read (e.g. no organization on the user yet).
-  const approvalStatus = user.organization?.approvalStatus;
-  if (approvalStatus && approvalStatus !== ApprovalStatus.APPROVED) {
+  // admin approves it. Pending/rejected orgs are sent to the verification wizard.
+  // Fail open when status can't be read (e.g. org members without permission).
+  const status = await getVerificationStatus();
+  if (
+    !('err' in status) &&
+    status.approvalStatus &&
+    status.approvalStatus !== ApprovalStatus.APPROVED
+  ) {
     redirect(ROUTE_ORGANIZATION_VERIFICATION);
   }
 
   return (
-    <div className="flex min-h-svh">
-      <OrgSidebar user={user} />
-      <div className="flex flex-1 flex-col">
-        <SiteHeader title={t('title')} />
-        <main className="flex-1 p-6">{children}</main>
-      </div>
+    <div>
+      <SidebarProvider
+        style={
+          {
+            '--sidebar-width': 'calc(var(--spacing) * 72)',
+            '--header-height': 'calc(var(--spacing) * 12)',
+          } as React.CSSProperties
+        }>
+        <OrgSidebar user={initialUser} />
+        <SidebarInset>
+          <SiteHeader />
+          <VerificationSuccessAlert />
+          <OrganizationDashboardOnboardingHost user={initialUser} />
+          <div className="">{children}</div>
+        </SidebarInset>
+      </SidebarProvider>
     </div>
   );
 }

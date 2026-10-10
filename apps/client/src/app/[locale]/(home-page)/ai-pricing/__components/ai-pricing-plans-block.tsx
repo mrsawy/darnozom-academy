@@ -1,0 +1,125 @@
+'use client';
+
+import { useMemo, useRef, useState } from 'react';
+import { useTranslations } from 'next-intl';
+import { Badge } from '@/components/atoms/badge';
+import { Switch } from '@/components/atoms/switch';
+import { cn } from '@/lib/utils';
+import { usePublicAiPlans } from '@/lib/hooks/ai-plans/useAiPlans';
+import { useElementIsVisible } from '@/lib/hooks/use-element-is-visible';
+import { type AiPlanResponse } from '@/lib/actions/ai-plan/ai-plan.action';
+import { AiPlanCard } from '@/components/organs/ai-subscription-plans/ai-plan-card';
+import { AiSubscriptionPlansSkeleton } from '@/components/organs/ai-subscription-plans/ai-subscription-plans.skeleton';
+
+function maxSavingsPercent(plans: AiPlanResponse[]): number {
+  let max = 0;
+  for (const p of plans) {
+    const m = p.price?.MONTHLY?.originalPrice ?? p.price?.MONTHLY?.priceUSD ?? 0;
+    const y = p.price?.YEARLY?.originalPrice ?? p.price?.YEARLY?.priceUSD ?? 0;
+    if (m > 0 && y > 0) {
+      const pct = Math.round(((m * 12 - y) / (m * 12)) * 100);
+      if (pct > max) max = pct;
+    }
+  }
+  return max;
+}
+
+function popularIndex(count: number): number {
+  if (count >= 3) return Math.floor(count / 2);
+  if (count === 2) return 1;
+  return -1;
+}
+
+interface AiPricingPlansBlockProps {
+  className?: string;
+}
+
+export default function AiPricingPlansBlock({ className }: AiPricingPlansBlockProps) {
+  const t = useTranslations('AiPricing');
+  const [isAnnual, setIsAnnual] = useState(false);
+  const blockRef = useRef<HTMLDivElement>(null);
+  const isVisible = useElementIsVisible(blockRef);
+  const { data: plans = [], isLoading, isError, error } = usePublicAiPlans();
+
+  const sorted = useMemo(
+    () =>
+      [...plans].toSorted((a, b) => {
+        const aPrice = a.price?.MONTHLY?.priceUSD ?? 0;
+        const bPrice = b.price?.MONTHLY?.priceUSD ?? 0;
+        return aPrice - bPrice;
+      }),
+    [plans]
+  );
+
+  const savePercent = useMemo(() => maxSavingsPercent(sorted), [sorted]);
+  const popular = popularIndex(sorted.length);
+
+  const gridClassName = cn(
+    'grid gap-8',
+    sorted.length === 1 && 'mx-auto max-w-md',
+    sorted.length === 2 && 'md:grid-cols-2',
+    sorted.length === 3 && 'lg:grid-cols-3',
+    sorted.length >= 4 && 'sm:grid-cols-2 xl:grid-cols-4'
+  );
+
+  return (
+    <div ref={blockRef} className={className}>
+      {isError ? (
+        <div className="border-destructive/50 bg-destructive/10 text-destructive rounded-lg border px-4 py-3 text-sm">
+          {error instanceof Error ? error.message : t('loadError')}
+        </div>
+      ) : null}
+
+      {sorted.length > 0 && !isLoading ? (
+        <div className="light:glassy dir-ltr dark:bg-muted! mx-auto mb-10 flex max-w-lg flex-wrap items-center justify-center gap-3 rounded-full border px-4 py-3">
+          <span
+            className={cn(
+              'text-sm font-medium',
+              isAnnual ? 'text-muted-foreground' : 'text-foreground'
+            )}>
+            {t('monthly')}
+          </span>
+          <Switch
+            checked={isAnnual}
+            onCheckedChange={setIsAnnual}
+            aria-label={t('billingToggleAria')}
+            className="data-[state=checked]:bg-primary dir-ltr"
+          />
+          <span
+            className={cn(
+              'text-sm font-medium',
+              isAnnual ? 'text-foreground' : 'text-muted-foreground'
+            )}>
+            {t('yearly')}
+          </span>
+          {savePercent > 0 ? (
+            <Badge variant="secondary" className="text-xs">
+              {t('toggleSaveHint', { percent: savePercent })}
+            </Badge>
+          ) : null}
+        </div>
+      ) : null}
+
+      {isLoading ? (
+        <AiSubscriptionPlansSkeleton />
+      ) : (
+        <div className={gridClassName}>
+          {sorted.map((plan, index) => (
+            <AiPlanCard
+              key={plan._id}
+              plan={plan}
+              tierIndex={index}
+              isAnnual={isAnnual}
+              isPopular={index === popular}
+              activeSubscription={null}
+            />
+          ))}
+        </div>
+      )}
+
+      {!isLoading && !isError && isVisible && plans.length === 0 ? (
+        <p className="text-muted-foreground mt-4 text-center text-sm">{t('noPlans')}</p>
+      ) : null}
+    </div>
+  );
+}

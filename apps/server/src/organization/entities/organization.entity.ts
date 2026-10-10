@@ -1,21 +1,24 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
 import mongoose, { Document, Types } from 'mongoose';
-import { VerificationStatus, IdentityDocumentType, EntityStatus, ApprovalStatus } from '@islamic-academy/shared-types';
+import { VerificationStatus, IdentityDocumentType, EntityStatus, ApprovalStatus } from '@lms-organization/shared-types';
 
 @Schema({ timestamps: true })
 export class Organization extends Document<Types.ObjectId> {
   @Prop({ type: String, required: true })
   name: string;
 
-  @Prop({ required: true, type: mongoose.Types.ObjectId, ref: 'User' })
+  @Prop({ required: true, type: mongoose.Types.ObjectId })
   superAdminId: mongoose.Types.ObjectId;
 
   @Prop({ type: String, required: true, unique: true })
   slug: string;
 
-  @Prop({ type: String, required: false })
-  planName?: string;
+  @Prop({ required: true, type: String })
+  planName: string;
+
+  @Prop({ type: mongoose.Types.ObjectId, ref: 'Subscription', required: false })
+  subscriptionId: mongoose.Types.ObjectId | null;
 
   @Prop({
     type: {
@@ -24,12 +27,19 @@ export class Organization extends Document<Types.ObjectId> {
         primaryColor: String,
         secondaryColor: String,
       },
+      notifications: {
+        emailEnabled: Boolean,
+        smsEnabled: Boolean,
+      },
     },
     default: {
       branding: {
-        logo: '',
         primaryColor: '#000',
         secondaryColor: '#fff',
+      },
+      notifications: {
+        emailEnabled: false,
+        smsEnabled: false,
       },
     },
     required: true,
@@ -40,28 +50,38 @@ export class Organization extends Document<Types.ObjectId> {
       primaryColor: string;
       secondaryColor: string;
     };
+    notifications: {
+      emailEnabled: boolean;
+      smsEnabled: boolean;
+    };
   };
 
   @Prop({
     type: {
-      totalUsers: Number,
-      totalStudents: Number,
-      totalTeachers: Number,
-      totalClasses: Number,
+      totalReviews: Number,
+      averageRating: Number,
+      averageCoursesRating: Number,
+      totalCoursesReviews: Number,
+      totalEnrollments: Number,
+      totalCourses: Number,
     },
     default: {
-      totalUsers: 0,
-      totalStudents: 0,
-      totalTeachers: 0,
-      totalClasses: 0,
+      totalReviews: 0,
+      averageRating: 0,
+      averageCoursesRating: 0,
+      totalCoursesReviews: 0,
+      totalEnrollments: 0,
+      totalCourses: 0,
     },
     required: false,
   })
-  stats?: {
-    totalUsers: number;
-    totalStudents: number;
-    totalTeachers: number;
-    totalClasses: number;
+  stats: {
+    totalReviews: number;
+    averageRating: number;
+    averageCoursesRating: number;
+    totalCoursesReviews: number;
+    totalEnrollments: number;
+    totalCourses: number;
   };
 
   @Prop({
@@ -94,9 +114,8 @@ export class Organization extends Document<Types.ObjectId> {
         reviewedAt: null,
       },
     },
-    required: false,
   })
-  verification?: {
+  verification: {
     email: {
       verified: boolean;
       verifiedAt: Date | null;
@@ -118,32 +137,48 @@ export class Organization extends Document<Types.ObjectId> {
   status: EntityStatus;
 
   /**
-   * Platform-admin (SUPER_ADMIN) account-approval gate. New orgs start PENDING
-   * and cannot operate fully until approved.
+   * Platform-admin account-approval gate. New orgs start PENDING and cannot
+   * create content until an admin approves. Approval also auto-approves the
+   * org's content going forward (see isOrgApproved).
    */
   @Prop({ type: String, enum: ApprovalStatus, default: ApprovalStatus.PENDING, index: true })
   approvalStatus: ApprovalStatus;
 
   @Prop({ type: String, default: null })
-  approvalComment?: string | null;
+  approvalComment: string | null;
 
   @Prop({ type: mongoose.Types.ObjectId, ref: 'User', default: null })
-  approvalReviewedBy?: mongoose.Types.ObjectId | null;
+  approvalReviewedBy: mongoose.Types.ObjectId | null;
 
   @Prop({ type: Date, default: null })
-  approvalReviewedAt?: Date | null;
+  approvalReviewedAt: Date | null;
 }
 
 export const OrganizationSchema = SchemaFactory.createForClass(Organization);
 
 OrganizationSchema.plugin(mongoosePaginate);
 
+OrganizationSchema.virtual('plan', {
+  ref: 'Plan',
+  localField: 'planName',
+  foreignField: 'name',
+  justOne: true,
+});
 OrganizationSchema.virtual('superAdmin', {
   ref: 'User',
   localField: 'superAdminId',
   foreignField: '_id',
   justOne: true,
 });
-
-OrganizationSchema.set('toJSON', { virtuals: true });
-OrganizationSchema.set('toObject', { virtuals: true });
+OrganizationSchema.virtual('course', {
+  ref: 'Course',
+  localField: 'courseId',
+  foreignField: '_id',
+  justOne: true,
+});
+OrganizationSchema.virtual('subscription', {
+  ref: 'Subscription',
+  localField: 'subscriptionId',
+  foreignField: '_id',
+  justOne: true,
+});

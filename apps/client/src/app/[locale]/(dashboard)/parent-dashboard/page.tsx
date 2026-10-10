@@ -1,12 +1,9 @@
-import { getTranslations } from 'next-intl/server';
+import { getRelatedStudentsProgress } from '@/lib/actions/parent/parent-progress.action';
+import { ParentDashboardView } from './__components/parent-dashboard-view';
+import { isNatsErrResult } from '@/lib/utils/natsErrorHandler';
 
 export default async function ParentDashboardPage() {
-  const t = await getTranslations('parentDashboard.home');
-
-  return (
-    <div>
-      <h1 className="text-xl font-bold">{t('title')}</h1>
-      <p className="mt-2 text-sm text-muted-foreground">{t('description')}</p>
-    </div>
-  );
+  const progressResult = await getRelatedStudentsProgress();
+  const initialChildrenProgress = isNatsErrResult(progressResult) ? [] : progressResult;
+  return <ParentDashboardView initialChildrenProgress={initialChildrenProgress} />;
 }

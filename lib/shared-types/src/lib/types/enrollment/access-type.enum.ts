@@ -1,0 +1,6 @@
+export enum AccessType {
+  FREE = 'FREE',
+  PAID_ONCE = 'PAID_ONCE',
+  SUBSCRIPTION = 'SUBSCRIPTION',
+  BY_ORGANIZATION = 'BY_ORGANIZATION',
+}

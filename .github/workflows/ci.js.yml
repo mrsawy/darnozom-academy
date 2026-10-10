@@ -1,0 +1,68 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: NClip CI
+
+on:
+  pull_request:
+    branches: ['develop', 'production']
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    if: github.base_ref != 'production'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/composite-action
+      - run: pnpm lint
+  tsc:
+    if: github.base_ref != 'production'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/composite-action
+      - run: pnpm tsc
+
+  # Builds the same images the deploy workflow ships, without pushing them, so a
+  # broken Dockerfile fails on the pull request instead of during a deploy.
+  # Only on PRs into production — develop does not need image validation.
+  docker-build:
+    if: github.base_ref == 'production'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - app: server
+            file: apps/server/DockerFile
+            build-args: ''
+          # Placeholders only: this image is never pushed, and the real values are
+          # inlined by the deploy workflow.
+          - app: client
+            file: apps/client/DockerFile
+            build-args: |
+              NEXT_PUBLIC_API_URL=https://api.example.com
+              NEXT_PUBLIC_S3_BUCKET_NAME=placeholder
+              NEXT_PUBLIC_S3_REGION=us-east-1
+              NEXT_PUBLIC_CLOUDFRONT_DOMAIN=cdn.example.com
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ${{ matrix.file }}
+          push: false
+          build-args: ${{ matrix.build-args }}
+          # Read the deploy cache but write to a separate scope, so pull request
+          # builds stay fast without evicting what the deploy workflow relies on.
+          cache-from: |
+            type=gha,scope=${{ matrix.app }}
+            type=gha,scope=${{ matrix.app }}-pr
+          # mode=min: only cache the final (slim) image. mode=max exported multi-GB
+          # intermediate node_modules layers and caused GHA cache export timeouts.
+          cache-to: type=gha,mode=min,scope=${{ matrix.app }}-pr

@@ -1,5 +1,5 @@
 import { SetMetadata } from '@nestjs/common';
-import { Actions } from '@islamic-academy/shared-types';
+import { Actions } from '@lms-organization/shared-types';
 
 export const PERMISSIONS_KEY = 'permissions';
 

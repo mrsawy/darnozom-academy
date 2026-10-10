@@ -1,12 +1,32 @@
-import { getTranslations } from 'next-intl/server';
+'use client';
 
-export default async function ParentChildrenPage() {
-  const t = await getTranslations('parentDashboard.children');
+import { useState } from 'react';
+import { ChildrenPageHeader } from './__components/children-page-header';
+import { ChildrenTable } from './__components/children-table';
+import { AddChildDialog } from './__components/add-child-dialog';
+import { useChildren } from '@/lib/hooks/parent/useParent.hook';
+import { Alert, AlertDescription } from '@/components/atoms/alert';
+import { IconInfoCircle } from '@tabler/icons-react';
+import { useTranslations } from 'next-intl';
+
+function ChildrenPage() {
+  const [addDialogOpen, setAddDialogOpen] = useState(false);
+  const { data: children = [], isLoading } = useChildren();
+  const t = useTranslations('ParentDashboard.children');
 
   return (
-    <div>
-      <h1 className="text-xl font-bold">{t('title')}</h1>
-      <p className="mt-2 text-sm text-muted-foreground">{t('comingSoon')}</p>
+    <div className="container mx-auto px-4 py-6">
+      <ChildrenPageHeader onAddChild={() => setAddDialogOpen(true)} />
+      <Alert className="mb-6 border-blue-200 bg-blue-50 text-blue-800 dark:border-blue-800 dark:bg-blue-950 dark:text-blue-200">
+        <IconInfoCircle className="h-4 w-4 text-blue-600! dark:text-blue-400!" />
+        <AlertDescription className="text-blue-800 dark:text-blue-200">
+          {t('passwordDisclaimer')}
+        </AlertDescription>
+      </Alert>
+      <ChildrenTable items={children} isLoading={isLoading} />
+      <AddChildDialog open={addDialogOpen} onClose={() => setAddDialogOpen(false)} />
     </div>
   );
 }
+
+export default ChildrenPage;

@@ -1,13 +1,13 @@
 import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { RpcException } from '@nestjs/microservices';
-import { AuthErrors } from '@islamic-academy/shared-types';
+import { AuthErrors } from '@lms-organization/shared-types';
 import { SKIP_ONBOARDING_CHECK_KEY } from '../decorators/skip-onboarding-check.decorator';
-import { IUserContext } from '../../utils/types/IUserContext.interface';
+import { IUserContext } from 'src/utils/types/IUserContext.interface';
 import { AuthService } from '../auth.service';
-import { UserDocument } from '../../user/entities/user.entity';
-import { Role } from '../../role/entities/role.entity';
-import { CaslAbilityFactory } from '../../role/permissions.factory';
+import { UserDocument } from 'src/user/entities/user.entity';
+import { Role } from 'src/role/entities/role.entity';
+import { CaslAbilityFactory } from 'src/role/permissions.factory';
 
 interface RequestWithUser {
   headers: { authorization?: string };
@@ -23,7 +23,7 @@ interface RequestWithUser {
  * token (same as AuthGuard) so the onboarding check still applies.
  *
  * Use `@SkipOnboardingCheck()` on routes that must stay reachable before onboarding
- * (OAuth callback redirect target, onboarding completion, etc.).
+ * (OAuth callback redirect target, onboarding completion, `GET /user/user-data`, etc.).
  */
 @Injectable()
 export class OnboardingGuard implements CanActivate {

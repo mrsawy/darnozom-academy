@@ -2,9 +2,9 @@ import { CanActivate, ExecutionContext, Injectable, InternalServerErrorException
 import { RpcException } from '@nestjs/microservices';
 import { AuthService } from '../auth.service';
 import { UserDocument } from '../../user/entities/user.entity';
-import { Role } from '../../role/entities/role.entity';
-import { AppAbility, CaslAbilityFactory } from '../../role/permissions.factory';
-import { IUserContext } from '../../utils/types/IUserContext.interface';
+import { Role } from 'src/role/entities/role.entity';
+import { AppAbility, CaslAbilityFactory } from 'src/role/permissions.factory';
+import { IUserContext } from 'src/utils/types/IUserContext.interface';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -18,9 +18,11 @@ export class AuthGuard implements CanActivate {
       return await this.handleHttpRequest(context);
     } else if (context.getType() === 'rpc') {
       return await this.handleRpcRequest(context);
+      /* c8 ignore start */
     } else {
       throw new InternalServerErrorException('unimplemented communication context');
     }
+    /* c8 ignore end */
   }
 
   private async handleHttpRequest(context: ExecutionContext): Promise<boolean> {

@@ -8,6 +8,7 @@ import { RegisterDto } from '../../dto/register.dto';
 import { RefreshDto } from '../../dto/refresh.dto';
 import { ForgotPasswordDto } from '../../dto/forgot-password.dto';
 import { ResetPasswordDto } from '../../dto/reset-password.dto';
+import { VerifyPasswordResetOtpDto } from '../../dto/verify-password-reset-otp.dto';
 import { CompleteOnboardingDto } from '../../dto/complete-onboarding.dto';
 import { OAuthProfileService, GoogleProfile } from '../../services/oauth-profile.service';
 import { AuthSessionService } from '../../services/auth-session.service';
@@ -16,8 +17,9 @@ import { SkipOnboardingCheck } from '../../decorators/skip-onboarding-check.deco
 import { AuthGuard } from '../../guards/auth.guard';
 import { UserDocument } from '../../../user/entities/user.entity';
 import { Role } from '../../../role/entities/role.entity';
-import { AuthErrors } from '@islamic-academy/shared-types';
+import { AuthErrors, RATE_LIMIT } from '@lms-organization/shared-types';
 import { GoogleAuthGuard } from '../../guards/google-auth.guard';
+import { RateLimit } from 'src/rate-limiter/rate-limiter.decorator';
 
 interface RequestWithGoogleUser extends Request {
   user?: GoogleProfile;
@@ -56,18 +58,36 @@ export class AuthControllerHttp {
 
   @Post('forgot-password')
   @HttpCode(HttpStatus.OK)
+  @RateLimit({ ttlSeconds: RATE_LIMIT.PASSWORD_RESET_SEND.TTL_SECONDS, maxRequests: RATE_LIMIT.PASSWORD_RESET_SEND.MAX_REQUESTS })
   forgotPassword(@Body() dto: ForgotPasswordDto) {
-    return this.authService.requestPasswordReset(dto.email);
+    return this.authService.requestPasswordReset(dto.email, dto.client);
+  }
+
+  @Post('verify-reset-otp')
+  @HttpCode(HttpStatus.OK)
+  @RateLimit({ ttlSeconds: RATE_LIMIT.PASSWORD_RESET_VERIFY.TTL_SECONDS, maxRequests: RATE_LIMIT.PASSWORD_RESET_VERIFY.MAX_REQUESTS })
+  verifyPasswordResetOtp(@Body() dto: VerifyPasswordResetOtpDto) {
+    return this.authService.verifyPasswordResetOtp(dto.email, dto.otp);
   }
 
   @Post('reset-password')
   @HttpCode(HttpStatus.OK)
+  @RateLimit({ ttlSeconds: RATE_LIMIT.PASSWORD_RESET_VERIFY.TTL_SECONDS, maxRequests: RATE_LIMIT.PASSWORD_RESET_VERIFY.MAX_REQUESTS })
   resetPassword(@Body() dto: ResetPasswordDto) {
     return this.authService.resetPassword(dto.token, dto.email, dto.newPassword);
   }
 
   // ── Google OAuth ──────────────────────────────────────────────────────────
   @Get('google')
+  @SkipOnboardingCheck()
+  googleLoginInit(@Query('redirect_uri') redirectUri: string, @Res() res: Response): void {
+    const allowed = (this.configService.get<string>('OAUTH_ALLOWED_REDIRECT_URLS') ?? '').split(',').map((u) => u.trim());
+    const safeRedirect = redirectUri && allowed.includes(redirectUri) ? redirectUri : null;
+    const state = safeRedirect ? encodeURIComponent(safeRedirect) : '';
+    res.redirect(state ? `/auth/google/start?state=${state}` : '/auth/google/start');
+  }
+
+  @Get('google/start')
   @SkipOnboardingCheck()
   @UseGuards(GoogleAuthGuard)
   googleLogin(): void {
@@ -96,14 +116,29 @@ export class AuthControllerHttp {
       onboarding_required: onboardingRequired,
     });
 
-    const baseUrl = this.configService.get<string>('OAUTH_SUCCESS_REDIRECT_URL');
+    // Read redirect_uri from state param Google echoed back.
+    // This is more reliable than session cookies for native `openAuthSessionAsync` flows.
+    const rawState = req.query?.state;
+    const stateRedirect =
+      typeof rawState === 'string'
+        ? decodeURIComponent(rawState)
+        : Array.isArray(rawState) && typeof rawState[0] === 'string'
+          ? decodeURIComponent(rawState[0])
+          : null;
+
+    const allowed = (this.configService.get<string>('OAUTH_ALLOWED_REDIRECT_URLS') ?? '').split(',').map((u) => u.trim());
+    const baseUrl = stateRedirect && allowed.includes(stateRedirect) ? stateRedirect : this.configService.get<string>('OAUTH_SUCCESS_REDIRECT_URL');
+
     const separator = baseUrl?.includes('?') ? '&' : '?';
     res.redirect(`${baseUrl}${separator}oauth_code=${encodeURIComponent(code)}`);
   }
+  // ── OAuth Code Exchange ───────────────────────────────────────────────────
 
   /**
    * Exchanges a short-lived one-time oauth_code for the actual access/refresh tokens.
-   * Prevents tokens from appearing in browser history, server logs, and referrer headers.
+   * The code is generated server-side after a successful Google OAuth flow and is
+   * valid for 60 seconds. This prevents tokens from appearing in browser history,
+   * server logs, and referrer headers.
    */
   @Post('oauth/exchange')
   @HttpCode(HttpStatus.OK)

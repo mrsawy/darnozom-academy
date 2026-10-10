@@ -1,18 +1,22 @@
 import { forwardRef, MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
-import type { SignOptions } from 'jsonwebtoken';
+import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { OrganizationModule } from '../organization/organization.module';
 import { UserModule } from '../user/user.module';
+import { WalletModule } from '../wallet/wallet.module';
 import { RoleModule } from '../role/role.module';
+import { WishlistModule } from '../wishlist/wishlist.module';
 import { AuthControllerMessage } from './controllers/message/auth.controller.message';
 import { AuthGuard } from './guards/auth.guard';
+import { SubscriptionModule } from '../subscription/subscription.module';
+import { NotificationModule } from '../notification/notification.module';
 import { RealtimeModule } from '../realtime/realtime.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from '../user/entities/user.entity';
 import { PasswordResetToken, PasswordResetTokenSchema } from './entities/password-reset-token.entity';
+import { VerificationModule } from '../verification/verification.module';
 import { TokenService } from './services/token.service';
 import { AuthSessionService } from './services/auth-session.service';
 import { OAuthProfileService } from './services/oauth-profile.service';
@@ -21,6 +25,8 @@ import { GoogleStrategy } from './strategies/google.strategy';
 import { AuthControllerHttp } from './controllers/http/auth.controller.http';
 import session from 'express-session';
 
+const shouldEnableRealtime = process.env.DISABLE_REALTIME !== 'true';
+
 @Module({
   imports: [
     ConfigModule,
@@ -28,11 +34,9 @@ import session from 'express-session';
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService): JwtModuleOptions => ({
+      useFactory: (configService: ConfigService) => ({
         secret: configService.get<string>('JSON_PRIVATE_KEY') ?? '',
-        signOptions: {
-          expiresIn: (configService.get<string>('ACCESS_TOKEN_EXPIRES_IN') ?? '15m') as SignOptions['expiresIn'],
-        },
+        signOptions: { expiresIn: configService.get<string>('ACCESS_TOKEN_EXPIRES_IN') ?? '15m' },
       }),
     }),
     MongooseModule.forFeature([
@@ -41,8 +45,13 @@ import session from 'express-session';
     ]),
     forwardRef(() => OrganizationModule),
     forwardRef(() => UserModule),
+    forwardRef(() => WalletModule),
+    forwardRef(() => WishlistModule),
+    forwardRef(() => SubscriptionModule),
+    forwardRef(() => NotificationModule),
+    forwardRef(() => VerificationModule),
     forwardRef(() => RoleModule),
-    RealtimeModule,
+    ...(shouldEnableRealtime ? [RealtimeModule] : []),
   ],
   controllers: [AuthControllerHttp, AuthControllerMessage],
   providers: [AuthService, AuthGuard, TokenService, AuthSessionService, OAuthProfileService, OAuthCodeService, GoogleStrategy],
@@ -59,8 +68,8 @@ export class AuthModule implements NestModule {
           resave: false,
           saveUninitialized: false,
           cookie: {
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
+            secure: true,
+            sameSite: 'none',
             maxAge: 10 * 60 * 1000,
           },
         })

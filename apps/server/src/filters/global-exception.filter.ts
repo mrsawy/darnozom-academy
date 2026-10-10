@@ -2,6 +2,7 @@ import { Catch, ArgumentsHost, HttpException, HttpStatus, ExceptionFilter } from
 import { RpcException } from '@nestjs/microservices';
 import { Response } from 'express';
 import { throwError } from 'rxjs';
+import { CommonErrors } from '@lms-organization/shared-types';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
@@ -21,7 +22,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const request = ctx.getRequest<{ url?: string }>();
 
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
-    let message = 'Internal server error';
+    let message: string = CommonErrors.INTERNAL_SERVER_ERROR;
     let error = 'Error';
 
     if (exception instanceof HttpException) {
@@ -36,7 +37,6 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         error = (typeof responseObj.error === 'string' ? responseObj.error : error) ?? error;
       }
     } else if (exception instanceof RpcException) {
-      // Handle RPC exceptions in HTTP context
       const rpcError = exception.getError();
       if (typeof rpcError === 'string') {
         message = rpcError;
@@ -48,8 +48,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       }
       status = HttpStatus.BAD_GATEWAY;
     } else {
-      // Handle unexpected errors
-      message = (exception instanceof Error ? exception.message : message) ?? message;
+      message = CommonErrors.INTERNAL_SERVER_ERROR;
     }
 
     response.status(status).json({
@@ -64,7 +63,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
   private handleRpcException(exception: unknown, _host: ArgumentsHost) {
     let error: { statusCode: number; message: string; error: string; code?: number } = {
       statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-      message: 'Internal server error',
+      message: CommonErrors.INTERNAL_SERVER_ERROR,
       error: 'RpcError',
     };
 
@@ -83,7 +82,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         error = httpResponse as { statusCode: number; message: string; error: string; code?: number };
       }
     } else if (exception instanceof Error) {
-      error.message = exception.message;
+      error.message = CommonErrors.INTERNAL_SERVER_ERROR;
     }
 
     if (exception instanceof RpcException && typeof exception.getError() === 'object') {
@@ -93,7 +92,6 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       }
     }
 
-    // Return error as observable for NATS
     return throwError(() => error);
   }
 }

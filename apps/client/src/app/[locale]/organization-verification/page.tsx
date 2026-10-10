@@ -1,25 +1,18 @@
-import type { Metadata } from 'next';
-import { getTranslations } from 'next-intl/server';
-import { Clock } from 'lucide-react';
+import { redirect } from 'next/navigation';
+import { Roles } from '@lms-organization/shared-types';
+import { getAuthUser } from '@/lib/actions/user/user.action';
+import { getDashboardUrl } from '@/lib/utils/routes/getDashboardUrl';
+import { ROUTE_LOGIN } from '@/lib/data/constants/routes.constants';
+import { OrganizationVerificationWizard } from './__components/organization-verification-wizard';
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}): Promise<Metadata> {
-  const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: 'Metadata' });
-  return { title: t('verificationTitle') };
-}
+export const dynamic = 'force-dynamic';
 
 export default async function OrganizationVerificationPage() {
-  const t = await getTranslations('organizationVerification');
+  const user = await getAuthUser();
 
-  return (
-    <div className="flex min-h-svh flex-col items-center justify-center gap-4 p-6 text-center">
-      <Clock className="h-12 w-12 text-muted-foreground" />
-      <h1 className="text-xl font-bold">{t('title')}</h1>
-      <p className="max-w-md text-sm text-muted-foreground">{t('description')}</p>
-    </div>
-  );
+  if (!user) redirect(ROUTE_LOGIN);
+  // Only organization super-admins use this gate; send everyone else home.
+  if (user.roleName !== Roles.SUPER_ADMIN) redirect(getDashboardUrl(user.roleName));
+
+  return <OrganizationVerificationWizard />;
 }

@@ -1,9 +1,11 @@
 {
-  "name": "@islamic-academy/shared-types",
+  "name": "@lms-organization/shared-types",
   "version": "0.0.1",
   "private": true,
   "type": "module",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
@@ -12,7 +14,11 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json && node scripts/add-js-extensions.cjs",
-    "tsc": "tsc --noEmit -p tsconfig.lib.json"
+    "build:inplace": "tsc -p tsconfig.build.json && node scripts/add-js-extensions.cjs",
+    "lint": "eslint \"src/**/*.ts\" \"vitest.config.ts\" \"scripts/*.cjs\" --ignore-pattern \"**/*.d.ts\" --max-warnings 0",
+    "tsc": "tsc --noEmit -p tsconfig.lib.json",
+    "test": "vitest",
+    "test:run": "vitest run"
   },
   "dependencies": {
     "class-transformer": "^0.5.1",
@@ -21,6 +27,7 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "typescript": "~5.9.2"
+    "typescript": "~5.9.2",
+    "vitest": "^2.1.9"
   }
 }

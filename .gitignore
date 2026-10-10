@@ -2,6 +2,15 @@
 node_modules/
 */node_modules/
 
+apps/lms-mobile/node_modules/
+apps/lms-mobile/.expo/
+apps/lms-mobile/dist/
+apps/lms-mobile/web-build/
+apps/lms-mobile/android/
+apps/lms-mobile/ios/
+apps/lms-mobile/web/
+apps/lms-mobile/expo-env.d.ts
+apps/lms-mobile/.metro-cache
 # === Build Artifacts ===
 dist/
 */dist/
@@ -52,4 +61,7 @@ coverage/
 *.log
 *.tgz
 
+
 /.nx
+.claude/worktrees
+.claude/settings.local.json

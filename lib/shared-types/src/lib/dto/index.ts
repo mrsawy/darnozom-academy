@@ -1,2 +1,2 @@
-export * from './custom/pagination.dto';
-export * from './user/create-user.dto';
+export * from './custom/index';
+export * from './user/index';

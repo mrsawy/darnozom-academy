@@ -1,0 +1,109 @@
+# LMS Organization – production (EC2)
+# Images are pulled from DockerHub; nothing is built here.
+# Caddy handles HTTPS automatically via Let's Encrypt.
+#
+# First-time setup:
+#   1. Place .env next to this file (see .env.example), including MONGODB_URI_PROD
+#   2. Allow this EC2's IP in the MongoDB Atlas network access list
+#   3. docker compose -f docker-compose.prod.yml pull
+#   4. docker compose -f docker-compose.prod.yml up -d
+#
+# Env loading:
+#   - server/client load ~/lms/.env via env_file (all secrets/config)
+#   - environment: below overrides Docker-network URLs and process settings
+#     so a host-oriented REDIS_URL in .env cannot break containers
+
+services:
+
+  # ── Reverse proxy (automatic HTTPS) ────────────────────────────────
+  caddy:
+    image: caddy:2-alpine
+    container_name: lms-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - server
+      - client
+
+  # ── Redis ───────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: lms-redis
+    restart: unless-stopped
+    command: redis-server --save 60 1 --loglevel warning
+    volumes:
+      - redis_data:/data
+    ports:
+      - "127.0.0.1:6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # ── NATS (JetStream) ───────────────────────────────────────────────
+  nats:
+    image: nats:2.10-alpine
+    container_name: lms-nats
+    restart: unless-stopped
+    command: ["--jetstream", "--http_port", "8222"]
+    ports:
+      - "127.0.0.1:4222:4222"
+      - "127.0.0.1:8222:8222"
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8222/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── NestJS Server ──────────────────────────────────────────────────
+  server:
+    image: mrsawy/lms-server:latest
+    container_name: lms-server
+    restart: unless-stopped
+    env_file:
+      - .env
+    depends_on:
+      redis:   { condition: service_healthy }
+      nats:    { condition: service_healthy }
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      # MongoDB is on Atlas, so MONGODB_URI_PROD is left to .env — only the
+      # Docker-network URLs are forced here (overrides any host values in .env)
+      REDIS_URL_DEV: redis://redis:6379
+      REDIS_URL: redis://redis:6379
+      NATS_URLS: nats://nats:4222
+
+  # ── Next.js Client ─────────────────────────────────────────────────
+  client:
+    image: mrsawy/lms-client:latest
+    container_name: lms-client
+    restart: unless-stopped
+    env_file:
+      - .env
+    depends_on:
+      - server
+      - nats
+      - redis
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      HOSTNAME: "0.0.0.0"
+      # Middleware fetch to /api/user must not use 0.0.0.0 (invalid outbound target); loopback is correct in-container.
+      INTERNAL_APP_ORIGIN: ${INTERNAL_APP_ORIGIN:-http://127.0.0.1:3000}
+      NATS_URLS: nats://nats:4222
+      REDIS_URL: redis://redis:6379
+      REDIS_ENABLED: "true"
+
+volumes:
+  caddy_data:
+  caddy_config:
+  redis_data:

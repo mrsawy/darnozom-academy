@@ -1,23 +1,15 @@
 import { Type } from 'class-transformer';
-import { IsArray, IsEnum, IsOptional, ValidateNested } from 'class-validator';
-import { Actions, Roles, Subjects } from '@islamic-academy/shared-types';
-
-export class PermissionDto {
-  @IsEnum(Actions)
-  action: Actions;
-
-  @IsEnum(Subjects)
-  subject: Subjects;
-
-  @IsOptional()
-  conditions?: unknown;
-}
+import { ArrayMinSize, IsArray, IsEnum, IsNotEmpty, ValidateNested } from 'class-validator';
+import { Roles } from '@lms-organization/shared-types';
+import { PermissionDto } from './permission.dto';
 
 export class CreateRoleDto {
   @IsEnum(Roles)
+  @IsNotEmpty()
   name: Roles;
 
   @IsArray()
+  @ArrayMinSize(1)
   @ValidateNested({ each: true })
   @Type(() => PermissionDto)
   permissions: PermissionDto[];

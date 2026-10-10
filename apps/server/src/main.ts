@@ -6,6 +6,7 @@ import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { GlobalExceptionFilter } from './filters/global-exception.filter';
 
+/** Default Express JSON limit (~100kb) is too small for AI chat payloads (full thread history). */
 const HTTP_BODY_LIMIT = '5mb';
 
 const logger = new Logger('Bootstrap');
@@ -43,7 +44,7 @@ async function bootstrap() {
         transport: Transport.NATS,
         options: {
           servers: process.env.NATS_URLS.split(',').filter((server) => server.trim().length > 0),
-          queue: 'islamic-academy',
+          queue: 'lms',
           debug: true,
         },
       });

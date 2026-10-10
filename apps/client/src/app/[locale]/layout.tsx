@@ -1,9 +1,34 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { redirect } from 'next/navigation';
-import { getMessages, getTranslations } from 'next-intl/server';
 import { routing } from '@/i18n/routing';
-import Provider from './provider';
+import { Geist, Geist_Mono } from 'next/font/google';
 import '@/app/globals.css';
+import { getMessages, getTranslations } from 'next-intl/server';
+import Provider from './provider';
+import {
+  APP_URL,
+  OG_IMAGE_URL,
+  APPLE_ICON_URL,
+  THEME_COLOR_PRIMARY_LIGHT,
+  THEME_COLOR_PRIMARY_DARK,
+} from '@/lib/data/constants/metadata.constants';
+
+const geistSans = Geist({
+  variable: '--font-geist-sans',
+  subsets: ['latin'],
+});
+
+const geistMono = Geist_Mono({
+  variable: '--font-geist-mono',
+  subsets: ['latin'],
+});
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: THEME_COLOR_PRIMARY_LIGHT },
+    { media: '(prefers-color-scheme: dark)', color: THEME_COLOR_PRIMARY_DARK },
+  ],
+};
 
 export async function generateMetadata({
   params,
@@ -14,8 +39,30 @@ export async function generateMetadata({
   const t = await getTranslations({ locale, namespace: 'Metadata' });
 
   return {
+    metadataBase: new URL(APP_URL),
     title: { default: t('homeTitle'), template: `%s | ${t('siteName')}` },
     description: t('homeDescription'),
+    applicationName: t('siteName'),
+    icons: { icon: '/favicon.ico', apple: APPLE_ICON_URL },
+    openGraph: {
+      type: 'website',
+      siteName: t('siteName'),
+      locale: locale === 'ar' ? 'ar_SA' : 'en_US',
+      alternateLocale: locale === 'ar' ? ['en_US'] : ['ar_SA'],
+      title: { default: t('homeTitle'), template: `%s | ${t('siteName')}` },
+      description: t('homeDescription'),
+      images: [{ url: OG_IMAGE_URL, width: 1200, height: 630, alt: t('siteName') }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: { default: t('homeTitle'), template: `%s | ${t('siteName')}` },
+      description: t('homeDescription'),
+      images: [OG_IMAGE_URL],
+    },
+    alternates: {
+      canonical: `/${locale}`,
+      languages: { en: '/en', ar: '/ar' },
+    },
   };
 }
 
@@ -35,8 +82,14 @@ export default async function LocaleLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} dir={locale === 'ar' ? 'rtl' : 'ltr'} suppressHydrationWarning>
-      <body className="antialiased" suppressHydrationWarning>
+    <html
+      lang={locale}
+      dir={locale === 'ar' ? 'rtl' : 'ltr'}
+      suppressHydrationWarning
+      className="custom-scrollbar">
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        suppressHydrationWarning>
         <Provider locale={locale} messages={messages}>
           {children}
         </Provider>

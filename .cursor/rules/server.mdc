@@ -1,0 +1,942 @@
+---
+name: server
+description: Development rules and conventions for the NestJS server application
+---
+
+# Server Application Development Rules
+
+This document outlines the coding standards, patterns, and conventions for the `apps/server` NestJS application. Follow these rules consistently to maintain code quality and consistency.
+
+## Table of Contents
+1. [Project Structure](#project-structure)
+2. [Module Architecture](#module-architecture)
+3. [File Naming Conventions](#file-naming-conventions)
+4. [Code Style & Patterns](#code-style--patterns)
+5. [TypeScript Guidelines](#typescript-guidelines)
+6. [Controllers](#controllers)
+7. [Services](#services)
+8. [DTOs (Data Transfer Objects)](#dtos-data-transfer-objects)
+9. [Entities & Schemas](#entities--schemas)
+10. [Error Handling](#error-handling)
+    - [User-facing API messages (i18n)](#user-facing-api-messages-i18n)
+11. [Authentication & Authorization](#authentication--authorization)
+12. [Microservices (NATS)](#microservices-nats)
+13. [Database (MongoDB/Mongoose)](#database-mongodbmongoose)
+14. [Validation](#validation)
+15. [Utilities](#utilities)
+16. [Testing](#testing)
+
+---
+
+## Project Structure
+
+### Directory Organization
+```
+src/
+├── app.module.ts          # Root module
+├── main.ts                # Application entry point
+├── [feature]/             # Feature modules (e.g., user, course, auth)
+│   ├── [feature].module.ts
+│   ├── controllers/
+│   │   ├── http/          # HTTP controllers
+│   │   │   └── [feature].controller.http.ts
+│   │   └── message/        # Microservice message controllers
+│   │       └── [feature].controller.message.ts
+│   ├── services/
+│   │   └── [feature].service.ts
+│   ├── dto/                # Data Transfer Objects
+│   │   ├── create-[feature].dto.ts
+│   │   └── update-[feature].dto.ts
+│   ├── entities/           # Mongoose schemas
+│   │   └── [feature].entity.ts
+│   ├── enum/               # Feature-specific enums
+│   ├── seeds/              # Database seeders
+│   └── interfaces/         # Feature-specific interfaces
+├── auth/                   # Authentication module
+├── role/                   # Role & permissions module
+├── utils/                  # Shared utilities
+│   ├── interceptors/
+│   ├── types/
+│   ├── enums/
+│   └── validators/
+├── filters/                # Exception filters
+└── database/               # Database configuration & seeds
+```
+
+**Rules:**
+- Each feature should be a self-contained module
+- Group related files by feature/domain
+- Use separate controllers for HTTP and message patterns
+- Place shared utilities in `src/utils/`
+- Use feature-specific directories for feature-specific code
+
+---
+
+## Module Architecture
+
+### Module Structure
+```typescript
+import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
+import { FeatureControllerHttp } from './controllers/http/feature.controller.http';
+import { FeatureControllerMessage } from './controllers/message/feature.controller.message';
+import { FeatureService } from './services/feature.service';
+import { Feature, FeatureSchema } from './entities/feature.entity';
+
+@Module({
+  imports: [
+    MongooseModule.forFeature([
+      { name: Feature.name, schema: FeatureSchema }
+    ]),
+    // Other module imports
+  ],
+  controllers: [
+    FeatureControllerHttp,
+    FeatureControllerMessage,
+  ],
+  providers: [FeatureService],
+  exports: [FeatureService], // Export if used by other modules
+})
+export class FeatureModule {}
+```
+
+**Rules:**
+- Always register Mongoose schemas in module imports
+- Export services that are used by other modules
+- Use `forwardRef()` for circular dependencies
+- Register all controllers (HTTP and message) in the module
+
+---
+
+## File Naming Conventions
+
+### Files
+- **Modules**: `[feature].module.ts` (e.g., `user.module.ts`)
+- **Services**: `[feature].service.ts` (e.g., `user.service.ts`)
+- **Admin services**: `[feature].admin.service.ts` (e.g., `subscription.admin.service.ts`) — platform-admin overrides only; see `.agents/skills/admin-service-colocation/SKILL.md`
+- **HTTP Controllers**: `[feature].controller.http.ts` (e.g., `user.controller.http.ts`)
+- **Message Controllers**: `[feature].controller.message.ts` (e.g., `user.controller.message.ts`)
+- **DTOs**: `[action]-[feature].dto.ts` (e.g., `create-user.dto.ts`, `update-user.dto.ts`)
+- **Entities**: `[feature].entity.ts` (e.g., `user.entity.ts`)
+- **Enums**: `[name].enum.ts` (e.g., `Roles.enum.ts`, `Status.enum.ts`)
+- **Interfaces**: `[name].interface.ts` (e.g., `IUserRequest.interface.ts`)
+- **Utils**: `[name].utils.ts` or `[name].ts` (e.g., `ObjectId.utils.ts`)
+- **Filters**: `[name].filter.ts` (e.g., `global-exception.filter.ts`)
+- **Interceptors**: `[name].interceptor.ts` (e.g., `errorHandler.interceptor.ts`)
+- **Guards**: `[name].guard.ts` (e.g., `auth.guard.ts`)
+- **Seeds**: `[feature].seeder.ts` (e.g., `user.seeder.ts`)
+
+### Classes
+- **Modules**: `PascalCase` ending with `Module` (e.g., `UserModule`)
+- **Services**: `PascalCase` ending with `Service` (e.g., `UserService`)
+- **Admin services**: `PascalCase` ending with `AdminService` (e.g., `SubscriptionAdminService`)
+- **Controllers**: `PascalCase` ending with `Controller` + type (e.g., `UserControllerHttp`, `UserControllerMessage`)
+- **DTOs**: `PascalCase` ending with `Dto` (e.g., `CreateUserDto`)
+- **Entities**: `PascalCase` (e.g., `User`)
+- **Enums**: `PascalCase` (e.g., `Roles`, `Status`)
+- **Interfaces**: `PascalCase` with `I` prefix (e.g., `IUserRequest`)
+
+**Rules:**
+- Use kebab-case for file names
+- Use PascalCase for class names
+- Use descriptive suffixes (`.http.ts`, `.message.ts`, `.dto.ts`, etc.)
+- Always use `.ts` extension (never `.js`)
+
+---
+
+## Code Style & Patterns
+
+### Dependency Injection
+```typescript
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+
+@Injectable()
+export class FeatureService {
+  constructor(
+    @InjectModel(Feature.name)
+    private readonly featureModel: Model<Feature>,
+  ) {}
+}
+```
+
+**Rules:**
+- Always use `@Injectable()` decorator for services
+- Use `@InjectModel()` for Mongoose models
+- Use `readonly` for injected dependencies
+- Use constructor injection (never property injection)
+
+### Decorators Order
+```typescript
+@Controller('feature')
+export class FeatureController {
+  @UseGuards(AuthGuard)
+  @UseGuards(PermissionsGuard)
+  @RequiredPermissions({ action: Actions.CREATE, subject: Subjects.FEATURE })
+  @Post()
+  async create(@Body() dto: CreateFeatureDto) {
+    // Implementation
+  }
+}
+```
+
+**Rules:**
+- Decorators should be ordered: Guards → Permissions → Route decorators
+- Use `@UseGuards()` before permission decorators
+- Use `@RequiredPermissions()` after guards
+
+### Quotes
+- **Always use single quotes** (`'`) for strings
+- Exception: Use double quotes only when string contains single quotes
+
+---
+
+## TypeScript Guidelines
+
+### Type Definitions
+- **Interfaces**: Use for object shapes, DTOs, and public APIs
+  ```typescript
+  export interface IUserRequest {
+    user: User;
+  }
+  ```
+
+- **Types**: Use for unions, intersections, and computed types
+  ```typescript
+  export type UserStatus = 'active' | 'inactive' | 'suspended';
+  export type UserWithRole = User & { role: Role };
+  ```
+
+- **Enums**: Use for fixed sets of constants
+  ```typescript
+  export enum Roles {
+    SUPER_ADMIN = 'SuperAdmin',
+    ADMIN = 'Admin',
+    INSTRUCTOR = 'Instructor',
+  }
+  ```
+
+### Type Safety Rules
+- Always type function parameters and return values
+- Use `strictNullChecks: true` (already enabled)
+- Avoid `any` - use `unknown` if type is truly unknown
+- Use type guards for runtime type checking
+- Prefer interfaces over types for object shapes
+- Use Mongoose types: `Document`, `Types.ObjectId`, `PaginateModel`, etc.
+
+---
+
+## Controllers
+
+### HTTP Controllers
+```typescript
+import { Controller, Get, Post, Body, UseGuards, Request } from '@nestjs/common';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { IUserRequest } from 'src/auth/interfaces/IUserRequest.interface';
+import { FeatureService } from '../services/feature.service';
+import { CreateFeatureDto } from '../dto/create-feature.dto';
+import { handleError } from 'src/utils/errorHandling';
+
+@Controller('feature')
+export class FeatureControllerHttp {
+  constructor(
+    private readonly featureService: FeatureService,
+  ) {}
+
+  @Get()
+  @UseGuards(AuthGuard)
+  async findAll(
+    @Request() req: IUserRequest,
+  ) {
+    try {
+      const organizationId = req.user.organizationId;
+      // Implementation
+      return await this.featureService.findAll();
+    } catch (error) {
+      handleError(error);
+    }
+  }
+
+  @Post()
+  @UseGuards(AuthGuard)
+  async create(
+    @Body() createFeatureDto: CreateFeatureDto,
+    @Request() req: IUserRequest,
+  ) {
+    try {
+      // Implementation
+      return await this.featureService.create(createFeatureDto);
+    } catch (error) {
+      handleError(error);
+    }
+  }
+}
+```
+
+### Message Controllers (NATS)
+```typescript
+import { Controller, UseGuards } from '@nestjs/common';
+import { Ctx, MessagePattern, Payload } from '@nestjs/microservices';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { RpcValidationPipe } from 'src/utils/RpcValidationPipe';
+import { IUserContext } from 'src/utils/types/IUserContext.interface';
+import { FeatureService } from '../services/feature.service';
+import { handleRpcError } from 'src/utils/errorHandling';
+
+@Controller('feature')
+export class FeatureControllerMessage {
+  constructor(
+    private readonly featureService: FeatureService,
+  ) {}
+
+  @MessagePattern('features.findAll')
+  @UseGuards(AuthGuard)
+  async findAll(
+    @Ctx() context: IUserContext,
+    @Payload(new RpcValidationPipe())
+    payload: { options: PaginateOptions },
+  ) {
+    try {
+      const organizationId = context.userPayload.organizationId;
+      // Implementation
+      return await this.featureService.findAll(payload.options);
+    } catch (error) {
+      handleRpcError(error);
+    }
+  }
+}
+```
+
+### Message Pattern Naming
+- Use dot notation: `[feature].[action]` (e.g., `users.findAll`, `courses.create`)
+- Use plural for feature name: `users`, `courses`, `instructors`
+- Use camelCase for actions: `findAll`, `findOne`, `create`, `update`, `delete`
+
+**Rules:**
+- Always use `try-catch` blocks in controllers
+- Always use `handleError()` for HTTP controllers
+- Always use `handleRpcError()` for message controllers
+- Always use `@UseGuards(AuthGuard)` for protected routes
+- Always use `RpcValidationPipe` for message payloads
+- Always extract `organizationId` from request/context for multi-tenant operations
+- Use `IUserRequest` type for HTTP request objects
+- Use `IUserContext` type for RPC context objects
+
+---
+
+## Services
+
+### Service Structure
+```typescript
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model, PaginateModel, PaginateOptions } from 'mongoose';
+import { UserErrors } from '@lms-organization/shared-types';
+import { Feature, FeatureDocument } from '../entities/feature.entity';
+import { CreateFeatureDto } from '../dto/create-feature.dto';
+import { removePassword } from 'src/utils/removePassword';
+import { convertObjectValuesToObjectId } from 'src/utils/ObjectId.utils';
+
+@Injectable()
+export class FeatureService {
+  constructor(
+    @InjectModel(Feature.name)
+    private readonly featureModel: PaginateModel<Feature>,
+  ) {}
+
+  async findAll(
+    options: PaginateOptions,
+    filters?: mongoose.RootFilterQuery<Feature>,
+  ) {
+    const result = await this.featureModel.paginate(filters || {}, options);
+
+    // Remove sensitive data if needed
+    result.docs = result.docs.map(removePassword);
+
+    return result;
+  }
+
+  async findOne(filters: mongoose.RootFilterQuery<Feature>) {
+    const feature = await this.featureModel.findOne(filters);
+
+    if (!feature) {
+      throw new NotFoundException(UserErrors.USER_NOT_FOUND);
+    }
+
+    return feature;
+  }
+
+  async create(createFeatureDto: CreateFeatureDto) {
+    const feature = new this.featureModel(createFeatureDto);
+    return await feature.save();
+  }
+}
+```
+
+**Rules:**
+- Always use `@Injectable()` decorator
+- Use `PaginateModel` for models that support pagination
+- Always check for `null`/`undefined` and throw `NotFoundException` using **shared-types message keys** (see [User-facing API messages](#user-facing-api-messages-i18n)), not ad hoc English strings
+- Always remove sensitive data (passwords) before returning
+- Use `convertObjectValuesToObjectId()` for filter objects
+- Use proper Mongoose types (`RootFilterQuery`, `PaginateOptions`, etc.)
+- Use transactions (`ClientSession`) for multi-document operations
+
+---
+
+## DTOs (Data Transfer Objects)
+
+### DTO Structure
+```typescript
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsString,
+  IsOptional,
+  IsMongoId,
+  IsEnum,
+} from 'class-validator';
+import { Type } from 'class-transformer';
+import mongoose from 'mongoose';
+
+export class CreateFeatureDto {
+  @IsNotEmpty()
+  @IsString()
+  name: string;
+
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
+
+  @IsOptional()
+  @IsMongoId()
+  organizationId?: mongoose.Types.ObjectId;
+
+  @IsOptional()
+  @IsEnum(Status)
+  status?: Status;
+}
+```
+
+### Nested DTOs
+```typescript
+export class AddressDto {
+  @IsOptional()
+  @IsString()
+  city?: string;
+
+  @IsNotEmpty()
+  @IsString()
+  country: string;
+}
+
+export class CreateFeatureDto {
+  @IsOptional()
+  @IsObject()
+  @Type(() => AddressDto)
+  address?: AddressDto;
+}
+```
+
+**Rules:**
+- Always use `class-validator` decorators for validation
+- Use `@Type()` from `class-transformer` for nested objects
+- Use `@IsOptional()` for optional fields
+- Use `@IsNotEmpty()` for required fields
+- Use `@IsMongoId()` for MongoDB ObjectIds
+- Use `@IsEnum()` for enum values
+- Use descriptive property names
+- Export DTOs from `dto/` directory
+
+---
+
+## Entities & Schemas
+
+### Entity Structure
+```typescript
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import mongoose, { Document, Types } from 'mongoose';
+import * as mongoosePaginate from 'mongoose-paginate-v2';
+
+export type FeatureDocument = Feature & Document<Types.ObjectId>;
+
+@Schema({ timestamps: true })
+export class Feature extends Document<mongoose.Types.ObjectId> {
+  @Prop({ type: Types.ObjectId, ref: 'Organization', required: false })
+  organizationId: Types.ObjectId;
+
+  @Prop({ required: true, unique: true, index: true })
+  name: string;
+
+  @Prop({ required: true })
+  email: string;
+
+  @Prop({ type: String, enum: Status, default: 'active' })
+  status: string;
+}
+
+export const FeatureSchema = SchemaFactory.createForClass(Feature);
+FeatureSchema.plugin(mongoosePaginate);
+
+// Virtuals
+FeatureSchema.virtual('organization', {
+  ref: 'Organization',
+  localField: 'organizationId',
+  foreignField: '_id',
+  justOne: true,
+});
+
+FeatureSchema.set('toJSON', { virtuals: true });
+FeatureSchema.set('toObject', { virtuals: true });
+```
+
+**Rules:**
+- Always use `@Schema()` decorator with `timestamps: true` for automatic `createdAt`/`updatedAt`
+- Always export `FeatureDocument` type
+- Use `mongoose-paginate-v2` plugin for pagination support
+- Use `@Prop()` with proper types and options
+- Use `Types.ObjectId` for references
+- Use `ref` for population
+- Add indexes for frequently queried fields
+- Use virtuals for computed relationships
+- Always enable virtuals in `toJSON` and `toObject`
+- Use nested schemas with `@Schema({ _id: false })` for embedded documents
+
+---
+
+## Error Handling
+
+### Error Handling Utilities
+```typescript
+// For HTTP controllers
+import { handleError } from 'src/utils/errorHandling';
+
+try {
+  // Operation
+} catch (error) {
+  handleError(error);
+}
+
+// For Message controllers
+import { handleRpcError } from 'src/utils/errorHandling';
+
+try {
+  // Operation
+} catch (error) {
+  handleRpcError(error);
+}
+```
+
+### Exception Types
+- `NotFoundException`: Resource not found
+- `BadRequestException`: Invalid input/request
+- `ConflictException`: Resource conflict (e.g., duplicate)
+- `UnauthorizedException`: Authentication required
+- `ForbiddenException`: Insufficient permissions
+- `InternalServerErrorException`: Unexpected server error
+
+### Global Exception Filter
+- Global exception filter is configured in `main.ts`
+- Handles both HTTP and RPC exceptions
+- Automatically formats error responses
+
+**Rules:**
+- Always use `try-catch` blocks in controllers
+- Always use `handleError()` for HTTP controllers
+- Always use `handleRpcError()` for message controllers
+- Throw appropriate NestJS exceptions
+- Never expose sensitive error details to clients
+- Log errors with context (timestamp, path, method, etc.)
+
+### User-facing API messages (i18n)
+
+Exception `message` strings and success payloads like `{ message: string }` are shown to users (or forwarded to the client for toasts). They **must** be stable keys from `@lms-organization/shared-types`, not English prose typed only in `apps/server`.
+
+**Required workflow**
+
+1. Define or reuse an enum in `lib/shared-types/src/lib/messages/` (`AuthErrors`, `UserErrors`, `CommonErrors`, feature-specific `*Errors`, success enums).
+2. Ensure the enum participates in `ALL_ERROR_KEYS` in `lib/shared-types/src/lib/messages/index.ts` (usually via `...Object.values(MyErrors)`).
+3. Throw or return using the enum value: `throw new BadRequestException(AuthErrors.SOME_KEY)`.
+4. Add **`errors.<key>`** to **both** `apps/client/messages/en.json` and `ar.json`.
+5. On the client, use `translateApiMessage` with `useTranslations('errors')` where server messages are displayed.
+
+**Agent skill:** `.agents/skills/api-error-messages/SKILL.md` — read it before adding or changing API error text.
+
+**Documentation:** `docs/api-error-messages.md`
+
+**Anti-patterns**
+
+- `throw new NotFoundException('Feature not found')`
+- `findOneOrThrow(..., 'Resource not found')` with a hardcoded sentence (use a shared-types key; only the query helper’s default may remain internal if unused)
+- JWT / auth services returning `'Invalid token'` strings without a catalog key (add to shared-types + i18n like any other user-visible error)
+
+**Allowed English**
+
+- Logger / `console.error` diagnostics for operators
+- Comments and non-API internal errors that never reach the client
+
+---
+
+## Authentication & Authorization
+
+### Auth Guard
+```typescript
+@UseGuards(AuthGuard)
+@Get()
+async findAll() {
+  // Protected route
+}
+```
+
+### Permissions Guard
+```typescript
+import { RequiredPermissions } from 'src/role/permission.decorator';
+import { PermissionsGuard } from 'src/role/guards/permissions.guard';
+import { Actions } from 'src/role/enum/Action.enum';
+import { Subjects } from 'src/role/enum/subject.enum';
+
+@UseGuards(AuthGuard)
+@UseGuards(PermissionsGuard)
+@RequiredPermissions({ action: Actions.CREATE, subject: Subjects.USER })
+@Post()
+async create(@Body() dto: CreateUserDto) {
+  // Protected and permission-checked route
+}
+```
+
+### Request Context
+```typescript
+// HTTP
+import { IUserRequest } from 'src/auth/interfaces/IUserRequest.interface';
+
+@Get()
+@UseGuards(AuthGuard)
+async findAll(@Request() req: IUserRequest) {
+  const user = req.user;
+  const organizationId = req.user.organizationId;
+}
+
+// RPC
+import { IUserContext } from 'src/utils/types/IUserContext.interface';
+
+@MessagePattern('features.findAll')
+@UseGuards(AuthGuard)
+async findAll(@Ctx() context: IUserContext) {
+  const user = context.userPayload;
+  const organizationId = context.userPayload.organizationId;
+}
+```
+
+**Rules:**
+- Always use `@UseGuards(AuthGuard)` for protected routes
+- Always use `@UseGuards(PermissionsGuard)` with `@RequiredPermissions()` for permission checks
+- Always extract `organizationId` for multi-tenant operations
+- Use `IUserRequest` for HTTP requests
+- Use `IUserContext` for RPC contexts
+- Never trust client-provided organization IDs
+
+---
+
+## Microservices (NATS)
+
+### Message Pattern Structure
+```typescript
+@MessagePattern('features.findAll')
+@UseGuards(AuthGuard)
+async findAll(
+  @Ctx() context: IUserContext,
+  @Payload(new RpcValidationPipe())
+  payload: { options: PaginateOptions },
+) {
+  // Implementation
+}
+```
+
+### Message Pattern Naming
+- Format: `[feature].[action]`
+- Use plural for feature: `users`, `courses`, `instructors`
+- Use camelCase for action: `findAll`, `findOne`, `create`, `update`, `delete`
+
+**Examples:**
+- `users.findAll`
+- `users.findOne`
+- `users.create`
+- `courses.findAllCourses`
+- `instructors.filterOne`
+
+### RPC Validation
+- Always use `RpcValidationPipe` for message payloads
+- DTOs are automatically validated
+- Validation errors are converted to `RpcException`
+
+**Rules:**
+- Always use `@MessagePattern()` decorator
+- Always use `@UseGuards(AuthGuard)` for protected patterns
+- Always use `RpcValidationPipe` for payload validation
+- Always use `IUserContext` for context
+- Always use `handleRpcError()` for error handling
+- Follow consistent naming pattern: `[feature].[action]`
+
+---
+
+## Database (MongoDB/Mongoose)
+
+### ObjectId Handling
+```typescript
+import { convertToObjectId, convertObjectValuesToObjectId } from 'src/utils/ObjectId.utils';
+
+// Convert single ID
+const objectId = convertToObjectId(id);
+
+// Convert object values
+const filters = convertObjectValuesToObjectId({ userId: '123', courseId: '456' });
+```
+
+### Pagination
+```typescript
+import { PaginateModel, PaginateOptions } from 'mongoose';
+
+async findAll(options: PaginateOptions, filters?: mongoose.RootFilterQuery<Feature>) {
+  const result = await this.featureModel.paginate(filters || {}, options);
+  return result;
+}
+```
+
+### Queries
+```typescript
+// Find one
+const feature = await this.featureModel.findOne({ _id: objectId });
+
+// Find with population
+const feature = await this.featureModel
+  .findOne({ _id: objectId })
+  .populate('organization');
+
+// Find with filters
+const filters: mongoose.RootFilterQuery<Feature> = {
+  organizationId: new mongoose.Types.ObjectId(organizationId),
+  status: 'active',
+};
+const features = await this.featureModel.find(filters);
+```
+
+### Transactions
+```typescript
+import { ClientSession } from 'mongoose';
+
+async createWithTransaction(dto: CreateFeatureDto) {
+  const session = await this.featureModel.db.startSession();
+  session.startTransaction();
+
+  try {
+    const feature = await this.featureModel.create([dto], { session });
+    // Other operations
+    await session.commitTransaction();
+    return feature[0];
+  } catch (error) {
+    await session.abortTransaction();
+    throw error;
+  } finally {
+    session.endSession();
+  }
+}
+```
+
+**Rules:**
+- Always validate ObjectIds before using them
+- Always use `convertObjectValuesToObjectId()` for filter objects
+- Always use pagination for list endpoints
+- Always use transactions for multi-document operations
+- Always populate relationships when needed
+- Always remove sensitive data before returning
+- Use indexes for frequently queried fields
+- Use proper Mongoose types
+
+---
+
+## Validation
+
+### DTO Validation
+- DTOs are automatically validated by `ValidationPipe` (HTTP) and `RpcValidationPipe` (RPC)
+- Use `class-validator` decorators in DTOs
+- Validation errors are automatically formatted
+
+### Custom Validators
+- Place custom validators in `src/utils/validators/`
+- Use `class-validator` for custom validation logic
+
+**Rules:**
+- Always validate input in DTOs
+- Use appropriate validation decorators
+- Provide meaningful error messages
+- Use `@Type()` for nested objects
+- Use `@IsOptional()` for optional fields
+
+---
+
+## Utilities
+
+### Common Utilities
+- `errorHandling.ts`: `handleError()`, `handleRpcError()`
+- `ObjectId.utils.ts`: `convertToObjectId()`, `convertObjectValuesToObjectId()`
+- `removePassword.ts`: `removePassword()` - removes password from documents
+
+### Utility Structure
+```typescript
+// src/utils/feature.utils.ts
+export const utilityFunction = (param: string): string => {
+  // Implementation
+  return result;
+};
+```
+
+**Rules:**
+- Place utilities in `src/utils/`
+- Use descriptive file names
+- Export functions (not classes) for pure utilities
+- Use TypeScript types
+- Document complex utilities
+
+---
+
+## Testing
+
+### Test File Naming
+- Unit tests: `[feature].service.spec.ts`
+- Controller tests: `[feature].controller.spec.ts`
+- E2E tests: `[feature].e2e-spec.ts`
+
+### Test Structure
+```typescript
+import { Test, TestingModule } from '@nestjs/testing';
+import { FeatureService } from './feature.service';
+
+describe('FeatureService', () => {
+  let service: FeatureService;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [FeatureService],
+    }).compile();
+
+    service = module.get<FeatureService>(FeatureService);
+  });
+
+  it('should be defined', () => {
+    expect(service).toBeDefined();
+  });
+});
+```
+
+**Rules:**
+- Write tests for all services
+- Write tests for complex business logic
+- Use descriptive test names
+- Mock external dependencies
+- Test error cases
+
+---
+
+## Additional Rules
+
+### Environment Variables
+- Use `@nestjs/config` for configuration
+- Access via `ConfigService` or `process.env`
+- Never commit `.env` files
+
+### Logging
+- Use `console.log()` for development
+- Use `console.error()` for errors
+- Log with context (timestamp, path, method, etc.)
+
+### Code Organization
+- Keep files focused and single-purpose
+- Use feature modules for domain logic
+- Share utilities across modules
+- Avoid circular dependencies (use `forwardRef()` if needed)
+
+### Performance
+- Use indexes for frequently queried fields
+- Use pagination for list endpoints
+- Use transactions for multi-document operations
+- Avoid N+1 queries (use `populate()` efficiently)
+
+### Security
+- Always validate input
+- Never expose sensitive data (passwords, tokens)
+- Always use authentication for protected routes
+- Always check permissions for sensitive operations
+- Always validate ObjectIds
+- Always sanitize user input
+
+---
+
+## Quick Reference Checklist
+
+When creating a new feature module:
+- [ ] Create feature directory structure
+- [ ] Create `[feature].module.ts`
+- [ ] Create `[feature].service.ts`
+- [ ] Create HTTP controller: `controllers/http/[feature].controller.http.ts`
+- [ ] Create message controller: `controllers/message/[feature].controller.message.ts`
+- [ ] Create DTOs: `dto/create-[feature].dto.ts`, `dto/update-[feature].dto.ts`
+- [ ] Create entity: `entities/[feature].entity.ts`
+- [ ] Register in module (imports, controllers, providers, exports)
+- [ ] Add authentication guards
+- [ ] Add error handling
+- [ ] Add validation
+- [ ] Remove sensitive data before returning
+
+When creating a service method:
+- [ ] Use `@Injectable()` decorator
+- [ ] Inject models with `@InjectModel()`
+- [ ] Check for null/undefined and throw `NotFoundException` with a **shared-types** message key (see [User-facing API messages](#user-facing-api-messages-i18n))
+- [ ] Remove sensitive data (passwords)
+- [ ] Use `convertObjectValuesToObjectId()` for filters
+- [ ] Use transactions for multi-document operations
+- [ ] Use proper Mongoose types
+
+When creating a controller endpoint:
+- [ ] Use appropriate HTTP decorator (`@Get()`, `@Post()`, etc.)
+- [ ] Use `@UseGuards(AuthGuard)` for protected routes
+- [ ] Use `@UseGuards(PermissionsGuard)` with `@RequiredPermissions()` for permissions
+- [ ] Use `try-catch` blocks
+- [ ] Use `handleError()` or `handleRpcError()`
+- [ ] Extract `organizationId` for multi-tenant operations
+- [ ] Use proper request/context types
+
+When creating a DTO:
+- [ ] Use `class-validator` decorators
+- [ ] Use `@Type()` for nested objects
+- [ ] Use `@IsOptional()` for optional fields
+- [ ] Use `@IsNotEmpty()` for required fields
+- [ ] Use `@IsMongoId()` for ObjectIds
+- [ ] Use `@IsEnum()` for enums
+
+When creating an entity:
+- [ ] Use `@Schema({ timestamps: true })`
+- [ ] Export `FeatureDocument` type
+- [ ] Use `mongoose-paginate-v2` plugin
+- [ ] Use proper `@Prop()` decorators
+- [ ] Add indexes for frequently queried fields
+- [ ] Use virtuals for relationships
+- [ ] Enable virtuals in `toJSON` and `toObject`
+
+---
+
+## Notes
+
+- The project uses NestJS 11.x with TypeScript
+- MongoDB with Mongoose for database
+- NATS for microservices communication
+- Fastify as HTTP adapter (configured in main.ts)
+- Class-validator for DTO validation
+- Mongoose-paginate-v2 for pagination
+- CASL for permissions/authorization
+- JWT for authentication
+
+---
+
+**Last Updated**: Generated from project analysis
+**Maintainer**: Development Team

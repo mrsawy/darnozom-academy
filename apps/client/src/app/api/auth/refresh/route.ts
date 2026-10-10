@@ -1,22 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import {
-  AUTH_COOKIE_NAME,
-  REFRESH_TOKEN_NAME,
-  SESSION_ID_COOKIE_NAME,
-} from '@islamic-academy/shared-types';
-import { getPublicApiUrl } from '@/lib/data/constants/api-url.constants';
-import { RefreshResponse } from '@/types/auth/auth.type';
+import { connectToNats, request as natsRequest } from '@/lib/nats/client';
+import { randomUUID } from 'node:crypto';
+import { redis } from '@/lib/redis/client';
+import { AUTH_COOKIE_NAME, REFRESH_TOKEN_NAME, SESSION_ID_COOKIE_NAME } from '@/lib/data/constants';
+import { parseDurationToSeconds } from '@/lib/utils';
+import { RefreshResponse } from '@/lib/types/auth/auth.type';
 
-const ACCESS_TOKEN_TTL_SECONDS = 15 * 60;
-const REFRESH_TOKEN_TTL_SECONDS = 7 * 24 * 60 * 60;
-
-/**
- * Internal Route Handler consumed by proxy.ts for silent refresh.
- *
- * ASSUMPTION: the server exposes `POST /auth/refresh` accepting
- * `{ refreshToken }` and returning `{ access_token, refresh_token, sid, user }`.
- * Verify this shape against the server agent's final implementation.
- */
 export async function POST(request: NextRequest) {
   const refreshToken = request.cookies.get(REFRESH_TOKEN_NAME)?.value;
   if (!refreshToken) {
@@ -24,37 +13,46 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const response = await fetch(`${getPublicApiUrl()}/auth/refresh`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ refreshToken }),
-      cache: 'no-store',
-    });
+    const natsClient = await connectToNats();
+    const response = await natsRequest<RefreshResponse>(
+      natsClient,
+      'auth.refresh',
+      JSON.stringify({
+        id: randomUUID(),
+        data: { refreshToken },
+      })
+    );
 
-    if (!response.ok) {
+    if ('err' in response) {
       return new NextResponse(undefined, { status: 401 });
     }
 
-    const data = (await response.json()) as RefreshResponse;
+    const accessTtl = parseDurationToSeconds(
+      process.env.ACCESS_TOKEN_EXPIRES_IN ?? process.env.AUTH_EXPIRES_IN ?? '15m'
+    );
+    const refreshTtl = parseDurationToSeconds(process.env.REFRESH_TOKEN_EXPIRES_IN ?? '7d');
     const isProduction = process.env.NODE_ENV === 'production';
 
-    const res = NextResponse.json(data.user);
-    res.cookies.set(AUTH_COOKIE_NAME, data.access_token, {
+    void redis.set(`auth-${response.access_token}`, JSON.stringify(response.user), 'EX', accessTtl);
+
+    const res = NextResponse.json(response.user);
+
+    res.cookies.set(AUTH_COOKIE_NAME, response.access_token, {
       httpOnly: isProduction,
       secure: isProduction,
-      maxAge: ACCESS_TOKEN_TTL_SECONDS,
+      maxAge: accessTtl,
       path: '/',
     });
-    res.cookies.set(REFRESH_TOKEN_NAME, data.refresh_token, {
+    res.cookies.set(REFRESH_TOKEN_NAME, response.refresh_token, {
       httpOnly: true,
       secure: isProduction,
-      maxAge: REFRESH_TOKEN_TTL_SECONDS,
+      maxAge: refreshTtl,
       path: '/',
     });
-    res.cookies.set(SESSION_ID_COOKIE_NAME, data.sid, {
+    res.cookies.set(SESSION_ID_COOKIE_NAME, response.sid, {
       httpOnly: false,
       secure: isProduction,
-      maxAge: REFRESH_TOKEN_TTL_SECONDS,
+      maxAge: refreshTtl,
       path: '/',
     });
 

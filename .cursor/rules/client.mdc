@@ -1,0 +1,748 @@
+---
+name: client
+description: Development rules and conventions for the Next.js client application
+---
+
+# Client Application Development Rules
+
+This document outlines the coding standards, patterns, and conventions for the `apps/client` Next.js application. Follow these rules consistently to maintain code quality and consistency.
+
+## Table of Contents
+1. [Project Structure](#project-structure)
+2. [Component Architecture](#component-architecture)
+3. [File Naming Conventions](#file-naming-conventions)
+4. [Code Style & Patterns](#code-style--patterns)
+5. [TypeScript Guidelines](#typescript-guidelines)
+6. [Styling & CSS](#styling--css)
+7. [Internationalization (i18n)](#internationalization-i18n)
+8. [Server Actions](#server-actions)
+9. [API Routes](#api-routes)
+10. [State Management](#state-management)
+11. [Form Validation](#form-validation)
+12. [Imports & Path Aliases](#imports--path-aliases)
+13. [Error Handling](#error-handling)
+14. [RTL/LTR Support](#rtlltr-support)
+
+---
+
+## Project Structure
+
+### Directory Organization
+```
+src/
+├── app/                    # Next.js App Router pages
+│   ├── [locale]/          # Internationalized routes
+│   │   ├── (auth)/        # Auth route group
+│   │   ├── (home-page)/   # Home page route group
+│   │   ├── (pages)/       # Public pages route group
+│   │   ├── organization-dashboard/
+│   │   ├── student-dashboard/
+│   │   └── layout.tsx
+│   └── api/               # API routes
+├── components/
+│   ├── atoms/             # Basic UI components (shadcn/ui)
+│   ├── molecules/         # Composite components
+│   ├── organs/            # Complex feature components
+│   └── ui/                # Additional UI components
+├── lib/
+│   ├── actions/           # Server actions (grouped by feature)
+│   ├── data/              # Constants, enums, static data
+│   ├── hooks/             # Custom React hooks
+│   ├── nats/              # NATS client utilities
+│   ├── redis/             # Redis client utilities
+│   ├── schema/            # Yup validation schemas
+│   ├── store/             # Zustand stores
+│   ├── types/             # TypeScript type definitions
+│   └── utils/             # Utility functions
+├── i18n/                  # Internationalization config
+└── types/                 # Global type definitions
+```
+
+**Rules:**
+- Keep related files grouped by feature/domain
+- Use route groups `(folder)` for logical organization without affecting URLs
+- Place shared utilities in `lib/utils/`
+- Place feature-specific utilities in feature directories
+
+---
+
+## Component Architecture
+
+### Atomic Design Pattern
+The project follows Atomic Design principles:
+
+1. **Atoms** (`components/atoms/`): Basic building blocks
+   - Examples: `button.tsx`, `input.tsx`, `card.tsx`
+   - Should be reusable, single-purpose components
+   - Based on shadcn/ui components
+
+2. **Molecules** (`components/molecules/`): Composite components
+   - Examples: `nav-bar.tsx`, `data-table.tsx`, `course-card.tsx`
+   - Combine multiple atoms
+   - Can contain business logic
+
+3. **Organs** (`components/organs/`): Complex feature components
+   - Examples: `discussion-section.tsx`, `course-enrollment-card.tsx`
+   - Full features with multiple molecules
+   - Can contain API calls and state management
+
+**Rules:**
+- Atoms should not depend on molecules or organs
+- Molecules can depend on atoms only
+- Organs can depend on atoms and molecules
+- Each component should be in its own file
+- Use PascalCase for component names and file names
+
+---
+
+## File Naming Conventions
+
+### Components
+- **Component files**: `kebab-case.tsx` (e.g., `nav-bar.tsx`, `course-card.tsx`)
+- **Component names**: `PascalCase` (e.g., `NavBar`, `CourseCard`)
+- **Default export**: Component name should match file name
+
+### Server Actions
+- **File names**: `actionName.action.ts` (e.g., `getCourses.action.ts`)
+- **Function names**: `camelCase` (e.g., `getCourses`, `createCourse`)
+
+### Types/Interfaces
+- **File names**: `feature.interface.ts` or `feature.types.ts`
+- **Type names**: `PascalCase` with descriptive prefix (e.g., `ICourse`, `IUser`)
+- **Interface prefix**: Use `I` prefix for interfaces (e.g., `IUser`, `ICourse`)
+
+### Hooks
+- **File names**: `use-hook-name.ts` (e.g., `use-lazy-ref.ts`)
+- **Hook names**: `camelCase` starting with `use` (e.g., `useLazyRef`)
+
+### Schemas
+- **File names**: `feature.schema.ts` (e.g., `course.schema.ts`)
+- **Schema names**: `camelCase` ending with `Schema` (e.g., `createCourseSchema`)
+
+### Utils
+- **File names**: `utility-name.ts` (e.g., `serverUtils.ts`)
+- **Function names**: `camelCase` (e.g., `getCookie`, `formatDate`)
+
+**Rules:**
+- Always use `.tsx` for React components
+- Always use `.ts` for non-React files
+- Use kebab-case for file names
+- Use PascalCase for component/type names
+- Use camelCase for functions and variables
+
+---
+
+## Code Style & Patterns
+
+### React Components
+
+```tsx
+'use client'; // Only for client components
+
+import * as React from 'react';
+import { cn } from '@/lib/utils';
+
+interface ComponentProps {
+  // Props definition
+}
+
+export const Component = React.forwardRef<HTMLElement, ComponentProps>(
+  ({ className, ...props }, ref) => {
+    return (
+      <div ref={ref} className={cn('base-classes', className)} {...props}>
+        {/* Component content */}
+      </div>
+    );
+  }
+);
+
+Component.displayName = 'Component';
+```
+
+**Rules:**
+- Use `'use client'` directive only when necessary (interactivity, hooks, browser APIs)
+- Use `React.forwardRef` for components that need ref forwarding
+- Always set `displayName` for forwardRef components
+- Use `cn()` utility for className merging
+- Destructure props with default values when appropriate
+- Use TypeScript interfaces for props (not types, unless extending)
+
+### Server Components (Default)
+- No `'use client'` directive
+- Can use async/await directly
+- Can access server-side APIs (cookies, headers, etc.)
+- Cannot use React hooks or browser APIs
+
+### Component Composition
+- Prefer composition over inheritance
+- Use `asChild` prop pattern with Radix UI Slot when appropriate
+- Use children prop for flexible content
+
+---
+
+## TypeScript Guidelines
+
+### Type Definitions
+- **Interfaces**: Use for object shapes, props, and public APIs
+  ```tsx
+  export interface IUser {
+    id: string;
+    name: string;
+  }
+  ```
+
+- **Types**: Use for unions, intersections, and computed types
+  ```tsx
+  export type Status = 'pending' | 'approved' | 'rejected';
+  export type UserWithRole = IUser & { role: IRole };
+  ```
+
+- **Enums**: Use for fixed sets of constants
+  ```tsx
+  export enum Currency {
+    USD = 'USD',
+    EUR = 'EUR',
+  }
+  ```
+
+### Type Exports
+- Export types from dedicated type files: `lib/types/feature/`
+- Use `InferType` from Yup for schema-derived types
+- Group related types in the same file
+
+### Type Safety Rules
+- Always type function parameters and return values
+- Use `strict: true` in tsconfig (already enabled)
+- Avoid `any` - use `unknown` if type is truly unknown
+- Use type guards for runtime type checking
+- Prefer interfaces over types for object shapes
+
+---
+
+## Styling & CSS
+
+### Tailwind CSS
+- Use Tailwind utility classes for styling
+- Use `cn()` utility for conditional classes
+- Use CSS variables from `globals.css` for colors
+- Use semantic Tailwind classes backed by the tokens in `globals.css` (e.g., `text-primary`)
+
+### Color Usage
+**CRITICAL**: Use semantic Tailwind utilities for design-system colors. Never reference
+library-specific variables or undeclared CSS custom properties.
+
+**Available semantic colors:**
+- Primary: `primary`, `primary-foreground`
+- Success: `success`, `success-foreground`
+- Error: `destructive`, `destructive-foreground`
+- Warning: `warning`, `warning-foreground`
+- Info: `info`, `info-foreground`
+- Surfaces and text: `background`, `foreground`, `card`, `muted`, `muted-foreground`
+
+**Example:**
+```tsx
+// ✅ Correct
+<div className="bg-primary text-primary-foreground">
+
+// ❌ Wrong
+<div className="bg-[var(--library-color-primary)] text-white">
+```
+
+### Class Variance Authority (CVA)
+Use CVA for component variants:
+
+```tsx
+import { cva, type VariantProps } from 'class-variance-authority';
+
+const buttonVariants = cva(
+  'base-classes',
+  {
+    variants: {
+      variant: {
+        default: 'variant-classes',
+        destructive: 'destructive-classes',
+      },
+      size: {
+        default: 'h-10 px-4',
+        sm: 'h-9 px-3',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+      size: 'default',
+    },
+  }
+);
+```
+
+### Custom CSS
+- Place global styles in `globals.css`
+- Use CSS modules for component-specific styles (`.module.css`)
+- Use Tailwind `@layer` directives for custom utilities
+
+---
+
+## Internationalization (i18n)
+
+### Setup
+- Uses `next-intl` for internationalization
+- Supported locales: `en`, `ar`
+- Default locale: `ar`
+- Messages stored in `messages/en.json` and `messages/ar.json`
+
+### Usage in Components
+
+```tsx
+import { useTranslations, useLocale } from 'next-intl';
+
+export const Component = () => {
+  const t = useTranslations('Namespace');
+  const locale = useLocale();
+  const isRTL = locale === 'ar';
+
+  return <div>{t('key')}</div>;
+};
+```
+
+### Navigation
+- Use navigation utilities from `@/i18n/navigation`
+- Always use `Link`, `useRouter`, `usePathname` from i18n navigation
+- Never use Next.js navigation directly
+
+```tsx
+import { Link, useRouter, usePathname } from '@/i18n/navigation';
+
+// ✅ Correct
+<Link href="/dashboard">Dashboard</Link>
+
+// ❌ Wrong
+import Link from 'next/link';
+```
+
+### RTL Support
+- Check `locale === 'ar'` for RTL logic
+- Use `dir` attribute: `dir={locale === 'ar' ? 'rtl' : 'ltr'}`
+- Adjust icon placement based on locale
+- Use CSS variables that support RTL automatically
+
+---
+
+## Server Actions
+
+### File Organization
+- Group by feature: `lib/actions/feature/actionName.action.ts`
+- One action per file (or related actions)
+- Always use `'use server'` directive
+
+### NATS Transport — use the helpers, never raw `request`
+
+All backend communication goes through NATS via two purpose-built helpers in
+`lib/utils/createNatsRequest.ts`. **Never** use `connectToNats` + `request` directly
+in action files, and **never** use `fetch` to call internal API endpoints.
+
+| Helper | When to use |
+|--------|-------------|
+| `createNatsRequest` | Public / unauthenticated calls (login, register, forgot-password, token refresh, OAuth token exchange with an explicit token) |
+| `createAuthorizedNatsRequest` | Every authenticated call — the helper reads `AUTH_COOKIE_NAME` automatically and retries on token expiry |
+
+#### Unauthenticated (public) action
+
+```ts
+'use server';
+import { createNatsRequest } from '@/lib/utils/createNatsRequest';
+
+export async function examplePublicAction(params: Params) {
+  const response = await createNatsRequest<SuccessType | { err: { message: string } }>(
+    'feature.action',
+    params
+  );
+  if ('err' in response) return response;
+  return response;
+}
+```
+
+#### Authenticated action
+
+```ts
+'use server';
+import { createAuthorizedNatsRequest } from '@/lib/utils/createNatsRequest';
+
+export async function exampleAuthAction(params: Params) {
+  const result = await createAuthorizedNatsRequest<SuccessType | { err: { message: string } }>(
+    'feature.action',
+    params
+  );
+  if ('err' in result) return result;
+  return result;
+}
+```
+
+**NATS errors and React Query:** `useQuery` / `useMutation` from `@/lib/utils` wrap
+results with `throwIfNatsError` (`lib/utils/natsErrorHandler.ts`). Server actions should
+**return** `{ err: { message: string } }` instead of throwing, so the client wrapper can
+surface errors to React Query without Next.js stripping messages. Omit the `if ('err')`
+branches when the action only returns the NATS result (direct `return createAuthorizedNatsRequest(...)`).
+See `.agents/skills/nats-server-actions/SKILL.md`.
+
+#### Passing an explicit token (e.g. OAuth callback — cookie not set yet)
+
+```ts
+await createNatsRequest<{ message: string; user: IUser } | { err: { message: string } }>(
+  'user.getOwnData',
+  { authorization: access_token }
+);
+```
+
+### Rules
+- Always use `'use server'` directive
+- **Use `createNatsRequest`** for public calls — never raw `connectToNats` + `request`
+- **Use `createAuthorizedNatsRequest`** for authenticated calls — never manually inject the cookie
+- **Never `fetch` internal HTTP endpoints** — use the NATS message pattern instead
+- Always type responses as `SuccessType | { err: { message: string } }`; return `{ err }` from the action (do not throw) when using `@/lib/utils` query hooks — they call `throwIfNatsError` on the client
+- Invalidate Redis cache (`redis.del(\`auth-\${idToken}\`)`) after mutations that change the user profile
+- See `.agents/skills/nats-server-actions/SKILL.md` for the full reference
+
+---
+
+## API Routes
+
+### File Organization
+- Place in `app/api/route-name/route.ts`
+- Export named functions: `GET`, `POST`, `PUT`, `DELETE`, etc.
+
+### Structure
+
+```tsx
+import { NextRequest, NextResponse } from 'next/server';
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+
+    // Validation
+    if (!body.field) {
+      return NextResponse.json(
+        { error: 'Field is required' },
+        { status: 400 }
+      );
+    }
+
+    // Business logic
+    const result = await performAction(body);
+
+    return NextResponse.json(
+      { message: 'Success', data: result },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error('API error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+```
+
+### Rules
+- Always validate input
+- Always return proper HTTP status codes
+- Always handle errors
+- Escape HTML in user input to prevent XSS
+- Use `NextRequest` and `NextResponse` types
+
+---
+
+## State Management
+
+### Zustand Stores
+- Place stores in `lib/store/`
+- One store per feature/domain
+- Use TypeScript interfaces for state shape
+
+```tsx
+import { create } from 'zustand';
+
+interface StoreState {
+  value: string;
+  setValue: (value: string) => void;
+}
+
+const useStore = create<StoreState>((set) => ({
+  value: '',
+  setValue: (value) => set({ value }),
+}));
+
+export default useStore;
+```
+
+### React Query
+- Use for server state management
+- Configured in `provider.tsx`
+- Use for data fetching, caching, and synchronization
+
+### Local State
+- Use `useState` for component-local state
+- Use `useReducer` for complex local state
+- Lift state up when shared between components
+
+---
+
+## Form Validation
+
+### Yup Schemas
+
+**Shared domain schemas** (reused across features): place in `lib/schema/feature.schema.ts`, export schema and inferred types, use `InferType` from Yup.
+
+**Form components with validation** (organs under `components/organs/`, or forms under `app/.../__components/`): **do not** define Yup inside the `.tsx` file. Use a **dedicated folder** named after the form:
+
+```
+<kebab-case-name>/
+  <kebab-case-name>.tsx          # 'use client'; imports from ./<kebab-case-name>.schema only
+  <kebab-case-name>.schema.ts    # Yup + InferType; no JSX, no React hooks
+```
+
+See `apps/client/src/components/organs/ORGAN-PATTERN.md` for the full convention (including optional skeleton files). Example: `onboarding-form/onboarding-form.schema.ts` next to `onboarding-form/onboarding-form.tsx`.
+
+```tsx
+import * as Yup from 'yup';
+import { InferType } from 'yup';
+
+export const formSchema = Yup.object().shape({
+  name: Yup.string()
+    .required('Name is required')
+    .min(3, 'Name must be at least 3 characters'),
+  email: Yup.string()
+    .email('Invalid email')
+    .required('Email is required'),
+});
+
+export type FormSchema = InferType<typeof formSchema>;
+```
+
+### React Hook Form Integration
+- Use `@hookform/resolvers/yup` for validation
+- Use `useForm` hook from `react-hook-form`
+
+```tsx
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { formSchema, FormSchema } from '@/lib/schema/form.schema';
+
+const form = useForm<FormSchema>({
+  resolver: yupResolver(formSchema),
+});
+```
+
+---
+
+## Imports & Path Aliases
+
+### Path Aliases (from tsconfig.json)
+- `@/*` → `./src/*`
+- `@/assets/*` → `./public/*`
+
+### Import Order
+1. React and Next.js imports
+2. Third-party libraries
+3. Internal utilities and types
+4. Components
+5. Styles
+
+### Import Examples
+
+```tsx
+// 1. React/Next.js
+import * as React from 'react';
+import { useTranslations } from 'next-intl';
+import Image from 'next/image';
+
+// 2. Third-party
+import { cva } from 'class-variance-authority';
+import { v7 } from 'uuid';
+
+// 3. Internal utilities
+import { cn } from '@/lib/utils';
+import { IUser } from '@/lib/types/user/user.interface';
+
+// 4. Components
+import { Button } from '@/components/atoms/button';
+import { NavBar } from '@/components/molecules/nav-bar';
+
+// 5. Styles (if needed)
+import styles from './component.module.css';
+```
+
+### Rules
+- Always use path aliases (`@/`) instead of relative paths
+- Group imports by category
+- Use absolute imports for all internal files
+- Use named exports for utilities
+- Use default exports for components (when single export)
+
+---
+
+## Error Handling
+
+### NATS server actions + React Query
+
+For actions that only proxy `createNatsRequest` / `createAuthorizedNatsRequest`, return
+the union result; **do not** throw when `'err' in response`. Hooks from `@/lib/utils` apply
+`throwIfNatsError` so mutations and queries enter error state correctly.
+
+### Server Actions (other)
+
+```tsx
+try {
+  // Operation
+} catch (error: any) {
+  console.error('descriptive error message:', error);
+  throw new Error(error.message || 'User-friendly error message');
+}
+```
+
+### API Routes
+```tsx
+try {
+  // Operation
+} catch (error) {
+  console.error('API error:', error);
+  return NextResponse.json(
+    { error: 'User-friendly error message' },
+    { status: 500 }
+  );
+}
+```
+
+### Client Components
+```tsx
+try {
+  // Operation
+} catch (error) {
+  console.error('Component error:', error);
+  // Show user-friendly error (toast, alert, etc.)
+}
+```
+
+### Rules
+- Always use try-catch for async operations
+- Always log errors with descriptive messages
+- Always provide user-friendly error messages
+- Use error boundaries for React component errors
+
+---
+
+## RTL/LTR Support
+
+### Direction Handling
+```tsx
+import { useLocale } from 'next-intl';
+
+const locale = useLocale();
+const isRTL = locale === 'ar';
+const iconPlacement = isRTL ? 'left' : 'right';
+```
+
+### CSS Classes
+- Use `dir-ltr` and `dir-rtl` utility classes when needed
+- Use logical properties (e.g., `margin-inline-start` instead of `margin-left`)
+- Test components in both RTL and LTR modes
+
+### Icon Placement
+- Adjust icon placement based on locale
+- Use conditional logic for icon positioning
+
+```tsx
+const iconPlacement = locale === 'ar' ? 'left' : 'right';
+```
+
+---
+
+## Additional Rules
+
+### Quotes
+- **Always use single quotes** (`'`) for strings, imports, and JSX attributes
+- Exception: Use double quotes only when string contains single quotes
+
+### Semicolons
+- Always use semicolons
+- Configure ESLint to enforce this
+
+### Line Length
+- Keep lines under 100 characters when possible
+- Break long lines logically
+
+### Comments
+- Use comments to explain "why", not "what"
+- Use JSDoc comments for public APIs
+- Remove commented-out code before committing
+
+### Git
+- Don't commit `node_modules/`
+- Don't commit `.next/` build directory
+- Don't commit environment files (`.env.local`)
+
+### Performance
+- Use `next/image` for images
+- Use dynamic imports for large components
+- Optimize bundle size
+- Use React.memo for expensive components when appropriate
+
+### Accessibility
+- Use semantic HTML
+- Include ARIA labels when needed
+- Ensure keyboard navigation works
+- Test with screen readers
+
+---
+
+## Quick Reference Checklist
+
+When creating a new component:
+- [ ] Use correct file naming (`kebab-case.tsx`)
+- [ ] Add `'use client'` only if needed
+- [ ] Use TypeScript interfaces for props
+- [ ] Use `cn()` for className merging
+- [ ] Use CSS variables for colors (never static colors)
+- [ ] Support RTL/LTR if applicable
+- [ ] Add i18n support if text is displayed
+- [ ] Use path aliases for imports
+- [ ] Export component with displayName
+- [ ] Follow atomic design pattern (atoms/molecules/organs)
+
+When creating a server action:
+- [ ] Add `'use server'` directive
+- [ ] Use proper file naming (`actionName.action.ts`)
+- [ ] Use `createNatsRequest` for public calls (login, register, etc.)
+- [ ] Use `createAuthorizedNatsRequest` for authenticated calls (reads cookie automatically)
+- [ ] Never use `connectToNats` + `request` directly — always use the helpers
+- [ ] Never `fetch` internal HTTP endpoints — use NATS subject instead
+- [ ] Type response as `SuccessType | { err: { message: string } }`; return NATS errors, do not throw (unless the action has success-only side effects — then `if ('err' in response) return response`)
+- [ ] Invalidate Redis cache after profile-mutating actions
+
+When creating types:
+- [ ] Use interfaces for object shapes
+- [ ] Use `I` prefix for interfaces
+- [ ] Place in `lib/types/feature/`
+- [ ] Export types from dedicated files
+
+---
+
+## Notes
+
+- The project uses Next.js 16.0.0 with App Router
+- React 19.2.0 is used
+- TypeScript strict mode is enabled
+- Tailwind CSS 4.x is used for styling
+- shadcn/ui components are used as base (atoms)
+- NATS is used for microservices communication
+- Redis is used for caching
+- Zustand is used for client state
+- React Query is used for server state
+- Yup is used for form validation
+- next-intl is used for internationalization
+
+---
+
+**Last Updated**: Generated from project analysis
+**Maintainer**: Development Team

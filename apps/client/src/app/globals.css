@@ -1,4 +1,42 @@
 @import 'tailwindcss';
+@import 'tw-animate-css';
+/* @import "./../../node_modules/tw-animate-css"; */
+
+@font-face {
+  font-family: 'ArabicFont';
+  src: url('./../../public/fonts/Noto_Kufi_Arabic/NotoKufiArabic-VariableFont_wght.ttf')
+    format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'ArabicFont1';
+  src: url('./../../public/fonts/alfont_com_AlFont_com_mbc-arabic-font.ttf') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'ArabicFont2';
+  src: url('./../../public/fonts/alfont_com_ArbFONTS-Bahij_TheSansArabic-Plain.ttf') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+html[lang='ar'],
+html[dir='rtl'],
+[lang='ar'],
+*:lang(ar) {
+  font-family: 'ArabicFont2', sans-serif !important;
+}
+
+.ltr {
+  direction: ltr !important;
+}
 
 @custom-variant dark (&:is(.dark *));
 
@@ -19,9 +57,20 @@
   --accent-foreground: oklch(1 0 0);
   --destructive: oklch(0.5505 0.2155 19.8095);
   --destructive-foreground: oklch(1 0 0);
+  --success: oklch(0.625 0.1772 140.4448);
+  --success-foreground: oklch(1 0 0);
+  --warning: oklch(0.692 0.2041 42.4293);
+  --warning-foreground: oklch(1 0 0);
+  --info: oklch(0.682 0.1448 235.3822);
+  --info-foreground: oklch(1 0 0);
   --border: oklch(0.8083 0.0174 271.1982);
   --input: oklch(0.8575 0.0145 268.4756);
   --ring: oklch(0.5547 0.2503 297.0156);
+  --chart-1: oklch(0.5547 0.2503 297.0156);
+  --chart-2: oklch(0.682 0.1448 235.3822);
+  --chart-3: oklch(0.625 0.1772 140.4448);
+  --chart-4: oklch(0.692 0.2041 42.4293);
+  --chart-5: oklch(0.7141 0.1045 33.0967);
   --sidebar: oklch(0.9335 0.0087 264.5206);
   --sidebar-foreground: oklch(0.4355 0.043 279.325);
   --sidebar-primary: oklch(0.5547 0.2503 297.0156);
@@ -30,7 +79,39 @@
   --sidebar-accent-foreground: oklch(1 0 0);
   --sidebar-border: oklch(0.8083 0.0174 271.1982);
   --sidebar-ring: oklch(0.5547 0.2503 297.0156);
-  --radius: 0.5rem;
+  --font-sans: Montserrat, sans-serif;
+  --font-serif: Georgia, serif;
+  --font-mono: Fira Code, monospace;
+  --radius: 0.35rem;
+  --shadow-2xs: 0px 4px 6px 0px hsl(240 30% 25% / 0.06);
+  --shadow-xs: 0px 4px 6px 0px hsl(240 30% 25% / 0.06);
+  --shadow-sm: 0px 4px 6px 0px hsl(240 30% 25% / 0.12), 0px 1px 2px -1px hsl(240 30% 25% / 0.12);
+  --shadow: 0px 4px 6px 0px hsl(240 30% 25% / 0.12), 0px 1px 2px -1px hsl(240 30% 25% / 0.12);
+  --shadow-md: 0px 4px 6px 0px hsl(240 30% 25% / 0.12), 0px 2px 4px -1px hsl(240 30% 25% / 0.12);
+  --shadow-lg: 0px 4px 6px 0px hsl(240 30% 25% / 0.12), 0px 4px 6px -1px hsl(240 30% 25% / 0.12);
+  --shadow-xl: 0px 4px 6px 0px hsl(240 30% 25% / 0.12), 0px 8px 10px -1px hsl(240 30% 25% / 0.12);
+  --shadow-2xl: 0px 4px 6px 0px hsl(240 30% 25% / 0.3);
+  --tracking-normal: 0em;
+  --spacing: 0.25rem;
+  --shadow-color: hsl(240 30% 25%);
+  --shadow-opacity: 0.12;
+  --shadow-blur: 6px;
+  --shadow-spread: 0px;
+  --shadow-offset-x: 0px;
+  --shadow-offset-y: 4px;
+  --letter-spacing: 0em;
+  --bg-0: #faf9f5;
+  --bg-000: #faf9f5;
+  --bg-100: #ffffff;
+  --bg-200: #f0eee6;
+  --bg-300: #dddddd;
+  --text-100: #1f1e1d;
+  --text-200: #3d3d3a;
+  --text-300: #73726c;
+  --text-400: #888888;
+  --text-500: #999999;
+  --accent-hover: #c6613f;
+  --ease-silk: cubic-bezier(0.2, 0, 0, 1);
 }
 
 html.dark {
@@ -50,17 +131,48 @@ html.dark {
   --accent-foreground: oklch(0.2429 0.0304 283.911);
   --destructive: oklch(0.7556 0.1297 2.7642);
   --destructive-foreground: oklch(0.2429 0.0304 283.911);
+  --success: oklch(0.8577 0.1092 142.7153);
+  --success-foreground: oklch(0.2429 0.0304 283.911);
+  --warning: oklch(0.8237 0.1015 52.6294);
+  --warning-foreground: oklch(0.2429 0.0304 283.911);
+  --info: oklch(0.8467 0.0833 210.2545);
+  --info-foreground: oklch(0.2429 0.0304 283.911);
   --border: oklch(0.324 0.0319 281.9784);
   --input: oklch(0.324 0.0319 281.9784);
   --ring: oklch(0.7871 0.1187 304.7693);
-  --sidebar: oklch(0.2429 0.0304 283.911);
+  --chart-1: oklch(0.7871 0.1187 304.7693);
+  --chart-2: oklch(0.8467 0.0833 210.2545);
+  --chart-3: oklch(0.8577 0.1092 142.7153);
+  --chart-4: oklch(0.8237 0.1015 52.6294);
+  --chart-5: oklch(0.9226 0.0238 30.4919);
+  --sidebar: oklch(0.1828 0.0204 284.2039);
   --sidebar-foreground: oklch(0.8787 0.0426 272.2767);
   --sidebar-primary: oklch(0.7871 0.1187 304.7693);
   --sidebar-primary-foreground: oklch(0.2429 0.0304 283.911);
   --sidebar-accent: oklch(0.8467 0.0833 210.2545);
   --sidebar-accent-foreground: oklch(0.2429 0.0304 283.911);
-  --sidebar-border: oklch(0.324 0.0319 281.9784);
+  --sidebar-border: oklch(0.4037 0.032 280.152);
   --sidebar-ring: oklch(0.7871 0.1187 304.7693);
+  --font-sans: Montserrat, sans-serif;
+  --font-serif: Georgia, serif;
+  --font-mono: Fira Code, monospace;
+  --radius: 0.35rem;
+  --shadow-2xs: 0px 4px 6px 0px hsl(240 30% 25% / 0.06);
+  --shadow-xs: 0px 4px 6px 0px hsl(240 30% 25% / 0.06);
+  --shadow-sm: 0px 4px 6px 0px hsl(240 30% 25% / 0.12), 0px 1px 2px -1px hsl(240 30% 25% / 0.12);
+  --shadow: 0px 4px 6px 0px hsl(240 30% 25% / 0.12), 0px 1px 2px -1px hsl(240 30% 25% / 0.12);
+  --shadow-md: 0px 4px 6px 0px hsl(240 30% 25% / 0.12), 0px 2px 4px -1px hsl(240 30% 25% / 0.12);
+  --shadow-lg: 0px 4px 6px 0px hsl(240 30% 25% / 0.12), 0px 4px 6px -1px hsl(240 30% 25% / 0.12);
+  --shadow-xl: 0px 4px 6px 0px hsl(240 30% 25% / 0.12), 0px 8px 10px -1px hsl(240 30% 25% / 0.12);
+  --shadow-2xl: 0px 4px 6px 0px hsl(240 30% 25% / 0.3);
+  --shadow-color: hsl(240 30% 25%);
+  --shadow-opacity: 0.12;
+  --shadow-blur: 6px;
+  --shadow-spread: 0px;
+  --shadow-offset-x: 0px;
+  --shadow-offset-y: 4px;
+  --letter-spacing: 0em;
+  --spacing: 0.25rem;
 }
 
 @theme inline {
@@ -80,9 +192,20 @@ html.dark {
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -91,22 +214,628 @@ html.dark {
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  --font-sans: Montserrat, sans-serif;
+  --font-mono: Fira Code, monospace;
+  --font-serif: Georgia, serif;
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
+  --shadow-2xs: var(--shadow-2xs);
+  --shadow-xs: var(--shadow-xs);
+  --shadow-sm: var(--shadow-sm);
+  --shadow: var(--shadow);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+  --shadow-xl: var(--shadow-xl);
+  --shadow-2xl: var(--shadow-2xl);
+  --radius: 0.35rem;
+  --tracking-tighter: calc(var(--tracking-normal) - 0.05em);
+  --tracking-tight: calc(var(--tracking-normal) - 0.025em);
+  --tracking-wide: calc(var(--tracking-normal) + 0.025em);
+  --tracking-wider: calc(var(--tracking-normal) + 0.05em);
+  --tracking-widest: calc(var(--tracking-normal) + 0.1em);
+  --tracking-normal: var(--tracking-normal);
+  --spacing: var(--spacing);
+  --spacing-base: 1rem;
+  --letter-spacing: var(--letter-spacing);
+  --shadow-offset-y: var(--shadow-offset-y);
+  --shadow-offset-x: var(--shadow-offset-x);
+  --shadow-spread: var(--shadow-spread);
+  --shadow-blur: var(--shadow-blur);
+  --shadow-opacity: var(--shadow-opacity);
+  --color-shadow-color: var(--shadow-color);
+  --animate-marquee: marquee var(--duration) infinite linear;
+  --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+
+    to {
+      transform: translateX(calc(-100% - var(--gap)));
+    }
+  }
+
+  @keyframes marquee-vertical {
+    from {
+      transform: translateY(0);
+    }
+
+    to {
+      transform: translateY(calc(-100% - var(--gap)));
+    }
+  }
+
+  --color-bg-0: var(--bg-0);
+
+  --color-bg-000: var(--bg-000);
+
+  --color-bg-100: var(--bg-100);
+
+  --color-bg-200: var(--bg-200);
+
+  --color-bg-300: var(--bg-300);
+
+  --color-text-100: var(--text-100);
+
+  --color-text-200: var(--text-200);
+
+  --color-text-300: var(--text-300);
+
+  --color-text-400: var(--text-400);
+
+  --color-text-500: var(--text-500);
+
+  --color-accent-hover: var(--accent-hover);
+
+  --shadow-input: 0 1px 2px -1px rgba(0, 0, 0, 0.08), 0 2px 8px -2px rgba(0, 0, 0, 0.04);
+
+  --shadow-input-hover: 0 1px 2px -1px rgba(0, 0, 0, 0.08), 0 4px 12px -2px rgba(0, 0, 0, 0.08);
+
+  --shadow-input-focus: 0 0 0 2px rgba(217, 119, 87, 0.1), 0 4px 12px -2px rgba(0, 0, 0, 0.08);
+
+  --ease-silk: var(----ease-silk);
+
+  --color-color-destructive: var(----color-destructive);
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(8px) scale(0.98);
+      filter: blur(4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      filter: blur(0);
+    }
+  }
+  --color-gray-50: #fafafa;
+  --color-gray-100: #f5f5f5;
+  --color-gray-200: #e5e5e5;
+  --color-gray-300: #d4d4d4;
+  --color-gray-400: #a3a3a3;
+  --color-gray-500: #737373;
+  --color-gray-600: #525252;
+  --color-gray-700: #404040;
+  --color-gray-800: #262626;
+  --color-gray-900: #171717;
+  --color-gray-950: #0a0a0a;
+  --shadow-modal: 0 -4px 12px 4px rgba(0, 0, 0, 0.04), 0 4px 12px -4px rgba(0, 0, 0, 0.06);
+  --scale-96: 0.96;
+  --scale-97: 0.97;
+  --scale-98: 0.98;
+  --scale-99: 0.99;
+  --color-color-gray-950: var(--color-gray-950);
+  --color-color-gray-900: var(--color-gray-900);
+  --color-color-gray-800: var(--color-gray-800);
+  --color-color-gray-700: var(--color-gray-700);
+  --color-color-gray-600: var(--color-gray-600);
+  --color-color-gray-500: var(--color-gray-500);
+  --color-color-gray-400: var(--color-gray-400);
+  --color-color-gray-300: var(--color-gray-300);
+  --color-color-gray-200: var(--color-gray-200);
+  --color-color-gray-100: var(--color-gray-100);
+  --color-color-gray-50: var(--color-gray-50);
 }
 
-html[lang='ar'],
-html[dir='rtl'] {
-  font-family: 'Noto Kufi Arabic', ui-sans-serif, system-ui, sans-serif;
+/* 
+  --animate-shine: shine 3s ease-out infinite;
+
+  @keyframes shine {
+    0% {
+      background-position: 200% 0;
+    }
+
+    25% {
+      background-position: -200% 0;
+    }
+
+    100% {
+      background-position: -200% 0;
+    }
+  }
+
+  --animate-gradient-flow: gradientFlow 10s ease 0s infinite normal none running;
+
+  @keyframes gradientFlow {
+
+    0%,
+    100% {
+      background-position: 0% 50%
+    }
+
+    50% {
+      background-position: 100% 50%
+    }
+  } */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    letter-spacing: var(--tracking-normal);
+  }
+
+  @keyframes show-top-mask {
+    to {
+      --top-mask-height: var(--mask-height);
+    }
+  }
+
+  @keyframes hide-bottom-mask {
+    to {
+      --bottom-mask-height: 0px;
+    }
+  }
+
+  @keyframes show-left-mask {
+    to {
+      --left-mask-width: var(--mask-width);
+    }
+  }
+
+  @keyframes hide-right-mask {
+    to {
+      --right-mask-width: 0px;
+    }
+  }
 }
 
-* {
-  border-color: var(--border);
+/* Radix UI (e.g. Select): keep scrollbar visible when it exists, don't add one when it doesn't */
+html body[data-scroll-locked] {
+  overflow: visible !important;
+  --removed-body-scroll-bar-size: 0 !important;
+  margin-right: 0 !important;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
+.glassy {
+  background: rgba(255, 255, 255, 0.5);
+  /* or use a dark rgba if dark mode */
+  backdrop-filter: blur(2px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.min-\[2500px\]\:hidden {
+  @media (width >=2500px) {
+    display: none;
+  }
+}
+
+.rbc-off-range-bg {
+  background-color: var(--shadow-color) !important;
+}
+
+.rbc-today {
+  background-color: var(--shadow-color) !important;
+  color: #000;
+}
+
+/* Gentle idle drift for floating device mockups. */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-14px);
+  }
+}
+
+/* Audience orbit diagram */
+@keyframes orbit-pulse-ring {
+  0% {
+    transform: scale(0.72);
+    opacity: 0.55;
+  }
+
+  70% {
+    opacity: 0.12;
+  }
+
+  100% {
+    transform: scale(1.15);
+    opacity: 0;
+  }
+}
+
+@keyframes orbit-hub-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.035);
+  }
+}
+
+@keyframes orbit-dot-travel {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Pure vertical bob. Centering and scaling live on sibling wrappers, so the
+   animation never fights the transition when a node activates. */
+@keyframes orbit-node-idle {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes orbit-active-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+
+  100% {
+    transform: scale(1.85);
+    opacity: 0;
+  }
+}
+
+@keyframes orbit-beam-sweep {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes collapsible-down {
+  from {
+    max-height: 0;
+    opacity: 0;
+  }
+
+  to {
+    max-height: 2000px;
+    opacity: 1;
+  }
+}
+
+@keyframes collapsible-up {
+  from {
+    max-height: 2000px;
+    opacity: 1;
+  }
+
+  to {
+    max-height: 0;
+    opacity: 0;
+  }
+}
+
+.animate-collapsible-down {
+  animation: collapsible-down var(--collapsible-duration) var(--collapsible-ease-out);
+  animation-fill-mode: forwards;
+}
+
+.animate-collapsible-up {
+  animation: collapsible-up var(--collapsible-duration) var(--collapsible-ease-in);
+  animation-fill-mode: forwards;
+}
+
+.dir-ltr {
+  direction: ltr !important;
+}
+
+.dir-rtl {
+  direction: rtl !important;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* Custom scrollbar styles for wishlist drawer */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.1) transparent;
+}
+
+html.dark .custom-scrollbar {
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+.custom-scrollbar:hover {
+  scrollbar-color: rgba(0, 0, 0, 0.25) transparent;
+}
+
+html.dark .custom-scrollbar:hover {
+  scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 1px;
+  height: 1px;
+  transition: width 0.4s ease;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  transition:
+    background 0.2s ease,
+    width 0.2s ease;
+}
+
+html.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.custom-scrollbar:hover::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.custom-scrollbar:hover::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.25);
+}
+
+html.dark .custom-scrollbar:hover::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.custom-scrollbar:hover::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+html.dark .custom-scrollbar:hover::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.dir-unset {
+  direction: unset;
+}
+
+/* Phone input: value stays LTR, placeholder follows document direction (e.g. RTL for Arabic) */
+html[dir='rtl'] .phone-input-number::placeholder {
+  direction: rtl;
+}
+
+/* Auth text input: when dirLtr, value stays LTR, placeholder follows document direction (e.g. RTL for Arabic) */
+html[dir='rtl'] .auth-text-input-ltr::placeholder {
+  direction: rtl;
+}
+
+.dark {
+  --bg-0: #212121;
+  --bg-000: #212121;
+  --bg-100: #262624;
+  --bg-200: #30302e;
+  --bg-300: #454540;
+  --text-100: #ececec;
+  --text-200: #e1e1e0;
+  --text-300: #b4b4b4;
+  --text-400: #8a8a88;
+  --text-500: #6b6b65;
+  --accent: #d2996e;
+  --accent-hover: #e5aa7f;
+  --background: hsl(222.2 84% 4.9%);
+  --foreground: hsl(210 40% 98%);
+  --card: hsl(222.2 84% 4.9%);
+  --card-foreground: hsl(210 40% 98%);
+  --popover: hsl(222.2 84% 4.9%);
+  --popover-foreground: hsl(210 40% 98%);
+  --primary: hsl(210 40% 98%);
+  --primary-foreground: hsl(222.2 47.4% 11.2%);
+  --secondary: hsl(217.2 32.6% 17.5%);
+  --secondary-foreground: hsl(210 40% 98%);
+  --muted: hsl(217.2 32.6% 17.5%);
+  --muted-foreground: hsl(215 20.2% 65.1%);
+  --accent-foreground: hsl(210 40% 98%);
+  --destructive: hsl(0 62.8% 30.6%);
+  --destructive-foreground: hsl(210 40% 98%);
+  --border: hsl(217.2 32.6% 17.5%);
+  --input: hsl(217.2 32.6% 17.5%);
+  --ring: hsl(212.7 26.8% 83.9%);
+  --sidebar: hsl(240 5.9% 10%);
+  --sidebar-foreground: hsl(240 4.8% 95.9%);
+  --sidebar-primary: hsl(224.3 76.3% 48%);
+  --sidebar-primary-foreground: hsl(0 0% 100%);
+  --sidebar-accent: hsl(240 3.7% 15.9%);
+  --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
+  --sidebar-border: hsl(240 3.7% 15.9%);
+  --sidebar-ring: hsl(217.2 91.2% 59.8%);
+}
+
+@property --top-mask-height {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 0px;
+}
+
+@property --bottom-mask-height {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 64px;
+}
+
+@property --left-mask-width {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 0px;
+}
+
+@property --right-mask-width {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 64px;
+}
+
+@utility scroll-fade-effect-y {
+  --mask-height: 64px;
+  --mask-offset-top: 0px;
+  --mask-offset-bottom: 0px;
+  --scroll-buffer: 2rem;
+  mask-image:
+    linear-gradient(to top, transparent, black 90%),
+    linear-gradient(to bottom, transparent 0%, black 100%), linear-gradient(black, black);
+  mask-size:
+    100% var(--top-mask-height),
+    100% var(--bottom-mask-height),
+    100% 100%;
+  mask-repeat: no-repeat, no-repeat, no-repeat;
+  mask-position:
+    0 var(--mask-offset-top),
+    0 calc(100% - var(--mask-offset-bottom)),
+    0 0;
+  mask-composite: exclude;
+  animation-name: show-top-mask, hide-bottom-mask;
+  animation-timeline: scroll(self), scroll(self);
+  animation-range:
+    0 var(--scroll-buffer),
+    calc(100% - var(--scroll-buffer)) 100%;
+  animation-fill-mode: both;
+}
+
+@utility scroll-fade-effect-x {
+  --mask-width: 64px;
+  --mask-offset-left: 0px;
+  --mask-offset-right: 0px;
+  --scroll-buffer: 2rem;
+  mask-image:
+    linear-gradient(to left, transparent, black 90%),
+    linear-gradient(to right, transparent 0%, black 100%), linear-gradient(black, black);
+  mask-size:
+    var(--left-mask-width) 100%,
+    var(--right-mask-width) 100%,
+    100% 100%;
+  mask-repeat: no-repeat, no-repeat, no-repeat;
+  mask-position:
+    var(--mask-offset-left) 0,
+    calc(100% - var(--mask-offset-right)) 0,
+    0 0;
+  mask-composite: exclude;
+  animation-name: show-left-mask, hide-right-mask;
+  animation-timeline: scroll(self inline), scroll(self inline);
+  animation-range:
+    0 var(--scroll-buffer),
+    calc(100% - var(--scroll-buffer)) 100%;
+  animation-fill-mode: both;
+}
+
+.custom-scrollbar {
+  /* scroll (not auto) keeps the gutter visible in WebKit classic mode */
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
+}
+
+/* Firefox — standard scrollbar-* API */
+@supports (-moz-appearance: none) {
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(0 0 0 / 0.22) rgb(0 0 0 / 0.06);
+  }
+}
+
+/*
+ * WebKit (Safari, Chrome). Do NOT set scrollbar-width here — Safari 26+ treats
+ * it as a native overlay scrollbar (thumb only while scrolling). Explicit
+ * width/height on ::-webkit-scrollbar forces classic, always-visible mode.
+ */
+.custom-scrollbar::-webkit-scrollbar {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 3px;
+  height: 3px;
+  background-color: rgb(0 0 0 / 0.06);
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background-color: rgb(0 0 0 / 0.06);
+  border-radius: 999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgb(0 0 0 / 0.22);
+  border-radius: 999px;
+  min-height: 24px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: rgb(0 0 0 / 0.32);
+}
+
+.custom-scrollbar::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Safari bug: force style recomputation so thumb/track paint persistently */
+.custom-scrollbar:hover {
+  --custom-scrollbar-fix: ;
+}
+
+/* Organization onboarding — active spotlight target (Joyride CTA steps) */
+@keyframes org-onboarding-spotlight-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 3px var(--primary),
+      0 0 0 8px color-mix(in oklab, var(--primary) 35%, transparent),
+      0 12px 32px color-mix(in oklab, var(--primary) 28%, transparent);
+  }
+  50% {
+    box-shadow:
+      0 0 0 4px var(--primary),
+      0 0 0 14px color-mix(in oklab, var(--primary) 22%, transparent),
+      0 16px 40px color-mix(in oklab, var(--primary) 36%, transparent);
+  }
+}
+
+.org-onboarding-spotlight-active {
+  position: relative;
+  z-index: 10001;
+  border-radius: 0.85rem;
+  background: color-mix(in oklab, var(--card) 88%, transparent);
+  animation: org-onboarding-spotlight-pulse 1.6s ease-in-out infinite;
 }
