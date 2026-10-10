@@ -1817,7 +1817,8 @@
       "Attendance": "Attendance",
       "checkIn": "Check In",
       "attendWithScanner": "Attend with Scanner",
-      "attendanceHistory": "Attendance History"
+      "attendanceHistory": "Attendance History",
+      "booksStore": "Books Store"
     },
     "navSecondary": {
       "settings": "Settings",
@@ -1925,7 +1926,8 @@
       "children": "My Children",
       "wallet": "Wallet",
       "aiSubscription": "AI Subscription",
-      "chat": "Messages"
+      "chat": "Messages",
+      "booksStore": "Books Store"
     }
   },
   "ParentDashboard": {
@@ -2327,7 +2329,8 @@
       "attendance": "Attendance",
       "wallet": "Wallet",
       "privateSessions": "Private Sessions",
-      "chat": "Messages"
+      "chat": "Messages",
+      "booksStore": "Books Store"
     },
     "navSecondary": {
       "getHelp": "Get Help",
@@ -6344,7 +6347,10 @@
     "conversations": [
       {
         "context": "Student · Algebra · Unit 2",
-        "sources": ["Unit 2 · Lesson 4", "lecture-notes.pdf"],
+        "sources": [
+          "Unit 2 · Lesson 4",
+          "lecture-notes.pdf"
+        ],
         "messages": [
           {
             "role": "user",
@@ -6370,7 +6376,10 @@
       },
       {
         "context": "Instructor · Quiz builder",
-        "sources": ["Unit 2", "Course quiz bank"],
+        "sources": [
+          "Unit 2",
+          "Course quiz bank"
+        ],
         "messages": [
           {
             "role": "user",
@@ -6396,7 +6405,10 @@
       },
       {
         "context": "Instructor · File analysis",
-        "sources": ["syllabus.pdf", "Week 3 slides"],
+        "sources": [
+          "syllabus.pdf",
+          "Week 3 slides"
+        ],
         "messages": [
           {
             "role": "user",
@@ -6422,7 +6434,10 @@
       },
       {
         "context": "Student · Study help",
-        "sources": ["Unit 3 · Lesson 1", "practice-set.pdf"],
+        "sources": [
+          "Unit 3 · Lesson 1",
+          "practice-set.pdf"
+        ],
         "messages": [
           {
             "role": "user",
@@ -6644,5 +6659,41 @@
         "description": "Instant alerts for assignments, quizzes, sessions, attendance, and payments, at the right time."
       }
     ]
+  },
+  "store": {
+    "bannerEyebrow": "Knowledge & Publications",
+    "title": "Academy Books Store",
+    "subtitle": "Discover curated editions in Shariah, management, and institutional governance in print and digital PDF formats.",
+    "searchPlaceholder": "Search by title, author, or keyword...",
+    "formats": {
+      "all": "All Formats",
+      "paper": "Paper Edition",
+      "digital": "Digital PDF"
+    },
+    "allCategories": "All Categories",
+    "digitalPdf": "Digital PDF",
+    "paper": "Paper",
+    "from": "From",
+    "addToCart": "Add to Cart",
+    "added": "Added",
+    "addedToCart": "Added to Cart",
+    "buyNow": "Buy Now",
+    "selectFormat": "Select Edition",
+    "quantity": "Quantity",
+    "authorPrefix": "Author",
+    "digitalEdition": "Digital Edition",
+    "digitalDeliveryNotice": "Instant digital PDF access provided upon order confirmation.",
+    "physicalDeliveryNotice": "Standard shipping with delivery tracking.",
+    "secureCheckoutNotice": "Encrypted and secure checkout powered by Medusa.",
+    "descriptionTitle": "About the Book",
+    "backToBooks": "Back to Books",
+    "bookNotFoundTitle": "Book Not Found",
+    "bookNotFoundMessage": "The requested book could not be found or has been archived.",
+    "emptyTitle": "No books found",
+    "emptyMessage": "No books matched your search or selected filters.",
+    "clearFilters": "Clear Filters",
+    "errorTitle": "Unable to Load Books",
+    "errorMessage": "Could not connect to the Medusa catalog. Please verify your connection or try again.",
+    "retry": "Try Again"
   }
 }

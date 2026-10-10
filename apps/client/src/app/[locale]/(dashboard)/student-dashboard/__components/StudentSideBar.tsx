@@ -20,6 +20,7 @@ import {
   IconWallet,
   IconCalendar,
   IconHistory,
+  IconBooks,
 } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
 import { useEffect } from 'react';
@@ -28,6 +29,7 @@ import {
   ROUTE_STUDENT_CHECK_IN,
   ROUTE_STUDENT_ATTENDANCE_WITH_SCANNER,
   ROUTE_STUDENT_ATTENDANCE_HISTORY,
+  ROUTE_BOOKS,
 } from '@/lib/data/constants/routes.constants';
 
 function SidebarCalendar() {
@@ -61,6 +63,12 @@ export const useStudentSidebarData = () => {
         url: '/student-dashboard/wallet',
         icon: IconWallet,
         key: 'Wallet',
+      },
+      {
+        title: t('navMain.booksStore'),
+        url: ROUTE_BOOKS,
+        icon: IconBooks,
+        key: 'books-store',
       },
       {
         title: t('navMain.calendar'),

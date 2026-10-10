@@ -3,7 +3,7 @@ import {
   AUTH_COOKIE_NAME,
   REFRESH_TOKEN_NAME,
   SESSION_ID_COOKIE_NAME,
-} from '@islamic-academy/shared-types';
+} from '@/lib/data/constants';
 import { getPublicApiUrl } from '@/lib/data/constants/api-url.constants';
 
 const ACCESS_TOKEN_TTL_SECONDS = 15 * 60;

@@ -1,4 +1,4 @@
-import { Actions, ConditionKeys, Subjects, Roles } from '@islamic-academy/shared-types';
+import { Actions, ConditionKeys, Subjects, Roles } from '@lms-organization/shared-types';
 import { RoleSeedEntry } from './role.types';
 
 const OWN_ORG = { key: ConditionKeys.OWN_ORG, value: 'organizationId' };

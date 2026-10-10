@@ -1,4 +1,4 @@
-import { Roles } from '@islamic-academy/shared-types';
+import { Roles } from '@lms-organization/shared-types';
 import { IUser } from '../user/user.interface';
 
 export interface RegisterResponse {

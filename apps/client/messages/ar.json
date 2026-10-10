@@ -1817,7 +1817,8 @@
       "Attendance": "الحضور",
       "checkIn": "تسجيل الحضور",
       "attendWithScanner": "الحضور بالماسح",
-      "attendanceHistory": "سجل الحضور"
+      "attendanceHistory": "سجل الحضور",
+      "booksStore": "متجر الكتب"
     },
     "navSecondary": {
       "settings": "الإعدادات",
@@ -1925,7 +1926,8 @@
       "children": "أبنائي",
       "wallet": "المحفظة",
       "aiSubscription": "اشتراك الذكاء الاصطناعي",
-      "chat": "الرسائل"
+      "chat": "الرسائل",
+      "booksStore": "متجر الكتب"
     }
   },
   "ParentDashboard": {
@@ -2327,7 +2329,8 @@
       "attendance": "الحضور",
       "wallet": "المحفظة",
       "privateSessions": "الجلسات الخاصة",
-      "chat": "الرسائل"
+      "chat": "الرسائل",
+      "booksStore": "متجر الكتب"
     },
     "navSecondary": {
       "getHelp": "الحصول على المساعدة",
@@ -6344,7 +6347,10 @@
     "conversations": [
       {
         "context": "طالب · الجبر · الوحدة 2",
-        "sources": ["الوحدة 2 · الدرس 4", "lecture-notes.pdf"],
+        "sources": [
+          "الوحدة 2 · الدرس 4",
+          "lecture-notes.pdf"
+        ],
         "messages": [
           {
             "role": "user",
@@ -6370,7 +6376,10 @@
       },
       {
         "context": "مدرّس · إنشاء اختبار",
-        "sources": ["الوحدة 2", "بنك أسئلة الدورة"],
+        "sources": [
+          "الوحدة 2",
+          "بنك أسئلة الدورة"
+        ],
         "messages": [
           {
             "role": "user",
@@ -6396,7 +6405,10 @@
       },
       {
         "context": "مدرّس · تحليل ملف",
-        "sources": ["syllabus.pdf", "شرائح الأسبوع 3"],
+        "sources": [
+          "syllabus.pdf",
+          "شرائح الأسبوع 3"
+        ],
         "messages": [
           {
             "role": "user",
@@ -6422,7 +6434,10 @@
       },
       {
         "context": "طالب · مساعدة دراسية",
-        "sources": ["الوحدة 3 · الدرس 1", "practice-set.pdf"],
+        "sources": [
+          "الوحدة 3 · الدرس 1",
+          "practice-set.pdf"
+        ],
         "messages": [
           {
             "role": "user",
@@ -6448,7 +6463,6 @@
       }
     ]
   },
-
   "StudentAppSection": {
     "badge": "تطبيق خاص بالطلاب",
     "title": "الدورة كاملة… في جيب الطالب",
@@ -6645,5 +6659,41 @@
         "description": "تنبيهات فورية للواجبات والاختبارات والجلسات والحضور والمدفوعات في الوقت المناسب."
       }
     ]
+  },
+  "store": {
+    "bannerEyebrow": "المعرفة والإصدارات الأكاديمية",
+    "title": "متجر كتب الأكاديمية",
+    "subtitle": "إصدارات ومراجع منتقاة في العلوم الشرعية، الإدارة، والحوكمة المؤسسية بصيغ ورقية ورقمية PDF.",
+    "searchPlaceholder": "ابحث بالعنوان أو اسم المؤلف أو الكلمات المفتاحية...",
+    "formats": {
+      "all": "جميع الصيغ",
+      "paper": "نسخة ورقية",
+      "digital": "نسخة رقمية PDF"
+    },
+    "allCategories": "جميع التصنيفات",
+    "digitalPdf": "رقمي PDF",
+    "paper": "ورقي",
+    "from": "من",
+    "addToCart": "إضافة للسلة",
+    "added": "تمت الإضافة",
+    "addedToCart": "تمت الإضافة إلى السلة",
+    "buyNow": "شراء الآن",
+    "selectFormat": "اختر الصيغة المطلوبة",
+    "quantity": "الكمية",
+    "authorPrefix": "المؤلف",
+    "digitalEdition": "نسخة رقمية",
+    "digitalDeliveryNotice": "إتاحة فورية لتحميل النسخة الرقمية PDF فور تأكيد الطلب.",
+    "physicalDeliveryNotice": "شحن موثوق مع إمكانية تتبع مسار الشحنة.",
+    "secureCheckoutNotice": "إتمام آمن ومشفر للطلبات مدعوم بنظام ميديوسا.",
+    "descriptionTitle": "عن الكتاب والمحتوى",
+    "backToBooks": "العودة لمتجر الكتب",
+    "bookNotFoundTitle": "الكتاب غير موجود",
+    "bookNotFoundMessage": "تعذر العثور على الكتاب المطلوب أو تمت أرشفته.",
+    "emptyTitle": "لم يتم العثور على كتب",
+    "emptyMessage": "لم نجد كتباً مطابقة لبحثك أو الفلاتر المختارة.",
+    "clearFilters": "مسح الفلاتر",
+    "errorTitle": "تعذر تحميل الكتب",
+    "errorMessage": "تعذر الاتصال بكتالوج Medusa. يرجى التحقق من الاتصال والمحاولة مرة أخرى.",
+    "retry": "إعادة المحاولة"
   }
 }

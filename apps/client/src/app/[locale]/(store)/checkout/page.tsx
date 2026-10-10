@@ -19,7 +19,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useCart } from '@/lib/context/cart-context';
-import { useUser } from '@/lib/hooks/user/use-user.hook';
+import { useAuthUser } from '@/lib/hooks/user/use-user.hook';
 import { getMedusaClient } from '@/lib/medusa-client';
 import {
   ROUTE_CART,
@@ -31,7 +31,7 @@ export default function CheckoutPage() {
   const t = useTranslations('checkout');
   const router = useRouter();
   const { cart, items, subtotal, total, currency, hasPaperItems, clearCart } = useCart();
-  const { data: user } = useUser();
+  const { data: user } = useAuthUser();
 
   // Form state
   const [firstName, setFirstName] = useState('');

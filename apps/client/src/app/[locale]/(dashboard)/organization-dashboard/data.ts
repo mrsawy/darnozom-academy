@@ -27,6 +27,7 @@ import {
   IconCalendarUser,
   IconFolder,
   IconListCheck,
+  IconBooks,
 } from '@tabler/icons-react';
 import {
   ROUTE_ORG_AI_BILLING,
@@ -49,6 +50,7 @@ import {
   ROUTE_ORG_WALLET,
   ROUTE_ORG_PRIVATE_SESSIONS,
   ROUTE_ORG_CHAT,
+  ROUTE_BOOKS,
 } from '@/lib/data/constants/routes.constants';
 import { CourseContentType } from '@lms-organization/shared-types';
 
@@ -125,6 +127,12 @@ export const data = {
       url: ROUTE_ORG_WALLET,
       icon: IconWallet,
       key: 'wallet',
+    },
+    {
+      titleKey: 'navMain.booksStore',
+      url: ROUTE_BOOKS,
+      icon: IconBooks,
+      key: 'books-store',
     },
     {
       titleKey: 'navMain.privateSessions',

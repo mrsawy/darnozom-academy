@@ -6,7 +6,7 @@ import { Link, usePathname, useRouter } from '@/i18n/navigation';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useCart } from '@/lib/context/cart-context';
-import { useUser } from '@/lib/hooks/user/use-user.hook';
+import { useAuthUser } from '@/lib/hooks/user/use-user.hook';
 import { getDashboardUrl } from '@/lib/utils/routes/getDashboardUrl';
 import {
   ROUTE_HOME,
@@ -21,7 +21,7 @@ export function PublicHeader() {
   const pathname = usePathname();
   const router = useRouter();
   const { itemCount } = useCart();
-  const { data: user } = useUser();
+  const { data: user } = useAuthUser();
 
   const otherLocale = locale === 'ar' ? 'en' : 'ar';
   const otherLocaleLabel = locale === 'ar' ? 'English' : 'العربية';

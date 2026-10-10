@@ -1,5 +1,5 @@
 import { cookies, headers } from 'next/headers';
-import { AUTH_COOKIE_NAME } from '@islamic-academy/shared-types';
+import { AUTH_COOKIE_NAME } from '@/lib/data/constants';
 import { IUser } from '@/types/user/user.interface';
 
 /**

@@ -139,6 +139,12 @@ export const ROUTE_STUDENT_CHECK_IN = '/student-dashboard/check-in';
 export const ROUTE_STUDENT_ATTENDANCE_WITH_SCANNER = '/student-dashboard/attendance-with-scanner';
 export const ROUTE_STUDENT_ATTENDANCE_HISTORY = '/student-dashboard/attendance-history';
 
+/** Books Store (Medusa-powered) */
+export const ROUTE_BOOKS = '/books';
+export const ROUTE_CART = '/cart';
+export const ROUTE_CHECKOUT = '/checkout';
+export const ROUTE_CHECKOUT_SUCCESS = '/checkout/success';
+
 export const URL_FACEBOOK =
   'https://www.facebook.com/people/Safeer-%D8%B3%D9%81%D9%8A%D8%B1/61572332113165/';
 export const URL_INSTAGRAM = 'https://www.instagram.com/safeerlms';

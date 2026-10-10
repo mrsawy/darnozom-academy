@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { AUTH_COOKIE_NAME } from '@islamic-academy/shared-types';
+import { AUTH_COOKIE_NAME } from '@/lib/data/constants';
 import { getPublicApiUrl } from '@/lib/data/constants/api-url.constants';
 
 /**

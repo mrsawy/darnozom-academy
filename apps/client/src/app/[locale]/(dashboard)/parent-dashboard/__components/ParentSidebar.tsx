@@ -9,10 +9,14 @@ import {
   IconUsers,
   IconUsersGroup,
   IconWallet,
+  IconBooks,
 } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
 import { useEffect } from 'react';
-import { ROUTE_PARENT_AI_SUBSCRIPTION } from '@/lib/data/constants/routes.constants';
+import {
+  ROUTE_PARENT_AI_SUBSCRIPTION,
+  ROUTE_BOOKS,
+} from '@/lib/data/constants/routes.constants';
 
 export function ParentSidebar({ user }: { user?: IUser }) {
   const t = useTranslations('ParentSidebar');
@@ -42,6 +46,12 @@ export function ParentSidebar({ user }: { user?: IUser }) {
       url: '/parent-dashboard/wallet',
       icon: IconWallet,
       key: 'wallet',
+    },
+    {
+      title: t('navMain.booksStore'),
+      url: ROUTE_BOOKS,
+      icon: IconBooks,
+      key: 'books-store',
     },
     {
       title: t('navMain.aiSubscription'),

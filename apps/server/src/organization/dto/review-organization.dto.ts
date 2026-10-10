@@ -1,5 +1,5 @@
 import { IsEnum, IsOptional, IsString } from 'class-validator';
-import { ApprovalStatus } from '@islamic-academy/shared-types';
+import { ApprovalStatus } from '@lms-organization/shared-types';
 
 export class ReviewOrganizationDto {
   @IsEnum(ApprovalStatus)

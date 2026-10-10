@@ -1,4 +1,4 @@
-import { IOrganization, IPermission, Roles, UserStatus } from '@islamic-academy/shared-types';
+import { IOrganization, IPermission, Roles, UserStatus } from '@lms-organization/shared-types';
 
 export interface Profile {
   bio?: string;

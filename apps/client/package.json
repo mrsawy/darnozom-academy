@@ -17,6 +17,8 @@
     "i18n:lint-hardcoded": "eslint src"
   },
   "dependencies": {
+    "@medusajs/js-sdk": "^2.21.0",
+    "@medusajs/types": "^2.21.0",
     "@ai-sdk/openai": "^3.0.52",
     "@ai-sdk/react": "^3.0.160",
     "@assistant-ui/react": "^0.12.24",
