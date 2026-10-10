@@ -82,9 +82,6 @@ class FeaturesDto {
   certificates: boolean;
 
   @IsBoolean()
-  discussions: boolean;
-
-  @IsBoolean()
   customBranding: boolean;
 
   @IsBoolean()

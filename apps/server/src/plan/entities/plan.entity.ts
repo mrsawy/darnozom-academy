@@ -137,7 +137,6 @@ export class Plan extends Document {
     prioritySupport: boolean;
     accessStudentsInfo: boolean;
     certificates: boolean;
-    discussions: boolean;
     customBranding: boolean;
     inAppChat: boolean;
     liveSessions: boolean;

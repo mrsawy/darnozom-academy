@@ -22,7 +22,6 @@ export const ADMIN_MANAGE_SUBJECTS: Subjects[] = [
   Subjects.ASSIGNMENT,
   Subjects.PROJECT,
   Subjects.LIVE_SESSION,
-  Subjects.DISCUSSION,
   Subjects.TASK,
   Subjects.FILE,
   Subjects.GALLERY,

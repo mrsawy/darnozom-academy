@@ -31,7 +31,7 @@ const PROTECTED_FIELDS = new Set([
  * Fields that always bypass the approval workflow and are written
  * directly to the document regardless of its current approvalStatus.
  * publishStatus/publishedAt are visibility toggles, not content changes.
- * settings (e.g. discussionEnabled) and attendanceSettings are operational
+ * settings (e.g. downloadEnabled) and attendanceSettings are operational
  * toggles, not editorial content.
  */
 const BYPASS_APPROVAL_FIELDS = new Set(['publishStatus', 'publishedAt', 'settings', 'attendanceSettings']);

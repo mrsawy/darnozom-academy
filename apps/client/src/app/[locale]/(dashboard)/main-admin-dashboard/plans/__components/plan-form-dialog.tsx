@@ -42,7 +42,6 @@ const BOOLEAN_FEATURES = [
   'prioritySupport',
   'accessStudentsInfo',
   'certificates',
-  'discussions',
   'customBranding',
   'inAppChat',
   'liveSessions',

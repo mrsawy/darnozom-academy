@@ -29,7 +29,6 @@ export interface PlanFeatures {
   prioritySupport: boolean;
   accessStudentsInfo: boolean;
   certificates: boolean;
-  discussions: boolean;
   customBranding: boolean;
   inAppChat: boolean;
   liveSessions: boolean;
