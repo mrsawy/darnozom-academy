@@ -3,7 +3,6 @@
 export enum NotificationType {
   COURSE_CONTENT = 'course_content',
   COURSE_COMPLETED = 'course_completed',
-  DISCUSSION = 'discussion',
   SECURITY = 'security',
   CHAT = 'chat',
   INFO = 'info',
