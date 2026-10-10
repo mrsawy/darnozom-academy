@@ -90,12 +90,32 @@ Each phase has a gate. A phase does not start until the previous gate is green.
 
 ### Phase 0 — Snapshot and stage
 
-The target tree is dirty: **20 modified files, 579 insertions, 122 deletions**, uncommitted, on
-`master`. This must be captured before a bulk copy overwrites it.
+The target tree is dirty, and **more so than it first appears**: 18 modified files
+(579 insertions, 122 deletions), 2 deletions, and **24 untracked files** on `master`.
 
-1. Commit the 20 dirty files on `master` with a message noting they are pre-port work.
-2. Tag the commit `pre-darnozom-port`. This tag is the rollback point for the whole port.
-3. Copy the store keepers to a staging directory outside the repo:
+The untracked set is not incidental — it contains the things this port is built around:
+
+| Untracked path | Why it matters |
+|---|---|
+| `apps/client/src/app/[locale]/(store)/` | **The entire books store. Never committed.** |
+| `apps/client/src/lib/medusa-client.ts` | Medusa SDK wrapper |
+| `apps/client/src/lib/context/` | `cart-context.tsx` |
+| `apps/client/src/components/layout/` | `public-header.tsx` with the cart link |
+| `apps/client/src/app/[locale]/(dashboard)/parent-dashboard/` | **Whole dashboard, never committed** |
+| `apps/client/src/app/[locale]/(dashboard)/student-dashboard/` | **Whole dashboard, never committed** |
+| `apps/client/src/app/[locale]/(dashboard)/__components/` | Shared dashboard components |
+| `apps/client/.env.example`, `components/ui/badge.tsx`, `lib/data/userRole.enum.ts`, `lib/utils/routes/requireDashboardUser.ts` | Misc. uncommitted support files |
+
+**Consequence:** a `git stash` or `git checkout` would not protect this work, and the bulk copy in
+Phase 1 could silently overwrite it with no git record to recover from. Committing *everything*
+is therefore the first action of the port, not a tidiness step.
+
+1. `git add -A` on `master` — all 18 modified, 2 deleted, and 24 untracked files — and commit
+   with a message noting this is pre-port work.
+2. Tag the commit `pre-darnozom-port`. This tag is the only rollback point for the whole port.
+3. Verify `git status` is clean and `git ls-files` now tracks the `(store)` directory, both new
+   dashboards, `medusa-client.ts`, and `cart-context.tsx`. Do not proceed otherwise.
+4. Copy the store keepers to a staging directory outside the repo:
 
 | Keeper | Path |
 |---|---|
@@ -108,7 +128,9 @@ The target tree is dirty: **20 modified files, 579 insertions, 122 deletions**, 
 | Sidebar store entries | the `{ href: ROUTE_BOOKS, icon: BookOpen, labelKey: 'booksStore' }` item in the org, parent, and student sidebars |
 | Client env | `apps/client/.env` — `NEXT_PUBLIC_MEDUSA_BACKEND_URL`, `NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY` |
 
-**Gate:** tag `pre-darnozom-port` resolves; `git status` clean; all keepers present in staging.
+**Gate:** tag `pre-darnozom-port` resolves; `git status` clean with zero untracked files; the
+store, both new dashboards, `medusa-client.ts`, and `cart-context.tsx` all appear in
+`git ls-files`; all keepers present in staging.
 
 ### Phase 1 — Bulk copy
 
@@ -382,7 +404,7 @@ Run in order; each must pass before the next.
 | RBAC enum edit desyncs from role seeds | Server build fails on type mismatch; seed run is an explicit gate |
 | Plan shape change is a silent product decision | Called out in §5.3; plans re-seeded fresh |
 | Store breaks under Next 16 | Dedicated compat pass in Phase 2 with its own render gate |
-| Target's uncommitted work lost | Committed and tagged in Phase 0 before any copy |
+| Target's uncommitted work lost — incl. 24 **untracked** files holding the entire store and two dashboards | `git add -A` + tag in Phase 0 before any copy; Phase 0 gate verifies they are tracked (§4, Phase 0) |
 | Source secrets leak into the target | Placeholders only; real `.env`/`.env.production` values never copied |
 | Inheriting the `safeer-lms` git remote | Explicit `git remote -v` check in the Phase 4 gate |
 | `pnpm install` fails on missing RN patch files | `patchedDependencies` removed in Phase 1 (§6.1); install is part of the Phase 1 gate |
