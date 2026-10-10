@@ -6,6 +6,8 @@
     "loginTitle": "Login",
     "signupTitle": "Sign Up",
     "orgDashboardTitle": "Organization Dashboard",
+    "studentDashboardTitle": "Student Dashboard",
+    "parentDashboardTitle": "Parent Dashboard",
     "verificationTitle": "Account Review"
   },
   "auth": {
@@ -36,6 +38,12 @@
       "usernameLabel": "Username",
       "emailLabel": "Email",
       "passwordLabel": "Password",
+      "roleLabel": "I am a",
+      "roles": {
+        "STUDENT": "Student",
+        "ORGANIZATION": "Organization",
+        "PARENT": "Parent"
+      },
       "organizationNameLabel": "Organization name",
       "organizationSlugLabel": "Organization slug",
       "submit": "Sign up",
@@ -43,7 +51,8 @@
       "haveAccount": "Already have an account?",
       "signIn": "Sign in",
       "validation": {
-        "somethingWentWrong": "Something went wrong, please try again"
+        "somethingWentWrong": "Something went wrong, please try again",
+        "orgRequired": "Organization name and slug are required"
       }
     },
     "forgotPassword": {
@@ -98,7 +107,8 @@
       "dashboard": "Dashboard",
       "account": "Account",
       "users": "Users",
-      "settings": "Settings"
+      "settings": "Settings",
+      "booksStore": "Books Store"
     },
     "header": {
       "title": "Organization Dashboard"
@@ -117,6 +127,49 @@
     },
     "settings": {
       "title": "Settings",
+      "comingSoon": "Coming soon"
+    }
+  },
+  "studentDashboard": {
+    "sidebar": {
+      "brand": "Academy",
+      "dashboard": "Dashboard",
+      "account": "Account",
+      "booksStore": "Books Store"
+    },
+    "header": {
+      "title": "Student Dashboard"
+    },
+    "home": {
+      "title": "Welcome",
+      "description": "This is your student dashboard."
+    },
+    "account": {
+      "title": "Account",
+      "comingSoon": "Coming soon"
+    }
+  },
+  "parentDashboard": {
+    "sidebar": {
+      "brand": "Academy",
+      "dashboard": "Dashboard",
+      "children": "Children",
+      "account": "Account",
+      "booksStore": "Books Store"
+    },
+    "header": {
+      "title": "Parent Dashboard"
+    },
+    "home": {
+      "title": "Welcome",
+      "description": "This is your parent dashboard."
+    },
+    "children": {
+      "title": "Children",
+      "comingSoon": "Coming soon"
+    },
+    "account": {
+      "title": "Account",
       "comingSoon": "Coming soon"
     }
   },
@@ -143,8 +196,129 @@
     },
     "cta": {
       "title": "Ready to get started?",
-      "description": "Create your organization's account now and begin your journey.",
+      "description": "Create your account now and begin your journey.",
       "button": "Sign up"
+    }
+  },
+  "nav": {
+    "brand": "Islamic Academy",
+    "home": "Home",
+    "books": "Books Store",
+    "cart": "Cart",
+    "signIn": "Sign In",
+    "dashboard": "Dashboard"
+  },
+  "store": {
+    "bannerEyebrow": "Knowledge & Publications",
+    "title": "Academy Books Store",
+    "subtitle": "Discover curated editions in Shariah, management, and institutional governance in print and digital PDF formats.",
+    "searchPlaceholder": "Search by title, author, or keyword...",
+    "formats": {
+      "all": "All Formats",
+      "paper": "Paper Edition",
+      "digital": "Digital PDF"
+    },
+    "allCategories": "All Categories",
+    "digitalPdf": "Digital PDF",
+    "paper": "Paper",
+    "from": "From",
+    "addToCart": "Add to Cart",
+    "added": "Added",
+    "addedToCart": "Added to Cart",
+    "buyNow": "Buy Now",
+    "selectFormat": "Select Edition",
+    "quantity": "Quantity",
+    "authorPrefix": "Author",
+    "digitalEdition": "Digital Edition",
+    "digitalDeliveryNotice": "Instant digital PDF access provided upon order confirmation.",
+    "physicalDeliveryNotice": "Standard shipping with delivery tracking.",
+    "secureCheckoutNotice": "Encrypted and secure checkout powered by Medusa.",
+    "descriptionTitle": "About the Book",
+    "backToBooks": "Back to Books",
+    "bookNotFoundTitle": "Book Not Found",
+    "bookNotFoundMessage": "The requested book could not be found or has been archived.",
+    "emptyTitle": "No books found",
+    "emptyMessage": "No books matched your search or selected filters.",
+    "clearFilters": "Clear Filters",
+    "errorTitle": "Unable to Load Books",
+    "errorMessage": "Could not connect to the Medusa catalog. Please verify your connection or try again.",
+    "retry": "Try Again"
+  },
+  "cart": {
+    "title": "Shopping Cart",
+    "itemsCount": "items in your cart",
+    "clearCart": "Clear cart",
+    "emptyTitle": "Your cart is empty",
+    "emptyMessage": "Explore our academic publications and add books to your cart.",
+    "exploreBooks": "Browse Books Store",
+    "digitalPdf": "Digital PDF",
+    "paper": "Paper Edition",
+    "perUnit": "per copy",
+    "continueShopping": "Continue Shopping",
+    "orderSummary": "Order Summary",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "shippingCalculatedAtCheckout": "Calculated at checkout",
+    "freeDigital": "Free (Digital Edition)",
+    "total": "Total",
+    "proceedToCheckout": "Proceed to Checkout",
+    "secureCheckout": "Secure SSL encrypted transaction",
+    "instantDigitalAccess": "Instant digital downloads",
+    "fastShippingEgypt": "Reliable shipping"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "subtitle": "Provide your delivery details to complete your order.",
+    "backToCart": "Back to Cart",
+    "emptyCart": "Your cart is empty",
+    "backToStore": "Return to Store",
+    "contactInfo": "Contact Details",
+    "firstName": "First name",
+    "firstNamePlaceholder": "e.g. Ahmad",
+    "lastName": "Last name",
+    "lastNamePlaceholder": "e.g. Al-Sayed",
+    "email": "Email address",
+    "phone": "Phone number",
+    "shippingAddress": "Shipping Address",
+    "city": "City / Governorate",
+    "cityPlaceholder": "e.g. Cairo",
+    "address": "Street Address / Building",
+    "addressPlaceholder": "Street, Building, Apartment",
+    "paymentMethod": "Payment Method",
+    "methods": {
+      "cod": "Cash on Delivery",
+      "codDesc": "Pay in cash upon physical receipt (paper editions only).",
+      "card": "Credit Card / Debit",
+      "cardDesc": "Pay securely with Visa, MasterCard, or local cards.",
+      "paypal": "PayPal",
+      "paypalDesc": "Fast and secure international payment."
+    },
+    "summary": "Order Summary",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "standardShipping": "Standard",
+    "free": "Free",
+    "grandTotal": "Grand Total",
+    "placeOrder": "Complete Order",
+    "processing": "Processing Order...",
+    "encryptedSecurity": "256-bit encrypted checkout",
+    "validation": {
+      "requiredFields": "Please fill in all required contact details.",
+      "addressRequired": "Please provide a shipping city and street address for physical books."
+    },
+    "errors": {
+      "generic": "Could not complete order. Please check your information and try again."
+    },
+    "successPage": {
+      "title": "Thank you for your order!",
+      "subtitle": "Your order has been received and confirmed by Medusa.",
+      "orderReference": "Order Reference ID",
+      "physicalOrdersTitle": "Physical Deliveries",
+      "physicalOrdersDesc": "Our dispatch team will prepare and ship your package promptly.",
+      "digitalOrdersTitle": "Digital Editions",
+      "digitalOrdersDesc": "Digital download links are active and ready in your account.",
+      "continueBrowsing": "Explore More Books",
+      "backToHome": "Return to Home"
     }
   }
 }

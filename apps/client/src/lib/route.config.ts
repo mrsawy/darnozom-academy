@@ -11,4 +11,7 @@ export const PUBLIC_PREFIX_ROUTES = [
   '/reset-password',
   '/onboarding',
   '/organization-verification',
+  '/books',
+  '/cart',
+  '/checkout',
 ];

@@ -9,7 +9,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useRouter } from '@/i18n/navigation';
 import { api } from '@/lib/api/axios';
-import { ROUTE_ORGANIZATION_DASHBOARD } from '@/lib/data/constants/routes.constants';
+import { getDashboardUrl } from '@/lib/utils/routes/getDashboardUrl';
+import { ROUTE_ORGANIZATION_VERIFICATION } from '@/lib/data/constants/routes.constants';
 
 const ROLE_OPTIONS = [Roles.SUPER_ADMIN, Roles.TEACHER, Roles.STUDENT, Roles.PARENT];
 
@@ -50,7 +51,11 @@ export default function OnboardingPage() {
             }
           : {}),
       });
-      router.push(ROUTE_ORGANIZATION_DASHBOARD);
+      if (roleName === Roles.SUPER_ADMIN) {
+        router.push(ROUTE_ORGANIZATION_VERIFICATION);
+      } else {
+        router.push(getDashboardUrl(roleName));
+      }
     } catch {
       setError(t('validation.somethingWentWrong'));
     } finally {

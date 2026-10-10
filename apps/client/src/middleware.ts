@@ -12,9 +12,9 @@ import {
 import { getDashboardUrl } from '@/lib/utils/routes/getDashboardUrl';
 
 /** Greppable prefix for stdout during local `pnpm dev`. */
-const LOG_PREFIX = '[client:proxy]';
+const LOG_PREFIX = '[client:middleware]';
 
-function proxyLog(stage: string, details?: Record<string, string | number | boolean | undefined>) {
+function middlewareLog(stage: string, details?: Record<string, string | number | boolean | undefined>) {
   const extra = details && Object.keys(details).length > 0 ? ` ${JSON.stringify(details)}` : '';
   console.log(`${LOG_PREFIX} ${stage}${extra}`);
 }
@@ -56,7 +56,7 @@ async function trySilentRefresh(
     return null;
   }
 
-  proxyLog('auth', { decision: 'attempting_refresh' });
+  middlewareLog('auth', { decision: 'attempting_refresh' });
   const refreshUrl = new URL('/api/auth/refresh', request.url);
   const refreshResponse = await fetch(refreshUrl, {
     method: 'POST',
@@ -66,18 +66,18 @@ async function trySilentRefresh(
   });
 
   if (!refreshResponse.ok) {
-    proxyLog('auth', { decision: 'refresh_failed', status: refreshResponse.status });
+    middlewareLog('auth', { decision: 'refresh_failed', status: refreshResponse.status });
     return null;
   }
 
-  proxyLog('auth', { decision: 'refresh_success' });
+  middlewareLog('auth', { decision: 'refresh_success' });
   for (const cookieHeader of refreshResponse.headers.getSetCookie()) {
     outgoingResponse.headers.append('set-cookie', cookieHeader);
   }
   return (await refreshResponse.json()) as IUser;
 }
 
-export default async function proxy(request: NextRequest & { user?: IUser }) {
+export default async function middleware(request: NextRequest & { user?: IUser }) {
   try {
     const { pathname } = request.nextUrl;
     const pathWithoutLocale = pathname.replace(/^\/(ar|en)/, '') || '/';
@@ -86,7 +86,7 @@ export default async function proxy(request: NextRequest & { user?: IUser }) {
     const locale = localeMatch ? localeMatch[1] : 'ar';
 
     const isPublic = isPublicRoute(pathWithoutLocale);
-    proxyLog('request', {
+    middlewareLog('request', {
       method: request.method,
       pathname,
       pathWithoutLocale,
@@ -97,7 +97,7 @@ export default async function proxy(request: NextRequest & { user?: IUser }) {
     // Redirect authenticated users away from /login and /signup to their dashboard
     const isAuthPage = pathWithoutLocale === '/login' || pathWithoutLocale === '/signup';
     if (isAuthPage && request.cookies.has(AUTH_COOKIE_NAME)) {
-      proxyLog('branch', { decision: 'auth_page_with_cookie', pathname });
+      middlewareLog('branch', { decision: 'auth_page_with_cookie', pathname });
       const apiUrl = new URL('/api/user', request.url);
       try {
         const userResp = await fetch(apiUrl, {
@@ -110,31 +110,31 @@ export default async function proxy(request: NextRequest & { user?: IUser }) {
           if (contentType.includes('application/json')) {
             const user = (await userResp.json()) as IUser;
             const dashboard = getDashboardUrl(user.roleName);
-            proxyLog('response', { decision: 'redirect_authenticated_from_auth_page', dashboard });
+            middlewareLog('response', { decision: 'redirect_authenticated_from_auth_page', dashboard });
             return NextResponse.redirect(new URL(`/${locale}${dashboard}`, request.url));
           }
         }
       } catch {
         // If verification fails, let them through to the login/signup page
-        proxyLog('branch', { decision: 'auth_page_verify_failed_continue' });
+        middlewareLog('branch', { decision: 'auth_page_verify_failed_continue' });
       }
     }
 
     if (isPublic) {
-      proxyLog('branch', { decision: 'public_route', pathname });
+      middlewareLog('branch', { decision: 'public_route', pathname });
       const response = i18nMiddleware(toI18nMiddlewareRequest(request));
       response.headers.set('x-pathname', pathname);
       return response;
     }
 
-    proxyLog('branch', { decision: 'protected_route', pathname });
+    middlewareLog('branch', { decision: 'protected_route', pathname });
 
     const i18nResponse = i18nMiddleware(toI18nMiddlewareRequest(request));
     i18nResponse.headers.set('x-pathname', pathname);
 
     const hasAuthCookie = request.cookies.has(AUTH_COOKIE_NAME);
 
-    proxyLog('auth', {
+    middlewareLog('auth', {
       hasAuthCookie: hasAuthCookie ? 'true' : 'false',
       cookieName: AUTH_COOKIE_NAME,
     });
@@ -150,7 +150,7 @@ export default async function proxy(request: NextRequest & { user?: IUser }) {
       });
 
       const contentType = response.headers.get('content-type') ?? '';
-      proxyLog('fetch_user_result', {
+      middlewareLog('fetch_user_result', {
         status: response.status,
         ok: response.ok ? 'true' : 'false',
       });
@@ -159,7 +159,7 @@ export default async function proxy(request: NextRequest & { user?: IUser }) {
         if (contentType.includes('application/json')) {
           resolvedUser = (await response.json()) as IUser;
         } else {
-          proxyLog('response', { decision: 'redirect_login_non_json', locale });
+          middlewareLog('response', { decision: 'redirect_login_non_json', locale });
           return NextResponse.redirect(new URL(`/${locale}/login`, request.url));
         }
       }
@@ -172,7 +172,7 @@ export default async function proxy(request: NextRequest & { user?: IUser }) {
     resolvedUser ??= await trySilentRefresh(request, i18nResponse);
 
     if (!resolvedUser) {
-      proxyLog('response', { decision: 'redirect_login_no_session', locale });
+      middlewareLog('response', { decision: 'redirect_login_no_session', locale });
       const redirectResponse = NextResponse.redirect(new URL(`/${locale}/login`, request.url));
       redirectResponse.cookies.delete(AUTH_COOKIE_NAME);
       redirectResponse.cookies.delete(REFRESH_TOKEN_NAME);
@@ -186,17 +186,17 @@ export default async function proxy(request: NextRequest & { user?: IUser }) {
     const isGuestOnboarding =
       resolvedUser.roleName === Roles.GUEST || resolvedUser.onboardingComplete === false;
     if (isGuestOnboarding && !pathWithoutLocale.startsWith(ROUTE_ONBOARDING)) {
-      proxyLog('response', { decision: 'redirect_onboarding', pathname });
+      middlewareLog('response', { decision: 'redirect_onboarding', pathname });
       return NextResponse.redirect(new URL(`/${locale}${ROUTE_ONBOARDING}`, request.url));
     }
 
     return i18nResponse;
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    proxyLog('error', { message, pathname: request.nextUrl.pathname });
+    middlewareLog('error', { message, pathname: request.nextUrl.pathname });
     const localeMatch = request.nextUrl.pathname.match(/^\/(ar|en)/);
     const locale = localeMatch ? localeMatch[1] : 'ar';
-    proxyLog('response', { decision: 'redirect_login_after_error', locale });
+    middlewareLog('response', { decision: 'redirect_login_after_error', locale });
     return NextResponse.redirect(new URL(`/${locale}/login`, request.url));
   }
 }

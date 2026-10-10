@@ -6,6 +6,8 @@
     "loginTitle": "تسجيل الدخول",
     "signupTitle": "إنشاء حساب",
     "orgDashboardTitle": "لوحة تحكم المؤسسة",
+    "studentDashboardTitle": "لوحة تحكم الطالب",
+    "parentDashboardTitle": "لوحة تحكم ولي الأمر",
     "verificationTitle": "مراجعة الحساب"
   },
   "auth": {
@@ -36,6 +38,12 @@
       "usernameLabel": "اسم المستخدم",
       "emailLabel": "البريد الإلكتروني",
       "passwordLabel": "كلمة المرور",
+      "roleLabel": "أنا",
+      "roles": {
+        "STUDENT": "طالب",
+        "ORGANIZATION": "مؤسسة",
+        "PARENT": "ولي أمر"
+      },
       "organizationNameLabel": "اسم المؤسسة",
       "organizationSlugLabel": "معرّف المؤسسة",
       "submit": "إنشاء حساب",
@@ -43,7 +51,8 @@
       "haveAccount": "لديك حساب بالفعل؟",
       "signIn": "تسجيل الدخول",
       "validation": {
-        "somethingWentWrong": "حدث خطأ ما، حاول مرة أخرى"
+        "somethingWentWrong": "حدث خطأ ما، حاول مرة أخرى",
+        "orgRequired": "اسم المؤسسة ومعرّفها مطلوبان"
       }
     },
     "forgotPassword": {
@@ -98,7 +107,8 @@
       "dashboard": "الرئيسية",
       "account": "الحساب",
       "users": "المستخدمون",
-      "settings": "الإعدادات"
+      "settings": "الإعدادات",
+      "booksStore": "متجر الكتب"
     },
     "header": {
       "title": "لوحة تحكم المؤسسة"
@@ -117,6 +127,49 @@
     },
     "settings": {
       "title": "الإعدادات",
+      "comingSoon": "قريباً"
+    }
+  },
+  "studentDashboard": {
+    "sidebar": {
+      "brand": "الأكاديمية",
+      "dashboard": "الرئيسية",
+      "account": "الحساب",
+      "booksStore": "متجر الكتب"
+    },
+    "header": {
+      "title": "لوحة تحكم الطالب"
+    },
+    "home": {
+      "title": "مرحباً بك",
+      "description": "هذه لوحة تحكم الطالب."
+    },
+    "account": {
+      "title": "الحساب",
+      "comingSoon": "قريباً"
+    }
+  },
+  "parentDashboard": {
+    "sidebar": {
+      "brand": "الأكاديمية",
+      "dashboard": "الرئيسية",
+      "children": "الأبناء",
+      "account": "الحساب",
+      "booksStore": "متجر الكتب"
+    },
+    "header": {
+      "title": "لوحة تحكم ولي الأمر"
+    },
+    "home": {
+      "title": "مرحباً بك",
+      "description": "هذه لوحة تحكم ولي الأمر."
+    },
+    "children": {
+      "title": "الأبناء",
+      "comingSoon": "قريباً"
+    },
+    "account": {
+      "title": "الحساب",
       "comingSoon": "قريباً"
     }
   },
@@ -143,8 +196,129 @@
     },
     "cta": {
       "title": "جاهز للبدء؟",
-      "description": "أنشئ حساب مؤسستك الآن وابدأ رحلتك معنا.",
+      "description": "أنشئ حسابك الآن وابدأ رحلتك معنا.",
       "button": "إنشاء حساب"
+    }
+  },
+  "nav": {
+    "brand": "أكاديمية دار نظم",
+    "home": "الرئيسية",
+    "books": "متجر الكتب",
+    "cart": "السلة",
+    "signIn": "تسجيل الدخول",
+    "dashboard": "لوحة التحكم"
+  },
+  "store": {
+    "bannerEyebrow": "المعرفة والإصدارات الأكاديمية",
+    "title": "متجر كتب الأكاديمية",
+    "subtitle": "إصدارات ومراجع منتقاة في العلوم الشرعية، الإدارة، والحوكمة المؤسسية بصيغ ورقية ورقمية PDF.",
+    "searchPlaceholder": "ابحث بالعنوان أو اسم المؤلف أو الكلمات المفتاحية...",
+    "formats": {
+      "all": "جميع الصيغ",
+      "paper": "نسخة ورقية",
+      "digital": "نسخة رقمية PDF"
+    },
+    "allCategories": "جميع التصنيفات",
+    "digitalPdf": "رقمي PDF",
+    "paper": "ورقي",
+    "from": "من",
+    "addToCart": "إضافة للسلة",
+    "added": "تمت الإضافة",
+    "addedToCart": "تمت الإضافة إلى السلة",
+    "buyNow": "شراء الآن",
+    "selectFormat": "اختر الصيغة المطلوبة",
+    "quantity": "الكمية",
+    "authorPrefix": "المؤلف",
+    "digitalEdition": "نسخة رقمية",
+    "digitalDeliveryNotice": "إتاحة فورية لتحميل النسخة الرقمية PDF فور تأكيد الطلب.",
+    "physicalDeliveryNotice": "شحن موثوق مع إمكانية تتبع مسار الشحنة.",
+    "secureCheckoutNotice": "إتمام آمن ومشفر للطلبات مدعوم بنظام ميديوسا.",
+    "descriptionTitle": "عن الكتاب والمحتوى",
+    "backToBooks": "العودة لمتجر الكتب",
+    "bookNotFoundTitle": "الكتاب غير موجود",
+    "bookNotFoundMessage": "تعذر العثور على الكتاب المطلوب أو تمت أرشفته.",
+    "emptyTitle": "لم يتم العثور على كتب",
+    "emptyMessage": "لم نجد كتباً مطابقة لبحثك أو الفلاتر المختارة.",
+    "clearFilters": "مسح الفلاتر",
+    "errorTitle": "تعذر تحميل الكتب",
+    "errorMessage": "تعذر الاتصال بكتالوج Medusa. يرجى التحقق من الاتصال والمحاولة مرة أخرى.",
+    "retry": "إعادة المحاولة"
+  },
+  "cart": {
+    "title": "سلة المشتريات",
+    "itemsCount": "عناصر في سلتك",
+    "clearCart": "تفريغ السلة",
+    "emptyTitle": "سلتك فارغة حالياً",
+    "emptyMessage": "تصفح إصداراتنا الأكاديمية وأضف الكتب التي تهمك إلى السلة.",
+    "exploreBooks": "تصفح متجر الكتب",
+    "digitalPdf": "نسخة رقمية PDF",
+    "paper": "نسخة ورقية",
+    "perUnit": "للنسخة",
+    "continueShopping": "متابعة التسوق",
+    "orderSummary": "ملخص الطلب",
+    "subtotal": "المجموع الفرعي",
+    "shipping": "الشحن والتوصيل",
+    "shippingCalculatedAtCheckout": "يُحسب عند إتمام الطلب",
+    "freeDigital": "مجاني (نسخة رقمية)",
+    "total": "الإجمالي",
+    "proceedToCheckout": "المتابعة لإتمام الطلب",
+    "secureCheckout": "معاملة آمنة ومشفرة بالكامل SSL",
+    "instantDigitalAccess": "وصول فوري للكتب الرقمية",
+    "fastShippingEgypt": "شحن سريع وموثوق"
+  },
+  "checkout": {
+    "title": "إتمام الطلب",
+    "subtitle": "أدخل بيانات التواصل والشحن لتأكيد طلبك وتجهيزه.",
+    "backToCart": "العودة للسلة",
+    "emptyCart": "السلة فارغة",
+    "backToStore": "العودة للمتجر",
+    "contactInfo": "بيانات التواصل",
+    "firstName": "الاسم الأول",
+    "firstNamePlaceholder": "مثال: أحمد",
+    "lastName": "اسم العائلة",
+    "lastNamePlaceholder": "مثال: السيد",
+    "email": "البريد الإلكتروني",
+    "phone": "رقم الهاتف / الجوال",
+    "shippingAddress": "عنوان الشحن والتوصيل",
+    "city": "المدينة / المحافظة",
+    "cityPlaceholder": "مثال: القاهرة",
+    "address": "العنوان التفصيلي / الشارع والمبنى",
+    "addressPlaceholder": "الشارع، رقم العمارة، رقم الشقة",
+    "paymentMethod": "طريقة الدفع",
+    "methods": {
+      "cod": "الدفع عند الاستلام",
+      "codDesc": "ادفع نقداً عند استلام شحنتك (للنسخ الورقية فقط).",
+      "card": "بطاقة ائتمان / مدى / ميزة",
+      "cardDesc": "دفع إلكتروني آمن وسريع عبر البطاقات المعتمدة.",
+      "paypal": "PayPal",
+      "paypalDesc": "دفع إلكتروني آمن للمدفوعات الدولية."
+    },
+    "summary": "ملخص الطلب",
+    "subtotal": "المجموع الفرعي",
+    "shipping": "الشحن",
+    "standardShipping": "شحن قياسي",
+    "free": "مجاني",
+    "grandTotal": "المجموع الكلي",
+    "placeOrder": "تأكيد الطلب الآن",
+    "processing": "جارٍ تأكيد الطلب...",
+    "encryptedSecurity": "دفع آمن ومشفر 256-bit",
+    "validation": {
+      "requiredFields": "يرجى ملء جميع بيانات التواصل المطلوبة.",
+      "addressRequired": "يرجى إدخال المدينة وعنوان الشحن للنسخ الورقية."
+    },
+    "errors": {
+      "generic": "تعذر إتمام الطلب، يرجى مراجعة البيانات والمحاولة مجدداً."
+    },
+    "successPage": {
+      "title": "تم تأكيد طلبك بنجاح!",
+      "subtitle": "شكراً لاهتمامك وثقتك، تم تسجيل طلبك في نظام ميديوسا بنجاح.",
+      "orderReference": "رقم مرجع الطلب",
+      "physicalOrdersTitle": "الشحنات الورقية",
+      "physicalOrdersDesc": "سيقوم فريق التجهيز بمراجعة الطلب وتسليمه لشركة الشحن في أقرب وقت.",
+      "digitalOrdersTitle": "النسخ الرقمية",
+      "digitalOrdersDesc": "روابط التحميل الرقمية جاهزة ومفعلة مباشرة في حسابك.",
+      "continueBrowsing": "تصفح المزيد من الكتب",
+      "backToHome": "العودة للرئيسية"
     }
   }
 }

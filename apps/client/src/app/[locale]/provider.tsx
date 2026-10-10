@@ -4,6 +4,8 @@ import { ReactNode, useState } from 'react';
 import { NextIntlClientProvider } from 'next-intl';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
+import { CartProvider } from '@/lib/context/cart-context';
+
 interface ProviderProps {
   children: ReactNode;
   locale: string;
@@ -26,7 +28,9 @@ export default function Provider({ children, locale, messages }: ProviderProps) 
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages} timeZone="UTC">
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      <QueryClientProvider client={queryClient}>
+        <CartProvider>{children}</CartProvider>
+      </QueryClientProvider>
     </NextIntlClientProvider>
   );
 }

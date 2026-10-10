@@ -10,15 +10,14 @@ import { Label } from '@/components/ui/label';
 import { Link, useRouter } from '@/i18n/navigation';
 import { api } from '@/lib/api/axios';
 import { getDashboardUrl } from '@/lib/utils/routes/getDashboardUrl';
-import { ROUTE_LOGIN } from '@/lib/data/constants/routes.constants';
+import { ROUTE_LOGIN, ROUTE_ORGANIZATION_VERIFICATION } from '@/lib/data/constants/routes.constants';
+import { UserMainRoles } from '@/lib/data/userRole.enum';
 import { IUser } from '@/types/user/user.interface';
 import { RegisterRequestBody } from '@/types/auth/auth.type';
 
 /**
- * Signup form for the organization-owner flow. The server's `POST /auth/register`
- * (RegisterDto) expects `{ userDto: { ..., roleName }, organizationDto?, acceptedTerms? }`
- * — a non-STUDENT/PARENT `roleName` (here Roles.SUPER_ADMIN) makes the registrant the
- * SUPER_ADMIN of a newly created organization, which requires `organizationDto`.
+ * Public signup. Organization maps to SUPER_ADMIN + organizationDto on the server;
+ * students and parents register without an organization and land on their own dashboards.
  */
 export function SignupForm() {
   const t = useTranslations('auth.signup');
@@ -29,11 +28,14 @@ export function SignupForm() {
     password: '',
     firstName: '',
     lastName: '',
+    roleName: UserMainRoles.STUDENT,
     organizationName: '',
     organizationSlug: '',
   });
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const isOrg = form.roleName === UserMainRoles.ORGANIZATION;
 
   const update = (key: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm((prev) => ({ ...prev, [key]: e.target.value }));
@@ -41,6 +43,12 @@ export function SignupForm() {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    if (isOrg && (!form.organizationName.trim() || !form.organizationSlug.trim())) {
+      setError(t('validation.orgRequired'));
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const body: RegisterRequestBody = {
@@ -50,16 +58,29 @@ export function SignupForm() {
           email: form.email,
           username: form.username,
           password: form.password,
-          roleName: Roles.SUPER_ADMIN,
+          roleName: isOrg
+            ? Roles.SUPER_ADMIN
+            : form.roleName === UserMainRoles.PARENT
+              ? Roles.PARENT
+              : Roles.STUDENT,
         },
-        organizationDto: {
-          name: form.organizationName,
-          slug: form.organizationSlug,
-        },
-        acceptedTerms: true,
+        ...(isOrg
+          ? {
+              organizationDto: {
+                name: form.organizationName,
+                slug: form.organizationSlug,
+              },
+              acceptedTerms: true,
+            }
+          : {}),
       };
       const { data } = await api.post<IUser>('/auth/register', body);
-      router.push(getDashboardUrl(data.roleName));
+
+      if (data.roleName === Roles.SUPER_ADMIN) {
+        router.push(ROUTE_ORGANIZATION_VERIFICATION);
+      } else {
+        router.push(getDashboardUrl(data.roleName));
+      }
     } catch {
       setError(t('validation.somethingWentWrong'));
     } finally {
@@ -74,6 +95,23 @@ export function SignupForm() {
           <div className="flex flex-col items-center gap-2 text-center">
             <h1 className="text-lg font-bold sm:text-2xl">{t('title')}</h1>
             <p className="text-sm text-muted-foreground text-balance">{t('subtitle')}</p>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="roleName">{t('roleLabel')}</Label>
+            <select
+              id="roleName"
+              className="h-9 rounded-md border border-input bg-transparent px-3 text-sm"
+              value={form.roleName}
+              onChange={(e) =>
+                setForm((prev) => ({ ...prev, roleName: e.target.value as UserMainRoles }))
+              }>
+              {Object.values(UserMainRoles).map((role) => (
+                <option key={role} value={role}>
+                  {t(`roles.${role}`)}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
@@ -107,15 +145,27 @@ export function SignupForm() {
             />
           </div>
 
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="organizationName">{t('organizationNameLabel')}</Label>
-            <Input id="organizationName" value={form.organizationName} onChange={update('organizationName')} />
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="organizationSlug">{t('organizationSlugLabel')}</Label>
-            <Input id="organizationSlug" dir="ltr" value={form.organizationSlug} onChange={update('organizationSlug')} />
-          </div>
+          {isOrg ? (
+            <>
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="organizationName">{t('organizationNameLabel')}</Label>
+                <Input
+                  id="organizationName"
+                  value={form.organizationName}
+                  onChange={update('organizationName')}
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="organizationSlug">{t('organizationSlugLabel')}</Label>
+                <Input
+                  id="organizationSlug"
+                  dir="ltr"
+                  value={form.organizationSlug}
+                  onChange={update('organizationSlug')}
+                />
+              </div>
+            </>
+          ) : null}
 
           {error ? <p className="text-center text-sm text-destructive">{error}</p> : null}
 
