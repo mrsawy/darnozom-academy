@@ -3,10 +3,8 @@ import type { IUserReview } from '../review/review.types';
 import type { ApprovalStatusType as ApprovalStatus } from '@lms-organization/shared-types';
 import { PublishStatus } from '@lms-organization/shared-types';
 
-/** Embedded settings on modules (mirrors course `settings` shape for discussion). */
-export interface IModuleContentSettings {
-  discussionEnabled?: boolean;
-}
+/** Embedded settings on modules (extend as needed). */
+export interface IModuleContentSettings {}
 
 export interface IModule {
   _id: string;

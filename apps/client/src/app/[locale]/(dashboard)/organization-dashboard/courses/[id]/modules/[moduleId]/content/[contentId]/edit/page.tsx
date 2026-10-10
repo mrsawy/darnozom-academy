@@ -5,7 +5,6 @@ import { CourseBreadcrumb } from '@/components/molecules/course-breadcrumb';
 import { getContent } from '@/lib/actions/courses/content/content.action';
 import { getModule } from '@/lib/actions/courses/modules.action';
 import { getCourse } from '@/lib/actions/courses/getCourse.action';
-import { ContentDiscussionPanel } from './content-discussion-panel';
 import { isNatsErrResult } from '@/lib/utils/natsErrorHandler';
 import {
   ROUTE_ORG_COURSES,
@@ -38,11 +37,6 @@ export default async function EditContentPage({ params }: { params: Promise<Page
   ) {
     notFound();
   }
-  const showDiscussionPanel =
-    course.settings?.discussionEnabled !== false &&
-    moduleEntity?.settings?.discussionEnabled !== false &&
-    existingContent.settings?.discussionEnabled !== false;
-
   const tCrumb = await getTranslations('CourseBreadcrumb');
 
   return (
@@ -68,16 +62,6 @@ export default async function EditContentPage({ params }: { params: Promise<Page
         mode="edit"
         initialContent={existingContent}
       />
-      {showDiscussionPanel ? (
-        <div className="container mx-auto px-4 pb-8">
-          <ContentDiscussionPanel
-            courseId={courseId}
-            moduleId={moduleId}
-            contentId={contentId}
-            canDeleteAny
-          />
-        </div>
-      ) : null}
     </div>
   );
 }

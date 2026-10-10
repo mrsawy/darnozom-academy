@@ -11,7 +11,6 @@ import { Textarea } from '@/components/atoms/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/atoms/tabs';
 import { Plus, X, Save, Lightbulb } from 'lucide-react';
-import { Checkbox } from '@/components/atoms/checkbox';
 import { Label } from '@/components/atoms/label';
 import { toast } from 'react-toastify';
 import useGeneralStore from '@/lib/store/generalStore';
@@ -44,7 +43,7 @@ export default function EditModuleForm({ module, courseId, moduleId }: EditModul
       title: module.title ?? '',
       learningObjectives: module.learningObjectives ?? [''],
       description: module.description ?? '',
-      settings: { discussionEnabled: module.settings?.discussionEnabled !== false },
+      settings: {},
     },
   });
 
@@ -54,7 +53,7 @@ export default function EditModuleForm({ module, courseId, moduleId }: EditModul
       reset({
         title: module.title ?? '',
         description: module.description ?? '',
-        settings: { discussionEnabled: module.settings?.discussionEnabled !== false },
+        settings: {},
       });
       // Update learning objectives when module changes
       const objectives =
@@ -63,14 +62,7 @@ export default function EditModuleForm({ module, courseId, moduleId }: EditModul
           : [''];
       setLearningObjectives(objectives);
     }
-  }, [
-    module,
-    module?._id,
-    module?.title,
-    module?.description,
-    module?.settings?.discussionEnabled,
-    reset,
-  ]);
+  }, [module, module?._id, module?.title, module?.description, reset]);
 
   const onSubmit = async (values: UpdateModuleSchema) => {
     try {
@@ -182,26 +174,6 @@ export default function EditModuleForm({ module, courseId, moduleId }: EditModul
                       {errors.description ? (
                         <p className="text-sm text-red-600">{errors.description.message}</p>
                       ) : null}
-                    </div>
-
-                    <div className="flex items-start gap-3 rounded-md border p-3">
-                      <Checkbox
-                        id="edit-module-discussion"
-                        checked={watch('settings.discussionEnabled') !== false}
-                        onCheckedChange={(c) => {
-                          setValue('settings.discussionEnabled', c === true, { shouldDirty: true });
-                        }}
-                      />
-                      <div className="grid gap-1">
-                        <Label
-                          htmlFor="edit-module-discussion"
-                          className="cursor-pointer text-sm font-medium">
-                          {t('moduleInformation.discussionEnabled')}
-                        </Label>
-                        <p className="text-muted-foreground text-xs">
-                          {t('moduleInformation.discussionEnabledHelp')}
-                        </p>
-                      </div>
                     </div>
 
                     {/* Learning Objectives */}

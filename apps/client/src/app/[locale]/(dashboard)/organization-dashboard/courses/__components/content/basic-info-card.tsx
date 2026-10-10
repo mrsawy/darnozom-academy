@@ -15,7 +15,6 @@ import type { UseFormRegister, UseFormSetValue, FieldErrors, UseFormWatch } from
 import { useTranslations } from 'next-intl';
 import { CourseContentType } from '@/lib/types/course/enum/CourseContentType.enum';
 import type { CourseContentFormData } from '@/lib/schema/content.schema';
-import { Checkbox } from '@/components/atoms/checkbox';
 import { Label } from '@/components/atoms/label';
 
 interface BasicInfoCardProps {
@@ -120,26 +119,6 @@ export default function BasicInfoCard({
           {errors.description ? (
             <p className="text-sm text-red-600">{errors.description.message}</p>
           ) : null}
-        </div>
-
-        <div className="flex flex-col gap-2 rounded-md border p-3">
-          <div className="flex items-start gap-3">
-            <Checkbox
-              id="content-discussion-enabled"
-              checked={watch('settings.discussionEnabled') !== false}
-              onCheckedChange={(c) => {
-                setValue('settings.discussionEnabled', c === true, { shouldDirty: true });
-              }}
-            />
-            <div className="grid gap-1">
-              <Label htmlFor="content-discussion-enabled" className="cursor-pointer font-medium">
-                {t('basicInformation.discussionEnabled')}
-              </Label>
-              <p className="text-muted-foreground text-xs">
-                {t('basicInformation.discussionEnabledHelp')}
-              </p>
-            </div>
-          </div>
         </div>
       </CardContent>
     </Card>

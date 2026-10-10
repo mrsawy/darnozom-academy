@@ -1,8 +1,6 @@
 import * as yup from 'yup';
 
-const moduleSettingsSchema = yup.object({
-  discussionEnabled: yup.boolean().optional(),
-});
+const moduleSettingsSchema = yup.object({});
 
 export const createModuleSchema = yup.object({
   //   courseId: yup.string().required("Course ID is required"),

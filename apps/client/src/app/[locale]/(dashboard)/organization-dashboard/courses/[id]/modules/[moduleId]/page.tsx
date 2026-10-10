@@ -1,6 +1,5 @@
 import { getModule } from '@/lib/actions/courses/modules.action';
 import EditModuleForm from '../../../__components/modules/edit-module-form';
-import { ModuleDiscussionPanel } from './module-discussion-panel';
 import { getCourse } from '@/lib/actions/courses/getCourse.action';
 import { isNatsErrResult } from '@/lib/utils/natsErrorHandler';
 import { getTranslations } from 'next-intl/server';
@@ -40,10 +39,6 @@ export default async function EditModulePage({ params }: PageProps) {
     notFound();
   }
 
-  const showDiscussionPanel =
-    course.settings?.discussionEnabled !== false &&
-    moduleData?.settings?.discussionEnabled !== false;
-
   return (
     <div className="container mx-auto space-y-8 py-6">
       <CourseBreadcrumb
@@ -55,11 +50,6 @@ export default async function EditModulePage({ params }: PageProps) {
         ]}
       />
       <EditModuleForm module={moduleData} courseId={courseId} moduleId={moduleId} />
-      {showDiscussionPanel ? (
-        <div className="px-4">
-          <ModuleDiscussionPanel courseId={courseId} moduleId={moduleId} canDeleteAny />
-        </div>
-      ) : null}
     </div>
   );
 }

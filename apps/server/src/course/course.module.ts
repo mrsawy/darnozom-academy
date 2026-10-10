@@ -66,8 +66,6 @@ import { TranscriptionModule } from 'src/transcription/transcription.module';
           { name: ContentType.PROJECT, schema: ProjectSchema },
           { name: ContentType.LIVE_SESSION, schema: LiveSessionSchema },
           { name: ContentType.ATTACHMENT, schema: AttachmentSchema },
-
-          // { name: CourseType.DISCUSSION, schema: DiscussionSchema },
         ],
       },
     ]),

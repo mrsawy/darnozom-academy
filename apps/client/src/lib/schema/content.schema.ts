@@ -341,11 +341,7 @@ export function getCourseContentCreationSchemaDiscriminated(translate: Translate
 
   return yup.object({
     ...base.fields,
-    settings: yup
-      .object({
-        discussionEnabled: yup.boolean().optional(),
-      })
-      .optional(),
+    settings: yup.object({}).optional(),
     content: yup.lazy((_value, context) => {
       const parent = context?.parent as { type?: string } | undefined;
       const type = parent?.type;

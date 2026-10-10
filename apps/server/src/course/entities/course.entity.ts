@@ -34,7 +34,6 @@ export interface SettingsSchema {
   enrollmentLimit?: number;
   enrollmentDeadline?: Date;
   certificateEnabled?: boolean;
-  discussionEnabled?: boolean;
   downloadEnabled?: boolean;
 }
 export interface StatsSchema {
@@ -92,7 +91,6 @@ const SettingsSchemaPlain = new mongoose.Schema(
     enrollmentLimit: Number,
     enrollmentDeadline: Date,
     certificateEnabled: { type: Boolean, default: false },
-    discussionEnabled: { type: Boolean, default: true },
     downloadEnabled: { type: Boolean, default: false },
   },
   { _id: false }

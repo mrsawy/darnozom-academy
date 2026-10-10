@@ -29,7 +29,6 @@ export interface SettingsSchema {
   enrollmentLimit?: number;
   enrollmentDeadline?: Date;
   certificateEnabled: boolean;
-  discussionEnabled: boolean;
   downloadEnabled: boolean;
 }
 

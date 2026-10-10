@@ -138,10 +138,6 @@ export class SettingsDto {
 
   @IsBoolean()
   @IsOptional()
-  discussionEnabled?: boolean;
-
-  @IsBoolean()
-  @IsOptional()
   downloadEnabled?: boolean;
 }
 

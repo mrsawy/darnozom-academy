@@ -12,7 +12,7 @@ export function getContentFormDefaultValues(
   if (!initialContent) {
     return {
       type: CourseContentType.ARTICLE,
-      settings: { discussionEnabled: true },
+      settings: {},
       content: {
         videoType: VideoType.URL,
       },
@@ -23,9 +23,7 @@ export function getContentFormDefaultValues(
     type: initialContent.type,
     title: initialContent.title,
     description: initialContent.description ?? '',
-    settings: {
-      discussionEnabled: initialContent.settings?.discussionEnabled !== false,
-    },
+    settings: {},
     content:
       initialContent.type === CourseContentType.ARTICLE
         ? { body: initialContent.body ?? '' }

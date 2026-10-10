@@ -23,7 +23,6 @@ import { ReviewModule } from './review/review.module';
 import { TransactionModule } from './transaction/transaction.module';
 import { PageModule } from './page/page.module';
 import { GalleryModule } from './gallery/gallery.module';
-import { DiscussionModule } from './discussion/discussion.module';
 import { AttendanceModule } from './attendance/attendance.module';
 import { WishlistModule } from './wishlist/wishlist.module';
 import { DatabaseModule } from './database/database.module';
@@ -98,7 +97,6 @@ import { getMongoUri, MONGO_CONNECTION_OPTIONS } from './config/mongo.config';
     TransactionModule,
     PageModule,
     GalleryModule,
-    DiscussionModule,
     AttendanceModule,
     WishlistModule,
     AdminReviewModule,

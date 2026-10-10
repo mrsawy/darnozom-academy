@@ -2,7 +2,6 @@ import { DialogFooter } from '@/components/atoms/dialog';
 import { Button } from '@/components/atoms/button';
 import { Input } from '@/components/atoms/input';
 import { Label } from '@/components/atoms/label';
-import { Checkbox } from '@/components/atoms/checkbox';
 import { useForm } from 'react-hook-form';
 import { createModuleSchema, type CreateModuleSchema } from '@/lib/schema/module.schema';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -34,7 +33,7 @@ function CreateModuleForm({
     defaultValues: {
       title: '',
       description: '',
-      settings: { discussionEnabled: true },
+      settings: {},
     },
   });
 
@@ -98,24 +97,6 @@ function CreateModuleForm({
           {errors.description ? (
             <p className="text-left text-sm text-red-400">{errors.description?.message}</p>
           ) : null}
-        </div>
-
-        <div className="flex items-start gap-3 rounded-md border p-3">
-          <Checkbox
-            id="create-module-discussion"
-            checked={watch('settings.discussionEnabled') !== false}
-            onCheckedChange={(c) => {
-              setValue('settings.discussionEnabled', c === true);
-            }}
-          />
-          <div className="grid gap-1">
-            <Label
-              htmlFor="create-module-discussion"
-              className="cursor-pointer text-sm font-medium">
-              {t('discussionEnabled')}
-            </Label>
-            <p className="text-muted-foreground text-xs">{t('discussionEnabledHelp')}</p>
-          </div>
         </div>
 
         <div className="space-y-2">

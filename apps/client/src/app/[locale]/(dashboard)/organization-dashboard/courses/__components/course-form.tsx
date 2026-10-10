@@ -120,7 +120,6 @@ function CourseForm({ mode, setOpen, course, courseId }: CourseFormProps) {
             coInstructorsIds: course.coInstructorsIds ?? [],
             settings: {
               certificateEnabled: course.settings?.certificateEnabled ?? false,
-              discussionEnabled: course.settings?.discussionEnabled ?? true,
               downloadEnabled: course.settings?.downloadEnabled ?? false,
               enrollmentLimit: course.settings?.enrollmentLimit ?? undefined,
             },
@@ -149,7 +148,6 @@ function CourseForm({ mode, setOpen, course, courseId }: CourseFormProps) {
             coInstructorsIds: [],
             settings: {
               certificateEnabled: false,
-              discussionEnabled: true,
               downloadEnabled: false,
               enrollmentLimit: undefined,
             },

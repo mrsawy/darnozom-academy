@@ -89,7 +89,6 @@ function buildSettingsSchema(translate: CourseSchemaTranslateFn) {
       .nullable(),
     enrollmentDeadline: Yup.date().optional().nullable(),
     certificateEnabled: Yup.boolean().optional(),
-    discussionEnabled: Yup.boolean().optional(),
     downloadEnabled: Yup.boolean().optional(),
   });
 }
