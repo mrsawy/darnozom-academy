@@ -17,13 +17,29 @@ Bring `academy` up to near-parity with `lms-organization`, rebranded from **safe
 structure. It carries 10 of ~40 server modules and 32 of 123 shared-type files, and its three
 dashboards are shells.
 
-It also has **one feature the source does not**: a Medusa-backed books store. Preserving that
-is a hard requirement of this port.
+It also has **one feature the source does not**: a books store, currently Medusa-backed.
+Preserving its storefront UI through this port is a hard requirement.
+
+### This is the first of two specs
+
+The books store is being **moved off Medusa onto a native academy module** — its own entities,
+service, controllers, and admin UI inside `apps/server` and `apps/client`. Medusa stays where it
+belongs, in the sibling project `C:\COURSES\work\darnozom\darnozom-react-regular-website`
+(`apps/medusa` — "books commerce backend + admin dashboard", Postgres + Redis). `academy` will
+not depend on Medusa long term.
+
+That native module is substantial new feature work — per-organization catalogs, physical and
+digital fulfilment, three payment paths, two admin surfaces — not a port. It therefore gets its
+**own design → spec → plan cycle after this port lands**. Its agreed requirements are recorded in
+§11 so nothing is lost between the two cycles.
+
+Within *this* spec, the store's Medusa data layer is **transitional**: carried over so the
+storefront keeps building and working, and retired by the second spec.
 
 ### Success criteria
 
 1. Every selected feature from `lms-organization` runs in `academy`.
-2. The Medusa books store still works, unchanged, on its own backend.
+2. The books storefront UI still works, on its transitional Medusa data layer.
 3. No `discussion` feature in the codebase — fully removed, not merely hidden.
 4. No `safeer` string anywhere outside build artifacts.
 5. Both apps build, lint, and pass their existing test suites.
@@ -41,7 +57,7 @@ is a hard requirement of this port.
 | Commerce | Payments & checkout, wallet & transactions, subscriptions & plans, withdrawals/payouts |
 | Comms | Chat/messaging, notifications, reviews & ratings |
 | Platform | Main admin (super-admin) dashboard, public pages & gallery, AI assistant & AI plans, live sessions (Agora) |
-| Carried over | The existing Medusa books store, untouched |
+| Carried over | The books storefront UI, on its transitional Medusa data layer |
 
 Concretely, these source server modules land in `academy`: `admin-review`, `agora`, `ai`,
 `ai-plan`, `ai-subscription`, `attendance`, `category`, `chat`, `course`, `currency`,
@@ -57,9 +73,11 @@ across with them.
 - **Discussion / forums** — removed entirely (see §5).
 - **`apps/lms-mobile`** — the Expo app is not ported. It is also 6.5 GB of the source tree, all
   of which this port skips.
-- **Medusa ↔ LMS payment unification** — the store keeps its own Medusa checkout; LMS
-  payment/wallet handles courses and subscriptions. Routing Medusa through the LMS payment
-  module is a possible follow-up, explicitly not this work.
+- **The native book module** — replacing Medusa with academy's own book/order module is the
+  subject of the next spec, not this one. Its agreed requirements are recorded in §11. During
+  this port the storefront keeps its Medusa data layer so it stays buildable and usable.
+- **The ERP subsystems** — groups/cohorts, teacher HR, supervision & quality, the automation
+  engine, content governance, and accounting depth are later specs. See §12.
 - **Data migration** — the target starts on a fresh, empty `darnozom` database.
 
 ---
@@ -152,7 +170,15 @@ same phase, before any install is attempted — see §6.1 and §6.2.
 **Gate:** source tree present under `academy`; `git log` still shows the target's history with
 `pre-darnozom-port` reachable; `apps/lms-mobile` absent; `pnpm install` succeeds.
 
-### Phase 2 — Re-graft the store
+### Phase 2 — Re-graft the storefront
+
+The storefront UI is kept permanently; its Medusa data layer is kept **only until the native book
+module lands** (§11). So this phase restores both, unchanged, and the next spec deletes
+`medusa-client.ts` and rewires `cart-context.tsx` and the 6 pages to the native API.
+
+Keeping Medusa alive through the port is deliberate: stubbing the data layer now would leave the
+storefront non-building, which would both fail the Phase 2 gate and mask real breakage in the
+`nx build client` gate of later phases.
 
 1. Restore the 6 `(store)` route files, `medusa-client.ts`, and `cart-context.tsx`.
 2. Add `@medusajs/js-sdk@^2.21.0` and `@medusajs/types@^2.21.0` to `apps/client/package.json`.
@@ -411,6 +437,7 @@ Run in order; each must pass before the next.
 | `postinstall` fails on absent `apps/lms-mobile` | Prune script's target list fixed in Phase 1 (§6.2) |
 | Root rename silently breaks `nx run-many --exclude` | All six name references changed together (§6.3); lint/type-check behaviour is a Phase 4 gate |
 | Stale source-absolute paths in agent config | Cleaned in Phase 4 (§6.5) |
+| Academy keeps a transitional Medusa dependency until the book module lands | Deliberate and time-boxed (§4 Phase 2, §11); storefront UI is unaffected by the later swap |
 
 ---
 
@@ -434,9 +461,91 @@ other phase. Recorded as Phase 4 step 8.
 
 ---
 
-## 11. Open items for the operator
+## 11. Recorded requirements for the next spec: native book module
+
+Not built in this port. Recorded here so the agreed decisions survive into the next design cycle.
+
+**Why native:** the books store moves off Medusa onto academy's own module. Medusa remains the
+commerce backend of the sibling project
+`C:\COURSES\work\darnozom\darnozom-react-regular-website` (`apps/medusa`, Postgres + Redis) and
+is not shared with academy.
+
+| Decision | Value |
+|---|---|
+| Catalog ownership | **Per-organization.** `Book` carries `organizationId`, scoped by existing tenant guards; revenue to that org's wallet |
+| Fulfilment | **Both, per book.** Each book flagged physical or digital; checkout branches on cart contents. Physical: stock counts, shipping address, order status workflow. Digital: entitlement + signed download URLs via the existing `file` module |
+| Payment paths | **All three:** existing gateways via the `payment` strategy factory (kashier, lemon-squeezy, paddle, paymob, paypal), **wallet** balance via the `wallet` ledger, and **cash / manual confirmation** by an org admin |
+| Admin surfaces | **Both** the organization dashboard (own books, own orders, stock) and the main admin dashboard (all books and orders across orgs) |
+| Storefront | **Keep the existing UI.** The 6 `(store)` pages stay; delete `medusa-client.ts` and rewire `cart-context.tsx` + the pages to the native API |
+
+**House pattern to follow** (as used by every existing module, e.g. `wishlist`):
+
+```
+book/
+  book.module.ts
+  controllers/book.controller.http.ts
+  controllers/book.controller.message.ts
+  dto/
+  entities/
+  service/
+  seeds/book.seeder.ts
+  types/
+```
+
+Also required: a `book` RBAC subject in `subjects.enum.ts` with permissions added to the relevant
+role seed configs, and `@darnozom/shared-types` (or `@lms-organization/…`, per §10) DTO/enum
+exports for the client.
+
+---
+
+## 12. Roadmap: the Nozom Academy ERP subsystems
+
+The agreed destination is the **Nozom Academy ERP**, built on this ported NestJS/Next.js base —
+**not** on the Odoo three-tier architecture that the ERP document proposes. Academy remains a
+**multi-tenant platform**, so the ported platform layer (main admin dashboard, organization
+verification, plans, withdrawals) stays relevant.
+
+This port delivers the commodity LMS layer the ERP sits on. Verified against the source, the ERP's
+operational core is roughly half covered; what follows is absent and becomes its own spec.
+
+### Covered by this port
+
+Students/parents/teachers as users with RBAC · courses, modules, content · assignments
+(in `course` + `enrollment`) · enrollment · attendance · payments across five gateways, wallet,
+transactions, subscriptions, plans · reports and reviews · chat and notifications · live session
+delivery (`agora`, `private-session`) · minimal certificates (`certificateUrl` on course and
+enrollment).
+
+### Not covered — each a candidate spec, in rough dependency order
+
+| Subsystem | Notes |
+|---|---|
+| **Groups / cohorts & session lifecycle** | The ERP's spine is Course → Group → Session with readiness gating, weekly schedules, and session-start monitoring. The LMS has no cohort concept (`GroupSize`/`GroupProject` on private sessions are unrelated). Most other ERP features depend on this, so it goes first |
+| **Automation / task engine** | Task generation on group creation and approaching sessions, reminders, absence and late-report tracking, post-first-session follow-ups, escalation. Nothing exists (2 incidental `task` hits) |
+| **Teacher HR lifecycle** | Recruitment, interviews, training, evaluation, availability, schedules. Zero hits in source |
+| **Teacher compensation** | Pay computed from completed and approved sessions; salaries, deductions. Zero hits — and depends on sessions + approval workflow |
+| **Supervision & quality** | Program start monitoring, performance evaluation, improvement plans, escalation. Zero hits |
+| **Content governance** | Curricula, worksheets, **Sharia review and version approval**. Zero hits; the existing content model has no review/versioning workflow |
+| **Accounting depth** | Real invoicing, arrears, refunds, deductions. The 8 `invoice` hits are only PayPal/LemonSqueezy webhook payloads |
+| **Certificates & ceremonies** | Eligibility verification from attendance + assessment + fees, issuance, graduation ceremony organization. Only `certificateUrl` exists today |
+| **WhatsApp channel** | Zero hits. Messages, alerts, automated follow-ups |
+| **Renewal pipeline** | Student renewal and transfer into the next session. The 10 `renewal` hits are subscription renewals, a different thing |
+
+### Known sequencing conflict
+
+The ERP document's own MVP **postpones the content store to a later phase**, while §11's book
+module is currently queued as the next spec. These two priorities disagree and the order is an
+open decision — see §13.
+
+---
+
+## 13. Open items for the operator
 
 - Real secrets for the rebranded `.env` files (payment keys, Agora credentials, AI provider keys,
   SMTP, S3/CloudFront).
 - Production hostnames for `Caddyfile` and `.env.production`.
-- Whether the Medusa backend at `localhost:9010` has a darnozom-specific deployment target.
+- **Spec order after this port:** the native book module (§11) or the ERP's groups/cohorts &
+  session lifecycle (§12) first. The ERP document postpones the store; the book module is
+  currently queued next. Needs a decision before the next design cycle starts.
+- Whether the Medusa instance the storefront points at (`localhost:9010`) stays available to
+  academy for the transitional period, given Medusa now lives in the sibling website project.
