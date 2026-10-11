@@ -11,18 +11,16 @@ import {
   SelectValue,
 } from '@/components/atoms/select';
 import { FileText, Video, HelpCircle, FileCheck, Calendar, Paperclip } from 'lucide-react';
-import type { UseFormRegister, UseFormSetValue, FieldErrors, UseFormWatch } from 'react-hook-form';
+import type { UseFormRegister, UseFormSetValue, FieldErrors } from 'react-hook-form';
 import { useTranslations } from 'next-intl';
 import { CourseContentType } from '@/lib/types/course/enum/CourseContentType.enum';
 import type { CourseContentFormData } from '@/lib/schema/content.schema';
-import { Label } from '@/components/atoms/label';
 
 interface BasicInfoCardProps {
   contentType: CourseContentType;
   onContentTypeChange: (value: CourseContentType) => void;
   register: UseFormRegister<CourseContentFormData>;
   setValue: UseFormSetValue<CourseContentFormData>;
-  watch: UseFormWatch<CourseContentFormData>;
   errors: FieldErrors<CourseContentFormData>;
   mode: 'create' | 'edit';
 }
@@ -32,7 +30,6 @@ export default function BasicInfoCard({
   onContentTypeChange,
   register,
   setValue,
-  watch,
   errors,
   mode,
 }: BasicInfoCardProps) {

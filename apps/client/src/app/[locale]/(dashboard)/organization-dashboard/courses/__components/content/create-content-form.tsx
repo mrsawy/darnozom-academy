@@ -343,7 +343,6 @@ export default function CreateContentForm({
                   onContentTypeChange={setContentType}
                   register={register}
                   setValue={setValue}
-                  watch={watch}
                   errors={errors}
                   mode={mode}
                 />

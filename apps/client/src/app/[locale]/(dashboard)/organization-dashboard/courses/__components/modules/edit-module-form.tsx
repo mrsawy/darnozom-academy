@@ -11,7 +11,6 @@ import { Textarea } from '@/components/atoms/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/atoms/tabs';
 import { Plus, X, Save, Lightbulb } from 'lucide-react';
-import { Label } from '@/components/atoms/label';
 import { toast } from 'react-toastify';
 import useGeneralStore from '@/lib/store/generalStore';
 import { IModuleWithContents } from '@/lib/types/course/modules.interface';
@@ -35,8 +34,6 @@ export default function EditModuleForm({ module, courseId, moduleId }: EditModul
     handleSubmit,
     formState: { errors },
     reset,
-    watch,
-    setValue,
   } = useForm({
     resolver: yupResolver(updateModuleSchema),
     defaultValues: {

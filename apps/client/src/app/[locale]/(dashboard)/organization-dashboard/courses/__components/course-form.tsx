@@ -498,12 +498,7 @@ function CourseForm({ mode, setOpen, course, courseId }: CourseFormProps) {
           errors={errors}
         />
 
-        <CourseSettingsSection
-          register={register}
-          watch={watch}
-          setValue={setValue}
-          errors={errors}
-        />
+        <CourseSettingsSection register={register} errors={errors} />
 
         <CourseAttendanceSection
           watch={watch}

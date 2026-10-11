@@ -4,7 +4,7 @@ import type { ApprovalStatusType as ApprovalStatus } from '@darnozom/shared-type
 import { PublishStatus } from '@darnozom/shared-types';
 
 /** Embedded settings on modules (extend as needed). */
-export interface IModuleContentSettings {}
+export type IModuleContentSettings = Record<string, never>;
 
 export interface IModule {
   _id: string;

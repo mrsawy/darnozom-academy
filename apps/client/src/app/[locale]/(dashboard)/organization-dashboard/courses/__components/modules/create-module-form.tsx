@@ -25,8 +25,6 @@ function CreateModuleForm({
     register,
     handleSubmit,
     reset,
-    watch,
-    setValue,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(createModuleSchema),

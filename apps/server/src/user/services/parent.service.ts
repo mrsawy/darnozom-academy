@@ -148,10 +148,7 @@ export class ParentService {
     if (dto.phone !== undefined) updateData.phone = dto.phone;
     if (dto.country !== undefined) updateData['profile.address.country'] = dto.country;
 
-    await this.userService.update(
-      { _id: childId, roleName: Roles.STUDENT },
-      updateData as import('@darnozom/shared-types/dto').UpdateUserDto
-    );
+    await this.userService.update({ _id: childId, roleName: Roles.STUDENT }, updateData as import('@darnozom/shared-types/dto').UpdateUserDto);
   }
 
   async getLinkedParentInfo(studentId: mongoose.Types.ObjectId): Promise<{
