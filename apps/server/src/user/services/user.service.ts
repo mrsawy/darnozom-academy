@@ -15,7 +15,7 @@ import * as bcrypt from 'bcrypt';
 import { handleError } from '../../utils/errorHandling';
 import { escapeRegex } from '../../utils/approval.utils';
 import { CreateUserDto, UpdateUserDto } from '@darnozom/shared-types/dto';
-import { Roles, UserErrors, UserSuccessMessages } from '@darnozom/shared-types';
+import { AcademicsErrors, getAdditionalRolesViolation, Roles, UserErrors, UserSuccessMessages } from '@darnozom/shared-types';
 import { INSTRUCTOR_CATEGORY_CHANGED_EVENT, InstructorCategoryChangedEvent } from '../../category/events/category-count.events';
 import { USER_CREATED_FOR_AI_EVENT, UserCreatedForAiEvent } from '../../ai-subscription/events/user-created-for-ai.event';
 import { NOT_DELETED_USER_FILTER, withNotDeletedUserFilter } from '../utils/not-deleted-user.filter';
@@ -332,5 +332,18 @@ export class UserService {
       message: UserSuccessMessages.ORGANIZATION_ONBOARDING_COMPLETED,
       user: userData,
     };
+  }
+
+  async setAdditionalRoles(organizationId: string, userId: string, additionalRoles: string[]): Promise<{ additionalRoles: Roles[] }> {
+    const target = await this.userModel
+      .findOne({ _id: new mongoose.Types.ObjectId(userId), organizationId: new mongoose.Types.ObjectId(organizationId), deletedAt: null })
+      .lean()
+      .exec();
+    if (!target) throw new NotFoundException(AcademicsErrors.USER_NOT_FOUND_IN_ORGANIZATION);
+    if (getAdditionalRolesViolation(target.roleName, additionalRoles) !== null) {
+      throw new BadRequestException(AcademicsErrors.ADDITIONAL_ROLES_INVALID);
+    }
+    await this.userModel.updateOne({ _id: target._id }, { $set: { additionalRoles } }).exec();
+    return { additionalRoles: additionalRoles as Roles[] };
   }
 }

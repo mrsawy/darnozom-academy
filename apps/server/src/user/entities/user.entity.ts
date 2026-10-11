@@ -130,6 +130,10 @@ export class User extends Document<mongoose.Types.ObjectId> {
   @Prop({ type: String, enum: Roles, required: true })
   roleName: Roles;
 
+  /** Extra roles held in addition to the primary `roleName` (staff roles + INSTRUCTOR only). */
+  @Prop({ type: [{ type: String, enum: Object.values(Roles) }], default: [] })
+  additionalRoles: Roles[];
+
   @Prop({ type: ProfileSchema, required: false })
   profile: Profile;
 
@@ -419,6 +423,12 @@ UserSchema.virtual('role', {
   localField: 'roleName',
   foreignField: 'name',
   justOne: true,
+});
+UserSchema.virtual('additionalRoleDocs', {
+  ref: 'Role',
+  localField: 'additionalRoles',
+  foreignField: 'name',
+  justOne: false,
 });
 UserSchema.virtual('categories', {
   ref: 'Category',

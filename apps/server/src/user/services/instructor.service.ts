@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { PaginateModel } from 'mongoose';
 import { User } from '../entities/user.entity';
 import { convertObjectValuesToObjectId } from '../../utils/ObjectId.utils';
-import { Roles } from '../../role/enum/Roles.enum';
+import { Roles } from '@darnozom/shared-types';
 import { Role } from '../../role/entities/role.entity';
 import { NORMALIZATION_FACTORS, WEIGHTS, CAPS, MINIMUM_THRESHOLDS, SCALING_OPTIONS, RECENCY_CONFIG } from '../config/featuredInstructors.config';
 import { PaginateOptionsWithSearch } from 'src/utils/types/PaginateOptionsWithSearch';

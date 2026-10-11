@@ -47,7 +47,11 @@ export class CaslAbilityFactory {
     const { can, build } = new AbilityBuilder(createMongoAbility);
 
     // Guard: role may be null when a role document is missing from DB.
-    const permissions: Role['permissions'] = user.role?.permissions ?? [];
+    const additionalRoleDocs = (user as { additionalRoleDocs?: (Partial<Role> | null)[] }).additionalRoleDocs ?? [];
+    const permissions: Role['permissions'] = [
+      ...(user.role?.permissions ?? []),
+      ...additionalRoleDocs.flatMap((doc) => doc?.permissions ?? []),
+    ];
     for (const permission of permissions) {
       const { action, subject, conditions } = permission;
 

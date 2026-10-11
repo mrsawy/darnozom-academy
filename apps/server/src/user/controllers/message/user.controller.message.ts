@@ -14,7 +14,8 @@ import { convertObjectValuesToObjectId } from 'src/utils/ObjectId.utils';
 import { ApplyRpcErrorHandling } from 'src/utils/docerators/error-handeling/class/ApplyRpcErrorHandling.decorator';
 import { CreateUserDto } from '@darnozom/shared-types/dto';
 import { SubscriptionService } from 'src/subscription/services/subscription.service';
-import { Roles, UserErrors, UserSuccessMessages } from '@darnozom/shared-types';
+import { Actions, Roles, Subjects, UserErrors, UserSuccessMessages } from '@darnozom/shared-types';
+import { RequirePermissionsGuard } from 'src/role/permission.decorator';
 
 @Controller('user')
 @ApplyRpcErrorHandling
@@ -186,6 +187,17 @@ export class UserControllerMessage {
         organizationId: new mongoose.Types.ObjectId(context.userPayload.organizationId),
       },
       payload.userData
+    );
+  }
+
+  @RequirePermissionsGuard({ action: Actions.UPDATE, subject: Subjects.ROLE })
+  @MessagePattern('users.setAdditionalRoles')
+  @UseGuards(AuthGuard)
+  async setAdditionalRoles(@Ctx() context: IUserContext, @Payload() payload: { userId: string; additionalRoles: string[] }) {
+    return this.userService.setAdditionalRoles(
+      String(context.userPayload.organizationId),
+      payload.userId,
+      Array.isArray(payload.additionalRoles) ? payload.additionalRoles : []
     );
   }
 
