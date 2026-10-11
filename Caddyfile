@@ -1,13 +1,13 @@
 # LMS Organization – Caddy reverse proxy
-# Domain: safeerlms.com
+# Domain: darnozomlms.com
 # Caddy obtains and renews TLS certificates from Let's Encrypt automatically.
 
 # ── Client (Next.js) ─────────────────────────────────────────────────
-safeerlms.com, www.safeerlms.com {
+darnozomlms.com, www.darnozomlms.com {
 	reverse_proxy client:3000
 }
 
 # ── API (NestJS) ─────────────────────────────────────────────────────
-api.safeerlms.com {
+api.darnozomlms.com {
 	reverse_proxy server:3000
 }

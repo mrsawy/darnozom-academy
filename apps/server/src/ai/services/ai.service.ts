@@ -22,7 +22,7 @@ export class AiService {
 
   async streamChat(messages: UIMessage[], onFinish?: (text: string) => Promise<void>, systemContext?: string | null): Promise<StreamChatResult> {
     const baseSystem =
-      'You are a helpful learning assistant for an LMS platform called Safeer. Help students with their course-related questions, study tips, and general learning guidance.';
+      'You are a helpful learning assistant for an LMS platform called Darnozom. Help students with their course-related questions, study tips, and general learning guidance.';
     const system = systemContext ? `${baseSystem}\n\n${systemContext}` : baseSystem;
 
     return streamText({

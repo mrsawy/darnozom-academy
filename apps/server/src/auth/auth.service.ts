@@ -225,7 +225,7 @@ export class AuthService {
     const randomSuffix = randomBytes(3).toString('hex');
 
     const parentUsername = `parent_${student.username}`;
-    const parentEmail = `parent_${student.username}_${randomSuffix}@safeerlms.com`;
+    const parentEmail = `parent_${student.username}_${randomSuffix}@darnozomlms.com`;
     const parentPhone = `+10000${randomBytes(4).readUInt32BE(0).toString().slice(0, 7)}`;
 
     const parentRole = await this.query.findOneOrThrow<Role>(Role.name, { name: Roles.PARENT }, AuthErrors.ROLE_NOT_FOUND_CREATE_FIRST);
@@ -268,7 +268,7 @@ export class AuthService {
     const randomSuffix = randomBytes(3).toString('hex');
 
     const childUsername = `child_${parent.username}_1`;
-    const childEmail = `child_${parent.username}_${randomSuffix}@safeerlms.com`;
+    const childEmail = `child_${parent.username}_${randomSuffix}@darnozomlms.com`;
     const childPhone = `+20000${randomBytes(4).readUInt32BE(0).toString().slice(0, 7)}`;
 
     const studentRole = await this.query.findOneOrThrow<Role>(Role.name, { name: Roles.STUDENT }, AuthErrors.ROLE_NOT_FOUND_CREATE_FIRST);
@@ -446,7 +446,7 @@ export class AuthService {
       return { message: successMessage };
     }
 
-    const frontendUrl = process.env.SECURED_CLIENT_BASE_URL ?? 'https://safeerlms.com';
+    const frontendUrl = process.env.SECURED_CLIENT_BASE_URL ?? 'https://darnozomlms.com';
     const rawToken = randomBytes(48).toString('hex');
     const hashedToken = await bcrypt.hash(rawToken, 10);
 

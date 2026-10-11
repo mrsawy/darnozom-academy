@@ -1,4 +1,4 @@
-export const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://safeerlms.com';
+export const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://darnozomlms.com';
 
 export const OG_IMAGE_URL = '/og-image.png';
 export const APPLE_ICON_URL = '/apple-icon.png';

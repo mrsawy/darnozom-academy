@@ -40,13 +40,13 @@
     },
     "deleteAccount": {
       "title": "Delete Your Account",
-      "intro": "This page explains how to request deletion of your Safeer LMS (lms-mobile) account and the personal data associated with it. You do not need to have the app installed to submit a request.",
+      "intro": "This page explains how to request deletion of your Darnozom LMS (lms-mobile) account and the personal data associated with it. You do not need to have the app installed to submit a request.",
       "requestCta": "Email deletion request",
       "contactCta": "Use contact form",
       "blocks": {
         "howTo": {
           "title": "How to request account deletion",
-          "description": "Send an email to {email} with the subject \"Account Deletion Request\". Include the email address and username registered on your Safeer LMS account. You can also submit the same request through our Contact page. We may ask you to verify ownership of the account before processing."
+          "description": "Send an email to {email} with the subject \"Account Deletion Request\". Include the email address and username registered on your Darnozom LMS account. You can also submit the same request through our Contact page. We may ask you to verify ownership of the account before processing."
         },
         "deleted": {
           "title": "Data that will be deleted",
@@ -62,7 +62,7 @@
         },
         "inApp": {
           "title": "In-app deletion",
-          "description": "If you still have access to the Safeer LMS mobile or web app, you may also contact support from within the app using the same email address above. The web request on this page remains available if you have uninstalled the app."
+          "description": "If you still have access to the Darnozom LMS mobile or web app, you may also contact support from within the app using the same email address above. The web request on this page remains available if you have uninstalled the app."
         }
       }
     },
@@ -94,7 +94,7 @@
     },
     "returnPolicy": {
       "title": "Return & Refund Policy",
-      "intro": "All purchases, course enrollments, and digital subscriptions on Safeer LMS are final and non-refundable. Please review this policy carefully before completing your purchase.",
+      "intro": "All purchases, course enrollments, and digital subscriptions on Darnozom LMS are final and non-refundable. Please review this policy carefully before completing your purchase.",
       "blocks": {
         "noRefunds": {
           "title": "Strict No-Return & No-Refund Policy",
@@ -492,9 +492,9 @@
       "hours": "7:00am - 6:00pm (Mon - Fri), Sat, Sun & Holiday Closed",
       "socialLabel": "Follow Us",
       "social": {
-        "facebook": "https://www.facebook.com/people/Safeer-%D8%B3%D9%81%D9%8A%D8%B1/61572332113165/",
-        "instagram": "https://www.instagram.com/safeerlms",
-        "tiktok": "https://www.tiktok.com/@safeerlms"
+        "facebook": "https://www.facebook.com/darnozom",
+        "instagram": "https://www.instagram.com/darnozomlms",
+        "tiktok": "https://www.tiktok.com/@darnozomlms"
       },
       "fields": {
         "firstName": "First Name",
@@ -4853,8 +4853,8 @@
     "privacyPolicy": "Privacy Policy"
   },
   "Metadata": {
-    "siteName": "Safeer",
-    "homeTitle": "Safeer — Revolutionary LMS Platform",
+    "siteName": "Darnozom",
+    "homeTitle": "Darnozom — Revolutionary LMS Platform",
     "homeDescription": "Next-generation learning management with AI-powered insights and multi-tenant architecture.",
     "coursesTitle": "Courses",
     "coursesDescription": "Browse our full catalog of courses.",

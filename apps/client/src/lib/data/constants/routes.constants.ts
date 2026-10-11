@@ -18,7 +18,7 @@ export const ROUTE_TERMS = '/terms';
 export const ROUTE_RETURN_POLICY = '/return-policy';
 /** Google Play / App Store account & data deletion request page. */
 export const ROUTE_DELETE_ACCOUNT = '/delete-account';
-export const ACCOUNT_DELETION_SUPPORT_EMAIL = 'info@safeerlms.com';
+export const ACCOUNT_DELETION_SUPPORT_EMAIL = 'info@darnozomlms.com';
 export const URL_ACCOUNT_DELETION_SUPPORT_MAILTO = `mailto:${ACCOUNT_DELETION_SUPPORT_EMAIL}?subject=${encodeURIComponent('Account Deletion Request')}`;
 export const ROUTE_COURSE_DETAILS = (courseId: string) => `/courses/${courseId}`;
 export const ROUTE_STUDENT_DASHBOARD = '/student-dashboard';
@@ -146,6 +146,6 @@ export const ROUTE_CHECKOUT = '/checkout';
 export const ROUTE_CHECKOUT_SUCCESS = '/checkout/success';
 
 export const URL_FACEBOOK =
-  'https://www.facebook.com/people/Safeer-%D8%B3%D9%81%D9%8A%D8%B1/61572332113165/';
-export const URL_INSTAGRAM = 'https://www.instagram.com/safeerlms';
-export const URL_TIKTOK = 'https://www.tiktok.com/@safeerlms';
+  'https://www.facebook.com/darnozom';
+export const URL_INSTAGRAM = 'https://www.instagram.com/darnozomlms';
+export const URL_TIKTOK = 'https://www.tiktok.com/@darnozomlms';

@@ -3,8 +3,8 @@ import { THEME_COLOR_PRIMARY_LIGHT } from '@/lib/data/constants/metadata.constan
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Safeer LMS',
-    short_name: 'Safeer',
+    name: 'Darnozom LMS',
+    short_name: 'Darnozom',
     description:
       'Next-generation learning management with AI-powered insights and multi-tenant architecture.',
     start_url: '/',

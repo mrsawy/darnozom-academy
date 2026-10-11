@@ -1,6 +1,6 @@
 /**
  * Socket.IO handshake validates `Origin` like HTTP CORS. Expo / React Native dev
- * clients use origins that are not https://safeerlms.com; without `CORS_ORIGINS`
+ * clients use origins that are not https://darnozomlms.com; without `CORS_ORIGINS`
  * they would fail with a generic client-side "websocket error".
  */
 export function getWebSocketCorsOptions(): {
@@ -19,7 +19,7 @@ export function getWebSocketCorsOptions(): {
   }
   if (process.env.NODE_ENV === 'production') {
     return {
-      origin: ['https://safeerlms.com'],
+      origin: ['https://darnozomlms.com'],
       credentials: true,
     };
   }
