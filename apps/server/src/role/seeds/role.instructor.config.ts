@@ -22,6 +22,8 @@ export const INSTRUCTOR_PERMISSIONS: RolePermissionRule[] = [
   { action: Actions.UPDATE, subject: Subjects.SESSION_BOOKING },
   { action: Actions.READ, subject: Subjects.INSTRUCTOR_REPORT },
   { action: Actions.READ, subject: Subjects.STUDENT_REPORT },
+  { action: Actions.READ, subject: Subjects.GROUP },
+  { action: Actions.MANAGE, subject: Subjects.TEACHER_AVAILABILITY },
 ];
 
 export const INSTRUCTOR_SEED: RoleSeedEntry = {
