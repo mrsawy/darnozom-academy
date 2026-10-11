@@ -3,9 +3,8 @@ name: component-types-colocation
 description: >-
   Colocate component props, type aliases, and type-narrowing helpers in
   `<same-name>.types.ts` next to the main `.tsx`. USE WHEN adding or editing
-  React components under apps/client or apps/lms-mobile, moving inline
-  `interface`/`type` out of a component file, or reviewing imports that define
-  types beside JSX.
+  React components under apps/client, moving inline `interface`/`type` out of
+  a component file, or reviewing imports that define types beside JSX.
 ---
 
 # Component types colocation (client + mobile)
@@ -31,10 +30,6 @@ export { Foo } from './foo';
 ```
 
 Consumers should import from the component folder barrel, not from inner `.types.ts` paths, when the project already uses that pattern.
-
-## Relationship to layout skill
-
-The same folder layout (index + tsx + types) is documented in **lms-mobile-components** (`.cursor/skills/lms-mobile-components/SKILL.md`). This skill is the **narrow rule for TypeScript surface**: keep type-only code out of `.tsx` so components stay readable and types are easy to find.
 
 ## Do not
 
