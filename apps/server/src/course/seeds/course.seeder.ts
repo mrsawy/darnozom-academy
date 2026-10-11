@@ -14,7 +14,7 @@ import { Assignment } from '../entities/assignment.schema';
 import { Project } from '../entities/project.schema';
 import { LiveSession } from '../entities/liveSession.schema';
 import { Attachment } from '../entities/attachment.schema';
-import { Platform, ApprovalStatus, EntityStatus, PublishStatus, ActiveStatus } from '@lms-organization/shared-types';
+import { Platform, ApprovalStatus, EntityStatus, PublishStatus, ActiveStatus } from '@darnozom/shared-types';
 import { TranscriptStatus, TranscriptSource } from '../enum/transcriptStatus.enum';
 
 /** A small pool of real video/file keys for variety across courses. */

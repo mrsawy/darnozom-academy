@@ -12,8 +12,8 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/atoms/card';
-import type { ICalendarAppointment } from '@lms-organization/shared-types';
-import { CalendarAppointmentType } from '@lms-organization/shared-types';
+import type { ICalendarAppointment } from '@darnozom/shared-types';
+import { CalendarAppointmentType } from '@darnozom/shared-types';
 import { cn } from '@/lib/utils';
 import { DayButton } from 'react-day-picker';
 

@@ -1,6 +1,6 @@
 import { Model, Types } from 'mongoose';
 import * as bcrypt from 'bcrypt';
-import { Currency, Roles, UserStatus } from '@lms-organization/shared-types';
+import { Currency, Roles, UserStatus } from '@darnozom/shared-types';
 import { User } from '../entities/user.entity';
 import { Wallet } from '../../wallet/entities/wallet.entity';
 import { PlatformAdminCredentials } from '../../database/seeds/prod-preflight';

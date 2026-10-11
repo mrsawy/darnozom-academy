@@ -2,7 +2,7 @@
 
 import { Paginated, PaginationOptions, withDefaults } from '@/lib/types/Paginated';
 import { createAuthorizedNatsRequest } from '@/lib/utils/createNatsRequest';
-import { ActiveStatus, PublishStatus } from '@lms-organization/shared-types';
+import { ActiveStatus, PublishStatus } from '@darnozom/shared-types';
 import type {
   IDashboardStats,
   IReviewableCategory,

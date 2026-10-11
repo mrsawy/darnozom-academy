@@ -69,7 +69,7 @@ import {
   getOrganizationCourseModules,
   getOrganizationModuleContents,
 } from '@/lib/actions/admin-review/admin-review.action';
-import { ActiveStatus, PublishStatus } from '@lms-organization/shared-types';
+import { ActiveStatus, PublishStatus } from '@darnozom/shared-types';
 import { translateApiMessage } from '@/lib/utils/errors/translateApiMessage';
 import type {
   IDashboardStats,

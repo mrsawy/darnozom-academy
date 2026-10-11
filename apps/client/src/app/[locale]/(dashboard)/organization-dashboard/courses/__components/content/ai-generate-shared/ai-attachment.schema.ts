@@ -1,5 +1,5 @@
 import * as yup from 'yup';
-import type { AiAttachmentMime } from '@lms-organization/shared-types';
+import type { AiAttachmentMime } from '@darnozom/shared-types';
 
 // File-level validation (count/size/MIME) lives in `AiAttachmentPicker`, which
 // owns the picker UI and reports validity to the parent. The schema only

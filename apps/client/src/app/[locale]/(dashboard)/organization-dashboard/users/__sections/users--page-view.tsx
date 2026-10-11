@@ -46,7 +46,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/atoms/select';
-import { UserStatus } from '@lms-organization/shared-types';
+import { UserStatus } from '@darnozom/shared-types';
 import {
   useDeleteUser,
   useUpdateUserStatus,

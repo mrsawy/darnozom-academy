@@ -3,7 +3,7 @@ import { Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Job } from 'bullmq';
 import { Model, Types } from 'mongoose';
-import { AccessType, NotificationType, NotificationTextKey, RealtimeEvents } from '@lms-organization/shared-types';
+import { AccessType, NotificationType, NotificationTextKey, RealtimeEvents } from '@darnozom/shared-types';
 import { Course } from 'src/course/entities/course.entity';
 import { CourseContent } from 'src/course/entities/course-content.entity';
 import { isContentServableToStudent } from 'src/course/utils/content-access.util';

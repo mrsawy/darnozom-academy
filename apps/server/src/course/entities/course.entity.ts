@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document, Schema as MongooseSchema, Types } from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
-import { Currency, ActiveStatus, ApprovalStatus, PublishStatus, EntityStatus } from '@lms-organization/shared-types';
+import { Currency, ActiveStatus, ApprovalStatus, PublishStatus, EntityStatus } from '@darnozom/shared-types';
 import { BillingCycle } from 'src/utils/enums/billingCycle.enum';
 import { ReviewType } from 'src/review/enum/reviewType.enum';
 import { applySoftDeleteMiddleware } from 'src/utils/soft-delete';

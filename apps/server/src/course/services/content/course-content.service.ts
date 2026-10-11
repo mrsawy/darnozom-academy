@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, ForbiddenException, Logger } from '@nest
 import { InjectModel, InjectConnection } from '@nestjs/mongoose';
 import { Course } from '../../entities/course.entity';
 import mongoose, { ClientSession, Model, Connection, PaginateModel } from 'mongoose';
-import { ApprovalStatus, MeetingProvider, Platform, PublishStatus } from '@lms-organization/shared-types';
+import { ApprovalStatus, MeetingProvider, Platform, PublishStatus } from '@darnozom/shared-types';
 import { FileService } from 'src/file/file.service';
 import { SubscriptionService } from 'src/subscription/services/subscription.service';
 import { applyUpdateWithApproval } from 'src/utils/approval.utils';

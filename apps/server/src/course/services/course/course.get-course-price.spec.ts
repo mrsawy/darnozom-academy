@@ -1,5 +1,5 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
-import { CourseErrors, Currency } from '@lms-organization/shared-types';
+import { CourseErrors, Currency } from '@darnozom/shared-types';
 import { BillingCycle } from 'src/utils/enums/billingCycle.enum';
 import { CourseService } from './course.service';
 

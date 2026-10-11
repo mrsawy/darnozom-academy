@@ -2,7 +2,7 @@ import { Injectable, forwardRef, Inject } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { randomUUID } from 'node:crypto';
-import { AuthErrors, Roles, NotificationType, NotificationTextKey } from '@lms-organization/shared-types';
+import { AuthErrors, Roles, NotificationType, NotificationTextKey } from '@darnozom/shared-types';
 import { User, UserDocument } from '../../user/entities/user.entity';
 import { Role } from '../../role/entities/role.entity';
 import { TokenService } from './token.service';

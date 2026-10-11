@@ -26,7 +26,7 @@ import { useIsMobile } from '@/lib/hooks/use-mobile';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
 import { Link } from '@/i18n/navigation';
-import { Roles } from '@lms-organization/shared-types';
+import { Roles } from '@darnozom/shared-types';
 import { getAccountHref, getBillingHref } from './nav-user-routes';
 
 export function NavUser({

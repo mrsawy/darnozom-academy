@@ -15,7 +15,7 @@ import { NestFactory } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule, getModelToken } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { ApprovalStatus } from '@lms-organization/shared-types';
+import { ApprovalStatus } from '@darnozom/shared-types';
 import { MONGO_CONNECTION_OPTIONS } from '../../config/mongo.config';
 import { Organization, OrganizationSchema } from '../../organization/entities/organization.entity';
 import { resolveMigrationMongoUri } from './migration-mongo.util';

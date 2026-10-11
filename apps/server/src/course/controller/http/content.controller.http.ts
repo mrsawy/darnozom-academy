@@ -12,7 +12,7 @@ import { AssignmentService } from '../../services/content/assignment/assignment.
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { IUserRequest } from 'src/auth/interfaces/IUserRequest.interface';
 import { CreateCourseContentDto } from '../../dto/create-course-content.dto';
-import { Actions, Subjects } from '@lms-organization/shared-types';
+import { Actions, Subjects } from '@darnozom/shared-types';
 import { RequirePermissionsGuard } from 'src/role/permission.decorator';
 import { CheckSubscriptionLimit } from 'src/subscription/decorators/check-subscription-limit.decorator';
 import { GradeAssignmentDto, SubmitAssignmentDto } from 'src/enrollment/dto/assignment-submission.dto';

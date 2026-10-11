@@ -4,7 +4,7 @@ import { WalletService } from './wallet.service';
 import { IUserContext } from 'src/utils/types/IUserContext.interface';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { RequirePermissionsGuard } from 'src/role/permission.decorator';
-import { Actions, Subjects } from '@lms-organization/shared-types';
+import { Actions, Subjects } from '@darnozom/shared-types';
 
 @Controller('WalletMessageController')
 export class WalletMessageController {

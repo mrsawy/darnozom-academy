@@ -1,5 +1,5 @@
 import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
-import { Roles, STUDENT_ASSIGNMENT_MAX_BYTES } from '@lms-organization/shared-types';
+import { Roles, STUDENT_ASSIGNMENT_MAX_BYTES } from '@darnozom/shared-types';
 import { QueryService } from 'src/database/query';
 import { Enrollment } from 'src/enrollment/entities/enrollment.entity';
 import { CourseContent } from 'src/course/entities/course-content.entity';

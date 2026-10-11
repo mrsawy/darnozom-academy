@@ -1,4 +1,4 @@
-export { RealtimeEvents } from '@lms-organization/shared-types';
+export { RealtimeEvents } from '@darnozom/shared-types';
 
 export const RealtimeRooms = {
   user: (userId: string) => `user:${userId}`,

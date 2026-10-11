@@ -6,7 +6,7 @@ import {
   getDisplayPrice,
   type DisplayPrice,
   type PriceSource,
-} from '@lms-organization/shared-types';
+} from '@darnozom/shared-types';
 import { useQuery } from '@/lib/utils';
 import useUserStore from '@/lib/store/userStore';
 import { getViewerCurrencyData } from '@/lib/actions/currency/currency.action';

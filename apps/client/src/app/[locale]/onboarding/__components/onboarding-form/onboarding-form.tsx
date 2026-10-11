@@ -11,7 +11,7 @@ import { Checkbox } from '@/components/atoms/checkbox';
 import { Link } from '@/i18n/navigation';
 import { ROUTE_TERMS, ROUTE_PRIVACY } from '@/lib/data/constants/routes.constants';
 import { Combobox } from '@/components/molecules/combobox';
-import { CURRENCIES, Roles, type Currency } from '@lms-organization/shared-types';
+import { CURRENCIES, Roles, type Currency } from '@darnozom/shared-types';
 import {
   Select,
   SelectContent,

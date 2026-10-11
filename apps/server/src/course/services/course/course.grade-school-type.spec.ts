@@ -1,5 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
-import { GradeErrors, SchoolTypeErrors } from '@lms-organization/shared-types';
+import { GradeErrors, SchoolTypeErrors } from '@darnozom/shared-types';
 import { CourseService } from './course.service';
 
 /**

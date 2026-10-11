@@ -1,6 +1,6 @@
 import { Equals, IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString, Matches, NotEquals, ValidateIf, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
-import { AuthErrors, Currency, IDENTIFIER_PATTERN, Roles } from '@lms-organization/shared-types';
+import { AuthErrors, Currency, IDENTIFIER_PATTERN, Roles } from '@darnozom/shared-types';
 
 /**
  * Minimal org info needed when a Google-OAuth user picks the Organisation role.

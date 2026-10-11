@@ -10,7 +10,7 @@ import { Label } from '@/components/atoms/label';
 import { Badge } from '@/components/atoms/badge';
 import { Separator } from '@/components/atoms/separator';
 import { useTranslations } from 'next-intl';
-import { WithdrawalMethod, WithdrawalRequestStatus } from '@lms-organization/shared-types';
+import { WithdrawalMethod, WithdrawalRequestStatus } from '@darnozom/shared-types';
 import { IWithdrawalRequest } from '@/lib/types/withdrawal/withdrawal-request.interface';
 import { useProcessWithdrawalRequest } from '@/lib/hooks/withdrawal/use-withdrawal';
 import { uploadFile } from '@/lib/utils/uploadFile';

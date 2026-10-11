@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { LiveSessionAttendance, LiveSessionAttendanceSchema } from './liveSessionAttendance.entity';
-import { MeetingProvider, Platform } from '@lms-organization/shared-types';
+import { MeetingProvider, Platform } from '@darnozom/shared-types';
 
 @Schema({ _id: false })
 export class LiveSession extends Document {

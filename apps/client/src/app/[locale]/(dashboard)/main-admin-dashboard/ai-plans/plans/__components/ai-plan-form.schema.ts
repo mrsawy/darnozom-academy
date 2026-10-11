@@ -1,5 +1,5 @@
 import * as yup from 'yup';
-import { BillingCycle } from '@lms-organization/shared-types';
+import { BillingCycle } from '@darnozom/shared-types';
 
 const priceDetailsSchema = yup.object({
   originalPrice: yup.number().min(0, 'Must be ≥ 0').required('Required'),

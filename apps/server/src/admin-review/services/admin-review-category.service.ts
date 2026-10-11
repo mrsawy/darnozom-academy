@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, PaginateModel, Types } from 'mongoose';
-import { ActiveStatus, ApprovalStatus, PublishStatus } from '@lms-organization/shared-types';
+import { ActiveStatus, ApprovalStatus, PublishStatus } from '@darnozom/shared-types';
 import { Category } from 'src/category/entities/category.entity';
 import { buildPendingReviewFilter, applyUpdateWithApproval } from 'src/utils/approval.utils';
 import { buildSoftDeleteSet, withDeletedQueryOptions, withNotDeletedFilter } from 'src/utils/soft-delete';

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model, PaginateModel } from 'mongoose';
-import { AccessType, CalendarAppointmentType, CourseContentType } from '@lms-organization/shared-types';
+import { AccessType, CalendarAppointmentType, CourseContentType } from '@darnozom/shared-types';
 import { Enrollment } from 'src/enrollment/entities/enrollment.entity';
 import { Course, AttendanceSettings } from 'src/course/entities/course.entity';
 import { CourseModuleEntity } from 'src/course/entities/course-module.entity';

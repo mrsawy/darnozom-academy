@@ -1,6 +1,6 @@
 import { getLocale } from 'next-intl/server';
 import { redirect } from '@/i18n/navigation';
-import { Roles } from '@lms-organization/shared-types';
+import { Roles } from '@darnozom/shared-types';
 import { getAuthUser } from '@/lib/api/get-auth-user';
 import { ROUTE_LOGIN } from '@/lib/data/constants/routes.constants';
 import { IUser } from '@/types/user/user.interface';

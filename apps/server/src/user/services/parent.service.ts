@@ -1,7 +1,7 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { ClientSession, PaginateModel } from 'mongoose';
-import { ParentErrors, Roles, UserStatus, Currency } from '@lms-organization/shared-types';
+import { ParentErrors, Roles, UserStatus, Currency } from '@darnozom/shared-types';
 import { User } from '../entities/user.entity';
 import { Enrollment } from 'src/enrollment/entities/enrollment.entity';
 import { Course } from 'src/course/entities/course.entity';
@@ -150,7 +150,7 @@ export class ParentService {
 
     await this.userService.update(
       { _id: childId, roleName: Roles.STUDENT },
-      updateData as import('@lms-organization/shared-types/dto').UpdateUserDto
+      updateData as import('@darnozom/shared-types/dto').UpdateUserDto
     );
   }
 

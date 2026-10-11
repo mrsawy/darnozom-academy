@@ -16,7 +16,7 @@ import {
 } from '@/lib/types/private-session/private-session.interface';
 import { BookingDialog } from './booking-dialog';
 import { PriceWithCurrency } from '@/components/atoms/price-with-currency';
-import type { Currency } from '@lms-organization/shared-types';
+import type { Currency } from '@darnozom/shared-types';
 import { useViewerCurrency } from '@/lib/hooks/currency/use-viewer-currency.hook';
 
 interface Props {

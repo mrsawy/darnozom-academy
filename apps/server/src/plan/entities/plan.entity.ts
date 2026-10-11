@@ -3,7 +3,7 @@ import { Document, Schema as MongooseSchema } from 'mongoose';
 
 import { BillingCycle } from 'src/utils/enums/billingCycle.enum';
 import { PaymentProvider } from 'src/payment/strategies/interfaces/payment-strategy.interface';
-import { Currency } from '@lms-organization/shared-types';
+import { Currency } from '@darnozom/shared-types';
 
 import { PlanTier } from '../enum/planTier.enum';
 

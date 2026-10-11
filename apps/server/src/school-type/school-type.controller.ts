@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Request, UseGuards } from '@nestjs/common';
-import { Actions, Subjects } from '@lms-organization/shared-types';
+import { Actions, Subjects } from '@darnozom/shared-types';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { PlatformAdminGuard } from 'src/admin-review/guards/platform-admin.guard';
 import { RequirePermissionsGuard } from 'src/role/permission.decorator';

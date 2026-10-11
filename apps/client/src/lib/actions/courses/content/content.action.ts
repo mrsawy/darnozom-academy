@@ -6,7 +6,7 @@ import { connectToNats, request } from '@/lib/nats/client';
 import { revalidatePath } from 'next/cache';
 import { CourseContentFormData } from '@/lib/schema/content.schema';
 import { IContent } from '@/lib/types/course/content.interface';
-import { CourseContentType, PublishStatus } from '@lms-organization/shared-types';
+import { CourseContentType, PublishStatus } from '@darnozom/shared-types';
 import { IModuleWithContents } from '@/lib/types/course/modules.interface';
 import { AUTH_COOKIE_NAME } from '@/lib/data/constants';
 import { createAuthorizedNatsRequest } from '@/lib/utils/createNatsRequest';

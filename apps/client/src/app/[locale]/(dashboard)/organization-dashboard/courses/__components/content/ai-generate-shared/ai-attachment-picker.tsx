@@ -10,7 +10,7 @@ import {
   AI_ATTACHMENT_MAX_FILE_SIZE_BYTES,
   AI_ATTACHMENT_MAX_TOTAL_SIZE_BYTES,
   AI_ATTACHMENT_MIME_PDF,
-} from '@lms-organization/shared-types';
+} from '@darnozom/shared-types';
 import { Button } from '@/components/atoms/button';
 
 // Both MIME and extension help Windows file pickers, which often

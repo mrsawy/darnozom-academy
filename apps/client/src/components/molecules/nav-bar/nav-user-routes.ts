@@ -1,4 +1,4 @@
-import { Roles } from '@lms-organization/shared-types';
+import { Roles } from '@darnozom/shared-types';
 import {
   ROUTE_ORG_ACCOUNT,
   ROUTE_ORG_BILLING,

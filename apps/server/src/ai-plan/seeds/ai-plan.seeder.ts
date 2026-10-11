@@ -1,6 +1,6 @@
 import { Model } from 'mongoose';
 import { AiPlan } from '../entities/ai-plan.entity';
-import { AiPlanTier, BillingCycle, Currency } from '@lms-organization/shared-types';
+import { AiPlanTier, BillingCycle, Currency } from '@darnozom/shared-types';
 
 export class AiPlanSeeder {
   constructor(private readonly aiPlanModel: Model<AiPlan>) {}

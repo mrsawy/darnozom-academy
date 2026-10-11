@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { randomInt } from 'node:crypto';
 import { compare, hash } from 'bcrypt';
-import { RATE_LIMIT, UserErrors, VerificationErrors, VerificationSuccessMessages } from '@lms-organization/shared-types';
+import { RATE_LIMIT, UserErrors, VerificationErrors, VerificationSuccessMessages } from '@darnozom/shared-types';
 import { Organization } from 'src/organization/entities/organization.entity';
 import { User } from 'src/user/entities/user.entity';
 import { Otp } from '../entities/otp.entity';

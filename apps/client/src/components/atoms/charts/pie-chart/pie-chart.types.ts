@@ -1,5 +1,5 @@
 import type { ChartConfig } from '@/components/atoms/chart';
-import type { ReportsPieSlice } from '@lms-organization/shared-types';
+import type { ReportsPieSlice } from '@darnozom/shared-types';
 
 export type PieChartDatum = ReportsPieSlice & { fill: string };
 

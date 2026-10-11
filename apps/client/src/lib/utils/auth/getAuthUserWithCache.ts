@@ -1,4 +1,4 @@
-import { Roles } from '@lms-organization/shared-types';
+import { Roles } from '@darnozom/shared-types';
 import { getAuthUser } from '@/lib/actions/user/user.action';
 import useUserStore from '@/lib/store/userStore';
 import type { IUser } from '@/lib/types/user/user.interface';

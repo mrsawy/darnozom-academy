@@ -47,7 +47,7 @@
     "@aws-sdk/lib-storage": "^3.850.0",
     "@casl/ability": "^6.7.3",
     "@fastify/multipart": "^9.0.3",
-    "@lms-organization/shared-types": "workspace:*",
+    "@darnozom/shared-types": "workspace:*",
     "@nestjs/bullmq": "^11.0.4",
     "@nestjs/common": "^11.1.6",
     "@nestjs/config": "^4.0.2",
@@ -160,8 +160,8 @@
     },
     "moduleNameMapper": {
       "^src/(.*)$": "<rootDir>/src/$1",
-      "^@lms-organization/shared-types/dto$": "<rootDir>/../../lib/shared-types/src/lib/dto/index.ts",
-      "^@lms-organization/shared-types$": "<rootDir>/../../lib/shared-types/src/index.ts"
+      "^@darnozom/shared-types/dto$": "<rootDir>/../../lib/shared-types/src/lib/dto/index.ts",
+      "^@darnozom/shared-types$": "<rootDir>/../../lib/shared-types/src/index.ts"
     },
     "collectCoverageFrom": [
       "src/**/*.(t|j)s"

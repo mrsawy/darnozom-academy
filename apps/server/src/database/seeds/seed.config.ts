@@ -1,6 +1,6 @@
 import { OrganizationSeedConfig } from './seed-config.interface';
 import { ContentType } from '../../course/enum/contentType.enum';
-import { Currency, ApprovalStatus, EntityStatus, PublishStatus, VerificationStatus, IdentityDocumentType } from '@lms-organization/shared-types';
+import { Currency, ApprovalStatus, EntityStatus, PublishStatus, VerificationStatus, IdentityDocumentType } from '@darnozom/shared-types';
 import { BillingCycle } from 'src/utils/enums/billingCycle.enum';
 import { PlanTier } from 'src/plan/enum/planTier.enum';
 

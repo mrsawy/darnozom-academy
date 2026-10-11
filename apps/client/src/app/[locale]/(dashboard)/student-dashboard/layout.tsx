@@ -5,7 +5,7 @@ import { Separator } from '@/components/atoms/separator';
 import { getAuthUser } from '@/lib/actions/user/user.action';
 import { StudentSidebar } from './__components/StudentSideBar';
 import { NotificationDropdown } from './__components/notification-dropdown';
-import { Roles } from '@lms-organization/shared-types';
+import { Roles } from '@darnozom/shared-types';
 import { getTranslations } from 'next-intl/server';
 
 export async function generateMetadata({

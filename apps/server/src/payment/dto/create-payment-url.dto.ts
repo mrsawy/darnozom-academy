@@ -1,6 +1,6 @@
 import { IsEnum, IsNumber, IsPositive, Min, Max, IsOptional, IsObject } from 'class-validator';
 import { Transform } from 'class-transformer';
-import { Currency, PaymentMethod, PaymentProvider, PaymentPurpose } from '@lms-organization/shared-types';
+import { Currency, PaymentMethod, PaymentProvider, PaymentPurpose } from '@darnozom/shared-types';
 import { BillingCycle } from 'src/utils/enums/billingCycle.enum';
 
 export class CreatePaymentUrlDto {

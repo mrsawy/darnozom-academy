@@ -1,5 +1,5 @@
 import { IsEnum, IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
-import { Currency } from '@lms-organization/shared-types';
+import { Currency } from '@darnozom/shared-types';
 
 export class CreateTransactionDto {
   @IsEnum(Currency)

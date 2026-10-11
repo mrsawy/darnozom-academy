@@ -1,1 +1,1 @@
-export { AccessType } from '@lms-organization/shared-types';
+export { AccessType } from '@darnozom/shared-types';

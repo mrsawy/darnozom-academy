@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
-import { Currency, WithdrawalMethod, WithdrawalRequestStatus } from '@lms-organization/shared-types';
+import { Currency, WithdrawalMethod, WithdrawalRequestStatus } from '@darnozom/shared-types';
 
 export interface MobileWalletDetails {
   phoneNumber: string;

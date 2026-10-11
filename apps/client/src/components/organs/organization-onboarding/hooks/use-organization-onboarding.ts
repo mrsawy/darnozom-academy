@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Roles } from '@lms-organization/shared-types';
+import { Roles } from '@darnozom/shared-types';
 import type { IUser } from '@/lib/types/user/user.interface';
 import useUserStore from '@/lib/store/userStore';
 import { useUsersByOrganization } from '@/lib/hooks/user/use-user.hook';

@@ -5,7 +5,7 @@ import { RequirePermissionsGuard } from 'src/role/permission.decorator';
 import { RpcValidationPipe } from 'src/utils/RpcValidationPipe';
 import { IUserContext } from 'src/utils/types/IUserContext.interface';
 import { ApplyRpcErrorHandling } from 'src/utils/docerators/error-handeling/class/ApplyRpcErrorHandling.decorator';
-import { Actions, Subjects, WithdrawalRequestErrors, WithdrawalRequestStatus } from '@lms-organization/shared-types';
+import { Actions, Subjects, WithdrawalRequestErrors, WithdrawalRequestStatus } from '@darnozom/shared-types';
 import { WithdrawalRequestService } from '../services/withdrawal-request.service';
 import { CreateWithdrawalRequestDto } from '../dto/create-withdrawal-request.dto';
 import { UpdateWithdrawalRequestDto } from '../dto/update-withdrawal-request.dto';

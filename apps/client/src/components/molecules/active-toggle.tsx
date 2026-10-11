@@ -3,7 +3,7 @@
 import { Badge } from '@/components/atoms/badge';
 import { Switch } from '@/components/atoms/switch';
 import { useTranslations } from 'next-intl';
-import { ActiveStatus } from '@lms-organization/shared-types';
+import { ActiveStatus } from '@darnozom/shared-types';
 
 interface ActiveToggleProps {
   activeStatus?: ActiveStatus | string;

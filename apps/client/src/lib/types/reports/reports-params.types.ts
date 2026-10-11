@@ -1,4 +1,4 @@
-import { AccessType } from '@lms-organization/shared-types';
+import { AccessType } from '@darnozom/shared-types';
 
 /** NATS payload for report dashboard endpoints */
 export interface ReportsParams {

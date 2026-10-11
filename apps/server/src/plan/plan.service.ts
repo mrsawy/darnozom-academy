@@ -6,7 +6,7 @@ import { Plan } from './entities/plan.entity';
 import mongoose, { Model } from 'mongoose';
 import { BillingCycle } from 'src/utils/enums/billingCycle.enum';
 import { Frequency } from 'src/utils/types/Frequency.enum';
-import { Currency } from '@lms-organization/shared-types';
+import { Currency } from '@darnozom/shared-types';
 
 @Injectable()
 export class PlanService {

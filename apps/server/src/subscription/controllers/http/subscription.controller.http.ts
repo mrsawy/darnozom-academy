@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, UseGuards, Request } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { RequirePermissionsGuard } from 'src/role/permission.decorator';
-import { Actions, Subjects } from '@lms-organization/shared-types';
+import { Actions, Subjects } from '@darnozom/shared-types';
 import { handleError } from 'src/utils/errorHandling';
 import { IUserRequest } from 'src/auth/interfaces/IUserRequest.interface';
 import { SubscriptionService } from '../../services/subscription.service';

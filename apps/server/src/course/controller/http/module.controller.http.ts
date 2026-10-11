@@ -3,7 +3,7 @@ import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { IUserRequest } from 'src/auth/interfaces/IUserRequest.interface';
 import { CreateCourseModuleDto } from '../../dto/create-course-module.dto';
 import { CourseModulesService } from '../../services/module/course-modules.service';
-import { Actions, Subjects } from '@lms-organization/shared-types';
+import { Actions, Subjects } from '@darnozom/shared-types';
 import { RequirePermissionsGuard } from 'src/role/permission.decorator';
 
 @Controller('module')

@@ -35,7 +35,7 @@ import ContentTipsCard from './content-tips-card';
 import ContentStatusCard from './content-status-card';
 import { getErrorMessage } from '@/lib/schema/utils/gerErrorMessage';
 import { resolveOrgUploadPath } from '@/lib/utils/auth/getAuthUserWithCache';
-import { MeetingProvider } from '@lms-organization/shared-types';
+import { MeetingProvider } from '@darnozom/shared-types';
 import { ROUTE_ORG_LIVE_CALL } from '@/lib/data/constants/routes.constants';
 import { Link } from '@/i18n/navigation';
 import { Video } from 'lucide-react';

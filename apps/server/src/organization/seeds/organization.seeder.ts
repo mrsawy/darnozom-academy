@@ -5,7 +5,7 @@ import { ReviewType } from 'src/review/enum/reviewType.enum';
 import { Enrollment } from 'src/enrollment/entities/enrollment.entity';
 import { Review } from 'src/review/entities/review.entity';
 import { Course } from 'src/course/entities/course.entity';
-import { EntityStatus, VerificationStatus, IdentityDocumentType, ApprovalStatus } from '@lms-organization/shared-types';
+import { EntityStatus, VerificationStatus, IdentityDocumentType, ApprovalStatus } from '@darnozom/shared-types';
 
 export class OrganizationSeeder {
   constructor(

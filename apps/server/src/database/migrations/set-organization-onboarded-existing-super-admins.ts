@@ -10,7 +10,7 @@ import { NestFactory } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule, getModelToken } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Roles } from '@lms-organization/shared-types';
+import { Roles } from '@darnozom/shared-types';
 import { MONGO_CONNECTION_OPTIONS } from '../../config/mongo.config';
 import { User, UserSchema } from '../../user/entities/user.entity';
 import { resolveMigrationMongoUri } from './migration-mongo.util';

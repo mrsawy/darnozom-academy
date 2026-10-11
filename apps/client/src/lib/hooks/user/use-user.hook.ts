@@ -9,8 +9,8 @@ import {
   type InfiniteData,
 } from '@/lib/utils';
 import { CreateUserFormData, EditUserFormData } from '@/lib/schema/user.schema';
-import { CreateUserDto } from '@lms-organization/shared-types/dto';
-import { UserStatus } from '@lms-organization/shared-types';
+import { CreateUserDto } from '@darnozom/shared-types/dto';
+import { UserStatus } from '@darnozom/shared-types';
 import { toast } from 'react-toastify';
 import { useRouter } from '@/i18n/navigation';
 import useGeneralStore from '@/lib/store/generalStore';

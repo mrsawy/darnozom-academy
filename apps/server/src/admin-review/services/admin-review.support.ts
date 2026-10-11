@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, PaginateModel, PaginateOptions, Types } from 'mongoose';
-import { ApprovalStatus } from '@lms-organization/shared-types';
+import { ApprovalStatus } from '@darnozom/shared-types';
 import { Category } from 'src/category/entities/category.entity';
 import { Course } from 'src/course/entities/course.entity';
 import { User } from 'src/user/entities/user.entity';

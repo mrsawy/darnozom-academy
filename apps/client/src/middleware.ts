@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import createI18nMiddleware from 'next-intl/middleware';
-import { Roles } from '@lms-organization/shared-types';
+import { Roles } from '@darnozom/shared-types';
 import { PUBLIC_PREFIX_ROUTES, PUBLIC_ROUTES } from '@/lib/route.config';
 import { IUser } from '@/types/user/user.interface';
 import {

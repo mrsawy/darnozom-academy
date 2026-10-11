@@ -7,7 +7,7 @@ export type CourseSchemaTranslateFn = (
   key: string,
   values?: Record<string, string | number>
 ) => string;
-import { Currency, MIN_PAID_PRICE, isBelowMinPaidPrice } from '@lms-organization/shared-types';
+import { Currency, MIN_PAID_PRICE, isBelowMinPaidPrice } from '@darnozom/shared-types';
 
 function buildPricingDetailsSchema(translate: CourseSchemaTranslateFn) {
   return Yup.object().shape({

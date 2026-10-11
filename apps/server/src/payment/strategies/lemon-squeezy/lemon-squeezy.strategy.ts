@@ -10,7 +10,7 @@ import {
   ProcessedWebhook,
   SubscriptionCheckoutResult,
 } from '../interfaces/payment-strategy.interface';
-import { Currency } from '@lms-organization/shared-types';
+import { Currency } from '@darnozom/shared-types';
 import type { SubscribeToPlanPayload } from '../../dto/subscribe-to-plan.interface';
 import { UserDocument } from 'src/user/entities/user.entity';
 import { handleLemonSqueezySubscriptionWebhook } from './lemonSqueezySubscriptionWebhookHandler.service';

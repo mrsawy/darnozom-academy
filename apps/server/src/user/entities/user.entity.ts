@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document, Types } from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
-import { Roles, UserErrors, UserStatus, Currency } from '@lms-organization/shared-types';
+import { Roles, UserErrors, UserStatus, Currency } from '@darnozom/shared-types';
 import { applyUserSoftDeleteMiddleware } from '../utils/user-soft-delete.middleware';
 
 export type UserDocument = User & Document<Types.ObjectId>;

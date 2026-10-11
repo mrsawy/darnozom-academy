@@ -1,1 +1,1 @@
-export { PlanTier } from '@lms-organization/shared-types';
+export { PlanTier } from '@darnozom/shared-types';

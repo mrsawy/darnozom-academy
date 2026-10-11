@@ -17,7 +17,7 @@ import { SkipOnboardingCheck } from '../../decorators/skip-onboarding-check.deco
 import { AuthGuard } from '../../guards/auth.guard';
 import { UserDocument } from '../../../user/entities/user.entity';
 import { Role } from '../../../role/entities/role.entity';
-import { AuthErrors, RATE_LIMIT } from '@lms-organization/shared-types';
+import { AuthErrors, RATE_LIMIT } from '@darnozom/shared-types';
 import { GoogleAuthGuard } from '../../guards/google-auth.guard';
 import { RateLimit } from 'src/rate-limiter/rate-limiter.decorator';
 

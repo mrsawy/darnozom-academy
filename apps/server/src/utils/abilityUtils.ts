@@ -1,4 +1,4 @@
-import { Actions, ConditionKeys, Subjects } from '@lms-organization/shared-types';
+import { Actions, ConditionKeys, Subjects } from '@darnozom/shared-types';
 import { AppAbility } from 'src/role/permissions.factory';
 
 export function checkConditionForRule(ability: AppAbility, action: Actions, subject: Subjects, conditionKey: ConditionKeys) {

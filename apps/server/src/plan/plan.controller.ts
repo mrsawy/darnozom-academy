@@ -5,7 +5,7 @@ import { UpdatePlanDto } from './dto/update-plan.dto';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { PlatformAdminGuard } from 'src/admin-review/guards/platform-admin.guard';
 import { RequirePermissionsGuard } from 'src/role/permission.decorator';
-import { Actions, Subjects } from '@lms-organization/shared-types';
+import { Actions, Subjects } from '@darnozom/shared-types';
 
 @Controller('plan')
 export class PlanController {

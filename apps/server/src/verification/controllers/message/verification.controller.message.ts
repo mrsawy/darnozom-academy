@@ -1,6 +1,6 @@
 import { BadRequestException, Controller } from '@nestjs/common';
 import { Ctx, MessagePattern, Payload } from '@nestjs/microservices';
-import { Actions, RATE_LIMIT, Subjects, UserErrors } from '@lms-organization/shared-types';
+import { Actions, RATE_LIMIT, Subjects, UserErrors } from '@darnozom/shared-types';
 import { RpcValidationPipe } from 'src/utils/RpcValidationPipe';
 import { IUserContext } from 'src/utils/types/IUserContext.interface';
 import { ApplyRpcErrorHandling } from 'src/utils/docerators/error-handeling/class/ApplyRpcErrorHandling.decorator';

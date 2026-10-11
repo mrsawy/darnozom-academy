@@ -13,7 +13,7 @@ import {
   type StudentDashboardReportsSummary,
   type TimeSpentPerCourse,
   type TopCourseReport,
-} from '@lms-organization/shared-types';
+} from '@darnozom/shared-types';
 import { Enrollment } from 'src/enrollment/entities/enrollment.entity';
 
 export interface OrganizationDashboardAggregationExtras {

@@ -1,5 +1,5 @@
 import * as yup from 'yup';
-import { Actions, ConditionKeys, Roles, Subjects } from '@lms-organization/shared-types';
+import { Actions, ConditionKeys, Roles, Subjects } from '@darnozom/shared-types';
 
 export interface RoleFormValues {
   name?: Roles | string;

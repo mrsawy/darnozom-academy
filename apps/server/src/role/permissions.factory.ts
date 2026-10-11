@@ -1,5 +1,5 @@
 import { AbilityBuilder, createMongoAbility, MongoAbility } from '@casl/ability';
-import { Actions, ConditionKeys, Subjects, type ICondition } from '@lms-organization/shared-types';
+import { Actions, ConditionKeys, Subjects, type ICondition } from '@darnozom/shared-types';
 import { Injectable } from '@nestjs/common';
 import { Role } from './entities/role.entity';
 import { UserDocument } from 'src/user/entities/user.entity';

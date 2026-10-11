@@ -2,7 +2,7 @@ import { Model, Types } from 'mongoose';
 import { faker } from '@faker-js/faker';
 import { WithdrawalRequest } from '../entities/withdrawal-request.entity';
 import { Wallet } from '../../wallet/entities/wallet.entity';
-import { Currency, WithdrawalMethod, WithdrawalRequestStatus } from '@lms-organization/shared-types';
+import { Currency, WithdrawalMethod, WithdrawalRequestStatus } from '@darnozom/shared-types';
 import { User } from '../../user/entities/user.entity';
 
 const STATUSES = [

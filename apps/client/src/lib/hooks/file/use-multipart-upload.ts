@@ -7,7 +7,7 @@ import {
   completeMultipartUpload,
   abortMultipartUpload,
 } from '@/lib/actions/file/multipart-upload.action';
-import { MAX_CONCURRENT, MAX_RETRIES, PART_SIZE } from '@lms-organization/shared-types';
+import { MAX_CONCURRENT, MAX_RETRIES, PART_SIZE } from '@darnozom/shared-types';
 
 /** Thrown when the user cancels an in-progress multipart upload (do not toast as a failure). */
 export class MultipartUploadCancelledError extends Error {

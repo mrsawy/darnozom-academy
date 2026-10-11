@@ -1,7 +1,7 @@
 import { Card, CardContent } from '@/components/atoms/card';
 import { IContent } from '@/lib/types/course/content.interface';
 import { useEffect } from 'react';
-import { ProgressTrack } from '@lms-organization/shared-types';
+import { ProgressTrack } from '@darnozom/shared-types';
 import { useToggleContentComplete } from '@/lib/hooks/course/content/useContent';
 import { useParams } from 'next/navigation';
 

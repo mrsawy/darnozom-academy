@@ -5,7 +5,7 @@ import { SiteHeader } from '@/components/molecules/site-header';
 import { SidebarInset, SidebarProvider } from '@/components/atoms/sidebar';
 import { ParentSidebar } from './__components/ParentSidebar';
 import { getAuthUser } from '@/lib/actions/user/user.action';
-import { Roles } from '@lms-organization/shared-types';
+import { Roles } from '@darnozom/shared-types';
 
 export async function generateMetadata({
   params,

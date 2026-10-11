@@ -14,7 +14,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Combobox } from '@/components/molecules/combobox';
 import { PhoneInput } from '@/components/organs/phone-input';
 import { IconLoader2, IconUserPlus } from '@tabler/icons-react';
-import { Country } from '@lms-organization/shared-types';
+import { Country } from '@darnozom/shared-types';
 import { createParentForStudent } from '@/lib/actions/parent/parent-children.action';
 import { translateApiMessage } from '@/lib/utils/errors/translateApiMessage';
 import { buildCreateParentSchema, type CreateParentFormValues } from './create-parent-form.schema';

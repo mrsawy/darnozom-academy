@@ -6,7 +6,7 @@ import { InitiateMultipartUploadDto, CompleteMultipartUploadDto, AbortMultipartU
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { IUserRequest } from 'src/auth/interfaces/IUserRequest.interface';
 import { MultipartUploadAccessService } from './multipart-upload-access.service';
-import { Roles } from '@lms-organization/shared-types';
+import { Roles } from '@darnozom/shared-types';
 
 @UseGuards(AuthGuard)
 @Controller('file')

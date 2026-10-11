@@ -1,7 +1,7 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model, Types } from 'mongoose';
-import { GradeErrors, GradeSuccessMessages } from '@lms-organization/shared-types';
+import { GradeErrors, GradeSuccessMessages } from '@darnozom/shared-types';
 import { Grade } from './entities/grade.entity';
 import { Course } from '../course/entities/course.entity';
 import { CreateGradeDto } from './dto/create-grade.dto';

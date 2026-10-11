@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, PaginateModel } from 'mongoose';
-import { ActiveStatus, PublishStatus } from '@lms-organization/shared-types';
+import { ActiveStatus, PublishStatus } from '@darnozom/shared-types';
 import { Course } from 'src/course/entities/course.entity';
 import { CourseService } from 'src/course/services/course/course.service';
 import { buildPendingReviewFilter, applyUpdateWithApproval } from 'src/utils/approval.utils';

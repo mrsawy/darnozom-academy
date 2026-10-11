@@ -1,4 +1,4 @@
-import { Currency, Roles, UserStatus, IPermission } from '@lms-organization/shared-types';
+import { Currency, Roles, UserStatus, IPermission } from '@darnozom/shared-types';
 import { Organization } from '../organization/organization.interface';
 import { ICategory } from '../category/ICategory';
 

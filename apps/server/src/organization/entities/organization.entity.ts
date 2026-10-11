@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
 import mongoose, { Document, Types } from 'mongoose';
-import { VerificationStatus, IdentityDocumentType, EntityStatus, ApprovalStatus } from '@lms-organization/shared-types';
+import { VerificationStatus, IdentityDocumentType, EntityStatus, ApprovalStatus } from '@darnozom/shared-types';
 
 @Schema({ timestamps: true })
 export class Organization extends Document<Types.ObjectId> {

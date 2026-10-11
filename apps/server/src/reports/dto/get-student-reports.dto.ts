@@ -1,5 +1,5 @@
 import { IsArray, IsDateString, IsEnum, IsOptional } from 'class-validator';
-import { AccessType } from '@lms-organization/shared-types';
+import { AccessType } from '@darnozom/shared-types';
 
 /**
  * RPC payload for {@link MessagePattern} `reports.studentDashboard`.

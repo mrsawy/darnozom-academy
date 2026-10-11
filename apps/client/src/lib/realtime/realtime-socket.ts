@@ -1,8 +1,8 @@
 import { io, type Socket } from 'socket.io-client';
-import { ACCESS_TOKEN_NAME, SESSION_ID_COOKIE_NAME } from '@lms-organization/shared-types';
+import { ACCESS_TOKEN_NAME, SESSION_ID_COOKIE_NAME } from '@darnozom/shared-types';
 
 /** Server → client realtime event names. Shared with the server so neither side drifts. */
-export { RealtimeEvents } from '@lms-organization/shared-types';
+export { RealtimeEvents } from '@darnozom/shared-types';
 
 export function getTokenFromCookie(cookieName: string): string | null {
   if (typeof document === 'undefined') return null;

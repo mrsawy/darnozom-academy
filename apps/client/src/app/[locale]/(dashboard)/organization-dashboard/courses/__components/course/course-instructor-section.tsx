@@ -8,7 +8,7 @@ import { useTranslations } from 'next-intl';
 import { UserMultiSelect } from '@/components/molecules/multi-select/user-multi-select';
 import UserCombobox from '@/components/molecules/user-combobox';
 import type { Option } from '@/components/molecules/multi-select/multi-select';
-import { Roles } from '@lms-organization/shared-types';
+import { Roles } from '@darnozom/shared-types';
 import type { IInstructor } from '@/lib/types/user/user.interface';
 import { Label } from '@/components/atoms/label';
 

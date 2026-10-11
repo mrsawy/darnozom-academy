@@ -3,7 +3,7 @@
 import { useState, useCallback, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { IconLoader2, IconPlus, IconRefresh } from '@tabler/icons-react';
-import { Roles } from '@lms-organization/shared-types';
+import { Roles } from '@darnozom/shared-types';
 import { Button } from '@/components/atoms/button';
 import { DeleteConfirmationModal } from '@/components/molecules/modals';
 import {

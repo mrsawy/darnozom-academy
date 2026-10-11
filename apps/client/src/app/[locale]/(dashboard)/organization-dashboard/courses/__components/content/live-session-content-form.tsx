@@ -22,7 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/atoms/select';
-import { Platform } from '@lms-organization/shared-types';
+import { Platform } from '@darnozom/shared-types';
 import { CourseContentType } from '@/lib/types/course/enum/CourseContentType.enum';
 
 function getInitialLiveSessionProvider(initialValues?: CourseContentFormData): string | undefined {

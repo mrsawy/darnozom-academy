@@ -1,5 +1,5 @@
 import { IsEmail, IsNotEmpty, IsString, Length, Matches } from 'class-validator';
-import { PASSWORD_RESET } from '@lms-organization/shared-types';
+import { PASSWORD_RESET } from '@darnozom/shared-types';
 
 export class VerifyPasswordResetOtpDto {
   @IsNotEmpty()

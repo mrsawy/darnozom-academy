@@ -1,5 +1,5 @@
 import { IsArray, IsDateString, IsEnum, IsMongoId, IsOptional } from 'class-validator';
-import { AccessType } from '@lms-organization/shared-types';
+import { AccessType } from '@darnozom/shared-types';
 
 export class GetOrganizationReportsDto {
   @IsOptional()

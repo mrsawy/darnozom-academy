@@ -1,6 +1,6 @@
 import { BadRequestException, ForbiddenException } from '@nestjs/common';
 import { Types } from 'mongoose';
-import { MeetingProvider, PrivateSessionErrors } from '@lms-organization/shared-types';
+import { MeetingProvider, PrivateSessionErrors } from '@darnozom/shared-types';
 import { SessionBookingService } from './session-booking.service';
 import { BookingStatus } from '../enums/booking-status.enum';
 import { RescheduleStatus } from '../enums/reschedule-status.enum';

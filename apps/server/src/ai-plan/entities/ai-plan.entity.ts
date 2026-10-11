@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
-import { AiPlanTier, BillingCycle, Currency } from '@lms-organization/shared-types';
+import { AiPlanTier, BillingCycle, Currency } from '@darnozom/shared-types';
 
 const AiPlanPriceDetailsSchema = new MongooseSchema(
   {

@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common';
 import { OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import type { Server, Socket } from 'socket.io';
 import { RealtimeSessionAuthService, RealtimeSessionUser } from 'src/realtime/realtime-session-auth.service';
-import { ACCESS_TOKEN_NAME } from '@lms-organization/shared-types';
+import { ACCESS_TOKEN_NAME } from '@darnozom/shared-types';
 import { ChatService } from './chat.service';
 import { ChatEmitService } from './chat-emit.service';
 import { getWebSocketCorsOptions } from 'src/realtime/websocket-cors';

@@ -4,7 +4,7 @@ import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { ApplyRpcErrorHandling } from 'src/utils/docerators/error-handeling/class/ApplyRpcErrorHandling.decorator';
 import { RpcValidationPipe } from 'src/utils/RpcValidationPipe';
 import { RequirePermissionsGuard } from 'src/role/permission.decorator';
-import { Actions, Subjects } from '@lms-organization/shared-types';
+import { Actions, Subjects } from '@darnozom/shared-types';
 import { IUserContext } from 'src/utils/types/IUserContext.interface';
 import { AiSubscriptionService } from '../../services/ai-subscription.service';
 import type { PaginateOptions } from 'mongoose';

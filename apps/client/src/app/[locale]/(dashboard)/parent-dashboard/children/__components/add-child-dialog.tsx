@@ -18,7 +18,7 @@ import { createChildSchema, type CreateChildSchema } from './child-form.schema';
 import { translateApiMessage } from '@/lib/utils/errors/translateApiMessage';
 import { PhoneInput } from '@/components/organs/phone-input';
 import { Combobox } from '@/components/molecules/combobox';
-import { Country } from '@lms-organization/shared-types';
+import { Country } from '@darnozom/shared-types';
 
 interface AddChildDialogProps {
   open: boolean;

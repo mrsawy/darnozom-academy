@@ -13,8 +13,8 @@
     "baseUrl": "./",
     "paths": {
       "src/*": ["src/*"],
-      "@lms-organization/shared-types": ["../../lib/shared-types/src/index.ts"],
-      "@lms-organization/shared-types/dto": ["../../lib/shared-types/src/lib/dto/index.ts"]
+      "@darnozom/shared-types": ["../../lib/shared-types/src/index.ts"],
+      "@darnozom/shared-types/dto": ["../../lib/shared-types/src/lib/dto/index.ts"]
     },
     "incremental": true,
     "skipLibCheck": true,

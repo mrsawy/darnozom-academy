@@ -1,4 +1,4 @@
-import { Roles } from '@lms-organization/shared-types';
+import { Roles } from '@darnozom/shared-types';
 import { IUser } from '../user/user.interface';
 
 export interface RegisterResponse {

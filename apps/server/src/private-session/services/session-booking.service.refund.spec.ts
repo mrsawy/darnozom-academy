@@ -1,6 +1,6 @@
 import { BadRequestException, ForbiddenException } from '@nestjs/common';
 import { Types } from 'mongoose';
-import { Currency, PaymentMethod, PrivateSessionErrors } from '@lms-organization/shared-types';
+import { Currency, PaymentMethod, PrivateSessionErrors } from '@darnozom/shared-types';
 import { SessionBookingService } from './session-booking.service';
 import { BookingStatus } from '../enums/booking-status.enum';
 import { RefundRequestStatus } from '../enums/refund-status.enum';

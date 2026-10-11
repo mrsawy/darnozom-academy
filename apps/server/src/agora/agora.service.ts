@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { RtcRole, RtcTokenBuilder } from 'agora-token';
-import { MeetingProvider, Roles } from '@lms-organization/shared-types';
+import { MeetingProvider, Roles } from '@darnozom/shared-types';
 import { CourseContent } from 'src/course/entities/course-content.entity';
 import type { LiveSession } from 'src/course/entities/liveSession.schema';
 import { Enrollment } from 'src/enrollment/entities/enrollment.entity';

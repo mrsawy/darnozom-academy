@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { Controller, useForm, type Resolver } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Sparkles, Loader2 } from 'lucide-react';
-import { AI_QUIZ_MAX_QUESTIONS, AI_QUIZ_MIN_QUESTIONS } from '@lms-organization/shared-types';
+import { AI_QUIZ_MAX_QUESTIONS, AI_QUIZ_MIN_QUESTIONS } from '@darnozom/shared-types';
 import { translateApiMessage } from '@/lib/utils/errors/translateApiMessage';
 import { Button } from '@/components/atoms/button';
 import { Input } from '@/components/atoms/input';

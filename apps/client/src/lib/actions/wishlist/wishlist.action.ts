@@ -7,7 +7,7 @@ import {
   GetWishlistDto,
 } from '@/lib/types/wishlist/wishlist.interface';
 import { Paginated } from '@/lib/types/Paginated';
-import { isUnauthenticatedError } from '@lms-organization/shared-types';
+import { isUnauthenticatedError } from '@darnozom/shared-types';
 
 export async function addToWishlist(courseId: string) {
   const payload: CreateWishlistDto = { courseId };

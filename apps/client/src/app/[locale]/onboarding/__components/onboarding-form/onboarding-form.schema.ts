@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import { CURRENCIES, IDENTIFIER_PATTERN, Roles } from '@lms-organization/shared-types';
+import { CURRENCIES, IDENTIFIER_PATTERN, Roles } from '@darnozom/shared-types';
 
 /** Public OAuth onboarding choices: Student, Parent, or org admin (teacher) role. */
 export const ONBOARDING_ROLES = [Roles.STUDENT, Roles.PARENT, Roles.SUPER_ADMIN] as const;

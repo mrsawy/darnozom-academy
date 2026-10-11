@@ -15,7 +15,7 @@ import {
   AI_ATTACHMENT_TOTAL_TEXT_BUDGET,
   AiAttachmentErrors,
   AiAttachmentMime,
-} from '@lms-organization/shared-types';
+} from '@darnozom/shared-types';
 
 export type AiAttachmentPart = TextPart | ImagePart | FilePart;
 

@@ -11,7 +11,7 @@ import { VerifyPasswordResetOtpDto } from '../../dto/verify-password-reset-otp.d
 import { CompleteOnboardingDto } from '../../dto/complete-onboarding.dto';
 import { ApplyRpcErrorHandling } from 'src/utils/docerators/error-handeling/class/ApplyRpcErrorHandling.decorator';
 import { RateLimit } from 'src/rate-limiter/rate-limiter.decorator';
-import { RATE_LIMIT } from '@lms-organization/shared-types';
+import { RATE_LIMIT } from '@darnozom/shared-types';
 
 @ApplyRpcErrorHandling
 @Controller()

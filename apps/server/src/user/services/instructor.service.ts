@@ -7,7 +7,7 @@ import { Roles } from '../../role/enum/Roles.enum';
 import { Role } from '../../role/entities/role.entity';
 import { NORMALIZATION_FACTORS, WEIGHTS, CAPS, MINIMUM_THRESHOLDS, SCALING_OPTIONS, RECENCY_CONFIG } from '../config/featuredInstructors.config';
 import { PaginateOptionsWithSearch } from 'src/utils/types/PaginateOptionsWithSearch';
-import { UserStatus, EntityStatus } from '@lms-organization/shared-types';
+import { UserStatus, EntityStatus } from '@darnozom/shared-types';
 import { buildInstructorMatch, InstructorFilterInput } from '../utils/instructor-filter.util';
 import { lookupNotDeleted } from 'src/utils/soft-delete';
 

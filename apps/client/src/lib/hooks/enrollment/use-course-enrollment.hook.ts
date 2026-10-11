@@ -8,7 +8,7 @@ import {
   Currency,
   Roles,
   isUnauthenticatedError,
-} from '@lms-organization/shared-types';
+} from '@darnozom/shared-types';
 import { useRouter } from '@/i18n/navigation';
 import { useMutation, useQuery, useQueryClient } from '@/lib/utils';
 import { useWallet } from '@/lib/hooks/wallet/use-wallet';

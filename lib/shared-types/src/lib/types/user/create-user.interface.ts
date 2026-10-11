@@ -1,6 +1,6 @@
 /**
  * Client-safe shape for CreateUserDto. Use this type in the client;
- * use the class from '@lms-organization/shared-types/dto' on the server.
+ * use the class from '@darnozom/shared-types/dto' on the server.
  */
 import type { Roles } from '../role/role/roles.enum';
 import type { UserStatus } from './status.enum';

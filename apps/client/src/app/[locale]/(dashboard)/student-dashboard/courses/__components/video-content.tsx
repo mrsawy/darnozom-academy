@@ -8,7 +8,7 @@ import ReactYoutubePlayer from '@/components/molecules/video-player/react-youtub
 import type { IContentProgressItem } from '@/lib/types/enrollment/enrollment.interface';
 import { useToggleContentComplete } from '@/lib/hooks/course/content/useContent';
 import { useParams } from 'next/navigation';
-import { ProgressTrack } from '@lms-organization/shared-types';
+import { ProgressTrack } from '@darnozom/shared-types';
 
 /** Fraction (0-1) of a video that must be watched before it is auto-marked complete. Mirrors mobile's threshold. */
 const VIDEO_COMPLETION_FRACTION = ProgressTrack.VIDEO_COMPLETION_PERCENT / 100;

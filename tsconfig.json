@@ -16,7 +16,7 @@
     "isolatedModules": true,
     "incremental": true,
     "paths": {
-      "@lms-organization/shared-types": [
+      "@darnozom/shared-types": [
         "lib/shared-types/src/index.ts"
       ]
     }

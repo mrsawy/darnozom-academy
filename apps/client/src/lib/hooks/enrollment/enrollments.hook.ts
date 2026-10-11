@@ -3,7 +3,7 @@
 import { useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
-import { AccessType } from '@lms-organization/shared-types';
+import { AccessType } from '@darnozom/shared-types';
 import { useQuery, useMutation, useQueryClient } from '@/lib/utils';
 import { getUserEnrollments } from '@/lib/actions/enrollment/getUserEnrollments.action';
 import { Paginated, PaginationOptions } from '@/lib/types/Paginated';

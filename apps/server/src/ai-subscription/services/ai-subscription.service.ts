@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { PaginateModel, PaginateOptions, Types } from 'mongoose';
 import { AiSubscription, AiSubscriptionDocument } from '../entities/ai-subscription.entity';
 import { AiPlan, AiPlanDocument } from '../../ai-plan/entities/ai-plan.entity';
-import { AiPlanTier } from '@lms-organization/shared-types';
+import { AiPlanTier } from '@darnozom/shared-types';
 import { BillingCycle } from 'src/utils/enums/billingCycle.enum';
 import { SubscriptionStatus } from 'src/utils/enums/subscriptionStatus.enum';
 

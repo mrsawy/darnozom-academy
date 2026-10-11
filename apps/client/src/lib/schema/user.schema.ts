@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 
-import { UserStatus, Country, Currency } from '@lms-organization/shared-types';
+import { UserStatus, Country, Currency } from '@darnozom/shared-types';
 
 type TVal = (key: string) => string;
 
@@ -192,7 +192,7 @@ export type EditUserFormData = yup.InferType<ReturnType<typeof buildEditUserSche
 /** English-key identity translator for InferType / tests when no locale is bound. */
 export const socialLinksSchema = buildSocialLinksSchema((k) => k);
 
-export { UserStatus } from '@lms-organization/shared-types';
+export { UserStatus } from '@darnozom/shared-types';
 
 export enum UserCurrency {
   USD = 'USD',

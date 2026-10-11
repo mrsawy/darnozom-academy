@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { PaginateModel } from 'mongoose';
 import { APPROVED_STATUSES } from 'src/utils/approval.utils';
-import { PublishStatus } from '@lms-organization/shared-types';
+import { PublishStatus } from '@darnozom/shared-types';
 import { Course } from '../../entities/course.entity';
 import { FeaturedCourse } from '../../types/featured-course.interface';
 import { NORMALIZATION_FACTORS, WEIGHTS, CAPS, MINIMUM_THRESHOLDS, SCALING_OPTIONS, RECENCY_CONFIG } from '../../config/featuredCourses.config';

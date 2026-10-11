@@ -1,5 +1,5 @@
 import { IsEmail, IsEnum, IsNotEmpty, IsOptional } from 'class-validator';
-import { PasswordResetClient } from '@lms-organization/shared-types';
+import { PasswordResetClient } from '@darnozom/shared-types';
 
 export class ForgotPasswordDto {
   @IsNotEmpty()

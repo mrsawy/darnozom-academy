@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { PaginateModel } from 'mongoose';
-import { ActiveStatus, PublishStatus } from '@lms-organization/shared-types';
+import { ActiveStatus, PublishStatus } from '@darnozom/shared-types';
 import { APPROVED_STATUSES } from 'src/utils/approval.utils';
 import { CourseContent } from '../../../entities/course-content.entity';
 import { NOT_DELETED_CONTENT_FILTER } from '../../../utils/not-deleted-content.filter';

@@ -8,7 +8,7 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { CategoryService } from './category.service';
 import { PaginateOptionsWithSearch } from '../utils/types/PaginateOptionsWithSearch';
-import { UserErrors } from '@lms-organization/shared-types';
+import { UserErrors } from '@darnozom/shared-types';
 
 @Controller()
 export class CategoryMessageController {

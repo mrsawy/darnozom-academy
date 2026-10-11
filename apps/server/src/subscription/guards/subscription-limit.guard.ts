@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext, ForbiddenException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { RpcException } from '@nestjs/microservices';
-import { SubscriptionLimitErrors, UserErrors } from '@lms-organization/shared-types';
+import { SubscriptionLimitErrors, UserErrors } from '@darnozom/shared-types';
 import { SubscriptionService } from '../services/subscription.service';
 import { SUBSCRIPTION_LIMIT_KEY } from '../decorators/check-subscription-limit.decorator';
 import { FEATURE_LIMIT_CONFIG, FeatureLimitDefinition } from '../constants/feature-limit.config';

@@ -1,7 +1,7 @@
 'use server';
 
 import { createAuthorizedNatsRequest } from '@/lib/utils/createNatsRequest';
-import type { NotificationType } from '@lms-organization/shared-types';
+import type { NotificationType } from '@darnozom/shared-types';
 
 export interface INotification {
   _id: string;

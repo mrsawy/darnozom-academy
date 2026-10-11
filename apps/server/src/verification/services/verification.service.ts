@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { ApprovalStatus, VerificationStatus, IdentityDocumentType } from '@lms-organization/shared-types';
+import { ApprovalStatus, VerificationStatus, IdentityDocumentType } from '@darnozom/shared-types';
 import { Organization } from 'src/organization/entities/organization.entity';
 import { isOrgFullyVerified } from 'src/utils/verification.utils';
 

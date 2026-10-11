@@ -7,7 +7,7 @@ import { randomBytes } from 'node:crypto';
 import { CreateWalletDto } from './dto/create-wallet.dto';
 import { UpdateWalletDto } from './dto/update-wallet.dto';
 import { WalletTransactionDto } from './dto/wallet-transaction.dto';
-import { Currency, PaymentMethod, PaymentPurpose, PaymentProvider, WalletErrors, WithdrawalRequestErrors } from '@lms-organization/shared-types';
+import { Currency, PaymentMethod, PaymentPurpose, PaymentProvider, WalletErrors, WithdrawalRequestErrors } from '@darnozom/shared-types';
 import { CurrencyService } from 'src/currency/currency.service';
 import { TransactionService } from 'src/transaction/transaction.service';
 import { TransactionType, TransactionStatus, Transaction } from 'src/transaction/entities/transaction.entity';

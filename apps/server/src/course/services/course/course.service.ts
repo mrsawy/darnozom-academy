@@ -2,7 +2,7 @@ import { Injectable, InternalServerErrorException, NotFoundException, BadRequest
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import mongoose, { ClientSession, Connection, FilterQuery, PaginateModel } from 'mongoose';
-import { ActiveStatus, ApprovalStatus, PublishStatus, Currency, CourseErrors, GradeErrors, SchoolTypeErrors } from '@lms-organization/shared-types';
+import { ActiveStatus, ApprovalStatus, PublishStatus, Currency, CourseErrors, GradeErrors, SchoolTypeErrors } from '@darnozom/shared-types';
 import { BillingCycle } from 'src/utils/enums/billingCycle.enum';
 import { CurrencyService } from 'src/currency/currency.service';
 import { FileService } from 'src/file/file.service';

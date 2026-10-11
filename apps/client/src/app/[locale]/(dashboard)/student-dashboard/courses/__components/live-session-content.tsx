@@ -8,7 +8,7 @@ import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { ROUTE_STUDENT_LIVE_CALL } from '@/lib/data/constants/routes.constants';
-import { MeetingProvider } from '@lms-organization/shared-types';
+import { MeetingProvider } from '@darnozom/shared-types';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 const EARLY_JOIN_MS = 15 * 60 * 1000;

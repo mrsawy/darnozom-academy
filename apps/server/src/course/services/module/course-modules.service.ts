@@ -2,7 +2,7 @@ import { Injectable, InternalServerErrorException, NotFoundException, BadRequest
 import { InjectModel, InjectConnection } from '@nestjs/mongoose';
 import { CourseModuleEntity } from '../../entities/course-module.entity';
 import mongoose, { Model, Connection, ClientSession, PaginateModel } from 'mongoose';
-import { ApprovalStatus, PublishStatus } from '@lms-organization/shared-types';
+import { ApprovalStatus, PublishStatus } from '@darnozom/shared-types';
 import { applyUpdateWithApproval } from 'src/utils/approval.utils';
 import { assertOrgApproved, isOrgApproved } from 'src/utils/verification.utils';
 import { Organization } from 'src/organization/entities/organization.entity';

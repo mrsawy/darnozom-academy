@@ -1,4 +1,4 @@
-import { Currency } from '@lms-organization/shared-types';
+import { Currency } from '@darnozom/shared-types';
 import { WalletService } from './wallet.service';
 import type { CurrencyService } from 'src/currency/currency.service';
 

@@ -3,8 +3,8 @@
 import { CourseContentType } from './enum/CourseContentType.enum';
 import { VideoType } from './enum/VideoType.enum';
 import type { IUserReview } from '../review/review.types';
-import type { ApprovalStatusType as ApprovalStatus } from '@lms-organization/shared-types';
-import { PublishStatus } from '@lms-organization/shared-types';
+import type { ApprovalStatusType as ApprovalStatus } from '@darnozom/shared-types';
+import { PublishStatus } from '@darnozom/shared-types';
 import type { IModuleContentSettings } from './modules.interface';
 
 export interface Question {

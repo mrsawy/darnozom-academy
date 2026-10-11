@@ -1,4 +1,4 @@
-import { ALL_ERROR_KEYS_SET, CommonErrors } from '@lms-organization/shared-types';
+import { ALL_ERROR_KEYS_SET, CommonErrors } from '@darnozom/shared-types';
 
 /**
  * Extract a user-facing API message from an unknown error (Axios, Nest, plain Error).

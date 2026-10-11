@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MulterModule } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
-import { AI_ATTACHMENT_MAX_TOTAL_SIZE_BYTES } from '@lms-organization/shared-types';
+import { AI_ATTACHMENT_MAX_TOTAL_SIZE_BYTES } from '@darnozom/shared-types';
 import { AuthModule } from '../auth/auth.module';
 import { RoleModule } from '../role/role.module';
 import { AiService } from './services/ai.service';

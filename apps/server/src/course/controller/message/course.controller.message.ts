@@ -10,7 +10,7 @@ import { IUserContext } from 'src/utils/types/IUserContext.interface';
 import { Types, PaginateOptions } from 'mongoose';
 import { ICourseFilters } from 'src/utils/types/CourseFilters';
 import { ApplyRpcErrorHandling } from 'src/utils/docerators/error-handeling/class/ApplyRpcErrorHandling.decorator';
-import { Actions, CourseSuccessMessages, PublishStatus, Subjects, UserErrors } from '@lms-organization/shared-types';
+import { Actions, CourseSuccessMessages, PublishStatus, Subjects, UserErrors } from '@darnozom/shared-types';
 import { RequirePermissionsGuard } from 'src/role/permission.decorator';
 import { CheckSubscriptionLimit } from 'src/subscription/decorators/check-subscription-limit.decorator';
 import { SubscriptionService } from 'src/subscription/services/subscription.service';

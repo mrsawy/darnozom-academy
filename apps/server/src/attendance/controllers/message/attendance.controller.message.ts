@@ -10,7 +10,7 @@ import { RpcValidationPipe } from 'src/utils/RpcValidationPipe';
 import { convertObjectValuesToObjectId } from 'src/utils/ObjectId.utils';
 import { AuthGuard } from '../../../auth/guards/auth.guard';
 import { IUserContext } from '../../../utils/types/IUserContext.interface';
-import { Actions, Subjects } from '@lms-organization/shared-types';
+import { Actions, Subjects } from '@darnozom/shared-types';
 import { RequirePermissionsGuard } from 'src/role/permission.decorator';
 import { ApplyRpcErrorHandling } from 'src/utils/docerators/error-handeling/class/ApplyRpcErrorHandling.decorator';
 import { RateLimit } from 'src/rate-limiter/rate-limiter.decorator';

@@ -8,7 +8,7 @@ import { IUserContext } from '../utils/types/IUserContext.interface';
 import { RpcValidationPipe } from '../utils/RpcValidationPipe';
 import { PaginateOptions } from 'mongoose';
 import { RequirePermissionsGuard } from 'src/role/permission.decorator';
-import { Actions, Subjects } from '@lms-organization/shared-types';
+import { Actions, Subjects } from '@darnozom/shared-types';
 
 @Controller()
 export class GalleryControllerMessage {

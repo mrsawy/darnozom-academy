@@ -6,7 +6,7 @@ import {
   IDENTIFIER_CHARS_PATTERN,
   IDENTIFIER_PATTERN,
   IDENTIFIER_STARTS_WITH_LETTER,
-} from '@lms-organization/shared-types';
+} from '@darnozom/shared-types';
 
 export const signupSchema = Yup.object().shape({
   firstName: Yup.string()

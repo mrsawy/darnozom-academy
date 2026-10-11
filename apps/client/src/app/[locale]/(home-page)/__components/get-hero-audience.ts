@@ -1,4 +1,4 @@
-import { Roles } from '@lms-organization/shared-types';
+import { Roles } from '@darnozom/shared-types';
 
 export type HeroAudience = 'student' | 'parent' | 'organization';
 

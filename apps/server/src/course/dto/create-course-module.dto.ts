@@ -1,6 +1,6 @@
 import { IsString, IsNotEmpty, IsOptional, IsMongoId, IsArray, IsEnum, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
-import { PublishStatus } from '@lms-organization/shared-types';
+import { PublishStatus } from '@darnozom/shared-types';
 import { ModuleContentSettingsDto } from './module-content-settings.dto';
 
 export class CreateCourseModuleDto {

@@ -5,7 +5,7 @@ import { useForm, Controller, useFieldArray, type Control, type Resolver } from 
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useTranslations } from 'next-intl';
 import { IconLoader2, IconPlus, IconTrash } from '@tabler/icons-react';
-import { Actions, ConditionKeys, Roles, Subjects } from '@lms-organization/shared-types';
+import { Actions, ConditionKeys, Roles, Subjects } from '@darnozom/shared-types';
 import { Button } from '@/components/atoms/button';
 import { Label } from '@/components/atoms/label';
 import { Input } from '@/components/atoms/input';

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
-import { SESSION_ID_COOKIE_NAME } from '@lms-organization/shared-types';
+import { SESSION_ID_COOKIE_NAME } from '@darnozom/shared-types';
 import { useTranslations } from 'next-intl';
 import {
   Dialog,

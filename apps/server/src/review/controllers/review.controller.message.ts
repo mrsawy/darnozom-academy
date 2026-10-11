@@ -9,7 +9,7 @@ import { IUserContext } from 'src/utils/types/IUserContext.interface';
 import { RpcValidationPipe } from 'src/utils/RpcValidationPipe';
 import { RpcErrorHandler } from 'src/utils/docerators/error-handeling/method/RpcErrController.decorator';
 import { ReviewType } from '../enum/reviewType.enum';
-import { ReviewErrors } from '@lms-organization/shared-types';
+import { ReviewErrors } from '@darnozom/shared-types';
 
 @Controller()
 export class ReviewControllerMessage {

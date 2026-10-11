@@ -1,7 +1,7 @@
 // src/payment/validators/payment-amount.validator.ts
 
 import { BadRequestException } from '@nestjs/common';
-import { Currency } from '@lms-organization/shared-types';
+import { Currency } from '@darnozom/shared-types';
 
 export class PaymentAmountValidator {
   private static readonly MIN_AMOUNTS: Record<Currency, number> = {

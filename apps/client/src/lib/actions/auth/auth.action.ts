@@ -16,7 +16,7 @@ import {
 } from '@/lib/utils/createNatsRequest';
 import { IUser } from '@/lib/types/user/user.interface';
 import { getPublicApiUrl } from '@/lib/data/constants/api-url.constants';
-import { AuthErrors, type Currency } from '@lms-organization/shared-types';
+import { AuthErrors, type Currency } from '@darnozom/shared-types';
 
 // ─── Public (unauthenticated) helpers ──────────────────────────────────────
 

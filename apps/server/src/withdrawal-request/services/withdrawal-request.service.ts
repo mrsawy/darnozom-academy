@@ -6,7 +6,7 @@ import { CreateWithdrawalRequestDto } from '../dto/create-withdrawal-request.dto
 import { UpdateWithdrawalRequestDto } from '../dto/update-withdrawal-request.dto';
 import { ProcessWithdrawalRequestDto } from '../dto/process-withdrawal-request.dto';
 import { WalletService } from 'src/wallet/wallet.service';
-import { Currency, WithdrawalRequestErrors, WithdrawalRequestStatus, PaymentMethod, PaymentPurpose } from '@lms-organization/shared-types';
+import { Currency, WithdrawalRequestErrors, WithdrawalRequestStatus, PaymentMethod, PaymentPurpose } from '@darnozom/shared-types';
 
 @Injectable()
 export class WithdrawalRequestService {

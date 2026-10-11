@@ -3,14 +3,14 @@ import { UserService } from '../../services/user.service';
 import mongoose from 'mongoose';
 import { RequirePermissionsGuard } from 'src/role/permission.decorator';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
-import { Actions, ConditionKeys, Roles, Subjects } from '@lms-organization/shared-types';
+import { Actions, ConditionKeys, Roles, Subjects } from '@darnozom/shared-types';
 import { RoleService } from 'src/role/role.service';
 import { handleError } from 'src/utils/errorHandling';
 import { AppAbility } from 'src/role/permissions.factory';
 import { checkConditionForRule } from 'src/utils/abilityUtils';
 import { IUserRequest } from 'src/auth/interfaces/IUserRequest.interface';
 import { SkipOnboardingCheck } from 'src/auth/decorators/skip-onboarding-check.decorator';
-import { CreateUserDto, UpdateUserDto } from '@lms-organization/shared-types/dto';
+import { CreateUserDto, UpdateUserDto } from '@darnozom/shared-types/dto';
 import { CheckSubscriptionLimit } from 'src/subscription/decorators/check-subscription-limit.decorator';
 import { SubscriptionService } from 'src/subscription/services/subscription.service';
 

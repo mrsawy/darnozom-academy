@@ -1,11 +1,11 @@
-export { AttendanceStatus } from '@lms-organization/shared-types';
-import { AttendanceStatus } from '@lms-organization/shared-types';
+export { AttendanceStatus } from '@darnozom/shared-types';
+import { AttendanceStatus } from '@darnozom/shared-types';
 export type {
   StudentSessionHistoryRow,
   StudentCourseHistorySummary,
   StudentCourseHistory,
   StudentScheduledCourse,
-} from '@lms-organization/shared-types';
+} from '@darnozom/shared-types';
 
 export interface Attendance {
   _id: string;

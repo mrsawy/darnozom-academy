@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { FilterQuery, Model } from 'mongoose';
-import type { OrganizationMemberDashboardReports } from '@lms-organization/shared-types';
+import type { OrganizationMemberDashboardReports } from '@darnozom/shared-types';
 import { Enrollment } from 'src/enrollment/entities/enrollment.entity';
 import { GetOrganizationMemberReportsDto } from '../dto/get-organization-member-reports.dto';
 import { ReportsAggregationService } from './reports-aggregation.service';

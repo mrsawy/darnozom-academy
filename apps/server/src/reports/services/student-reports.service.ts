@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { FilterQuery, Model } from 'mongoose';
-import type { StudentDashboardReports } from '@lms-organization/shared-types';
+import type { StudentDashboardReports } from '@darnozom/shared-types';
 import { Enrollment } from 'src/enrollment/entities/enrollment.entity';
 import { GetStudentReportsDto } from '../dto/get-student-reports.dto';
 import { ReportsAggregationService } from './reports-aggregation.service';

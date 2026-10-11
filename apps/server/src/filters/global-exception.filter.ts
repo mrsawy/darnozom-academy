@@ -2,7 +2,7 @@ import { Catch, ArgumentsHost, HttpException, HttpStatus, ExceptionFilter } from
 import { RpcException } from '@nestjs/microservices';
 import { Response } from 'express';
 import { throwError } from 'rxjs';
-import { CommonErrors } from '@lms-organization/shared-types';
+import { CommonErrors } from '@darnozom/shared-types';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {

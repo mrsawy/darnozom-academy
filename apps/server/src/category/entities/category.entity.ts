@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema, Types } from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
-import { ActiveStatus, ApprovalStatus, PublishStatus } from '@lms-organization/shared-types';
+import { ActiveStatus, ApprovalStatus, PublishStatus } from '@darnozom/shared-types';
 import { applySoftDeleteMiddleware } from 'src/utils/soft-delete';
 
 @Schema({ timestamps: true })

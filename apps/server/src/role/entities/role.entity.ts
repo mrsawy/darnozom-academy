@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
-import { Actions, ICondition, Roles, Subjects } from '@lms-organization/shared-types';
+import { Actions, ICondition, Roles, Subjects } from '@darnozom/shared-types';
 
 export type RoleDocument = Role & Document;
 

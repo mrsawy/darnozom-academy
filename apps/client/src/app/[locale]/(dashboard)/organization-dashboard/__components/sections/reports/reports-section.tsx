@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Roles } from '@lms-organization/shared-types';
+import { Roles } from '@darnozom/shared-types';
 import { OrganizationDashboardReports } from '@/components/molecules/reports/organization-dashboard-reports';
 import {
   ORG_DASHBOARD_REPORTS_NAMESPACE,

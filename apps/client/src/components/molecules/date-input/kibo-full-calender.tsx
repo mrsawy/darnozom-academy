@@ -16,8 +16,8 @@ import {
   type Status,
 } from '@/components/atoms/kibo-ui/calendar';
 import { useStudentCalendar } from '@/lib/hooks/calender/useStudentCalendar.hook';
-import type { ICalendarAppointment } from '@lms-organization/shared-types';
-import { CalendarAppointmentType } from '@lms-organization/shared-types';
+import type { ICalendarAppointment } from '@darnozom/shared-types';
+import { CalendarAppointmentType } from '@darnozom/shared-types';
 import { Loader2 } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useMemo } from 'react';

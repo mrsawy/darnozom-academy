@@ -16,7 +16,7 @@ import { ProjectService } from '../../services/content/project/project.service';
 import { LiveSessionService } from '../../services/content/live-session/live-session.service';
 import { AssignmentService } from '../../services/content/assignment/assignment.service';
 import { ApplyRpcErrorHandling } from 'src/utils/docerators/error-handeling/class/ApplyRpcErrorHandling.decorator';
-import { Actions, CourseErrors, CourseSuccessMessages, Subjects, UserErrors } from '@lms-organization/shared-types';
+import { Actions, CourseErrors, CourseSuccessMessages, Subjects, UserErrors } from '@darnozom/shared-types';
 import { RequirePermissionsGuard, RequiredPermissions } from 'src/role/permission.decorator';
 import { PermissionsGuard } from 'src/role/guards/permissions.guard';
 import { CheckSubscriptionLimit } from 'src/subscription/decorators/check-subscription-limit.decorator';

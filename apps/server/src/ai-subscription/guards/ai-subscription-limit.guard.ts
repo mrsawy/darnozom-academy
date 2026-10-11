@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext, ForbiddenException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { RpcException } from '@nestjs/microservices';
-import { AiSubscriptionErrors, UserErrors } from '@lms-organization/shared-types';
+import { AiSubscriptionErrors, UserErrors } from '@darnozom/shared-types';
 import { AiSubscriptionService } from '../services/ai-subscription.service';
 import { AI_SUBSCRIPTION_LIMIT_KEY } from '../decorators/check-ai-subscription-limit.decorator';
 import { AI_FEATURE_LIMIT_CONFIG, AiFeatureLimitDefinition } from '../constants/ai-feature-limit.config';

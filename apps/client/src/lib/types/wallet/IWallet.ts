@@ -1,4 +1,4 @@
-import { Currency } from '@lms-organization/shared-types';
+import { Currency } from '@darnozom/shared-types';
 import { Transaction } from '../transaction/ITransaction.interface';
 import { IUser } from '../user/user.interface';
 

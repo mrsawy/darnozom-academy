@@ -1,4 +1,4 @@
-import type { ApprovalStatusType as ApprovalStatus } from '@lms-organization/shared-types';
+import type { ApprovalStatusType as ApprovalStatus } from '@darnozom/shared-types';
 
 export interface ICategory {
   _id: string;

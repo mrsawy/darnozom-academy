@@ -1,7 +1,7 @@
 import { IContent } from './content.interface';
 import type { IUserReview } from '../review/review.types';
-import type { ApprovalStatusType as ApprovalStatus } from '@lms-organization/shared-types';
-import { PublishStatus } from '@lms-organization/shared-types';
+import type { ApprovalStatusType as ApprovalStatus } from '@darnozom/shared-types';
+import { PublishStatus } from '@darnozom/shared-types';
 
 /** Embedded settings on modules (extend as needed). */
 export interface IModuleContentSettings {}

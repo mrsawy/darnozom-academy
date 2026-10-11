@@ -4,7 +4,7 @@ import { ConflictException, NotFoundException } from '@nestjs/common';
 import { RoleService } from './role.service';
 import { Role } from './entities/role.entity';
 import { User } from '../user/entities/user.entity';
-import { Actions, Roles, Subjects } from '@lms-organization/shared-types';
+import { Actions, Roles, Subjects } from '@darnozom/shared-types';
 
 const mockRoleModel = {
   findOne: jest.fn(),

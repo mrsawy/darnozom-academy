@@ -1,6 +1,6 @@
 'use server';
 
-import type { Currency, ExchangeRates } from '@lms-organization/shared-types';
+import type { Currency, ExchangeRates } from '@darnozom/shared-types';
 import { createNatsRequest } from '@/lib/utils/createNatsRequest';
 import { getRequestCurrency } from '@/lib/utils/geo/get-request-currency';
 

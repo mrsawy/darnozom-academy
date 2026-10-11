@@ -17,7 +17,7 @@ import { Course, TimeSlot } from 'src/course/entities/course.entity';
 import { User } from 'src/user/entities/user.entity';
 import { AccessType } from 'src/enrollment/enum/accessType.enum';
 import { SubscriptionStatus } from 'src/utils/enums/subscriptionStatus.enum';
-import { EnrollmentErrors, StudentCourseHistory, StudentScheduledCourse } from '@lms-organization/shared-types';
+import { EnrollmentErrors, StudentCourseHistory, StudentScheduledCourse } from '@darnozom/shared-types';
 import { escapeRegex } from 'src/utils/approval.utils';
 import {
   BulkAttendanceResult,

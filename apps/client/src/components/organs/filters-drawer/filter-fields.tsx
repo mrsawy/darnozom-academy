@@ -7,7 +7,7 @@ import { Combobox } from '@/components/molecules/combobox';
 import CategoryCombobox from '@/components/molecules/category-combobox';
 import { DualRangeSlider } from '@/components/molecules/dual-range-slider';
 import { Tabs, TabsList, TabsTrigger } from '@/components/atoms/tabs';
-import { Currency, CURRENCIES } from '@lms-organization/shared-types';
+import { Currency, CURRENCIES } from '@darnozom/shared-types';
 import { BillingCycle } from '@/lib/types/course/enum/BillingCycle.enum';
 import { usePublicGrades } from '@/lib/hooks/grade/use-grades.hook';
 import { usePublicSchoolTypes } from '@/lib/hooks/school-type/use-school-types.hook';

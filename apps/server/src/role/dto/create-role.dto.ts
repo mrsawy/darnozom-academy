@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { ArrayMinSize, IsArray, IsEnum, IsNotEmpty, ValidateNested } from 'class-validator';
-import { Roles } from '@lms-organization/shared-types';
+import { Roles } from '@darnozom/shared-types';
 import { PermissionDto } from './permission.dto';
 
 export class CreateRoleDto {

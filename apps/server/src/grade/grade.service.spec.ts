@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/mongoose';
 import { ConflictException, NotFoundException } from '@nestjs/common';
-import { GradeErrors } from '@lms-organization/shared-types';
+import { GradeErrors } from '@darnozom/shared-types';
 import { GradeService } from './grade.service';
 import { Grade } from './entities/grade.entity';
 import { Course } from '../course/entities/course.entity';

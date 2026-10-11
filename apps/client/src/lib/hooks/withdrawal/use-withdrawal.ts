@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { useQuery, useMutation, useQueryClient } from '@/lib/utils';
 import { toast } from 'react-toastify';
-import { WithdrawalRequestStatus } from '@lms-organization/shared-types';
+import { WithdrawalRequestStatus } from '@darnozom/shared-types';
 import { getErrorMessage } from '@/lib/utils/errors/getErrorMessage';
 import { translateApiMessage } from '@/lib/utils/errors/translateApiMessage';
 import {

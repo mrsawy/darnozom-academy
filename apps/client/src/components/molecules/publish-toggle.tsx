@@ -3,7 +3,7 @@
 import { Badge } from '@/components/atoms/badge';
 import { Switch } from '@/components/atoms/switch';
 import { useTranslations } from 'next-intl';
-import { ApprovalStatus, PublishStatus } from '@lms-organization/shared-types';
+import { ApprovalStatus, PublishStatus } from '@darnozom/shared-types';
 
 const APPROVABLE_STATUSES = new Set<string>([
   ApprovalStatus.APPROVED,

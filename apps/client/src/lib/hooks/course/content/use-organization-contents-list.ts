@@ -1,7 +1,7 @@
 import { useQuery } from '@/lib/utils';
 import { listContentsForOrganization } from '@/lib/actions/courses/content/content.action';
 import type { ListOrganizationContentsResult } from '@/lib/types/course/organization-contents-list.types';
-import { CourseContentType } from '@lms-organization/shared-types';
+import { CourseContentType } from '@darnozom/shared-types';
 import { throwIfNatsError } from '@/lib/utils/natsErrorHandler';
 
 export const organizationContentsKeys = {

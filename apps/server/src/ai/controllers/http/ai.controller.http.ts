@@ -12,7 +12,7 @@ import { CheckAiSubscriptionLimit } from 'src/ai-subscription/decorators/check-a
 import { AI_MESSAGE_SENT_EVENT, AiMessageSentEvent } from 'src/ai-subscription/events/ai-message-sent.event';
 import type { UIMessage } from 'ai';
 import type { UserDocument } from 'src/user/entities/user.entity';
-import { AI_ATTACHMENT_MAX_FILES, AI_ATTACHMENT_MAX_TOTAL_SIZE_BYTES } from '@lms-organization/shared-types';
+import { AI_ATTACHMENT_MAX_FILES, AI_ATTACHMENT_MAX_TOTAL_SIZE_BYTES } from '@darnozom/shared-types';
 
 type AuthedRequest = Request & { user: UserDocument };
 

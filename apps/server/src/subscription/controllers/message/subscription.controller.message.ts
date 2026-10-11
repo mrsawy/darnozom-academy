@@ -5,7 +5,7 @@ import { RpcValidationPipe } from 'src/utils/RpcValidationPipe';
 import { IUserContext } from 'src/utils/types/IUserContext.interface';
 import { handleRpcError } from 'src/utils/errorHandling';
 import { RequirePermissionsGuard } from 'src/role/permission.decorator';
-import { Actions, Subjects, SubscriptionSuccessMessages, UserErrors } from '@lms-organization/shared-types';
+import { Actions, Subjects, SubscriptionSuccessMessages, UserErrors } from '@darnozom/shared-types';
 import { SubscriptionService } from '../../services/subscription.service';
 import { CreateSubscriptionDto } from '../../dto/create-subscription.dto';
 import { UpdateSubscriptionDto } from '../../dto/update-subscription.dto';

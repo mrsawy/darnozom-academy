@@ -1,5 +1,5 @@
 import * as yup from 'yup';
-import { Currency } from '@lms-organization/shared-types';
+import { Currency } from '@darnozom/shared-types';
 
 import { buildSocialLinksSchema } from '@/lib/schema/user.schema';
 

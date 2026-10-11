@@ -3,7 +3,7 @@
 import { useCallback, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
-import { Currency } from '@lms-organization/shared-types';
+import { Currency } from '@darnozom/shared-types';
 import { useRouter } from '@/i18n/navigation';
 import { useMutation, useQueryClient } from '@/lib/utils';
 import { renewEnrollment } from '@/lib/actions/enrollment/renewEnrollment.action';

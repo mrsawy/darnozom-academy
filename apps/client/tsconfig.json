@@ -32,10 +32,10 @@
       "@/*": [
         "./src/*"
       ],
-      "@lms-organization/shared-types": [
+      "@darnozom/shared-types": [
         "../../lib/shared-types/src/index.ts"
       ],
-      "@lms-organization/shared-types/dto": [
+      "@darnozom/shared-types/dto": [
         "../../lib/shared-types/src/lib/dto/index.ts"
       ]
     }

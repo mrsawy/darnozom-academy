@@ -21,7 +21,7 @@ import { Badge } from '@/components/atoms/badge';
 import { Loader2, AlertCircle, Smartphone, Building2, CreditCard, ChevronLeft } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { useTranslations } from 'next-intl';
-import { WithdrawalMethod } from '@lms-organization/shared-types';
+import { WithdrawalMethod } from '@darnozom/shared-types';
 import { useCreateWithdrawalRequest } from '@/lib/hooks/withdrawal/use-withdrawal';
 import {
   buildWithdrawAmountSchema,

@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { AiPlan, AiPlanDocument } from '../entities/ai-plan.entity';
-import { AiPlanTier } from '@lms-organization/shared-types';
+import { AiPlanTier } from '@darnozom/shared-types';
 
 @Injectable()
 export class AiPlanService {

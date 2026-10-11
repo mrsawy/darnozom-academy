@@ -1,5 +1,5 @@
 import { registerDecorator, ValidationOptions, ValidationArguments } from 'class-validator';
-import { isBelowMinPaidPrice, MIN_PAID_PRICE, Currency } from '@lms-organization/shared-types';
+import { isBelowMinPaidPrice, MIN_PAID_PRICE, Currency } from '@darnozom/shared-types';
 
 interface PricingFields {
   originalCurrency?: Currency;

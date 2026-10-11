@@ -1,4 +1,4 @@
-import { Currency } from '@lms-organization/shared-types';
+import { Currency } from '@darnozom/shared-types';
 
 /**
  * Checks that must pass before the production seed writes anything.

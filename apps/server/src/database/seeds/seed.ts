@@ -49,7 +49,7 @@ import { ChatMessage, ChatMessageSchema } from '../../chat/entities/chat-message
 import { BillingCycle } from '../../utils/enums/billingCycle.enum';
 import { SubscriptionStatus } from '../../utils/enums/subscriptionStatus.enum';
 import { PlanTier } from '../../plan/enum/planTier.enum';
-import { Roles, UserStatus } from '@lms-organization/shared-types';
+import { Roles, UserStatus } from '@darnozom/shared-types';
 
 import { CurrencyService } from '../../currency/currency.service';
 import { RoleSeeder } from '../../role/seeds/role.seeder';

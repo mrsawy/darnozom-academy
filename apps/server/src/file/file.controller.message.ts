@@ -8,7 +8,7 @@ import { Ctx, MessagePattern, Payload } from '@nestjs/microservices';
 import { IUserContext } from 'src/utils/types/IUserContext.interface';
 import { RpcValidationPipe } from 'src/utils/RpcValidationPipe';
 import { RequirePermissionsGuard } from 'src/role/permission.decorator';
-import { Actions, FileSuccessMessages, Roles, Subjects } from '@lms-organization/shared-types';
+import { Actions, FileSuccessMessages, Roles, Subjects } from '@darnozom/shared-types';
 import { ApplyRpcErrorHandling } from 'src/utils/docerators/error-handeling/class/ApplyRpcErrorHandling.decorator';
 import { MultipartUploadAccessService } from './multipart-upload-access.service';
 

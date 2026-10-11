@@ -4,7 +4,7 @@ import { Page } from './entities/page.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreatePageDto } from './dto/create-page.dto';
 import { UpdatePageDto } from './dto/update-page.dto';
-import { PageErrors } from '@lms-organization/shared-types';
+import { PageErrors } from '@darnozom/shared-types';
 import { convertObjectValuesToObjectId } from 'src/utils/ObjectId.utils';
 import { Organization } from 'src/organization/entities/organization.entity';
 import { assertOrgApproved } from 'src/utils/verification.utils';

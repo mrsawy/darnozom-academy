@@ -4,7 +4,7 @@ import { PrivateSession } from '../entities/private-session.entity';
 import { SessionBooking } from '../entities/session-booking.entity';
 import { SessionType } from '../enums/session-type.enum';
 import { BookingStatus } from '../enums/booking-status.enum';
-import { Currency, EntityStatus, PaymentMethod } from '@lms-organization/shared-types';
+import { Currency, EntityStatus, PaymentMethod } from '@darnozom/shared-types';
 import { User } from '../../user/entities/user.entity';
 import { buildSlotInstants, utcToWallTime, DEFAULT_SESSION_TIMEZONE } from '../utils/session-time.util';
 

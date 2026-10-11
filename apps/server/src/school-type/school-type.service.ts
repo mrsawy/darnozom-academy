@@ -1,7 +1,7 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model, Types } from 'mongoose';
-import { SchoolTypeErrors, SchoolTypeSuccessMessages } from '@lms-organization/shared-types';
+import { SchoolTypeErrors, SchoolTypeSuccessMessages } from '@darnozom/shared-types';
 import { SchoolType } from './entities/school-type.entity';
 import { Course } from '../course/entities/course.entity';
 import { CreateSchoolTypeDto } from './dto/create-school-type.dto';

@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { RpcException } from '@nestjs/microservices';
-import { AuthErrors } from '@lms-organization/shared-types';
+import { AuthErrors } from '@darnozom/shared-types';
 import { SKIP_ONBOARDING_CHECK_KEY } from '../decorators/skip-onboarding-check.decorator';
 import { IUserContext } from 'src/utils/types/IUserContext.interface';
 import { AuthService } from '../auth.service';

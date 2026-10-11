@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { PasswordResetChannel, PASSWORD_RESET } from '@lms-organization/shared-types';
+import { PasswordResetChannel, PASSWORD_RESET } from '@darnozom/shared-types';
 import mongoose, { Document, Types } from 'mongoose';
 
 @Schema({ timestamps: true })

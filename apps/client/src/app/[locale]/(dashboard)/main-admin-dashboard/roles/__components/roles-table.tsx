@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { IconPencil, IconTrash } from '@tabler/icons-react';
-import { Roles } from '@lms-organization/shared-types';
+import { Roles } from '@darnozom/shared-types';
 import { Button } from '@/components/atoms/button';
 import { Badge } from '@/components/atoms/badge';
 import {

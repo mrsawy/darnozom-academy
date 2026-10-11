@@ -1,7 +1,7 @@
 // services/currency.service.ts
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
-import { CURRENCIES, Currency, type ExchangeRates } from '@lms-organization/shared-types';
+import { CURRENCIES, Currency, type ExchangeRates } from '@darnozom/shared-types';
 
 @Injectable()
 export class CurrencyService {

@@ -2,7 +2,7 @@
 
 import type { ComponentType } from 'react';
 
-import { PaymentMethod, PaymentProvider, PaymentPurpose } from '@lms-organization/shared-types';
+import { PaymentMethod, PaymentProvider, PaymentPurpose } from '@darnozom/shared-types';
 
 export interface PaymentOption {
   id: string; // Unique identifier for the option
@@ -42,4 +42,4 @@ export interface PaymentStatusResponse {
   metadata?: Record<string, unknown>;
 }
 
-export { PaymentMethod, PaymentPurpose, PaymentProvider } from '@lms-organization/shared-types';
+export { PaymentMethod, PaymentPurpose, PaymentProvider } from '@darnozom/shared-types';

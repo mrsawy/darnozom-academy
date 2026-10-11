@@ -1,4 +1,4 @@
-import { ALL_ERROR_KEYS_SET } from '@lms-organization/shared-types';
+import { ALL_ERROR_KEYS_SET } from '@darnozom/shared-types';
 import { _Translator } from 'next-intl';
 
 export const errorMessage = (

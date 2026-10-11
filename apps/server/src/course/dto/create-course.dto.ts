@@ -22,7 +22,7 @@ import {
 
 import { Type, Transform } from 'class-transformer';
 import { BillingCycle } from 'src/utils/enums/billingCycle.enum';
-import { Currency } from '@lms-organization/shared-types';
+import { Currency } from '@darnozom/shared-types';
 import mongoose from 'mongoose';
 import { IsAboveMinPaidPrice } from './validators/is-above-min-paid-price.validator';
 

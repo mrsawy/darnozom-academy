@@ -20,7 +20,7 @@ import { AdminSuspendActionDto } from '../../dto/admin-suspend-action.dto';
 import { AdminUpdateCategoryDto } from '../../dto/admin-update-category.dto';
 import { SetOrganizationPlanDto } from '../../dto/set-organization-plan.dto';
 import { UpdateOrganizationSubscriptionDto } from '../../dto/update-organization-subscription.dto';
-import { ActiveStatus, PublishStatus } from '@lms-organization/shared-types';
+import { ActiveStatus, PublishStatus } from '@darnozom/shared-types';
 
 @ApplyRpcErrorHandling
 @Controller()

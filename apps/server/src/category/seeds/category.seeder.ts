@@ -2,7 +2,7 @@ import { Model, Types, HydratedDocument } from 'mongoose';
 import { Category } from '../entities/category.entity';
 import { Course } from '../../course/entities/course.entity';
 import { fakerAR as faker } from '@faker-js/faker';
-import { ApprovalStatus } from '@lms-organization/shared-types';
+import { ApprovalStatus } from '@darnozom/shared-types';
 
 export class CategorySeeder {
   constructor(private readonly categoryModel: Model<Category>) {}

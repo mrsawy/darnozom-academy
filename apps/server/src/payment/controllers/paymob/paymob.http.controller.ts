@@ -4,7 +4,7 @@ import { PaymobWebhookService } from 'src/payment/services/paymob-webhook.servic
 import { PaymentProvider } from 'src/payment/strategies/interfaces/payment-strategy.interface';
 import { PaymobWebhookTransaction } from 'src/payment/types/transaction.interface';
 import { PaymobWebhookMetadata } from 'src/payment/types/paymob-webhook-metadata.interface';
-import { PaymentPurpose } from '@lms-organization/shared-types';
+import { PaymentPurpose } from '@darnozom/shared-types';
 
 @Controller('payment')
 export class PaymobHttpController {

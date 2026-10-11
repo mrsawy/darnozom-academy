@@ -1,7 +1,7 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { PaginateModel, PaginateResult, RootFilterQuery } from 'mongoose';
-import { ActiveStatus, ApprovalStatus, CategoryErrors, PublishStatus } from '@lms-organization/shared-types';
+import { ActiveStatus, ApprovalStatus, CategoryErrors, PublishStatus } from '@darnozom/shared-types';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Category } from './entities/category.entity';

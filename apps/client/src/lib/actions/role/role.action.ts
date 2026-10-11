@@ -1,7 +1,7 @@
 'use server';
 
 import { createAuthorizedNatsRequest } from '@/lib/utils/createNatsRequest';
-import type { Actions, ConditionKeys, Roles, Subjects } from '@lms-organization/shared-types';
+import type { Actions, ConditionKeys, Roles, Subjects } from '@darnozom/shared-types';
 
 export interface RolePermissionPayload {
   action: Actions;

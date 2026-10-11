@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { IconCheck, IconLoader2, IconLogout, IconShieldCheck } from '@tabler/icons-react';
-import { ApprovalStatus, VerificationStatus } from '@lms-organization/shared-types';
+import { ApprovalStatus, VerificationStatus } from '@darnozom/shared-types';
 import { useRouter } from '@/i18n/navigation';
 import { cn } from '@/lib/utils';
 import { Card, CardContent } from '@/components/atoms/card';

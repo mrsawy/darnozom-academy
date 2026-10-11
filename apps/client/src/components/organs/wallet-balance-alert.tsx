@@ -1,6 +1,6 @@
 import { Alert, AlertDescription } from '@/components/atoms/alert';
 import { PriceWithCurrency } from '@/components/atoms/price-with-currency';
-import { Currency } from '@lms-organization/shared-types';
+import { Currency } from '@darnozom/shared-types';
 import { Wallet } from 'lucide-react';
 import React from 'react';
 import { useTranslations } from 'next-intl';

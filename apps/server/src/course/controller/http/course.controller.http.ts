@@ -3,7 +3,7 @@ import { CreateCourseDto } from '../../dto/create-course.dto';
 import { UpdateCourseDto } from '../../dto/update-course.dto';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { RequirePermissionsGuard } from 'src/role/permission.decorator';
-import { Actions, Subjects } from '@lms-organization/shared-types';
+import { Actions, Subjects } from '@darnozom/shared-types';
 import { CreateCourseContentDto } from '../../dto/create-course-content.dto';
 import { IUserRequest } from 'src/auth/interfaces/IUserRequest.interface';
 import { CourseModulesService } from '../../services/module/course-modules.service';

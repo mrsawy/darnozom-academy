@@ -4,11 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/car
 import { Badge } from '@/components/atoms/badge';
 import { useTranslations } from 'next-intl';
 import { CourseContentType } from '@/lib/types/course/enum/CourseContentType.enum';
-import { PublishStatus } from '@lms-organization/shared-types';
+import { PublishStatus } from '@darnozom/shared-types';
 import { getContentTypeColor } from './content-type-helpers';
 import { useSetContentPublishStatus } from '@/lib/hooks/course/usePublishStatus';
 import { PublishToggle } from '@/components/molecules/publish-toggle';
-import type { ApprovalStatusType as ApprovalStatus } from '@lms-organization/shared-types';
+import type { ApprovalStatusType as ApprovalStatus } from '@darnozom/shared-types';
 
 interface ContentStatusCardProps {
   contentType: CourseContentType;

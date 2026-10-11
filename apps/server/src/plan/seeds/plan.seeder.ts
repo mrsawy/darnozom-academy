@@ -2,7 +2,7 @@ import { Model } from 'mongoose';
 import { Plan } from '../entities/plan.entity';
 import { PlanTier } from '../enum/planTier.enum';
 import { BillingCycle } from '../../utils/enums/billingCycle.enum';
-import { Currency } from '@lms-organization/shared-types';
+import { Currency } from '@darnozom/shared-types';
 import { CurrencyService } from '../../currency/currency.service';
 
 /** Read Paddle price IDs from env, e.g. PADDLE_PRICE_BASIC_MONTHLY=pri_xxx */

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { UserPlus } from 'lucide-react';
-import { Roles } from '@lms-organization/shared-types';
+import { Roles } from '@darnozom/shared-types';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/navigation';
 import DisclaimerModal from '@/components/organs/disclaimer-modal/disclaimer-modal';

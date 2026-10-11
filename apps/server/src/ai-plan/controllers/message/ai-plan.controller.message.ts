@@ -4,7 +4,7 @@ import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { ApplyRpcErrorHandling } from 'src/utils/docerators/error-handeling/class/ApplyRpcErrorHandling.decorator';
 import { RpcValidationPipe } from 'src/utils/RpcValidationPipe';
 import { RequirePermissionsGuard } from 'src/role/permission.decorator';
-import { Actions, Subjects } from '@lms-organization/shared-types';
+import { Actions, Subjects } from '@darnozom/shared-types';
 import { AiPlanService } from '../../services/ai-plan.service';
 import { AiPlan } from '../../entities/ai-plan.entity';
 

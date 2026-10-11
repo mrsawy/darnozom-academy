@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
-import { ApprovalStatus } from '@lms-organization/shared-types';
+import { ApprovalStatus } from '@darnozom/shared-types';
 import { SiteHeader } from '@/components/molecules/site-header';
 import { SidebarInset, SidebarProvider } from '@/components/atoms/sidebar';
 import { OrgSidebar } from './__components/OrgSidebar';

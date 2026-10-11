@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { GeneratePresignedUrlDto, PresignedUrlResponseDto } from './dto/file.dto';
 import { CloudFrontClient, CreateInvalidationCommand, CreateInvalidationCommandInput } from '@aws-sdk/client-cloudfront';
 import { getSignedUrl } from '@aws-sdk/cloudfront-signer';
-import { MAX_FILE_SIZE, PART_SIZE } from '@lms-organization/shared-types';
+import { MAX_FILE_SIZE, PART_SIZE } from '@darnozom/shared-types';
 
 /** MIME types allowed for upload (validated in validateFile). Must match attachment/course content allowed types. */
 const ALLOWED_MIME_TYPES = [

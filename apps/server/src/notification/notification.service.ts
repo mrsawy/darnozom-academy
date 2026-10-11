@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { PaginateModel } from 'mongoose';
-import { NotificationType } from '@lms-organization/shared-types';
+import { NotificationType } from '@darnozom/shared-types';
 import { Notification } from './entities/notification.entity';
 
 export interface CreateNotificationDto {

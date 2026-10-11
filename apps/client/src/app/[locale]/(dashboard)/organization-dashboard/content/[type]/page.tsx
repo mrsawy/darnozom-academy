@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
-import { CourseContentType } from '@lms-organization/shared-types';
+import { CourseContentType } from '@darnozom/shared-types';
 import { OrganizationContentListSection } from './__components/organization-content-list.client';
 
 const ORG_CONTENT_TYPES = new Set<string>(Object.values(CourseContentType));

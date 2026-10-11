@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document, Types } from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
-import { Currency, MeetingProvider, PaymentMethod } from '@lms-organization/shared-types';
+import { Currency, MeetingProvider, PaymentMethod } from '@darnozom/shared-types';
 import { BookingStatus } from '../enums/booking-status.enum';
 import { RescheduleStatus } from '../enums/reschedule-status.enum';
 import { RefundRequestStatus } from '../enums/refund-status.enum';

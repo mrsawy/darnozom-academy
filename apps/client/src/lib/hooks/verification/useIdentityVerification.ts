@@ -2,7 +2,7 @@
 
 import { useMutation, useQueryClient } from '@/lib/utils';
 import { toast } from 'react-toastify';
-import { IdentityDocumentType } from '@lms-organization/shared-types';
+import { IdentityDocumentType } from '@darnozom/shared-types';
 import { submitIdentityVerification } from '@/lib/actions/verification/verification.action';
 import { getErrorMessage } from '@/lib/utils/errors/getErrorMessage';
 import { verificationKeys } from './useVerificationStatus';

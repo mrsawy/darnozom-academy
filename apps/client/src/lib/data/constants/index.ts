@@ -2,7 +2,7 @@ export {
   ACCESS_TOKEN_NAME as AUTH_COOKIE_NAME,
   REFRESH_TOKEN_NAME,
   SESSION_ID_COOKIE_NAME,
-} from '@lms-organization/shared-types';
+} from '@darnozom/shared-types';
 export * from './routes.constants';
 export * from './api-url.constants';
 export * from './metadata.constants';

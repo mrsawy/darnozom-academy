@@ -1,4 +1,4 @@
-import { CourseContentType } from '@lms-organization/shared-types';
+import { CourseContentType } from '@darnozom/shared-types';
 import type { IReviewableContent } from '@/lib/types/admin-review/admin-review.interface';
 
 function assignIfDefined(target: Record<string, unknown>, key: string, value: unknown) {

@@ -2,7 +2,7 @@ import { Model } from 'mongoose';
 import { faker } from '@faker-js/faker';
 import { Notification } from '../entities/notification.entity';
 import { User } from '../../user/entities/user.entity';
-import { Roles, NotificationType, NotificationTextKey } from '@lms-organization/shared-types';
+import { Roles, NotificationType, NotificationTextKey } from '@darnozom/shared-types';
 
 interface NotificationTemplate {
   type: NotificationType;

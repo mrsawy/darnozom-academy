@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
-import { NotificationType } from '@lms-organization/shared-types';
+import { NotificationType } from '@darnozom/shared-types';
 
 @Schema({ timestamps: true, collection: 'notifications' })
 export class Notification extends Document {

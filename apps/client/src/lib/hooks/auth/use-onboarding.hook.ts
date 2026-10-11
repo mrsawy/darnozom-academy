@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import { useRouter } from '@/i18n/navigation';
 import useUserStore from '@/lib/store/userStore';
 import useGeneralStore from '@/lib/store/generalStore';
-import { Roles, type Currency } from '@lms-organization/shared-types';
+import { Roles, type Currency } from '@darnozom/shared-types';
 import { translateApiMessage } from '@/lib/utils/errors/translateApiMessage';
 import { completeOnboarding } from '@/lib/actions/auth/auth.action';
 import { getDashboardUrl } from '@/lib/utils/routes/getDashboardUrl';

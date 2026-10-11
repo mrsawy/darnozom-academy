@@ -1,5 +1,5 @@
 import * as yup from 'yup';
-import { Platform } from '@lms-organization/shared-types';
+import { Platform } from '@darnozom/shared-types';
 import { CourseContentType } from '../types/course/enum/CourseContentType.enum';
 import { VideoType } from '../types/course/enum/VideoType.enum';
 

@@ -1,7 +1,7 @@
 import { BadRequestException, ConflictException, ForbiddenException, HttpException, Logger, NotFoundException } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
 import { AxiosError } from 'axios';
-import { CommonErrors } from '@lms-organization/shared-types';
+import { CommonErrors } from '@darnozom/shared-types';
 
 const rpcErrorLogger = new Logger('handleRpcError');
 

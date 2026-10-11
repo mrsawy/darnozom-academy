@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
 import { InferType } from 'yup';
-import { Country } from '@lms-organization/shared-types';
+import { Country } from '@darnozom/shared-types';
 
 export const createChildSchema = Yup.object().shape({
   username: Yup.string()

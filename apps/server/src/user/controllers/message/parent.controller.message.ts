@@ -1,7 +1,7 @@
 import { BadRequestException, Controller, UseGuards } from '@nestjs/common';
 import { Ctx, MessagePattern, Payload } from '@nestjs/microservices';
 import mongoose from 'mongoose';
-import { Actions, ParentErrors, ParentSuccessMessages, Roles, Subjects, UserErrors } from '@lms-organization/shared-types';
+import { Actions, ParentErrors, ParentSuccessMessages, Roles, Subjects, UserErrors } from '@darnozom/shared-types';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { ApplyRpcErrorHandling } from 'src/utils/docerators/error-handeling/class/ApplyRpcErrorHandling.decorator';
 import { RpcValidationPipe } from 'src/utils/RpcValidationPipe';

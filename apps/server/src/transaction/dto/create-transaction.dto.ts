@@ -2,7 +2,7 @@
 import { IsArray, IsEnum, IsMongoId, IsNotEmpty, IsNumber, IsOptional, IsString, Min } from 'class-validator';
 import mongoose, { Types } from 'mongoose';
 import { TransactionStatus, TransactionType } from '../entities/transaction.entity';
-import { PaymentMethod, PaymentPurpose, PaymentProvider } from '@lms-organization/shared-types';
+import { PaymentMethod, PaymentPurpose, PaymentProvider } from '@darnozom/shared-types';
 
 export class CreateTransactionDto {
   // ========== Multi-Tenant Context ==========

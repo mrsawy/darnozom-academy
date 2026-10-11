@@ -1,4 +1,4 @@
-import { Currency } from '@lms-organization/shared-types';
+import { Currency } from '@darnozom/shared-types';
 import { assertExchangeRatesLoaded, extractDatabaseName, readPlatformAdminCredentials, redactUri } from './prod-preflight';
 
 const ATLAS_URI = 'mongodb+srv://seeder:s3cret@cluster0.abc.mongodb.net/lms?retryWrites=true&w=majority';

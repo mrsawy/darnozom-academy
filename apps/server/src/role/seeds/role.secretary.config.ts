@@ -1,4 +1,4 @@
-import { Actions, Roles, Subjects } from '@lms-organization/shared-types';
+import { Actions, Roles, Subjects } from '@darnozom/shared-types';
 import { RolePermissionRule, RoleSeedEntry } from './role.types';
 
 export const SECRETARY_PERMISSIONS: RolePermissionRule[] = [

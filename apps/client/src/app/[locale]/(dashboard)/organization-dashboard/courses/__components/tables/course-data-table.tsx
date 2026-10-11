@@ -41,7 +41,7 @@ import { ApprovalStatusBadge } from '@/app/[locale]/(dashboard)/main-admin-dashb
 import { ModulesCountCell } from '../modules/modules-count-cell';
 import { getFileFullUrl } from '@/lib/utils/getFileFullUrl';
 import { useTranslations } from 'next-intl';
-import { Currency } from '@lms-organization/shared-types';
+import { Currency } from '@darnozom/shared-types';
 import { BillingCycle } from '@/lib/types/course/enum/BillingCycle.enum';
 import { deleteCourse } from '@/lib/actions/courses/getCourses.action';
 import { toast } from 'react-toastify';

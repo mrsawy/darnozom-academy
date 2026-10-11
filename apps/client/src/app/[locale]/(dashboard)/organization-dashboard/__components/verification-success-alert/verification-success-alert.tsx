@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { IconCircleCheckFilled, IconX } from '@tabler/icons-react';
-import { ApprovalStatus } from '@lms-organization/shared-types';
+import { ApprovalStatus } from '@darnozom/shared-types';
 import { useVerificationStatus } from '@/lib/hooks/verification/useVerificationStatus';
 
 /** How long after approval the congrats banner keeps showing (auto-expires even if never dismissed). */

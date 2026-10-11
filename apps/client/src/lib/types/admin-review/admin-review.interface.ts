@@ -6,7 +6,7 @@ import type {
   ApprovalStatusType,
   PublishStatusType,
   EntityStatusType,
-} from '@lms-organization/shared-types';
+} from '@darnozom/shared-types';
 
 // Re-export from shared-types so every consumer can import from either location.
 // ApprovalStatus keeps its original name for backward-compat with existing client imports.
@@ -271,4 +271,4 @@ export {
   type ApprovalStatusType as ApprovalStatus,
   type EntityStatusType,
   type PublishStatusType,
-} from '@lms-organization/shared-types';
+} from '@darnozom/shared-types';

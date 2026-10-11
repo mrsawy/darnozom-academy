@@ -1,7 +1,7 @@
 import { IsBoolean, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, Max, Min, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { BillingCycle } from 'src/utils/enums/billingCycle.enum';
-import { Currency } from '@lms-organization/shared-types';
+import { Currency } from '@darnozom/shared-types';
 import { PlanTier } from '../enum/planTier.enum';
 
 class PlanPriceDetailsDto {

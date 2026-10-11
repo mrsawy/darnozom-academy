@@ -15,7 +15,7 @@ import {
   ValidateIf,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { Currency, MeetingProvider } from '@lms-organization/shared-types';
+import { Currency, MeetingProvider } from '@darnozom/shared-types';
 import { SessionType } from '../enums/session-type.enum';
 import { IsIanaTimeZone } from 'src/utils/validators/is-iana-timezone.validator';
 

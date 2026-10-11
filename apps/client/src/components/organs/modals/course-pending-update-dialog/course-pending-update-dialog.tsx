@@ -16,7 +16,7 @@ import { Pricing } from '@/lib/schema/course.schema';
 import type { ICourse } from '@/lib/types/course/course.interface';
 import { getFileFullUrl } from '@/lib/utils/getFileFullUrl';
 import { formatDate } from '@fullcalendar/core/index.js';
-import { Currency } from '@lms-organization/shared-types';
+import { Currency } from '@darnozom/shared-types';
 import { useTranslations } from 'next-intl';
 
 export interface CoursePendingUpdateDialogProps {

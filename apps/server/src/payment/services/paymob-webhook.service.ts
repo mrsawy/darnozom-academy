@@ -6,7 +6,7 @@ import { EnrollmentService } from 'src/enrollment/services/enrollment.service';
 import { CourseService } from 'src/course/services/course/course.service';
 import { UserService } from 'src/user/services/user.service';
 import { ProcessedWebhook, PaymentProvider } from '../strategies/interfaces/payment-strategy.interface';
-import { PrivateSessionErrors } from '@lms-organization/shared-types';
+import { PrivateSessionErrors } from '@darnozom/shared-types';
 import { AccessType } from 'src/enrollment/enum/accessType.enum';
 import { BillingCycle } from 'src/utils/enums/billingCycle.enum';
 import { SubscriptionStatus } from 'src/utils/enums/subscriptionStatus.enum';

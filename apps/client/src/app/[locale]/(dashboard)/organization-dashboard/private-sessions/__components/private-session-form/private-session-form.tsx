@@ -38,7 +38,7 @@ import {
   instantToDateInput,
   instantToTimeInput,
 } from '@/lib/utils/session-time';
-import { Currency, CURRENCIES } from '@lms-organization/shared-types';
+import { Currency, CURRENCIES } from '@darnozom/shared-types';
 
 import { getErrorMessage } from '@/lib/schema/utils/gerErrorMessage';
 import { toast } from 'react-toastify';

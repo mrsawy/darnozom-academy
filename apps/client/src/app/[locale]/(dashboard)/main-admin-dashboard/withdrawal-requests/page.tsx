@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { format } from 'date-fns';
 import { Loader2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { WithdrawalMethod, WithdrawalRequestStatus } from '@lms-organization/shared-types';
+import { WithdrawalMethod, WithdrawalRequestStatus } from '@darnozom/shared-types';
 import { Button } from '@/components/atoms/button';
 import { Badge } from '@/components/atoms/badge';
 import { Tabs, TabsList, TabsTrigger } from '@/components/atoms/tabs';

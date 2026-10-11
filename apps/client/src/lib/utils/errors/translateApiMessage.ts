@@ -7,7 +7,7 @@ import {
   SubscriptionLimitErrors,
   UserErrors,
   VerificationErrors,
-} from '@lms-organization/shared-types';
+} from '@darnozom/shared-types';
 
 type TranslateFn = (key: string, values?: Record<string, string | number>) => string;
 

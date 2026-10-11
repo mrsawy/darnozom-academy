@@ -1,4 +1,4 @@
-import { IPermission, Roles, UserStatus } from '@lms-organization/shared-types';
+import { IPermission, Roles, UserStatus } from '@darnozom/shared-types';
 import { Organization as IOrganization } from '@/lib/types/organization/organization.interface';
 
 export interface Profile {

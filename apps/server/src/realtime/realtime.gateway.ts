@@ -3,7 +3,7 @@ import type { Server, Socket } from 'socket.io';
 import { RealtimeRooms } from './realtime.constants';
 import { RealtimeService } from './realtime.service';
 import { RealtimeSessionAuthService } from './realtime-session-auth.service';
-import { ACCESS_TOKEN_NAME } from '@lms-organization/shared-types';
+import { ACCESS_TOKEN_NAME } from '@darnozom/shared-types';
 import { getWebSocketCorsOptions } from './websocket-cors';
 
 @WebSocketGateway({

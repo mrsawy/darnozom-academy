@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsArray, IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator';
-import { Actions, ConditionKeys, Subjects } from '@lms-organization/shared-types';
+import { Actions, ConditionKeys, Subjects } from '@darnozom/shared-types';
 
 export class ConditionEntryDto {
   @IsEnum(ConditionKeys)

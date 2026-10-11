@@ -2,7 +2,7 @@ import { redis } from '@/lib/redis/client';
 import { connectToNats, request as natsRequest } from '@/lib/nats/client';
 import { NextRequest, NextResponse } from 'next/server';
 import { IUser } from '@/lib/types/user/user.interface';
-import { Roles } from '@lms-organization/shared-types';
+import { Roles } from '@darnozom/shared-types';
 import { randomUUID } from 'node:crypto';
 import { AUTH_COOKIE_NAME, REFRESH_TOKEN_NAME, SESSION_ID_COOKIE_NAME } from '@/lib/data/constants';
 import { parseDurationToSeconds } from '@/lib/utils';

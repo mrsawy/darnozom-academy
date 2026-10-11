@@ -13,7 +13,7 @@ import {
 import { URLS } from 'src/utils/constants';
 import { TransactionStatus } from 'src/transaction/entities/transaction.entity';
 import { PaymobWebhookTransaction } from '../../types/transaction.interface';
-import { Currency } from '@lms-organization/shared-types';
+import { Currency } from '@darnozom/shared-types';
 import type { SubscribeToPlanPayload } from '../../dto/subscribe-to-plan.interface';
 import type { ISubscribeToAiPlanPayload } from '../../dto/subscribe-to-ai-plan.interface';
 import { Plan } from 'src/plan/entities/plan.entity';

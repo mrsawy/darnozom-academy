@@ -8,7 +8,7 @@ import {
   UpdateWithdrawalRequestPayload,
   ProcessWithdrawalRequestPayload,
 } from '@/lib/types/withdrawal/withdrawal-request.interface';
-import { WithdrawalRequestStatus } from '@lms-organization/shared-types';
+import { WithdrawalRequestStatus } from '@darnozom/shared-types';
 
 export async function createWithdrawalRequest(data: CreateWithdrawalRequestPayload) {
   return createAuthorizedNatsRequest<IWithdrawalRequest>('withdrawal.create', data);

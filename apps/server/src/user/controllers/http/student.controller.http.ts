@@ -1,6 +1,6 @@
 import { BadRequestException, Controller, Get, Query, Request, UseGuards } from '@nestjs/common';
 import mongoose from 'mongoose';
-import { Roles } from '@lms-organization/shared-types';
+import { Roles } from '@darnozom/shared-types';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { IUserRequest } from 'src/auth/interfaces/IUserRequest.interface';
 import { handleError } from 'src/utils/errorHandling';

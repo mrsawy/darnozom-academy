@@ -1,7 +1,7 @@
 import { NotFoundException } from '@nestjs/common';
 import { getConnectionToken, getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
-import { EntityStatus } from '@lms-organization/shared-types';
+import { EntityStatus } from '@darnozom/shared-types';
 import mongoose from 'mongoose';
 import { Course } from '../../../src/course/entities/course.entity';
 import { CourseContent } from '../../../src/course/entities/course-content.entity';

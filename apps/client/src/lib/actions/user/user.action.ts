@@ -14,7 +14,7 @@ import { getPreferredCurrency } from '@/lib/utils/getPreferredCurrency';
 import { redirect } from 'next/navigation';
 import { headers } from 'next/headers';
 import { parseDurationToSeconds } from '@/lib/utils';
-import { CreateUserDto } from '@lms-organization/shared-types/dto';
+import { CreateUserDto } from '@darnozom/shared-types/dto';
 
 /**
  * Gets the current authenticated user (server-only: cookie → Redis → NATS).

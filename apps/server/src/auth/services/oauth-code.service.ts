@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { randomBytes } from 'node:crypto';
-import { AuthErrors } from '@lms-organization/shared-types';
+import { AuthErrors } from '@darnozom/shared-types';
 
 export interface OAuthCodePayload {
   access_token: string;

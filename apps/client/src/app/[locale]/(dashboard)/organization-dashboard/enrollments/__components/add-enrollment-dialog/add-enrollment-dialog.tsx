@@ -15,7 +15,7 @@ import {
 } from '@/components/atoms/dialog';
 import { Field, FieldError, FieldGroup, FieldLabel, FieldSet } from '@/components/atoms/field';
 import { useEnrollByOrganization } from '@/lib/hooks/enrollment/enrollments.hook';
-import { Roles } from '@lms-organization/shared-types';
+import { Roles } from '@darnozom/shared-types';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { IconPlus } from '@tabler/icons-react';
 import { Loader2 } from 'lucide-react';

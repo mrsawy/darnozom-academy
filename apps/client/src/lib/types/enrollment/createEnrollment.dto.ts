@@ -1,4 +1,4 @@
-import { Currency } from '@lms-organization/shared-types';
+import { Currency } from '@darnozom/shared-types';
 import { PaymentMethod, PaymentProvider } from '../payment/payment.interface';
 import { BillingCycle } from '../course/enum/BillingCycle.enum';
 

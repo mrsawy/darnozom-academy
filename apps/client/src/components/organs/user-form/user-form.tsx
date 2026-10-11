@@ -16,7 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/atoms/tab
 import { Link } from '@/i18n/navigation';
 import { extractErrorMessages } from '@/lib/utils/extractErrorMessages';
 import { ROUTE_ORG_USERS } from '@/lib/data/constants/routes.constants';
-import { Country, UserStatus } from '@lms-organization/shared-types';
+import { Country, UserStatus } from '@darnozom/shared-types';
 import type { IInstructor, IParent, IStudent, IUser } from '@/lib/types/user/user.interface';
 import {
   buildCreateUserSchema,

@@ -29,7 +29,7 @@ import {
   Roles,
   Subjects,
   UserErrors,
-} from '@lms-organization/shared-types';
+} from '@darnozom/shared-types';
 import { PaymentOrchestratorService } from 'src/payment/services/payment-orchestrator.service';
 import { SubmitQuizDto } from '../dto/quiz-submission.dto';
 import { QuizService } from 'src/course/services/content/quiz/quiz.service';

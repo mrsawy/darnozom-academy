@@ -1,4 +1,4 @@
-import { ApprovalStatus, OrganizationErrors, VerificationStatus } from '@lms-organization/shared-types';
+import { ApprovalStatus, OrganizationErrors, VerificationStatus } from '@darnozom/shared-types';
 import { ForbiddenException } from '@nestjs/common';
 import { Organization } from 'src/organization/entities/organization.entity';
 

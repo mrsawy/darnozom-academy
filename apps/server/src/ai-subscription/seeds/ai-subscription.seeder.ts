@@ -1,7 +1,7 @@
 import { Model, Types } from 'mongoose';
 import { AiSubscription } from '../entities/ai-subscription.entity';
 import { AiPlan } from '../../ai-plan/entities/ai-plan.entity';
-import { AiPlanTier } from '@lms-organization/shared-types';
+import { AiPlanTier } from '@darnozom/shared-types';
 import { BillingCycle } from '../../utils/enums/billingCycle.enum';
 import { SubscriptionStatus } from '../../utils/enums/subscriptionStatus.enum';
 

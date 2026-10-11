@@ -1,4 +1,4 @@
-import { Roles } from '@lms-organization/shared-types';
+import { Roles } from '@darnozom/shared-types';
 import {
   ROUTE_MAIN_ADMIN_DASHBOARD,
   ROUTE_STUDENT_DASHBOARD,

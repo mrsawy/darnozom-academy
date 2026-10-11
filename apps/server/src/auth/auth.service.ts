@@ -34,7 +34,7 @@ import {
   UserErrors,
   UserStatus,
   VerificationStatus,
-} from '@lms-organization/shared-types';
+} from '@darnozom/shared-types';
 import { SubscriptionService } from '../subscription/services/subscription.service';
 import { WishlistService } from '../wishlist/service/wishlist.service';
 import { QueryService } from '../database/query';

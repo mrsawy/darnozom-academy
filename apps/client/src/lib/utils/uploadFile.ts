@@ -3,7 +3,7 @@ import {
   completeMultipartUpload,
   abortMultipartUpload,
 } from '@/lib/actions/file/multipart-upload.action';
-import { PART_SIZE, MAX_RETRIES } from '@lms-organization/shared-types';
+import { PART_SIZE, MAX_RETRIES } from '@darnozom/shared-types';
 
 /**
  * Upload a file using S3 multipart upload (initiate → upload parts → complete).

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
-import { ACCESS_TOKEN_NAME } from '@lms-organization/shared-types';
+import { ACCESS_TOKEN_NAME } from '@darnozom/shared-types';
 import { useQueryClient } from '@/lib/utils';
 import { chatKeys } from './use-chat.hook';
 import type { IChatMessage, PaginatedResponse } from '@/lib/actions/chat/chat.action';

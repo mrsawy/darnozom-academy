@@ -1,1 +1,1 @@
-export { AttendanceStatus } from '@lms-organization/shared-types';
+export { AttendanceStatus } from '@darnozom/shared-types';

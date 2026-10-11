@@ -4,7 +4,7 @@ import { Typography } from '@/components/atoms/typography';
 import { Badge } from '@/components/atoms/badge';
 import { PricingDetails, PricingSchema } from '@/lib/types/course/course.interface';
 import { BillingCycle } from '@/lib/types/course/enum/BillingCycle.enum';
-import { Currency, getDisplayPrice } from '@lms-organization/shared-types';
+import { Currency, getDisplayPrice } from '@darnozom/shared-types';
 import { useViewerCurrency } from '@/lib/hooks/currency/use-viewer-currency.hook';
 import { useTranslations } from 'next-intl';
 import { getDiscountedPrice, isDiscountActive } from '@/lib/utils/discount.utils';

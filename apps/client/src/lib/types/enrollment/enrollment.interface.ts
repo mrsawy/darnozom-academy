@@ -1,4 +1,4 @@
-import { AccessType } from '@lms-organization/shared-types';
+import { AccessType } from '@darnozom/shared-types';
 import { ICourse } from '../course/course.interface';
 import { BillingCycle } from '../course/enum/BillingCycle.enum';
 import { IUser } from '../user/user.interface';

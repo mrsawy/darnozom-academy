@@ -7,7 +7,7 @@ import { PUBLIC_PREFIX_ROUTES, PUBLIC_ROUTES } from '@/lib/route.config';
 import { IUser } from './lib/types/user/user.interface';
 import { AUTH_COOKIE_NAME, REFRESH_TOKEN_NAME, SESSION_ID_COOKIE_NAME } from './lib/data/constants';
 import { getDashboardUrl } from './lib/utils/routes/getDashboardUrl';
-import { Roles } from '@lms-organization/shared-types';
+import { Roles } from '@darnozom/shared-types';
 import { ROUTE_ONBOARDING } from './lib/data/constants/routes.constants';
 
 /** Greppable prefix for `docker logs` / local `pnpm dev` stdout */

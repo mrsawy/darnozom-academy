@@ -11,7 +11,7 @@ import {
 import { CreateCourseSchema, PricingDetails } from '@/lib/schema/course.schema';
 import { BillingCycle } from '@/lib/types/course/enum/BillingCycle.enum';
 import { FieldErrors, PathValue, UseFormSetValue, UseFormWatch } from 'react-hook-form';
-import { Currency, CURRENCIES } from '@lms-organization/shared-types';
+import { Currency, CURRENCIES } from '@darnozom/shared-types';
 import { useTranslations } from 'next-intl';
 import { useQuery } from '@tanstack/react-query';
 import {

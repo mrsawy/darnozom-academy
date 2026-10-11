@@ -1,6 +1,6 @@
 // src/wallet/dto/transfer-wallet.dto.ts
 import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, Min } from 'class-validator';
-import { Currency } from '@lms-organization/shared-types';
+import { Currency } from '@darnozom/shared-types';
 
 export class TransferWalletDto {
   @IsString()

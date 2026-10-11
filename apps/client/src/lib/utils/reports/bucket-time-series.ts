@@ -1,4 +1,4 @@
-import type { EnrollmentTrendSeriesPoint } from '@lms-organization/shared-types';
+import type { EnrollmentTrendSeriesPoint } from '@darnozom/shared-types';
 
 /** Aggregate daily points into week (Monday start) or calendar month buckets. */
 export type ReportTimeBucket = 'day' | 'week' | 'month';

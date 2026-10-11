@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
-import { BillingCycle, Currency } from '@lms-organization/shared-types';
+import { BillingCycle, Currency } from '@darnozom/shared-types';
 import { CreateCourseDto } from './create-course.dto';
 
 async function pricingErrors(pricing: Record<string, unknown>): Promise<boolean> {

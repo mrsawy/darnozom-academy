@@ -3,7 +3,7 @@
 import { useMutation, useQueryClient } from '@/lib/utils';
 import { toast } from 'react-toastify';
 import { useTranslations } from 'next-intl';
-import { PublishStatus } from '@lms-organization/shared-types';
+import { PublishStatus } from '@darnozom/shared-types';
 import { translateApiMessage } from '@/lib/utils/errors/translateApiMessage';
 import { setCoursePublishStatus } from '@/lib/actions/courses/getCourses.action';
 import { setModulePublishStatus } from '@/lib/actions/courses/modules.action';

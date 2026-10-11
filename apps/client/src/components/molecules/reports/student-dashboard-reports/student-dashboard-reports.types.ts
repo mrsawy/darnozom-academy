@@ -1,4 +1,4 @@
-import type { StudentDashboardReports } from '@lms-organization/shared-types';
+import type { StudentDashboardReports } from '@darnozom/shared-types';
 import type { ReportsFilters } from '@/lib/types/reports/reports-params.types';
 import type {
   ReportContentSliceMode,

@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsInt, IsMongoId, IsOptional, IsString, Max, MaxLength, Min } from 'class-validator';
-import { AI_QUIZ_MAX_QUESTIONS, AI_QUIZ_MIN_QUESTIONS } from '@lms-organization/shared-types';
+import { AI_QUIZ_MAX_QUESTIONS, AI_QUIZ_MIN_QUESTIONS } from '@darnozom/shared-types';
 
 export class GenerateQuizDto {
   @Type(() => Number)

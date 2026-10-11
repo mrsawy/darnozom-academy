@@ -7,7 +7,7 @@ import { handleRpcError } from 'src/utils/errorHandling';
 import { CreateCourseModuleDto } from '../../dto/create-course-module.dto';
 import { CourseModulesService } from '../../services/module/course-modules.service';
 import { ApplyRpcErrorHandling } from 'src/utils/docerators/error-handeling/class/ApplyRpcErrorHandling.decorator';
-import { Actions, Subjects, UserErrors } from '@lms-organization/shared-types';
+import { Actions, Subjects, UserErrors } from '@darnozom/shared-types';
 import { RequirePermissionsGuard } from 'src/role/permission.decorator';
 
 @Controller()

@@ -12,7 +12,7 @@ import { AiUpgradeModal, type AiUpgradeReason } from '@/components/assistant-ui/
 import { Button } from '@/components/atoms/button';
 import { cn } from '@/lib/utils';
 import { translateApiMessage } from '@/lib/utils/errors/translateApiMessage';
-import { AiSubscriptionErrors, CommonErrors } from '@lms-organization/shared-types';
+import { AiSubscriptionErrors, CommonErrors } from '@darnozom/shared-types';
 import {
   ActionBarMorePrimitive,
   ActionBarPrimitive,

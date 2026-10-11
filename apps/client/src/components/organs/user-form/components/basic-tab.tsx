@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { FieldErrors, UseFormRegister, UseFormSetValue, UseFormWatch } from 'react-hook-form';
-import { Country, Currency, CURRENCIES, Roles, UserStatus } from '@lms-organization/shared-types';
+import { Country, Currency, CURRENCIES, Roles, UserStatus } from '@darnozom/shared-types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/card';
 import { Input } from '@/components/atoms/input';
 import {

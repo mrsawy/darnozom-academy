@@ -6,7 +6,7 @@ import { format } from 'date-fns';
 import { ar, enUS } from 'date-fns/locale';
 import { ExternalLink } from 'lucide-react';
 import type { ColumnDef } from '@tanstack/react-table';
-import { CourseContentType } from '@lms-organization/shared-types';
+import { CourseContentType } from '@darnozom/shared-types';
 import { Link } from '@/i18n/navigation';
 import { useOrganizationContentsList } from '@/lib/hooks/course/content/use-organization-contents-list';
 import { ROUTE_ORG_COURSE_MODULE_CONTENT_EDIT } from '@/lib/data/constants/routes.constants';

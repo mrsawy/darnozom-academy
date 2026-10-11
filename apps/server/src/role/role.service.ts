@@ -5,9 +5,9 @@ import { PermissionDto } from './dto/permission.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Role } from './entities/role.entity';
 import { Model, Types } from 'mongoose';
-import { CommonErrors, RoleErrors, RoleSuccessMessages, Roles } from '@lms-organization/shared-types';
+import { CommonErrors, RoleErrors, RoleSuccessMessages, Roles } from '@darnozom/shared-types';
 import { User } from 'src/user/entities/user.entity';
-import type { ICondition } from '@lms-organization/shared-types';
+import type { ICondition } from '@darnozom/shared-types';
 
 /** Roles that must never be removed from the platform. */
 const PROTECTED_ROLE_NAMES: ReadonlySet<Roles> = new Set([Roles.PLATFORM_ADMIN, Roles.SUPER_ADMIN, Roles.GUEST]);

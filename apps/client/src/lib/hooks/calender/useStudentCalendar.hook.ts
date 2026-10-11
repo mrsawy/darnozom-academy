@@ -1,7 +1,7 @@
 'use client';
 
 import { getStudentCalendar } from '@/lib/actions/calender/getStudentCalendar.action';
-import type { ICalendarAppointment } from '@lms-organization/shared-types';
+import type { ICalendarAppointment } from '@darnozom/shared-types';
 import { useQuery } from '@/lib/utils';
 
 export const studentCalendarKeys = {

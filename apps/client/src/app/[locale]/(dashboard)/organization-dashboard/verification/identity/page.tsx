@@ -4,7 +4,7 @@ import { useState, useCallback, useEffect, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
 import { IconCircleCheck, IconClock, IconX, IconUpload, IconLoader2 } from '@tabler/icons-react';
-import { VerificationStatus, IdentityDocumentType } from '@lms-organization/shared-types';
+import { VerificationStatus, IdentityDocumentType } from '@darnozom/shared-types';
 import { Button } from '@/components/atoms/button';
 import { Progress } from '@/components/atoms/progress';
 import { useVerificationStatus } from '@/lib/hooks/verification/useVerificationStatus';

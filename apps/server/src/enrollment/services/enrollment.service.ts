@@ -20,7 +20,7 @@ import {
   Roles,
   NotificationType,
   NotificationTextKey,
-} from '@lms-organization/shared-types';
+} from '@darnozom/shared-types';
 import { PaginateOptionsWithSearch } from 'src/utils/types/PaginateOptionsWithSearch';
 import { SubscriptionStatus } from 'src/utils/enums/subscriptionStatus.enum';
 import { Organization } from 'src/organization/entities/organization.entity';

@@ -1,5 +1,5 @@
 import { BadRequestException, Logger } from '@nestjs/common';
-import { AiAttachmentErrors, AI_ATTACHMENT_MAX_TOTAL_SIZE_BYTES } from '@lms-organization/shared-types';
+import { AiAttachmentErrors, AI_ATTACHMENT_MAX_TOTAL_SIZE_BYTES } from '@darnozom/shared-types';
 import type { FileAttachmentDto } from '../dto/generate-content-nats.dto';
 
 const logger = new Logger('convertNatsFilesToMulterFormat');

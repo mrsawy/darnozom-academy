@@ -1,5 +1,5 @@
 import { BillingCycle } from 'src/utils/enums/billingCycle.enum';
-import { PaymentPurpose } from '@lms-organization/shared-types';
+import { PaymentPurpose } from '@darnozom/shared-types';
 
 export interface PaymobWebhookMetadata {
   userId?: string;

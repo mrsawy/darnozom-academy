@@ -15,7 +15,7 @@ import { SubscriptionTypeDef } from '../../utils/types/Subscription.interface';
 import { User } from '../../user/entities/user.entity';
 import { SubscriptionStatus } from '../../utils/enums/subscriptionStatus.enum';
 import { BillingCycle } from '../../utils/enums/billingCycle.enum';
-import { Currency } from '@lms-organization/shared-types';
+import { Currency } from '@darnozom/shared-types';
 import { ENROLLMENT_CONFIG } from './enrollment.config';
 
 const RECENT_ENROLL_WINDOW_MS = 110 * 86_400_000;

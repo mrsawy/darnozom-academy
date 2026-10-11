@@ -12,9 +12,9 @@ import { RpcValidationPipe } from 'src/utils/RpcValidationPipe';
 import { WalletService } from 'src/wallet/wallet.service';
 import { convertObjectValuesToObjectId } from 'src/utils/ObjectId.utils';
 import { ApplyRpcErrorHandling } from 'src/utils/docerators/error-handeling/class/ApplyRpcErrorHandling.decorator';
-import { CreateUserDto } from '@lms-organization/shared-types/dto';
+import { CreateUserDto } from '@darnozom/shared-types/dto';
 import { SubscriptionService } from 'src/subscription/services/subscription.service';
-import { Roles, UserErrors, UserSuccessMessages } from '@lms-organization/shared-types';
+import { Roles, UserErrors, UserSuccessMessages } from '@darnozom/shared-types';
 
 @Controller('user')
 @ApplyRpcErrorHandling

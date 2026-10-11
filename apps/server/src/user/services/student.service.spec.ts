@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { AccessType, ActiveStatus, ApprovalStatus, CalendarAppointmentType, CourseContentType, PublishStatus } from '@lms-organization/shared-types';
+import { AccessType, ActiveStatus, ApprovalStatus, CalendarAppointmentType, CourseContentType, PublishStatus } from '@darnozom/shared-types';
 import { SubscriptionStatus } from 'src/utils/enums/subscriptionStatus.enum';
 import { CalendarAppointment, StudentService } from './student.service';
 

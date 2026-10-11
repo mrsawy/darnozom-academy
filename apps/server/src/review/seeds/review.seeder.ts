@@ -8,7 +8,7 @@ import { User } from '../../user/entities/user.entity';
 import { Organization } from '../../organization/entities/organization.entity';
 import { CourseModuleEntity } from '../../course/entities/course-module.entity';
 import { CourseContent } from '../../course/entities/course-content.entity';
-import { Roles } from '@lms-organization/shared-types';
+import { Roles } from '@darnozom/shared-types';
 import { OrganizationSeedConfig } from 'src/database/seeds/seed-config.interface';
 
 export class ReviewSeeder {

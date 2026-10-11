@@ -8,7 +8,7 @@ import { ChatAttachmentDto, SendMessageDto } from './dto/chat.dto';
 import { ChatEmitService } from './chat-emit.service';
 import { NotificationService } from 'src/notification/notification.service';
 import { ChatEvents } from './chat.constants';
-import { NotificationType, NotificationTextKey } from '@lms-organization/shared-types';
+import { NotificationType, NotificationTextKey } from '@darnozom/shared-types';
 
 @Injectable()
 export class ChatService {

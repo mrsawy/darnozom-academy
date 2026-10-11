@@ -11,7 +11,7 @@ import { Button } from '@/components/atoms/button';
 import { Wallet, CreditCard } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import React from 'react';
-import { Currency } from '@lms-organization/shared-types';
+import { Currency } from '@darnozom/shared-types';
 import { PriceWithCurrency } from '@/components/atoms/price-with-currency';
 
 interface PaymentMethodSelectionDialogProps {

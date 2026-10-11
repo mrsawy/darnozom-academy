@@ -1,4 +1,4 @@
-import { WithdrawalMethod, WithdrawalRequestStatus } from '@lms-organization/shared-types';
+import { WithdrawalMethod, WithdrawalRequestStatus } from '@darnozom/shared-types';
 import { IUser } from '../user/user.interface';
 
 export interface MobileWalletDetails {

@@ -4,7 +4,7 @@ import { AppSidebar } from '@/components/molecules/app-sidebar';
 import { data } from '../data';
 import { IUser } from '@/lib/types/user/user.interface';
 import { useTranslations } from 'next-intl';
-import { Roles } from '@lms-organization/shared-types';
+import { Roles } from '@darnozom/shared-types';
 
 export function OrgSidebar({ user }: { user?: IUser }) {
   const t = useTranslations('OrgSidebar');

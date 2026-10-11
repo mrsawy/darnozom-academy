@@ -1,4 +1,4 @@
-import { NotificationType } from '@lms-organization/shared-types';
+import { NotificationType } from '@darnozom/shared-types';
 import type { NotificationTypeHandler } from './notification-handler.types';
 import { chatNotificationHandler } from './handlers/chat.handler';
 import { courseCompletedNotificationHandler } from './handlers/course-completed.handler';

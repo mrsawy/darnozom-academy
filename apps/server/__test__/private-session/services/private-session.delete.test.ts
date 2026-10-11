@@ -8,7 +8,7 @@ import { PrivateSession } from '../../../src/private-session/entities/private-se
 import { SessionBooking } from '../../../src/private-session/entities/session-booking.entity';
 import { PrivateSessionService } from '../../../src/private-session/services/private-session.service';
 import { BookingStatus } from '../../../src/private-session/enums/booking-status.enum';
-import { PrivateSessionErrors } from '@lms-organization/shared-types';
+import { PrivateSessionErrors } from '@darnozom/shared-types';
 
 describe('PrivateSessionService.delete (soft delete)', () => {
   const sessionId = new mongoose.Types.ObjectId();

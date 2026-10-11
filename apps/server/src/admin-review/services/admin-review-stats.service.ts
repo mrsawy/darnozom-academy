@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { PaginateModel } from 'mongoose';
-import { ApprovalStatus, VerificationStatus } from '@lms-organization/shared-types';
+import { ApprovalStatus, VerificationStatus } from '@darnozom/shared-types';
 import { Category } from 'src/category/entities/category.entity';
 import { Course } from 'src/course/entities/course.entity';
 import { CourseModuleEntity } from 'src/course/entities/course-module.entity';

@@ -1,4 +1,4 @@
-import type { OrganizationDashboardReports } from '@lms-organization/shared-types';
+import type { OrganizationDashboardReports } from '@darnozom/shared-types';
 import type { ReportsFilters } from '@/lib/types/reports/reports-params.types';
 import type {
   ReportContentSliceMode,

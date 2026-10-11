@@ -1,4 +1,4 @@
-import { Actions, Roles, Subjects } from '@lms-organization/shared-types';
+import { Actions, Roles, Subjects } from '@darnozom/shared-types';
 
 export interface RolePermissionRule {
   action: Actions;

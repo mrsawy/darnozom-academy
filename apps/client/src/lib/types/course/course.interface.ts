@@ -1,10 +1,10 @@
 import { BillingCycle } from './enum/BillingCycle.enum';
-import { Currency, PublishStatus } from '@lms-organization/shared-types';
+import { Currency, PublishStatus } from '@darnozom/shared-types';
 import { IModule, IModuleWithContents } from './modules.interface';
 import { ICategory } from '../category/ICategory';
 import { IInstructor, IUser } from '../user/user.interface';
 import type { IUserReview } from '../review/review.types';
-import type { ApprovalStatusType as ApprovalStatus } from '@lms-organization/shared-types';
+import type { ApprovalStatusType as ApprovalStatus } from '@darnozom/shared-types';
 
 // ----- Subdocuments -----
 
@@ -137,4 +137,4 @@ export interface ICourseOverview extends ICourse {
 }
 // export interface ICourseWithContents
 
-export { PublishStatus } from '@lms-organization/shared-types';
+export { PublishStatus } from '@darnozom/shared-types';

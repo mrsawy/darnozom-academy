@@ -9,7 +9,7 @@ import {
 } from '@/components/atoms/select';
 import { Combobox } from '@/components/molecules/combobox';
 import { PhoneInput } from '@/components/organs/phone-input';
-import { Country, UserStatus, Roles } from '@lms-organization/shared-types';
+import { Country, UserStatus, Roles } from '@darnozom/shared-types';
 import { CreateUserFormData } from '@/lib/schema/user.schema';
 import { FieldErrors, UseFormRegister, UseFormSetValue, UseFormWatch } from 'react-hook-form';
 import { Option } from '@/components/molecules/multi-select/multi-select';

@@ -1,6 +1,6 @@
 import { BadRequestException, Controller, Get, Body, Patch, Param, UseGuards, Request, Query, Post, Put } from '@nestjs/common';
 import { CreateEnrollmentHttpDto } from '../dto/create-enrollment.http.dto';
-import { PaymentMethod, PaymentPurpose } from '@lms-organization/shared-types';
+import { PaymentMethod, PaymentPurpose } from '@darnozom/shared-types';
 
 import { EnrollmentService } from '../services/enrollment.service';
 import { IUserRequest } from 'src/auth/interfaces/IUserRequest.interface';

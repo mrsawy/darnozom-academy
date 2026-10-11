@@ -1,5 +1,5 @@
 import { IsEnum, IsNotEmpty, IsNumber, IsObject, IsOptional, IsString, Min } from 'class-validator';
-import { WithdrawalMethod } from '@lms-organization/shared-types';
+import { WithdrawalMethod } from '@darnozom/shared-types';
 
 export class MobileWalletDetailsDto {
   @IsString()

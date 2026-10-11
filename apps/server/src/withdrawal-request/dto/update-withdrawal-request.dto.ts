@@ -1,5 +1,5 @@
 import { IsEnum, IsObject, IsOptional, IsString } from 'class-validator';
-import { WithdrawalMethod } from '@lms-organization/shared-types';
+import { WithdrawalMethod } from '@darnozom/shared-types';
 
 export class UpdateWithdrawalRequestDto {
   @IsEnum(WithdrawalMethod)

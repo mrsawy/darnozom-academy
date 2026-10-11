@@ -5,7 +5,7 @@ import mongoose, { Model } from 'mongoose';
 import { Category } from '../entities/category.entity';
 import { Course } from 'src/course/entities/course.entity';
 import { User } from 'src/user/entities/user.entity';
-import { Roles } from '@lms-organization/shared-types';
+import { Roles } from '@darnozom/shared-types';
 import {
   COURSE_CATEGORY_CHANGED_EVENT,
   INSTRUCTOR_CATEGORY_CHANGED_EVENT,

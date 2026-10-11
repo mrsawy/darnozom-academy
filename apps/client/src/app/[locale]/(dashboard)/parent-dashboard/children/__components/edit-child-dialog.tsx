@@ -19,7 +19,7 @@ import { updateChildSchema, type UpdateChildSchema } from './child-form.schema';
 import type { IChild } from '@/lib/types/parent/parent-children.interface';
 import { PhoneInput } from '@/components/organs/phone-input';
 import { Combobox } from '@/components/molecules/combobox';
-import { Country } from '@lms-organization/shared-types';
+import { Country } from '@darnozom/shared-types';
 
 interface EditChildDialogProps {
   open: boolean;

@@ -11,7 +11,7 @@ import {
   getValidationErrorMessage,
   type NatsErr,
 } from './natsErrorHandler';
-import { isAccessTokenExpiredError, AuthErrors } from '@lms-organization/shared-types';
+import { isAccessTokenExpiredError, AuthErrors } from '@darnozom/shared-types';
 import { clearAuthSession, refreshAuthTokens } from '../actions/auth/auth.action';
 
 interface NatsRequestPayload<T = unknown> {

@@ -17,7 +17,7 @@ import { toast } from 'react-toastify';
 import { useRouter } from '@/i18n/navigation';
 import { useMutation, useQuery, useQueryClient } from '@/lib/utils';
 import { toggleContentComplete } from '@/lib/actions/courses/toggleContentComplete.action';
-import { CourseMessages } from '@lms-organization/shared-types';
+import { CourseMessages } from '@darnozom/shared-types';
 import { useTranslations } from 'next-intl';
 import { translateApiMessage } from '@/lib/utils/errors/translateApiMessage';
 import { throwIfNatsError } from '@/lib/utils/natsErrorHandler';

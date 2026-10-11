@@ -7,7 +7,7 @@ import type {
 } from '@/lib/types/verification/verification.interface';
 import type { Paginated, PaginationOptions } from '@/lib/types/Paginated';
 import { withDefaults } from '@/lib/types/Paginated';
-import { IdentityDocumentType } from '@lms-organization/shared-types';
+import { IdentityDocumentType } from '@darnozom/shared-types';
 
 // ─── Organization Verification ──────────────────────────────────────
 

@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { PaginateModel, Types } from 'mongoose';
-import { AdminReviewErrors } from '@lms-organization/shared-types';
+import { AdminReviewErrors } from '@darnozom/shared-types';
 import { Course } from 'src/course/entities/course.entity';
 import { CourseModuleEntity } from 'src/course/entities/course-module.entity';
 import { CourseContent } from 'src/course/entities/course-content.entity';

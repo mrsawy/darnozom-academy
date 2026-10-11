@@ -1,5 +1,5 @@
 import type { RolePermissionPayload, RoleResponse } from '@/lib/actions/role/role.action';
-import { ConditionKeys } from '@lms-organization/shared-types';
+import { ConditionKeys } from '@darnozom/shared-types';
 import { defaultPermissionRow, type RoleFormValues } from './role-form.schema';
 
 function normalizeConditions(c: unknown): { key: ConditionKeys; value: string }[] {

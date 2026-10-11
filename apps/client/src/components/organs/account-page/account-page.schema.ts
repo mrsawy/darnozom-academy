@@ -1,5 +1,5 @@
 import * as yup from 'yup';
-import { Currency } from '@lms-organization/shared-types';
+import { Currency } from '@darnozom/shared-types';
 
 export const basicSchema = yup.object({
   firstName: yup.string().required().min(2),

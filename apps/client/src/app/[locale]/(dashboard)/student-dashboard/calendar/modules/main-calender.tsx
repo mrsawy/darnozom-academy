@@ -14,7 +14,7 @@ import {
   DialogTitle,
 } from '@/components/atoms/dialog';
 import { useStudentCalendar } from '@/lib/hooks/calender/useStudentCalendar.hook';
-import { ICalendarAppointment, CalendarAppointmentType } from '@lms-organization/shared-types';
+import { ICalendarAppointment, CalendarAppointmentType } from '@darnozom/shared-types';
 import { cn } from '@/lib/utils/index';
 import { format } from 'date-fns';
 import { ar as arDateFns, enUS as enUSDateFns } from 'date-fns/locale';

@@ -10,7 +10,7 @@ import {
   PaymentProvider,
   PrivateSessionErrors,
   PrivateSessionSuccessMessages,
-} from '@lms-organization/shared-types';
+} from '@darnozom/shared-types';
 import { SessionBooking } from '../entities/session-booking.entity';
 import { PrivateSession, IAvailableSlot } from '../entities/private-session.entity';
 import { BookingStatus } from '../enums/booking-status.enum';

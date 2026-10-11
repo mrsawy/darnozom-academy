@@ -16,7 +16,7 @@ import useGeneralStore from '@/lib/store/generalStore';
 import { Link, useRouter } from '@/i18n/navigation';
 import { Combobox } from '@/components/molecules/combobox';
 import { getLocalWishlistCourseIds, clearLocalWishlist } from '@/lib/utils/localStorageWishlist';
-import { Country, Roles } from '@lms-organization/shared-types';
+import { Country, Roles } from '@darnozom/shared-types';
 import { useTranslations } from 'next-intl';
 import { AuthTextInput, AuthPasswordInput, AuthPhoneInput, GoogleAuthButton } from '../components';
 import { translateApiMessage } from '@/lib/utils/errors/translateApiMessage';

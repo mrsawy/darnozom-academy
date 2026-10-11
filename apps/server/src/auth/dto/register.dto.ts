@@ -1,8 +1,8 @@
 import { Type } from 'class-transformer';
 import { IsNotEmpty, ValidateNested, ValidateIf, IsOptional, IsArray, IsMongoId, IsBoolean, Equals } from 'class-validator';
 import { CreateOrganizationDto } from '../../organization/dto/create-organization.dto';
-import { AuthErrors, Roles } from '@lms-organization/shared-types';
-import { CreateUserDto } from '@lms-organization/shared-types/dto';
+import { AuthErrors, Roles } from '@darnozom/shared-types';
+import { CreateUserDto } from '@darnozom/shared-types/dto';
 
 /** True only for organization (SUPER_ADMIN) registrations — not students/parents. */
 function isOrganizationRegistration(o: RegisterDto): boolean {

@@ -1,5 +1,5 @@
 import { NotFoundException } from '@nestjs/common';
-import { ActiveStatus, ApprovalStatus, PublishStatus } from '@lms-organization/shared-types';
+import { ActiveStatus, ApprovalStatus, PublishStatus } from '@darnozom/shared-types';
 import { APPROVED_STATUSES } from 'src/utils/approval.utils';
 import { sanitizeContentForStudent } from './content-sanitizer.util';
 

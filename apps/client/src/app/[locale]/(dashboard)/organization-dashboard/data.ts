@@ -52,7 +52,7 @@ import {
   ROUTE_ORG_CHAT,
   ROUTE_BOOKS,
 } from '@/lib/data/constants/routes.constants';
-import { CourseContentType } from '@lms-organization/shared-types';
+import { CourseContentType } from '@darnozom/shared-types';
 
 export const data = {
   navMain: [

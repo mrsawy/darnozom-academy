@@ -8,7 +8,7 @@ import mongoose, { PaginateOptions } from 'mongoose';
 import { User } from '../../entities/user.entity';
 import { convertObjectValuesToObjectId } from '../../../utils/ObjectId.utils';
 import { ApplyRpcErrorHandling } from '../../../utils/docerators/error-handeling/class/ApplyRpcErrorHandling.decorator';
-import { UserErrors } from '@lms-organization/shared-types';
+import { UserErrors } from '@darnozom/shared-types';
 import { FindInstructorsDto } from '../../dto/find-instructors.dto';
 
 @ApplyRpcErrorHandling

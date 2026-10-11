@@ -5,7 +5,7 @@ import { getCookie } from '@/lib/utils/serverUtils';
 import { AUTH_COOKIE_NAME } from '@/lib/data/constants';
 import { getPublicApiUrl } from '@/lib/data/constants/api-url.constants';
 import { refreshAuthTokens } from '@/lib/actions/auth/auth.action';
-import { AuthErrors, CommonErrors } from '@lms-organization/shared-types';
+import { AuthErrors, CommonErrors } from '@darnozom/shared-types';
 import type { UIMessage } from '@ai-sdk/react';
 
 export interface AiThreadMetadata {

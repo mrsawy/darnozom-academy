@@ -1,5 +1,5 @@
 import { toast } from 'react-toastify';
-import { AccessType } from '@lms-organization/shared-types';
+import { AccessType } from '@darnozom/shared-types';
 import { getEnrollmentByCourse } from '@/lib/actions/enrollment/getEnrollmentByCourse.action';
 import { SubscriptionStatus } from '@/lib/types/enrollment/enrollment.interface';
 import {
@@ -7,7 +7,7 @@ import {
   ROUTE_STUDENT_COURSE_CONTENT,
 } from '@/lib/data/constants/routes.constants';
 import { notificationKeys } from '@/lib/hooks/notification/use-notifications.hook';
-import type { CourseContentNotificationData } from '@lms-organization/shared-types';
+import type { CourseContentNotificationData } from '@darnozom/shared-types';
 import type { NotificationTypeHandler } from '../notification-handler.types';
 import { translateNotificationToastText } from '../translate-notification';
 

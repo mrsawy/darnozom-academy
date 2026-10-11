@@ -3,7 +3,7 @@ import { User } from '../entities/user.entity';
 import { Wallet } from '../../wallet/entities/wallet.entity';
 import { faker, fakerAR } from '@faker-js/faker';
 import * as bcrypt from 'bcrypt';
-import { Currency, Roles, UserStatus } from '@lms-organization/shared-types';
+import { Currency, Roles, UserStatus } from '@darnozom/shared-types';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 
 // Type assertion for bcrypt to avoid unsafe member access errors

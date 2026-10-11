@@ -15,7 +15,7 @@ import { Type } from 'class-transformer';
 import { BillingCycle } from '../../utils/enums/billingCycle.enum';
 import mongoose from 'mongoose';
 import { SubscriptionStatus } from 'src/utils/enums/subscriptionStatus.enum';
-import { IDENTIFIER_PATTERN } from '@lms-organization/shared-types';
+import { IDENTIFIER_PATTERN } from '@darnozom/shared-types';
 
 class BillingDto {
   @IsEmail()

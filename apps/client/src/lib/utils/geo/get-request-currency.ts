@@ -1,6 +1,6 @@
 import 'server-only';
 import { headers } from 'next/headers';
-import { currencyFromCountryCode, type Currency } from '@lms-organization/shared-types';
+import { currencyFromCountryCode, type Currency } from '@darnozom/shared-types';
 
 /**
  * Suggested currency for the current visitor, derived from the `CF-IPCountry`

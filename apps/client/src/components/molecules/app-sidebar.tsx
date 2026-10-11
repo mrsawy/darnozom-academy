@@ -17,7 +17,7 @@ import {
   SidebarMenuItem,
 } from '@/components/atoms/sidebar';
 import { useLocale, useTranslations } from 'next-intl';
-import { Roles } from '@lms-organization/shared-types';
+import { Roles } from '@darnozom/shared-types';
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   data: {

@@ -1,5 +1,5 @@
 import { Model, Types } from 'mongoose';
-import { PaymentPurpose } from '@lms-organization/shared-types';
+import { PaymentPurpose } from '@darnozom/shared-types';
 import { AccessType } from '../../enrollment/enum/accessType.enum';
 import { Enrollment } from '../../enrollment/entities/enrollment.entity';
 import { Transaction, TransactionStatus, TransactionType } from '../entities/transaction.entity';

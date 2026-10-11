@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { RpcException } from '@nestjs/microservices';
-import { CommonErrors, RATE_LIMIT } from '@lms-organization/shared-types';
+import { CommonErrors, RATE_LIMIT } from '@darnozom/shared-types';
 import { RateLimiterStore } from './rate-limiter.store';
 import { RATE_LIMIT_KEY, SKIP_RATE_LIMIT_KEY, RateLimitOptions } from './rate-limiter.decorator';
 

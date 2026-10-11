@@ -1,1 +1,1 @@
-export { CourseContentType as ContentType } from '@lms-organization/shared-types';
+export { CourseContentType as ContentType } from '@darnozom/shared-types';

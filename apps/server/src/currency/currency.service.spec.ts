@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { Currency } from '@lms-organization/shared-types';
+import { Currency } from '@darnozom/shared-types';
 import { CurrencyService } from './currency.service';
 
 function loadRates(service: CurrencyService, rates: Record<string, number>) {

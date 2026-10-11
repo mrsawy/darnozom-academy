@@ -8,8 +8,8 @@ import { DayButton } from 'react-day-picker';
 import { Button } from '@/components/atoms/button';
 import { Calendar, CalendarDayButton } from '@/components/atoms/calendar';
 import { Card, CardContent, CardFooter } from '@/components/atoms/card';
-import type { ICalendarAppointment } from '@lms-organization/shared-types';
-import { CalendarAppointmentType } from '@lms-organization/shared-types';
+import type { ICalendarAppointment } from '@darnozom/shared-types';
+import { CalendarAppointmentType } from '@darnozom/shared-types';
 import { cn } from '@/lib/utils';
 
 const typeColors: Record<CalendarAppointmentType, string> = {

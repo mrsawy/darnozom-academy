@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import { Country } from '@lms-organization/shared-types';
+import { Country } from '@darnozom/shared-types';
 
 const PASSWORD_MIN_LENGTH = 8;
 

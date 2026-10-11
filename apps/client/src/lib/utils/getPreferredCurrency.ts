@@ -1,4 +1,4 @@
-import { Country, Currency } from '@lms-organization/shared-types';
+import { Country, Currency } from '@darnozom/shared-types';
 
 export const getPreferredCurrency = (country: Country): Currency => {
   switch (country) {

@@ -11,7 +11,7 @@ import {
   ProcessedWebhook,
   SubscriptionCheckoutResult,
 } from '../interfaces/payment-strategy.interface';
-import { Currency } from '@lms-organization/shared-types';
+import { Currency } from '@darnozom/shared-types';
 import { TransactionStatus } from 'src/transaction/entities/transaction.entity';
 import { PayPalWebhookLink } from '../../types/paypal/paybalWebhookBody.interface';
 import { PayPalOrderResponse, PayPalCaptureResource, PayPalOrderDetails, PayPalTokenResponse } from '../../types/paypal/PayPalOrder.interface';

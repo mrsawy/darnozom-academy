@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document, Types } from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
-import { Currency, EntityStatus, MeetingProvider } from '@lms-organization/shared-types';
+import { Currency, EntityStatus, MeetingProvider } from '@darnozom/shared-types';
 import { SessionType } from '../enums/session-type.enum';
 import { applySoftDeleteMiddleware } from 'src/utils/soft-delete';
 

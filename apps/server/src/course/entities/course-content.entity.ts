@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema, Types } from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
 import { ContentType } from '../enum/contentType.enum';
-import { ActiveStatus, ApprovalStatus, PublishStatus, EntityStatus } from '@lms-organization/shared-types';
+import { ActiveStatus, ApprovalStatus, PublishStatus, EntityStatus } from '@darnozom/shared-types';
 import { Quiz } from './quiz.schema';
 import { Video } from './video.schema';
 import { Article } from './article.schema';

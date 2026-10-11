@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import { WithdrawalMethod } from '@lms-organization/shared-types';
+import { WithdrawalMethod } from '@darnozom/shared-types';
 
 /** Pass `useTranslations('Wallet.withdraw')` from the form component. */
 export type WithdrawDialogSchemaTranslate = (

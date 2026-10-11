@@ -7,7 +7,7 @@ import type {
   OrganizationDashboardReports,
   OrganizationMemberDashboardReports,
   StudentDashboardReports,
-} from '@lms-organization/shared-types';
+} from '@darnozom/shared-types';
 
 export async function getStudentDashboardReports(params?: ReportsParams) {
   return createAuthorizedNatsRequest<StudentDashboardReports | { err: { message: string } }>(

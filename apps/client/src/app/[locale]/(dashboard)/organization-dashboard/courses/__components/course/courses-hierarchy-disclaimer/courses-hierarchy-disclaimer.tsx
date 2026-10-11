@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { HelpCircle, Info } from 'lucide-react';
-import { Roles } from '@lms-organization/shared-types';
+import { Roles } from '@darnozom/shared-types';
 import { useTranslations } from 'next-intl';
 import { Alert, AlertDescription, AlertTitle } from '@/components/atoms/alert';
 import { Button } from '@/components/atoms/button';

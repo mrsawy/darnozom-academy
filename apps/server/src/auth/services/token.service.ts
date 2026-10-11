@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { AuthErrors } from '@lms-organization/shared-types';
+import { AuthErrors } from '@darnozom/shared-types';
 import * as jwt from 'jsonwebtoken';
 
 @Injectable()

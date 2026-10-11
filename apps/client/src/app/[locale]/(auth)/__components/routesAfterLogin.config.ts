@@ -1,4 +1,4 @@
-import { Roles } from '@lms-organization/shared-types';
+import { Roles } from '@darnozom/shared-types';
 
 export const routesAfterLogin = (role: Roles) => {
   switch (role) {

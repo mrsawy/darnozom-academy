@@ -23,7 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/atoms/select';
-import { BillingCycle, CURRENCIES } from '@lms-organization/shared-types';
+import { BillingCycle, CURRENCIES } from '@darnozom/shared-types';
 import {
   aiPlanFormSchema,
   defaultAiPlanFormValues,

@@ -6,7 +6,7 @@ import { PricingDetails } from '@/lib/types/course/course.interface';
 import { Timer } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import React from 'react';
-import type { DisplayPrice } from '@lms-organization/shared-types';
+import type { DisplayPrice } from '@darnozom/shared-types';
 import { getDiscountedPrice, isDiscountActive } from '@/lib/utils/discount.utils';
 
 interface PricingTabContentProps {

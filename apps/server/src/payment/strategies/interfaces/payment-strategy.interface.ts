@@ -1,4 +1,4 @@
-import { Currency, PaymentMethod, PaymentProvider, PaymentPurpose } from '@lms-organization/shared-types';
+import { Currency, PaymentMethod, PaymentProvider, PaymentPurpose } from '@darnozom/shared-types';
 import { UserDocument } from 'src/user/entities/user.entity';
 import { Course } from 'src/course/entities/course.entity';
 import { BillingCycle } from 'src/utils/enums/billingCycle.enum';
@@ -136,4 +136,4 @@ export interface PaddleCheckoutCustomer {
 export type SubscriptionCheckoutResult =
   { url: string } | { clientToken: string; priceId: string; customer?: PaddleCheckoutCustomer; successUrl?: string };
 
-export { PaymentProvider, PaymentPurpose } from '@lms-organization/shared-types';
+export { PaymentProvider, PaymentPurpose } from '@darnozom/shared-types';

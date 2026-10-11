@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsEnum, IsArray, ArrayMinSize, ArrayMaxSize, IsString } from 'class-validator';
-import { IdentityDocumentType } from '@lms-organization/shared-types';
+import { IdentityDocumentType } from '@darnozom/shared-types';
 
 export class SubmitIdentityDto {
   @IsNotEmpty()

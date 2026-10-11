@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, PaginateModel, PaginateOptions, Types } from 'mongoose';
-import { EntityStatus, MeetingProvider, PrivateSessionErrors, PrivateSessionSuccessMessages } from '@lms-organization/shared-types';
+import { EntityStatus, MeetingProvider, PrivateSessionErrors, PrivateSessionSuccessMessages } from '@darnozom/shared-types';
 import { PrivateSession } from '../entities/private-session.entity';
 import { SessionBooking } from '../entities/session-booking.entity';
 import { CreatePrivateSessionDto, AvailableSlotDto } from '../dto/create-private-session.dto';

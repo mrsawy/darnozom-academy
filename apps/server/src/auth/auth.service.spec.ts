@@ -6,7 +6,7 @@ import { TokenService } from './services/token.service';
 import { getModelToken, getConnectionToken } from '@nestjs/mongoose';
 import { User } from '../user/entities/user.entity';
 import { PasswordResetToken } from './entities/password-reset-token.entity';
-import { Roles, AuthErrors } from '@lms-organization/shared-types';
+import { Roles, AuthErrors } from '@darnozom/shared-types';
 
 const mockUser = {
   _id: 'user-id',

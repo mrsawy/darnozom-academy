@@ -9,7 +9,7 @@ import type {
 import { toast } from 'react-toastify';
 import { useTranslations } from 'next-intl';
 import { translateApiMessage } from '@/lib/utils/errors/translateApiMessage';
-import { EnrollmentSuccessMessages } from '@lms-organization/shared-types';
+import { EnrollmentSuccessMessages } from '@darnozom/shared-types';
 
 export function useGradeAssignment() {
   const tErrors = useTranslations('errors');

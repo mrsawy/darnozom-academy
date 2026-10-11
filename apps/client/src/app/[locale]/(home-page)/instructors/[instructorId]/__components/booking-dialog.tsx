@@ -25,7 +25,7 @@ import type {
   ISlotAvailability,
 } from '@/lib/types/private-session/private-session.interface';
 import { formatSlotDate, formatSlotTimeRange } from '@/lib/utils/session-time';
-import { Currency, PaymentMethod, PaymentProvider } from '@lms-organization/shared-types';
+import { Currency, PaymentMethod, PaymentProvider } from '@darnozom/shared-types';
 
 interface BookingDialogProps {
   session: IPrivateSession | null;

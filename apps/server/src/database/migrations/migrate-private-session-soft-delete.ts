@@ -12,7 +12,7 @@ import { NestFactory } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule, getModelToken } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { EntityStatus } from '@lms-organization/shared-types';
+import { EntityStatus } from '@darnozom/shared-types';
 import { MONGO_CONNECTION_OPTIONS } from '../../config/mongo.config';
 import { PrivateSession, PrivateSessionSchema } from '../../private-session/entities/private-session.entity';
 import { resolveMigrationMongoUri } from './migration-mongo.util';

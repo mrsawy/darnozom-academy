@@ -1,4 +1,4 @@
-import { Currency } from '@lms-organization/shared-types';
+import { Currency } from '@darnozom/shared-types';
 import { BillingCycle } from '../enums/billingCycle.enum';
 import { PaginateOptions } from 'mongoose';
 

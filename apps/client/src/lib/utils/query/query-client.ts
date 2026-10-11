@@ -1,7 +1,7 @@
 'use client';
 
 import { QueryCache, QueryClient, MutationCache } from '@tanstack/react-query';
-import { isUnauthenticatedError } from '@lms-organization/shared-types';
+import { isUnauthenticatedError } from '@darnozom/shared-types';
 import { handleUnauthenticatedSession } from '@/lib/utils/auth/handle-unauthenticated-session';
 
 function errorMessage(error: unknown): string {

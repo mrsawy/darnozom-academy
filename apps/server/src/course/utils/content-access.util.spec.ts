@@ -1,5 +1,5 @@
 import { NotFoundException } from '@nestjs/common';
-import { ActiveStatus, ApprovalStatus, PublishStatus } from '@lms-organization/shared-types';
+import { ActiveStatus, ApprovalStatus, PublishStatus } from '@darnozom/shared-types';
 import { ContentType } from '../enum/contentType.enum';
 import { authorizeContentForRequester, isContentServableToStudent } from './content-access.util';
 

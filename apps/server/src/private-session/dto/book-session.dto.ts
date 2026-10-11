@@ -1,5 +1,5 @@
 import { IsMongoId, IsString, IsEnum, IsOptional } from 'class-validator';
-import { Currency, PaymentMethod, PaymentProvider } from '@lms-organization/shared-types';
+import { Currency, PaymentMethod, PaymentProvider } from '@darnozom/shared-types';
 
 export class BookSessionDto {
   @IsMongoId()

@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { ClientSession, PaginateModel } from 'mongoose';
-import { AdminReviewErrors } from '@lms-organization/shared-types';
+import { AdminReviewErrors } from '@darnozom/shared-types';
 import { Subscription, SubscriptionDocument } from '../entities/subscription.entity';
 import { Organization } from 'src/organization/entities/organization.entity';
 import { Plan } from 'src/plan/entities/plan.entity';

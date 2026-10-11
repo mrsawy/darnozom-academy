@@ -2,7 +2,7 @@ import {
   VerificationStatus,
   IdentityDocumentType,
   ApprovalStatus,
-} from '@lms-organization/shared-types';
+} from '@darnozom/shared-types';
 
 export interface IEmailVerification {
   verified: boolean;

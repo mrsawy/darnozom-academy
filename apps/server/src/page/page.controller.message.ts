@@ -9,7 +9,7 @@ import mongoose, { PaginateOptions, Types } from 'mongoose';
 import { Page } from './entities/page.entity';
 import { convertObjectValuesToObjectId } from 'src/utils/ObjectId.utils';
 import { RequirePermissionsGuard } from 'src/role/permission.decorator';
-import { Actions, PageErrors, Subjects, UserErrors } from '@lms-organization/shared-types';
+import { Actions, PageErrors, Subjects, UserErrors } from '@darnozom/shared-types';
 import { CheckSubscriptionLimit } from 'src/subscription/decorators/check-subscription-limit.decorator';
 import { SubscriptionService } from 'src/subscription/services/subscription.service';
 import { ApplyRpcErrorHandling } from 'src/utils/docerators/error-handeling/class/ApplyRpcErrorHandling.decorator';

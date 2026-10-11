@@ -1,1 +1,1 @@
-export { BillingCycle } from '@lms-organization/shared-types';
+export { BillingCycle } from '@darnozom/shared-types';

@@ -1,4 +1,4 @@
-import { ApprovalStatus } from '@lms-organization/shared-types';
+import { ApprovalStatus } from '@darnozom/shared-types';
 import { Document } from 'mongoose';
 
 export function escapeRegex(str: string): string {

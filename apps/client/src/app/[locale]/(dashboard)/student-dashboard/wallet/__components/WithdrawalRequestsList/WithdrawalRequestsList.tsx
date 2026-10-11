@@ -17,7 +17,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/car
 import { Skeleton } from '@/components/atoms/skeleton';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/atoms/dialog';
 import { useTranslations } from 'next-intl';
-import { WithdrawalMethod, WithdrawalRequestStatus } from '@lms-organization/shared-types';
+import { WithdrawalMethod, WithdrawalRequestStatus } from '@darnozom/shared-types';
 import {
   useMyWithdrawalRequests,
   useCancelWithdrawalRequest,

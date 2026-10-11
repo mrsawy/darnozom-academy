@@ -19,7 +19,7 @@ import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { useInfiniteUsers } from '@/lib/hooks/user/use-user.hook';
 import { useInfiniteCourseEnrollments } from '@/lib/hooks/enrollment/use-course-enrollments.hook';
-import { Roles } from '@lms-organization/shared-types';
+import { Roles } from '@darnozom/shared-types';
 import type { OfflineScheduleSlot } from './types';
 
 const DAYS = [

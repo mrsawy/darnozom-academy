@@ -19,7 +19,7 @@ import { ModuleContentSettingsDto } from './module-content-settings.dto';
 import { ContentType } from '../enum/contentType.enum';
 import { VideoType } from '../enum/videoType.enum';
 import { Type } from 'class-transformer';
-import { MeetingProvider, Platform, PublishStatus } from '@lms-organization/shared-types';
+import { MeetingProvider, Platform, PublishStatus } from '@darnozom/shared-types';
 import { IsWithinAttachmentSizeLimit } from './validators/is-within-attachment-size-limit.validator';
 import { IsValidCorrectOption } from './validators/is-valid-correct-option.validator';
 

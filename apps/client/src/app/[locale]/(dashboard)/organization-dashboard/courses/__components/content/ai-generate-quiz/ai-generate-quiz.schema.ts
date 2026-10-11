@@ -1,5 +1,5 @@
 import * as yup from 'yup';
-import { AI_QUIZ_MAX_QUESTIONS, AI_QUIZ_MIN_QUESTIONS } from '@lms-organization/shared-types';
+import { AI_QUIZ_MAX_QUESTIONS, AI_QUIZ_MIN_QUESTIONS } from '@darnozom/shared-types';
 import { aiAttachmentsSchema } from '../ai-generate-shared/ai-attachment.schema';
 
 export const aiGenerateQuizSchema = yup.object({

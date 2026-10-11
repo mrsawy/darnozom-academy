@@ -3,7 +3,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import mongoose, { Connection, PaginateModel } from 'mongoose';
 import { randomBytes } from 'node:crypto';
-import { AuthErrors, Currency, Roles } from '@lms-organization/shared-types';
+import { AuthErrors, Currency, Roles } from '@darnozom/shared-types';
 import { USER_CREATED_FOR_AI_EVENT, UserCreatedForAiEvent } from '../../ai-subscription/events/user-created-for-ai.event';
 import { User, UserDocument } from '../../user/entities/user.entity';
 import { Role } from '../../role/entities/role.entity';
