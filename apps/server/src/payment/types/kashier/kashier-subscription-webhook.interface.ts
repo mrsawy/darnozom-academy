@@ -11,11 +11,7 @@ export interface KashierSubscriptionWebhookBody {
 }
 
 export type KashierSubscriptionEvent =
-  | 'subscription.created'
-  | 'subscription.renewed'
-  | 'subscription.cancelled'
-  | 'subscription.payment_failed'
-  | 'subscription.expired';
+  'subscription.created' | 'subscription.renewed' | 'subscription.cancelled' | 'subscription.payment_failed' | 'subscription.expired';
 
 export interface KashierSubscriptionWebhookData {
   subscriptionId: string;

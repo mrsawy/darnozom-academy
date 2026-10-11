@@ -417,10 +417,7 @@ export class EnrollmentService {
     const reviewsByCourseId = await this.reviewService.findUserCourseReviews(userId, courseIds.filter(Boolean) as string[]);
     for (const doc of result.docs) {
       const courseVal = doc.get('course') as
-        | (mongoose.Document & { _id?: mongoose.Types.ObjectId })
-        | { _id?: mongoose.Types.ObjectId }
-        | null
-        | undefined;
+        (mongoose.Document & { _id?: mongoose.Types.ObjectId }) | { _id?: mongoose.Types.ObjectId } | null | undefined;
       if (!courseVal || !courseVal._id) continue;
 
       const review = reviewsByCourseId.get(courseVal._id.toString()) ?? null;

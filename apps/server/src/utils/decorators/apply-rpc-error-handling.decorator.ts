@@ -48,7 +48,6 @@ export function ApplyRpcErrorHandling<T extends abstract new (...args: any[]) =>
 
     Object.defineProperty(wrappedMethod, 'name', { value: originalMethod.name });
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     descriptor.value = wrappedMethod as PropertyDescriptor['value'];
     Object.defineProperty(constructor.prototype, methodName, descriptor);
   }

@@ -14,11 +14,7 @@ export class QueryService {
     return this.connection.model(modelName) as Model<T>;
   }
 
-  async findOne<T>(
-    modelName: string,
-    filters: RootFilterQuery<T>,
-    options?: { populate?: string | string[]; select?: string }
-  ): Promise<T | null> {
+  async findOne<T>(modelName: string, filters: RootFilterQuery<T>, options?: { populate?: string | string[]; select?: string }): Promise<T | null> {
     const model = this.getModel<T>(modelName);
     let query = model.findOne(filters);
     if (options?.select != null) query = query.select(options.select);

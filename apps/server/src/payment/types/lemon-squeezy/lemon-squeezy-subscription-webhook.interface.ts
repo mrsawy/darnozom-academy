@@ -120,10 +120,7 @@ export interface LemonSqueezySubscriptionInvoiceAttributes {
 }
 
 export type LemonSqueezySubscriptionInvoiceEventName =
-  | 'subscription_payment_success'
-  | 'subscription_payment_failed'
-  | 'subscription_payment_recovered'
-  | 'subscription_payment_refunded';
+  'subscription_payment_success' | 'subscription_payment_failed' | 'subscription_payment_recovered' | 'subscription_payment_refunded';
 
 export interface LemonSqueezySubscriptionInvoiceWebhookBody {
   meta: LemonSqueezyWebhookMeta & { event_name: LemonSqueezySubscriptionInvoiceEventName };

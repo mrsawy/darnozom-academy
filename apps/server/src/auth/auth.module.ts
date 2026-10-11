@@ -37,8 +37,7 @@ const shouldEnableRealtime = process.env.DISABLE_REALTIME !== 'true';
       useFactory: (configService: ConfigService) => ({
         secret: configService.get<string>('JSON_PRIVATE_KEY') ?? '',
         signOptions: {
-          expiresIn: (configService.get<string>('ACCESS_TOKEN_EXPIRES_IN') ??
-            '15m') as JwtSignOptions['expiresIn'],
+          expiresIn: (configService.get<string>('ACCESS_TOKEN_EXPIRES_IN') ?? '15m') as JwtSignOptions['expiresIn'],
         },
       }),
     }),

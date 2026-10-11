@@ -1,7 +1,7 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "defaultBase": "master",
-  "name": "lms-organization",
+  "name": "darnozom-academy",
   "version": "1.0.0",
   "packageManager": "pnpm@8.15.4",
   "targetDefaults": {

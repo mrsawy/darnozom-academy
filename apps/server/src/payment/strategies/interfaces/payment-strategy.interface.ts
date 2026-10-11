@@ -134,7 +134,6 @@ export interface PaddleCheckoutCustomer {
 
 /** Result of subscribe-to-plan: redirect URL or Paddle overlay init per https://developer.paddle.com/build/checkout/build-overlay-checkout */
 export type SubscriptionCheckoutResult =
-  | { url: string }
-  | { clientToken: string; priceId: string; customer?: PaddleCheckoutCustomer; successUrl?: string };
+  { url: string } | { clientToken: string; priceId: string; customer?: PaddleCheckoutCustomer; successUrl?: string };
 
 export { PaymentProvider, PaymentPurpose } from '@lms-organization/shared-types';

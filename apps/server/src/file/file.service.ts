@@ -412,18 +412,16 @@ export class FileService {
     }
 
     const presignedUrls = await Promise.all(
-      Array.from(
-        { length: partCount },
-        (_, i): Promise<{ partNumber: number; url: string }> =>
-          this.s3
-            .getSignedUrlPromise('uploadPart', {
-              Bucket: bucket,
-              Key: normalizedKey,
-              UploadId,
-              PartNumber: i + 1,
-              Expires: 3600,
-            })
-            .then((url: string) => ({ partNumber: i + 1, url }))
+      Array.from({ length: partCount }, (_, i): Promise<{ partNumber: number; url: string }> =>
+        this.s3
+          .getSignedUrlPromise('uploadPart', {
+            Bucket: bucket,
+            Key: normalizedKey,
+            UploadId,
+            PartNumber: i + 1,
+            Expires: 3600,
+          })
+          .then((url: string) => ({ partNumber: i + 1, url }))
       )
     );
 

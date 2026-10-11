@@ -2,18 +2,18 @@
   "dependencies": {
     "@nestjs/mapped-types": "*"
   },
-  "name": "lms-organization",
+  "name": "darnozom-academy",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "postinstall": "node scripts/prune-nested-assistant-ui.cjs && node scripts/patch-radix-compose-refs.cjs",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "nx run-many -t lint --exclude=lms-organization",
-    "lint:format": "nx run-many -t lint:format --exclude=lms-organization",
+    "lint": "nx run-many -t lint --exclude=darnozom-academy",
+    "lint:format": "nx run-many -t lint:format --exclude=darnozom-academy",
     "lint:check": "eslint .",
-    "type-check": "nx run-many -t tsc --exclude=lms-organization",
-    "tsc": "nx run-many -t tsc --exclude=lms-organization"
+    "type-check": "nx run-many -t tsc --exclude=darnozom-academy",
+    "tsc": "nx run-many -t tsc --exclude=darnozom-academy"
   },
   "keywords": [],
   "author": "",

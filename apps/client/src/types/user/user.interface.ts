@@ -1,4 +1,5 @@
-import { IOrganization, IPermission, Roles, UserStatus } from '@lms-organization/shared-types';
+import { IPermission, Roles, UserStatus } from '@lms-organization/shared-types';
+import { Organization as IOrganization } from '@/lib/types/organization/organization.interface';
 
 export interface Profile {
   bio?: string;
