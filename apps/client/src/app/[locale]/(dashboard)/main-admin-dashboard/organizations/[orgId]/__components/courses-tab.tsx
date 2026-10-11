@@ -21,8 +21,6 @@ import { ResourceTable } from './resource-table';
 import { DeleteButton } from './delete-button';
 import { SuspendButton } from './suspend-button';
 import { EntityStatusBadge } from './entity-status-badge';
-import { DiscussionDialog } from '@/components';
-import { DiscussionType } from '@/lib/types/discussion/discussion.types';
 import { ROUTE_MAIN_ADMIN_ORG_COURSE_MODULES } from '@/lib/data/constants/routes.constants';
 
 interface CoursesTabProps {
@@ -83,7 +81,6 @@ export function CoursesTab({ orgId }: CoursesTabProps) {
             <TableHead>{t('table.status')}</TableHead>
             <TableHead>{t('table.approvalStatus')}</TableHead>
             <TableHead>{t('table.modules')}</TableHead>
-            <TableHead>{t('table.discussions')}</TableHead>
             <TableHead>{t('table.created')}</TableHead>
             <TableHead>{t('table.actions')}</TableHead>
           </TableRow>
@@ -117,14 +114,6 @@ export function CoursesTab({ orgId }: CoursesTabProps) {
                   }>
                   {t('table.viewModules')}
                 </Button>
-              </TableCell>
-              <TableCell>
-                <DiscussionDialog
-                  type={DiscussionType.COURSE}
-                  courseId={course._id}
-                  entityTitle={course.name}
-                  canDeleteAny
-                />
               </TableCell>
               <TableCell>{new Date(course.createdAt).toLocaleDateString()}</TableCell>
               <TableCell>

@@ -18,11 +18,15 @@ export class TokenService {
   }
 
   generateToken(payload: { _id: string; sid: string }): string {
-    return jwt.sign(payload, this.secret, { expiresIn: this.expiresIn });
+    return jwt.sign(payload, this.secret, {
+      expiresIn: this.expiresIn as jwt.SignOptions['expiresIn'],
+    });
   }
 
   generateRefreshToken(payload: { _id: string; sid: string; rtid: string }): string {
-    return jwt.sign(payload, this.refreshSecret, { expiresIn: this.refreshExpiresIn });
+    return jwt.sign(payload, this.refreshSecret, {
+      expiresIn: this.refreshExpiresIn as jwt.SignOptions['expiresIn'],
+    });
   }
 
   verifyAccessToken(token: string): { _id: string; sid: string } {

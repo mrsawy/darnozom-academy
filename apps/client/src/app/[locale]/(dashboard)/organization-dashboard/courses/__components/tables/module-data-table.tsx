@@ -40,8 +40,6 @@ import CreateModuleForm from '../modules/create-module-form';
 import { ApprovalStatusBadge } from '@/app/[locale]/(dashboard)/main-admin-dashboard/__components/ApprovalStatusBadge';
 import { PublishToggle } from '@/components/molecules/publish-toggle';
 import { useSetModulePublishStatus } from '@/lib/hooks/course/usePublishStatus';
-import { DiscussionDialog } from '@/components';
-import { DiscussionType } from '@/lib/types/discussion/discussion.types';
 
 // Create a separate component for the drag handle
 const DragHandle = React.memo(() => {
@@ -231,19 +229,6 @@ function ModulesDataTable({ courseId }: { courseId: string }) {
             </Link>
           );
         },
-      },
-      {
-        id: 'discussions',
-        header: t('columns.discussions'),
-        cell: ({ row }) => (
-          <DiscussionDialog
-            type={DiscussionType.MODULE}
-            courseId={courseId}
-            moduleId={row.original._id}
-            entityTitle={row.original.title}
-            canDeleteAny
-          />
-        ),
       },
       {
         accessorKey: 'publishStatus',

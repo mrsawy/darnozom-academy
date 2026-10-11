@@ -2,26 +2,10 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { openai } from '@ai-sdk/openai';
 import { generateText } from 'ai';
+import { YoutubeTranscript } from 'youtube-transcript';
 import { TranscriptSource } from 'src/course/enum/transcriptStatus.enum';
 import { extractYoutubeId } from '../utils/youtube-id';
 import { NoCaptionsError, TranscriptionResult, TranscriptionSkipError } from '../transcription.types';
-
-/** Package `main` is a broken CJS build under `"type":"module"`; load the real ESM build from CJS Nest output. */
-function loadYoutubeTranscriptModule() {
-  return import('youtube-transcript/dist/youtube-transcript.esm.js');
-}
-
-interface TranscriptSegment {
-  text: string;
-}
-
-interface YoutubeTranscriptStatic {
-  fetchTranscript: (videoId: string, options?: { lang?: string }) => Promise<TranscriptSegment[]>;
-}
-
-interface YoutubeTranscriptModule {
-  YoutubeTranscript: YoutubeTranscriptStatic;
-}
 
 @Injectable()
 export class YoutubeStrategy {
@@ -67,7 +51,6 @@ export class YoutubeStrategy {
 
   private async tryFetchTranscript(videoId: string, lang?: string): Promise<string | null> {
     try {
-      const { YoutubeTranscript } = (await loadYoutubeTranscriptModule()) as YoutubeTranscriptModule;
       const segments = await YoutubeTranscript.fetchTranscript(videoId, lang ? { lang } : undefined);
       if (!segments?.length) return null;
       const text = segments

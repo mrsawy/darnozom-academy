@@ -80,7 +80,8 @@
       "yallist": "4.0.0",
       "motion-dom": "12.35.0",
       "motion-utils": "12.29.2",
-      "preact": "^10.26.4"
+      "preact": "^10.26.4",
+      "@assistant-ui/react>@assistant-ui/store": "0.2.9"
     }
   }
 }

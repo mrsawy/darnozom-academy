@@ -150,10 +150,10 @@ export class UserService {
       // Snapshot for instructor category event
       let existingUser: User | null = null;
       if (updateUserDto.categoriesIds !== undefined) {
-        existingUser = await this.userModel
+        existingUser = (await this.userModel
           .findOne(withNotDeletedUserFilter(filters as mongoose.FilterQuery<User>))
           .lean()
-          .exec();
+          .exec()) as unknown as User | null;
       }
 
       const result = await this.userModel.updateOne(

@@ -51,8 +51,6 @@ import { courseKeys, useCoursesByOrganization } from '@/lib/hooks/course/useCour
 import { Paginated } from '@/lib/types/Paginated';
 import { CoursePendingUpdateDialog } from '@/components/organs/modals/course-pending-update-dialog/course-pending-update-dialog';
 import { DeleteCourseConfirmationDialog } from '@/components/organs/modals/delete-course-confirmation-dialog/delete-course-confirmation-dialog';
-import { DiscussionDialog } from '@/components';
-import { DiscussionType } from '@/lib/types/discussion/discussion.types';
 
 function CourseDataTable() {
   const t = useTranslations('CourseDataTable');
@@ -319,18 +317,6 @@ function CourseDataTable() {
         cell: ({ row }) => {
           return <ModulesCountCell courseId={row.original._id?.toString() ?? ''} />;
         },
-      },
-      {
-        id: 'discussions',
-        header: t('columns.discussions'),
-        cell: ({ row }) => (
-          <DiscussionDialog
-            type={DiscussionType.COURSE}
-            courseId={row.original._id?.toString() ?? ''}
-            entityTitle={row.original.name}
-            canDeleteAny
-          />
-        ),
       },
       {
         accessorKey: 'publishStatus',

@@ -85,7 +85,7 @@ export class EnrollmentSeeder {
   ) {
     const userId = student._id;
     try {
-      const course = await this.courseModel.findById(courseId).lean();
+      const course = (await this.courseModel.findById(courseId).lean()) as unknown as Course;
       if (!course) throw new Error(`Course ${courseId.toString()} not found`);
 
       const courseTitle = (course as { name?: string }).name ?? '';
@@ -107,7 +107,7 @@ export class EnrollmentSeeder {
         );
       }
 
-      const courseWithModules = course as Course & { modulesIds?: Types.ObjectId[] };
+      const courseWithModules = course as unknown as Course & { modulesIds?: Types.ObjectId[] };
       const modulesIds = courseWithModules.modulesIds ?? [];
       const allContents: Types.ObjectId[] = [];
       const moduleContentsMap = new Map<string, Types.ObjectId[]>();

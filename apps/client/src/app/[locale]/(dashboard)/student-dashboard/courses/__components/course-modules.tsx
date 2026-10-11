@@ -18,8 +18,6 @@ import { useState } from 'react';
 import { ContentViewer } from './content-viewer';
 import { ReviewModal } from '@/components/organs/review-modal';
 import { ReviewType } from '@/lib/types/review/review.types';
-import { DiscussionSection } from '@/components';
-import { DiscussionType } from '@/lib/types/discussion/discussion.types';
 import { useTranslations } from 'next-intl';
 
 interface CourseModulesProps {
@@ -28,8 +26,6 @@ interface CourseModulesProps {
   completedContents: string[];
   courseId: string;
   enrollmentId: string;
-  /** When false, module-level discussions are hidden (course `settings.discussionEnabled`). */
-  courseDiscussionEnabled: boolean;
 }
 
 export function CourseModules({
@@ -38,7 +34,6 @@ export function CourseModules({
   completedContents,
   courseId,
   enrollmentId,
-  courseDiscussionEnabled,
 }: CourseModulesProps) {
   const t = useTranslations('StudentCourses.courseModules');
   const [openModules, setOpenModules] = useState<string[]>([modules[0]?._id || '']);
@@ -163,19 +158,6 @@ export function CourseModules({
                       />
                     ))}
                   </div>
-
-                  {/* Module Discussions */}
-                  {courseDiscussionEnabled && module.settings?.discussionEnabled !== false ? (
-                    <div className="mt-4">
-                      <DiscussionSection
-                        type={DiscussionType.MODULE}
-                        entityId={courseId}
-                        courseId={courseId}
-                        moduleId={module._id}
-                        title={t('moduleDiscussions')}
-                      />
-                    </div>
-                  ) : null}
                 </CardContent>
               </CollapsibleContent>
             </Collapsible>

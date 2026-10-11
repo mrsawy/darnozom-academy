@@ -31,7 +31,7 @@ export class OrganizationReportsService {
       transactions as { courseId?: mongoose.Types.ObjectId; netAmount?: number }[]
     );
 
-    return this.reportsAggregation.aggregateOrganizationDashboard(enrollments as Enrollment[], {
+    return this.reportsAggregation.aggregateOrganizationDashboard(enrollments as unknown as Enrollment[], {
       totalRevenue,
       revenueByCourseId,
       transactions: transactions as { createdAt?: Date; netAmount?: number }[],

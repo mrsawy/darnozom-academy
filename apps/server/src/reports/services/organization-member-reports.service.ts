@@ -37,6 +37,6 @@ export class OrganizationMemberReportsService {
       match.accessType = { $in: dto.accessTypes };
     }
     const enrollments = await this.enrollmentModel.find(match).lean().exec();
-    return this.reportsAggregation.aggregateStudentDashboard(enrollments as Enrollment[]);
+    return this.reportsAggregation.aggregateStudentDashboard(enrollments as unknown as Enrollment[]);
   }
 }

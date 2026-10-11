@@ -17,8 +17,6 @@ import { ApprovalStatusBadge } from '../../../../../__components/ApprovalStatusB
 import { ResourceTable } from '../../../__components/resource-table';
 import { SuspendButton } from '../../../__components/suspend-button';
 import { EntityStatusBadge } from '../../../__components/entity-status-badge';
-import { DiscussionDialog } from '@/components';
-import { DiscussionType } from '@/lib/types/discussion/discussion.types';
 import { ROUTE_MAIN_ADMIN_ORG_MODULE_CONTENTS } from '@/lib/data/constants/routes.constants';
 
 interface ModulesTableProps {
@@ -63,7 +61,6 @@ export function ModulesTable({ orgId, courseId }: ModulesTableProps) {
           <TableHead>{t('table.approvalStatus')}</TableHead>
           <TableHead>{t('table.activeStatus')}</TableHead>
           <TableHead>{t('table.contents')}</TableHead>
-          <TableHead>{t('table.discussions')}</TableHead>
           <TableHead>{t('table.created')}</TableHead>
           <TableHead>{t('table.actions')}</TableHead>
         </TableRow>
@@ -103,15 +100,6 @@ export function ModulesTable({ orgId, courseId }: ModulesTableProps) {
                 }>
                 {t('table.viewContents')}
               </Button>
-            </TableCell>
-            <TableCell>
-              <DiscussionDialog
-                type={DiscussionType.MODULE}
-                courseId={courseId}
-                moduleId={module._id}
-                entityTitle={module.title}
-                canDeleteAny
-              />
             </TableCell>
             <TableCell>{new Date(module.createdAt).toLocaleDateString()}</TableCell>
             <TableCell>

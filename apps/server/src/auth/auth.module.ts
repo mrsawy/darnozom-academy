@@ -1,6 +1,6 @@
 import { forwardRef, MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtModule, JwtSignOptions } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { OrganizationModule } from '../organization/organization.module';
@@ -36,7 +36,10 @@ const shouldEnableRealtime = process.env.DISABLE_REALTIME !== 'true';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         secret: configService.get<string>('JSON_PRIVATE_KEY') ?? '',
-        signOptions: { expiresIn: configService.get<string>('ACCESS_TOKEN_EXPIRES_IN') ?? '15m' },
+        signOptions: {
+          expiresIn: (configService.get<string>('ACCESS_TOKEN_EXPIRES_IN') ??
+            '15m') as JwtSignOptions['expiresIn'],
+        },
       }),
     }),
     MongooseModule.forFeature([

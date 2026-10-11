@@ -9,8 +9,6 @@ import { Award, BookOpen, Clock, Loader2, Star, Users } from 'lucide-react';
 import { CourseModules } from './course-modules';
 import { useRouter } from '@/i18n/navigation';
 import { UserRatingDisplay } from '@/components/organs/user-rating-display';
-import { DiscussionSection } from '@/components';
-import { DiscussionType } from '@/lib/types/discussion/discussion.types';
 import { ReviewType } from '@/lib/types/review/review.types';
 import { useTranslations } from 'next-intl';
 import { useDetailedEnrolledCourse } from '@/lib/hooks/course/useDetailedEnrolledCourse';
@@ -51,8 +49,6 @@ export default function CourseView({ enrollmentId }: CourseViewProps) {
   }
 
   const { course, enrollment, progress, subscription } = data;
-
-  const courseDiscussionEnabled = course.settings?.discussionEnabled !== false;
 
   const formatDuration = (minutes: number) => {
     const hours = Math.floor(minutes / 60);
@@ -199,19 +195,8 @@ export default function CourseView({ enrollmentId }: CourseViewProps) {
             completedContents={progress.completedContents ?? []}
             courseId={course._id}
             enrollmentId={enrollmentId}
-            courseDiscussionEnabled={courseDiscussionEnabled}
           />
         </div>
-
-        {/* Course Discussions */}
-        {courseDiscussionEnabled ? (
-          <DiscussionSection
-            type={DiscussionType.COURSE}
-            entityId={course._id}
-            courseId={course._id}
-            title={t('courseDiscussions')}
-          />
-        ) : null}
       </div>
     </div>
   );

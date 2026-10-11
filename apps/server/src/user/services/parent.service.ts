@@ -170,7 +170,7 @@ export class ParentService {
 
     if (!parent) return null;
 
-    const p = parent as User & { passwordLastUpdated?: Date | null; parentCreatedByStudent?: boolean };
+    const p = parent as unknown as User & { passwordLastUpdated?: Date | null; parentCreatedByStudent?: boolean };
 
     return {
       _id: parent._id,
@@ -259,7 +259,7 @@ export class ParentService {
       throw new NotFoundException('Student not found');
     }
 
-    const linkedByParentUser = (student as User & { ParentUser?: mongoose.Types.ObjectId }).ParentUser?.toString() === parentId.toString();
+    const linkedByParentUser = (student as unknown as User & { ParentUser?: mongoose.Types.ObjectId }).ParentUser?.toString() === parentId.toString();
     const parentChildIds = Array.isArray(parent.childUsersIds) ? parent.childUsersIds.map((id) => id.toString()) : [];
     const linkedByChildUsers = parentChildIds.includes(studentId.toString());
 
@@ -267,7 +267,7 @@ export class ParentService {
       throw new ForbiddenException('Student is not related to this parent');
     }
 
-    const results = await this.buildStudentsProgress([student as User], organizationId, filters);
+    const results = await this.buildStudentsProgress([student as unknown as User], organizationId, filters);
     return results[0];
   }
 
@@ -316,7 +316,7 @@ export class ParentService {
       throw new NotFoundException('Student not found');
     }
 
-    const linkedByParentUser = (student as User & { ParentUser?: mongoose.Types.ObjectId }).ParentUser?.toString() === parentId.toString();
+    const linkedByParentUser = (student as unknown as User & { ParentUser?: mongoose.Types.ObjectId }).ParentUser?.toString() === parentId.toString();
     const parentChildIds = Array.isArray(parent.childUsersIds) ? parent.childUsersIds.map((id) => id.toString()) : [];
     const linkedByChildUsers = parentChildIds.includes(enrollment.userId.toString());
 
@@ -479,7 +479,7 @@ export class ParentService {
     for (const enrollment of enrollments) {
       const key = enrollment.userId.toString();
       const current = enrollmentsByStudentId.get(key) ?? [];
-      current.push(enrollment as Enrollment & { courseId?: mongoose.Types.ObjectId | { _id: mongoose.Types.ObjectId; title?: string } });
+      current.push(enrollment as unknown as Enrollment & { courseId?: mongoose.Types.ObjectId | { _id: mongoose.Types.ObjectId; title?: string } });
       enrollmentsByStudentId.set(key, current);
     }
 

@@ -64,10 +64,6 @@ export const ORGANIZATIONS_CONFIG: OrganizationSeedConfig[] = [
           { rating: 2, comment: 'This course is bad!' },
           { rating: 1, comment: 'This course is terrible!' },
         ],
-        discussions: [
-          { title: 'سؤال عن الدرس الأول', content: 'كيف أحل هذه المسألة الرياضية؟ أحتاج مساعدة في فهم المفهوم.' },
-          { title: 'شكر على المحتوى', content: 'دورة رائعة! الشرح واضح جداً.' },
-        ],
       },
       {
         name: 'الفيزياء - الصف الثاني الثانوي',
@@ -116,7 +112,6 @@ export const ORGANIZATIONS_CONFIG: OrganizationSeedConfig[] = [
           { rating: 4, comment: 'مفيدة جداً، خاصة الجلسات الحية' },
           { rating: 4, comment: 'المشاريع العملية ساعدتني كثيراً' },
         ],
-        discussions: [{ title: 'موعد الجلسة الحية القادمة', content: 'متى ستكون الجلسة الحية التالية لقوانين نيوتن؟' }],
       },
       {
         name: 'الحاسوب - الصف الثالث الثانوي',
@@ -189,10 +184,6 @@ export const ORGANIZATIONS_CONFIG: OrganizationSeedConfig[] = [
           { rating: 5, comment: 'دورة إبداعية وممتعة!' },
           { rating: 4, comment: 'المشاريع الفنية رائعة' },
         ],
-        discussions: [
-          { title: 'نصائح للمشروع الفني', content: 'هل يمكن استخدام ألوان إضافية في المشروع القادم؟' },
-          { title: 'طلب توضيح', content: 'لم أفهم متطلبات الواجب الأخير. هل يمكن الشرح أكثر؟' },
-        ],
       },
       {
         name: 'اللغة العربية - الصف الثاني الإعدادي',
@@ -206,7 +197,6 @@ export const ORGANIZATIONS_CONFIG: OrganizationSeedConfig[] = [
           { rating: 4, comment: 'دورة جيدة لتحسين اللغة العربية' },
           { rating: 5, comment: 'المحتوى مفيد والشرح واضح' },
         ],
-        discussions: [{ title: 'سؤال نحوي', content: 'ما الفرق بين المبتدأ والخبر في هذه الجملة؟' }],
       },
     ],
   },
@@ -270,11 +260,6 @@ export const ORGANIZATIONS_CONFIG: OrganizationSeedConfig[] = [
           { rating: 4, comment: 'الشرح واضح والجلسات الحية مفيدة' },
           { rating: 4, comment: 'ساعدتني في فهم الكيمياء بشكل أفضل' },
         ],
-        discussions: [
-          { title: 'سؤال عن التفاعلات الكيميائية', content: 'ما الفرق بين التفاعل الطارد والماص للحرارة؟' },
-          { title: 'موعد التجربة المعملية', content: 'متى ستكون التجربة القادمة؟ هل نحتاج أدوات خاصة؟' },
-          { title: 'ملاحظة على المحتوى', content: 'أعتقد أن هناك خطأً في معادلة الدرس الثالث.' },
-        ],
       },
       {
         name: 'الأحياء - الصف الثاني الثانوي',
@@ -335,7 +320,6 @@ export const ORGANIZATIONS_CONFIG: OrganizationSeedConfig[] = [
           { rating: 4, comment: 'المحتوى منظم والاختبارات مفيدة' },
           { rating: 3, comment: 'جيدة لكن تحتاج المزيد من التفاصيل' },
         ],
-        discussions: [{ title: 'خريط الزمن التاريخية', content: 'هل يمكنكم إضافة خريطة زمنية تفاعلية للأحداث؟' }],
       },
       {
         name: 'الجغرافيا - الصف الأول الثانوي',
@@ -421,10 +405,6 @@ export const ORGANIZATIONS_CONFIG: OrganizationSeedConfig[] = [
           { rating: 4, comment: 'Good content and live sessions are interactive' },
           { rating: 5, comment: "Best English course I've taken!" },
         ],
-        discussions: [
-          { title: 'Grammar question', content: 'Can you explain the difference between past perfect and past simple?' },
-          { title: 'Pronunciation tips', content: 'Any tips for improving pronunciation during live sessions?' },
-        ],
       },
       {
         name: 'اللغة الفرنسية - الصف الأول الثانوي',
@@ -471,7 +451,6 @@ export const ORGANIZATIONS_CONFIG: OrganizationSeedConfig[] = [
           { rating: 4, comment: 'دورة ممتعة ومفيدة' },
           { rating: 5, comment: 'الجلسات الحية رائعة!' },
         ],
-        discussions: [{ title: 'جدول التدريبات', content: 'ما هو جدول التدريبات الأسبوعي الموصى به؟' }],
       },
       {
         name: 'العلوم - الصف الثاني الإعدادي',
@@ -512,7 +491,6 @@ export const ORGANIZATIONS_CONFIG: OrganizationSeedConfig[] = [
           { rating: 5, comment: 'المحتوى رائع والشرح واضح' },
           { rating: 4, comment: 'الجلسات الحية مفيدة جداً' },
         ],
-        discussions: [{ title: 'سؤال ديني', content: 'ما تفسير الآية الكريمة المذكورة في الدرس الخامس؟' }],
       },
     ],
   },

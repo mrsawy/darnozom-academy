@@ -44,8 +44,6 @@ import {
 import { ApprovalStatusBadge } from '@/app/[locale]/(dashboard)/main-admin-dashboard/__components/ApprovalStatusBadge';
 import { PublishToggle } from '@/components/molecules/publish-toggle';
 import { useSetContentPublishStatus } from '@/lib/hooks/course/usePublishStatus';
-import { DiscussionDialog } from '@/components';
-import { DiscussionType } from '@/lib/types/discussion/discussion.types';
 
 // Content type icon mapping
 const getContentTypeIcon = (contentType: string) => {
@@ -286,20 +284,6 @@ function ContentDataTable({ courseId, moduleId }: ContentDataTableProps) {
       //         );
       //     }
       // },
-      {
-        id: 'discussions',
-        header: t('columns.discussions'),
-        cell: ({ row }) => (
-          <DiscussionDialog
-            type={DiscussionType.CONTENT}
-            courseId={courseId}
-            moduleId={moduleId}
-            contentId={row.original._id}
-            entityTitle={row.original.title}
-            canDeleteAny
-          />
-        ),
-      },
       {
         accessorKey: 'createdAt',
         header: t('columns.created'),

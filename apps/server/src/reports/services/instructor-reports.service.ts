@@ -113,7 +113,7 @@ export class InstructorReportsService {
       }
     }
 
-    return this.reportsAggregation.aggregateOrganizationDashboard(enrollments as Enrollment[], {
+    return this.reportsAggregation.aggregateOrganizationDashboard(enrollments as unknown as Enrollment[], {
       totalRevenue,
       revenueByCourseId,
       transactions: transactions as { createdAt?: Date; netAmount?: number }[],

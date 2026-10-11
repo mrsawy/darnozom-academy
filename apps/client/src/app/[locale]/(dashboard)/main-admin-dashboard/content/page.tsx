@@ -18,8 +18,6 @@ import { buildContentReviewSnapshot } from '@/lib/utils/admin/build-content-revi
 import { useSetContentPublishStatus } from '@/lib/hooks/course/usePublishStatus';
 import { PublishToggle } from '@/components/molecules/publish-toggle';
 import { ActiveToggle } from '@/components/molecules/active-toggle';
-import { DiscussionDialog } from '@/components';
-import { DiscussionType } from '@/lib/types/discussion/discussion.types';
 
 export default function ContentReviewPage() {
   const t = useTranslations('AdminDashboard');
@@ -62,19 +60,6 @@ export default function ContentReviewPage() {
     {
       header: t('table.created'),
       accessor: (item: IReviewableContent) => new Date(item.createdAt).toLocaleDateString(),
-    },
-    {
-      header: t('table.discussions'),
-      accessor: (item: IReviewableContent) => (
-        <DiscussionDialog
-          type={DiscussionType.CONTENT}
-          contentId={item._id}
-          courseId={item.courseId}
-          moduleId={item.moduleId}
-          entityTitle={item.title}
-          canDeleteAny
-        />
-      ),
     },
     {
       header: tPublish('published'),

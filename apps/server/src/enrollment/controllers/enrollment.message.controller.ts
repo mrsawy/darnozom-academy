@@ -49,7 +49,6 @@ import { displayNameFromUser } from 'src/user/utils/display-name.util';
 import { CourseContentDocument } from 'src/course/entities/course-content.entity';
 import { Course } from 'src/course/entities/course.entity';
 import { CourseModulesService } from 'src/course/services/module/course-modules.service';
-import { isDiscussionEnabled } from 'src/course/entities/module-content-settings.embed';
 import { ParentService } from 'src/user/services/parent.service';
 
 @Controller()
@@ -110,25 +109,9 @@ export class EnrollmentMessageController {
       content.fileUrl = await this.fileService.getFileUrl(content.fileKey);
     }
 
-    const courseId = content.courseId.toString();
-    const moduleId = content.moduleId.toString();
-    const [courseDoc, moduleDoc] = await Promise.all([
-      this.courseModel.findById(courseId).select('settings').lean(),
-      this.courseModulesService.findOne(moduleId),
-    ]);
-    const contentSettings = (content as { settings?: { discussionEnabled?: boolean } }).settings;
-    const discussionAllowed = !!(
-      courseDoc &&
-      moduleDoc &&
-      isDiscussionEnabled((courseDoc as { settings?: { discussionEnabled?: boolean } }).settings) &&
-      isDiscussionEnabled((moduleDoc as { settings?: { discussionEnabled?: boolean } }).settings) &&
-      isDiscussionEnabled(contentSettings)
-    );
-
     return {
       enrollment,
       content,
-      discussionAllowed,
     };
   }
 

@@ -34,10 +34,6 @@ import { OrganizationReviewSchema } from '../../review/entities/organization-rev
 import { ModuleReviewSchema } from '../../review/entities/module-review.entity';
 import { ContentReviewSchema } from '../../review/entities/content-review.entity';
 import { ReviewType } from '../../review/enum/reviewType.enum';
-import { Discussion, DiscussionSchema } from '../../discussion/entities/discussion.entity';
-import { CourseDiscussion, CourseDiscussionSchema } from '../../discussion/entities/course-discussion.entity';
-import { ModuleDiscussion, ModuleDiscussionSchema } from '../../discussion/entities/module-discussion.entity';
-import { ContentDiscussion, ContentDiscussionSchema } from '../../discussion/entities/content-discussion.entity';
 import { Subscription, SubscriptionSchema } from '../../subscription/entities/subscription.entity';
 import { Wishlist, WishlistSchema } from '../../wishlist/entities/wishlist.entity';
 import { AiPlan, AiPlanSchema } from '../../ai-plan/entities/ai-plan.entity';
@@ -67,7 +63,6 @@ import { CourseSeeder } from '../../course/seeds/course.seeder';
 import { EnrollmentSeeder } from '../../enrollment/seeds/enrollment.seeder';
 import { CategorySeeder } from '../../category/seeds/category.seeder';
 import { WishlistSeeder } from '../../wishlist/seeds/wishlist.seeder';
-import { DiscussionSeeder } from '../../discussion/seeds/discussion.seeder';
 import { ReviewSeeder } from '../../review/seeds/review.seeder';
 import { PrivateSessionSeeder } from '../../private-session/seeds/private-session.seeder';
 import { WithdrawalRequestSeeder } from '../../withdrawal-request/seeds/withdrawal-request.seeder';
@@ -149,15 +144,6 @@ function billingCycleForTier(tier: PlanTier): BillingCycle {
           { name: ReviewType.CONTENT, schema: ContentReviewSchema },
         ],
       },
-      {
-        name: Discussion.name,
-        schema: DiscussionSchema,
-        discriminators: [
-          { name: CourseDiscussion.name, schema: CourseDiscussionSchema },
-          { name: ModuleDiscussion.name, schema: ModuleDiscussionSchema },
-          { name: ContentDiscussion.name, schema: ContentDiscussionSchema },
-        ],
-      },
       { name: Subscription.name, schema: SubscriptionSchema },
       { name: Wishlist.name, schema: WishlistSchema },
       { name: AiPlan.name, schema: AiPlanSchema },
@@ -219,7 +205,6 @@ async function bootstrap() {
   const enrollmentModel = app.get<Model<Enrollment>>(getModelToken(Enrollment.name));
   const attendanceModel = app.get<Model<Attendance>>(getModelToken(Attendance.name));
   const reviewModel = app.get<Model<Review>>(getModelToken(Review.name));
-  const discussionModel = app.get<Model<Discussion>>(getModelToken(Discussion.name));
   const subscriptionModel = app.get<Model<Subscription>>(getModelToken(Subscription.name));
   const wishlistModel = app.get<Model<Wishlist>>(getModelToken(Wishlist.name));
   const aiPlanModel = app.get<Model<AiPlan>>(getModelToken(AiPlan.name));
@@ -249,7 +234,6 @@ async function bootstrap() {
   const enrollmentSeeder = new EnrollmentSeeder(enrollmentModel, attendanceModel, courseModel, moduleModel, contentModel, userModel);
   const transactionSeeder = new TransactionSeeder(transactionModel, enrollmentModel);
   const reviewSeeder = new ReviewSeeder(reviewModel, courseModel, enrollmentModel, userModel, organizationModel, moduleModel, contentModel);
-  const discussionSeeder = new DiscussionSeeder(discussionModel, courseModel, moduleModel, contentModel);
   const wishlistSeeder = new WishlistSeeder(wishlistModel, courseModel, userModel, enrollmentModel);
   const privateSessionSeeder = new PrivateSessionSeeder(privateSessionModel, sessionBookingModel);
   const withdrawalRequestSeeder = new WithdrawalRequestSeeder(withdrawalRequestModel, walletModel);
@@ -499,7 +483,7 @@ async function bootstrap() {
     // ── 2h-post. Wire offline slot rosters ───────────────────────
     log(`  Wiring offline slot rosters for ${organizationConfig.name}...`);
     for (const course of courses) {
-      const courseDoc = (await courseModel.findById(course._id).lean()) as Course;
+      const courseDoc = (await courseModel.findById(course._id).lean()) as unknown as Course;
       const slots =
         (courseDoc as { attendanceSettings?: { requireAttendance?: boolean; offlineSchedule?: unknown[] } }).attendanceSettings?.offlineSchedule ??
         [];
@@ -526,17 +510,6 @@ async function bootstrap() {
     await reviewSeeder.seedOrganizationReviews(org._id, 5);
     for (const instructor of instructors) {
       await reviewSeeder.seedInstructorReviews(instructor._id, org._id, 3);
-    }
-
-    // ── 2j. Discussions ──────────────────────────────────────────
-    log(`  Seeding Discussions for ${organizationConfig.name}...`);
-    const allAuthors = [...students, ...instructors];
-    for (const [courseIdx, course] of courses.entries()) {
-      const courseConfig = organizationConfig.courses[courseIdx];
-      await discussionSeeder.seedForCourse(course, org._id, {
-        configDiscussions: courseConfig?.discussions,
-        authors: allAuthors,
-      });
     }
 
     // ── 2k. Wishlists ─────────────────────────────────────────────

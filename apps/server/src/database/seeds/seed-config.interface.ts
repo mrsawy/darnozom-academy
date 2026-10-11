@@ -37,10 +37,6 @@ export interface CourseSeedConfig {
       discountEndDate?: Date;
     };
   };
-  discussions?: {
-    title: string;
-    content: string;
-  }[];
   reviews?: {
     rating: number;
     comment: string;

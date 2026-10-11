@@ -30,8 +30,6 @@ import {
   updateVideoProgress,
 } from '@/lib/actions/enrollment/progress.action';
 import { useParams } from 'next/navigation';
-import { DiscussionSection } from '@/components';
-import { DiscussionType } from '@/lib/types/discussion/discussion.types';
 import { useFormatter, useTranslations } from 'next-intl';
 
 import { useSidebar } from '@/components/atoms/sidebar';
@@ -121,7 +119,7 @@ export default function ContentView() {
     );
   }
 
-  const { content, progress, discussionAllowed } = data;
+  const { content, progress } = data;
 
   const contentTypeLabel =
     content.type && KNOWN_CONTENT_TYPES.has(content.type)
@@ -285,18 +283,6 @@ export default function ContentView() {
 
           {/* Content */}
           <div className="rounded-lg border p-8 shadow-sm">{renderContent()}</div>
-
-          {/* Content Discussions */}
-          {discussionAllowed ? (
-            <DiscussionSection
-              type={DiscussionType.CONTENT}
-              entityId={content.courseId}
-              courseId={content.courseId}
-              moduleId={content.moduleId}
-              contentId={content._id}
-              title={t('contentDiscussions')}
-            />
-          ) : null}
         </div>
       </div>
 

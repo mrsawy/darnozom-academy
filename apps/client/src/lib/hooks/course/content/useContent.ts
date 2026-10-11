@@ -40,8 +40,6 @@ export interface SingleContentInEnrollmentQueryData {
   enrollment: IEnrollment;
   content: IContent;
   progress: IEnrollmentProgress;
-  /** False when course, module, or content has discussion disabled in settings. */
-  discussionAllowed: boolean;
 }
 
 // Custom hook for fetching content by module ID

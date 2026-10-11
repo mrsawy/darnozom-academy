@@ -16,8 +16,6 @@ import { ResourceTable } from './resource-table';
 import { DeleteButton } from './delete-button';
 import { SuspendButton } from './suspend-button';
 import { EntityStatusBadge } from './entity-status-badge';
-import { DiscussionDialog } from '@/components';
-import { DiscussionType } from '@/lib/types/discussion/discussion.types';
 
 interface ContentsTabProps {
   orgId: string;
@@ -90,26 +88,6 @@ export function ContentsTab({ orgId }: ContentsTabProps) {
             <TableCell>{new Date(content.createdAt).toLocaleDateString()}</TableCell>
             <TableCell>
               <div className="flex items-center gap-2">
-                <DiscussionDialog
-                  type={DiscussionType.CONTENT}
-                  contentId={content._id}
-                  courseId={
-                    typeof content.courseId === 'object' && content.courseId
-                      ? content.courseId._id
-                      : typeof content.courseId === 'string'
-                        ? content.courseId
-                        : ''
-                  }
-                  moduleId={
-                    typeof content.moduleId === 'object' && content.moduleId
-                      ? content.moduleId._id
-                      : typeof content.moduleId === 'string'
-                        ? content.moduleId
-                        : ''
-                  }
-                  entityTitle={content.title}
-                  canDeleteAny
-                />
                 <SuspendButton
                   isSuspended={content.status === 'SUSPENDED'}
                   onSuspend={() => suspendContent.mutate(content._id)}

@@ -2,28 +2,71 @@ import { Model } from 'mongoose';
 import { faker } from '@faker-js/faker';
 import { Notification } from '../entities/notification.entity';
 import { User } from '../../user/entities/user.entity';
-import { Roles } from '@lms-organization/shared-types';
+import { Roles, NotificationType, NotificationTextKey } from '@lms-organization/shared-types';
 
 interface NotificationTemplate {
-  type: string;
-  title: string;
-  body: string;
+  type: NotificationType;
+  titleKey: NotificationTextKey;
+  bodyKey: NotificationTextKey;
 }
 
+// Demo/dev seed data only. The entity stores i18n keys, not literal text, and the small
+// NotificationTextKey set doesn't have a dedicated key per seed scenario (enrollment, quiz,
+// live session, etc.), so these reuse the closest generic key for valid, renderable seed rows.
 const STUDENT_TEMPLATES: NotificationTemplate[] = [
-  { type: 'enrollment', title: 'تم تسجيلك في دورة جديدة', body: 'تمت إضافتك إلى دورة بنجاح. ابدأ التعلم الآن!' },
-  { type: 'assignment', title: 'تم تقييم تكليفك', body: 'راجع التغذية الراجعة من المدرب على آخر تكليف.' },
-  { type: 'quiz', title: 'نتيجة الاختبار متاحة', body: 'تم تقييم اختبارك. اطلع على نتيجتك.' },
-  { type: 'live_session', title: 'جلسة مباشرة قادمة', body: 'تُبدأ الجلسة المباشرة خلال ساعة.' },
-  { type: 'course_update', title: 'تحديث جديد في الدورة', body: 'أضاف المدرب محتوى جديداً.' },
-  { type: 'info', title: 'مرحباً بك في المنصة', body: 'استكشف الدورات المتاحة وابدأ رحلتك التعليمية.' },
+  {
+    type: NotificationType.COURSE_CONTENT,
+    titleKey: NotificationTextKey.COURSE_CONTENT_TITLE,
+    bodyKey: NotificationTextKey.COURSE_CONTENT_BODY,
+  },
+  {
+    type: NotificationType.COURSE_CONTENT,
+    titleKey: NotificationTextKey.COURSE_CONTENT_TITLE,
+    bodyKey: NotificationTextKey.COURSE_CONTENT_BODY,
+  },
+  {
+    type: NotificationType.COURSE_COMPLETED,
+    titleKey: NotificationTextKey.COURSE_COMPLETED_TITLE,
+    bodyKey: NotificationTextKey.COURSE_COMPLETED_BODY,
+  },
+  {
+    type: NotificationType.CHAT,
+    titleKey: NotificationTextKey.CHAT_MESSAGE_TITLE,
+    bodyKey: NotificationTextKey.CHAT_MESSAGE_BODY,
+  },
+  {
+    type: NotificationType.COURSE_CONTENT,
+    titleKey: NotificationTextKey.COURSE_CONTENT_TITLE,
+    bodyKey: NotificationTextKey.COURSE_CONTENT_BODY,
+  },
+  {
+    type: NotificationType.INFO,
+    titleKey: NotificationTextKey.COURSE_CONTENT_TITLE,
+    bodyKey: NotificationTextKey.COURSE_CONTENT_BODY,
+  },
 ];
 
 const INSTRUCTOR_TEMPLATES: NotificationTemplate[] = [
-  { type: 'enrollment', title: 'طالب جديد انضم لدورتك', body: 'انضم طالب جديد إلى إحدى دوراتك.' },
-  { type: 'review', title: 'تقييم جديد على دورتك', body: 'أضاف أحد الطلاب تقييماً لدورتك. اطلع عليه.' },
-  { type: 'assignment', title: 'تكليف جديد بانتظار المراجعة', body: 'قدّم أحد الطلاب تكليفاً يحتاج مراجعتك.' },
-  { type: 'info', title: 'نصيحة لتحسين الدورة', body: 'أضف المزيد من الفيديوهات لزيادة تفاعل الطلاب.' },
+  {
+    type: NotificationType.COURSE_CONTENT,
+    titleKey: NotificationTextKey.COURSE_CONTENT_TITLE,
+    bodyKey: NotificationTextKey.COURSE_CONTENT_BODY,
+  },
+  {
+    type: NotificationType.COURSE_COMPLETED,
+    titleKey: NotificationTextKey.COURSE_COMPLETED_TITLE,
+    bodyKey: NotificationTextKey.COURSE_COMPLETED_BODY,
+  },
+  {
+    type: NotificationType.COURSE_CONTENT,
+    titleKey: NotificationTextKey.COURSE_CONTENT_TITLE,
+    bodyKey: NotificationTextKey.COURSE_CONTENT_BODY,
+  },
+  {
+    type: NotificationType.INFO,
+    titleKey: NotificationTextKey.COURSE_CONTENT_TITLE,
+    bodyKey: NotificationTextKey.COURSE_CONTENT_BODY,
+  },
 ];
 
 export class NotificationSeeder {
@@ -43,8 +86,8 @@ export class NotificationSeeder {
       for (const tpl of selected) {
         docs.push({
           userId: user._id,
-          title: tpl.title,
-          body: tpl.body,
+          titleKey: tpl.titleKey,
+          bodyKey: tpl.bodyKey,
           type: tpl.type,
           read: faker.datatype.boolean({ probability: 0.4 }),
           createdAt: faker.date.recent({ days: 30 }),

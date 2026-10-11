@@ -200,7 +200,6 @@ export async function getSingleContentInEnrollment(enrollmentId: string, content
   const raw = await createAuthorizedNatsRequest<{
     enrollment: IEnrollment;
     content: IContent;
-    discussionAllowed?: boolean;
   }>('enrollment.getSingleContentInEnrollment', { enrollmentId, contentId });
 
   // Propagate NATS error objects so the client-side throwIfNatsError wrapper can handle them
@@ -209,14 +208,12 @@ export async function getSingleContentInEnrollment(enrollmentId: string, content
       enrollment: IEnrollment;
       content: IContent;
       progress: IEnrollmentProgress;
-      discussionAllowed: boolean;
     };
   }
 
-  const { enrollment, content, discussionAllowed } = raw as {
+  const { enrollment, content } = raw as {
     enrollment: IEnrollment;
     content: IContent;
-    discussionAllowed?: boolean;
   };
   const progress = enrollment.progress;
 
@@ -224,6 +221,5 @@ export async function getSingleContentInEnrollment(enrollmentId: string, content
     enrollment,
     content,
     progress,
-    discussionAllowed: discussionAllowed !== false,
   };
 }
