@@ -42,6 +42,7 @@ import { TranscriptionModule } from './transcription/transcription.module';
 import { ReportsModule } from './reports/reports.module';
 import { AgoraModule } from './agora/agora.module';
 import { GradeModule } from './grade/grade.module';
+import { AcademicsModule } from './academics/academics.module';
 import { SchoolTypeModule } from './school-type/school-type.module';
 import { BullModule } from '@nestjs/bullmq';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
@@ -113,6 +114,7 @@ import { getMongoUri, MONGO_CONNECTION_OPTIONS } from './config/mongo.config';
     ReportsModule,
     AgoraModule,
     GradeModule,
+    AcademicsModule,
     SchoolTypeModule,
   ],
   controllers: [AppController],

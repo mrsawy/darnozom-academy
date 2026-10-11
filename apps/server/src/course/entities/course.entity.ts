@@ -138,6 +138,10 @@ export class Course extends Document<Types.ObjectId> {
   })
   organizationId!: Types.ObjectId;
 
+  /** Program this course belongs to (academics); null for courses outside any program. */
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Program', required: false, default: null, index: true })
+  programId?: Types.ObjectId | null;
+
   @Prop({ type: String, required: true })
   name!: string;
 
