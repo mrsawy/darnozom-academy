@@ -950,12 +950,12 @@
     "noCoursesFound": "No courses found in this category"
   },
   "footer": {
-    "title": "safier",
+    "title": "darnozom",
     "description": "Empowering learners worldwide with high-quality courses. Join thousands of students advancing their careers with our expert-led training programs.",
     "links": "Quick Links",
     "social": "Follow Us",
     "contact": "Contact Us",
-    "copyright": "Safier. All rights reserved."
+    "copyright": "Darnozom. All rights reserved."
   },
   "FeaturesGrid": {
     "files": [
@@ -1554,7 +1554,7 @@
     "cancel": "Cancel"
   },
   "Navbar": {
-    "brandName": "Safier",
+    "brandName": "Darnozom",
     "mobileMenu": "Menu",
     "signIn": "Sign In",
     "getStarted": "Get Started",
@@ -1577,7 +1577,7 @@
       "notifications": "Notifications",
       "logOut": "Log out"
     },
-    "logoAlt": "Safier Logo",
+    "logoAlt": "Darnozom Logo",
     "toggleLanguage": "Toggle language",
     "languageEnglish": "English",
     "languageArabic": "Arabic",
@@ -2240,7 +2240,7 @@
     "loadingCalendar": "Loading calendar"
   },
   "AppSidebar": {
-    "appName": "Safier LMS"
+    "appName": "Darnozom LMS"
   },
   "DateTimePicker": {
     "placeholder": "Select date and time",
@@ -6695,5 +6695,90 @@
     "errorTitle": "Unable to Load Books",
     "errorMessage": "Could not connect to the Medusa catalog. Please verify your connection or try again.",
     "retry": "Try Again"
+  },
+  "nav": {
+    "brand": "Islamic Academy",
+    "home": "Home",
+    "books": "Books Store",
+    "cart": "Cart",
+    "signIn": "Sign In",
+    "dashboard": "Dashboard"
+  },
+  "cart": {
+    "title": "Shopping Cart",
+    "itemsCount": "items in your cart",
+    "clearCart": "Clear cart",
+    "emptyTitle": "Your cart is empty",
+    "emptyMessage": "Explore our academic publications and add books to your cart.",
+    "exploreBooks": "Browse Books Store",
+    "digitalPdf": "Digital PDF",
+    "paper": "Paper Edition",
+    "perUnit": "per copy",
+    "continueShopping": "Continue Shopping",
+    "orderSummary": "Order Summary",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "shippingCalculatedAtCheckout": "Calculated at checkout",
+    "freeDigital": "Free (Digital Edition)",
+    "total": "Total",
+    "proceedToCheckout": "Proceed to Checkout",
+    "secureCheckout": "Secure SSL encrypted transaction",
+    "instantDigitalAccess": "Instant digital downloads",
+    "fastShippingEgypt": "Reliable shipping"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "subtitle": "Provide your delivery details to complete your order.",
+    "backToCart": "Back to Cart",
+    "emptyCart": "Your cart is empty",
+    "backToStore": "Return to Store",
+    "contactInfo": "Contact Details",
+    "firstName": "First name",
+    "firstNamePlaceholder": "e.g. Ahmad",
+    "lastName": "Last name",
+    "lastNamePlaceholder": "e.g. Al-Sayed",
+    "email": "Email address",
+    "phone": "Phone number",
+    "shippingAddress": "Shipping Address",
+    "city": "City / Governorate",
+    "cityPlaceholder": "e.g. Cairo",
+    "address": "Street Address / Building",
+    "addressPlaceholder": "Street, Building, Apartment",
+    "paymentMethod": "Payment Method",
+    "methods": {
+      "cod": "Cash on Delivery",
+      "codDesc": "Pay in cash upon physical receipt (paper editions only).",
+      "card": "Credit Card / Debit",
+      "cardDesc": "Pay securely with Visa, MasterCard, or local cards.",
+      "paypal": "PayPal",
+      "paypalDesc": "Fast and secure international payment."
+    },
+    "summary": "Order Summary",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "standardShipping": "Standard",
+    "free": "Free",
+    "grandTotal": "Grand Total",
+    "placeOrder": "Complete Order",
+    "processing": "Processing Order...",
+    "encryptedSecurity": "256-bit encrypted checkout",
+    "validation": {
+      "requiredFields": "Please fill in all required contact details.",
+      "addressRequired": "Please provide a shipping city and street address for physical books."
+    },
+    "errors": {
+      "generic": "Could not complete order. Please check your information and try again."
+    },
+    "successPage": {
+      "title": "Thank you for your order!",
+      "subtitle": "Your order has been received and confirmed by Medusa.",
+      "orderReference": "Order Reference ID",
+      "physicalOrdersTitle": "Physical Deliveries",
+      "physicalOrdersDesc": "Our dispatch team will prepare and ship your package promptly.",
+      "digitalOrdersTitle": "Digital Editions",
+      "digitalOrdersDesc": "Digital download links are active and ready in your account.",
+      "continueBrowsing": "Explore More Books",
+      "backToHome": "Return to Home"
+    }
   }
 }

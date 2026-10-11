@@ -10,6 +10,7 @@ import ClickSpark from '@/components/ClickSpark';
 import AuthSessionListener from '@/lib/realtime/auth-session-listener';
 import { GlobalAuthDialog } from '@/components/organs/auth-dialog/global-auth-dialog';
 import { queryClient } from '@/lib/utils/query/query-client';
+import { CartProvider } from '@/lib/context/cart-context';
 
 interface ProviderProps {
   children: ReactNode;
@@ -31,7 +32,7 @@ export default function Provider({ children, locale, messages }: ProviderProps) 
               <ClickSpark sparkSize={10} sparkRadius={15} sparkCount={8} duration={400}>
                 <AuthSessionListener locale={locale} />
                 <GlobalAuthDialog />
-                {children}
+                <CartProvider>{children}</CartProvider>
               </ClickSpark>
             </NextThemesProvider>
           </QueryClientProvider>

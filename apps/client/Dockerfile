@@ -13,11 +13,7 @@ COPY .npmrc package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/client/package.json apps/client/
 COPY apps/server/package.json apps/server/
 COPY lib/shared-types/package.json lib/shared-types/
-# Referenced from the root package.json: pnpm.patchedDependencies, the
-# react-native-keyboard-controller `file:` override, and the postinstall script.
-COPY patches patches
 COPY scripts scripts
-COPY apps/lms-mobile/shims apps/lms-mobile/shims
 RUN --mount=type=cache,id=pnpm-store,target=/pnpm-store \
     pnpm install --frozen-lockfile --store-dir=/pnpm-store
 
@@ -36,7 +32,7 @@ ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL \
 COPY apps/client apps/client
 COPY lib/shared-types lib/shared-types
 COPY tsconfig.json ./
-RUN pnpm --filter @lms-organization/shared-types run build
+RUN pnpm --filter @darnozom/shared-types run build
 RUN pnpm --filter client run build
 
 # standalone output (with outputFileTracingRoot = monorepo root) produces:

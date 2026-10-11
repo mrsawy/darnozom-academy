@@ -142,7 +142,7 @@ function ScrollCards() {
     <div ref={sectionRef} className="relative" style={{ height: '450vh' }}>
       <section
         className="sticky top-0 h-screen w-full overflow-hidden py-10 md:py-16"
-        id="why-safier">
+        id="why-darnozom">
         <div className="container mx-auto flex h-full flex-col px-6 lg:px-8">
           <div className="mb-2 md:mb-8">
             <div className="mb-4 flex items-center gap-4 pt-4 sm:pt-6 md:mb-4 md:pt-4">
