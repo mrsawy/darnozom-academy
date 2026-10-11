@@ -13,6 +13,9 @@ import { Cohort, CohortSchema } from './cohort/entities/cohort.entity';
 import { CohortService } from './cohort/cohort.service';
 import { CohortControllerMessage } from './cohort/cohort.controller.message';
 import { Group, GroupSchema } from './group/entities/group.entity';
+import { TeacherAvailability, TeacherAvailabilitySchema } from './teacher-availability/entities/teacher-availability.entity';
+import { TeacherAvailabilityService } from './teacher-availability/teacher-availability.service';
+import { TeacherAvailabilityControllerMessage } from './teacher-availability/teacher-availability.controller.message';
 
 @Module({
   imports: [
@@ -22,11 +25,12 @@ import { Group, GroupSchema } from './group/entities/group.entity';
       { name: Level.name, schema: LevelSchema },
       { name: Cohort.name, schema: CohortSchema },
       { name: Group.name, schema: GroupSchema },
+      { name: TeacherAvailability.name, schema: TeacherAvailabilitySchema },
     ]),
     forwardRef(() => AuthModule),
     RoleModule,
   ],
-  controllers: [ProgramControllerMessage, LevelControllerMessage, CohortControllerMessage],
-  providers: [ProgramService, LevelService, CohortService],
+  controllers: [ProgramControllerMessage, LevelControllerMessage, CohortControllerMessage, TeacherAvailabilityControllerMessage],
+  providers: [ProgramService, LevelService, CohortService, TeacherAvailabilityService],
 })
 export class AcademicsModule {}
