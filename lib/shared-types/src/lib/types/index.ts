@@ -16,3 +16,4 @@ export * from './attendance/index';
 export * from './withdrawal/index';
 export * from './payment/index';
 export * from './reports/index';
+export * from './academics/index';

@@ -274,16 +274,7 @@ export class UserService {
     // Manually populate 'role' virtuals for paginated docs
     result.docs = await this.userModel.populate(result.docs, { path: 'role' });
 
-    const roleCounts: Record<Roles, number> = {
-      [Roles.STUDENT]: 0,
-      [Roles.PARENT]: 0,
-      [Roles.ADMIN]: 0,
-      [Roles.SUPER_ADMIN]: 0,
-      [Roles.INSTRUCTOR]: 0,
-      [Roles.SECRETARY]: 0,
-      [Roles.PLATFORM_ADMIN]: 0,
-      [Roles.GUEST]: 0,
-    };
+    const roleCounts = Object.fromEntries(Object.values(Roles).map((role) => [role, 0])) as Record<Roles, number>;
 
     let totalStudents = 0;
     let totalParents = 0;

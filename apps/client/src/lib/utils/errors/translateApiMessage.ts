@@ -1,4 +1,5 @@
 import {
+  AcademicsErrors,
   AiAttachmentErrors,
   AiSubscriptionErrors,
   ALL_ERROR_KEYS_SET,
@@ -93,6 +94,10 @@ export function translateApiMessage(message: string, t: TranslateFn): string {
     param !== undefined
   ) {
     return t(key, { max: Number(param) });
+  }
+
+  if ((key as AcademicsErrors) === AcademicsErrors.AVAILABILITY_CONFLICTS_WITH_GROUPS && param !== undefined) {
+    return t(key, { details: param });
   }
 
   const errorKey = key as VerificationErrors | AuthErrors;
