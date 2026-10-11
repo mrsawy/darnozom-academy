@@ -1,4 +1,4 @@
-import { Equals, IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString, Matches, NotEquals, ValidateIf, ValidateNested } from 'class-validator';
+import { Equals, IsBoolean, IsEnum, IsIn, IsNotEmpty, IsOptional, IsString, Matches, ValidateIf, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { AuthErrors, Currency, IDENTIFIER_PATTERN, Roles } from '@darnozom/shared-types';
 
@@ -28,14 +28,10 @@ const ONBOARDING_SELF_ASSIGNABLE_ROLES = [Roles.STUDENT, Roles.PARENT, Roles.SUP
 
 export class CompleteOnboardingDto {
   @IsNotEmpty()
-  @IsEnum(Roles, {
+  // Allowlist, not a denylist: roles added to the enum later must never become self-assignable.
+  @IsIn(ONBOARDING_SELF_ASSIGNABLE_ROLES, {
     message: `roleName must be one of: ${ONBOARDING_SELF_ASSIGNABLE_ROLES.join(', ')}`,
   })
-  @NotEquals(Roles.GUEST, { message: 'Cannot keep the GUEST role after onboarding' })
-  @NotEquals(Roles.PLATFORM_ADMIN, { message: 'Cannot self-assign PLATFORM_ADMIN role' })
-  @NotEquals(Roles.ADMIN, { message: 'Cannot self-assign ADMIN role' })
-  @NotEquals(Roles.INSTRUCTOR, { message: 'Cannot self-assign INSTRUCTOR role' })
-  @NotEquals(Roles.SECRETARY, { message: 'Cannot self-assign SECRETARY role' })
   roleName: Roles;
 
   @IsNotEmpty()
