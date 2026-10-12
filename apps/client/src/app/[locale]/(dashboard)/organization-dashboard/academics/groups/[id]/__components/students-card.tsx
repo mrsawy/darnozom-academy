@@ -25,7 +25,15 @@ import {
   useStudentCandidates,
 } from '@/lib/hooks/academics/use-academics.hook';
 
-export function StudentsCard({ group, disabled }: { group: IGroupDetail; disabled: boolean }) {
+export function StudentsCard({
+  group,
+  disabled,
+  paymentDisabled,
+}: {
+  group: IGroupDetail;
+  disabled: boolean;
+  paymentDisabled: boolean;
+}) {
   const t = useTranslations('Academics');
   const [search, setSearch] = useState('');
   const debounced = useDebounce(search, 300);
@@ -58,7 +66,7 @@ export function StudentsCard({ group, disabled }: { group: IGroupDetail; disable
                   <div className="flex items-center gap-2">
                     <Switch
                       checked={student.paymentStatus === GroupPaymentStatus.PAID}
-                      disabled={disabled}
+                      disabled={paymentDisabled}
                       onCheckedChange={(paid) =>
                         setPayment.mutate({
                           id: group._id,

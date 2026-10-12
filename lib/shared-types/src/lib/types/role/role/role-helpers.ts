@@ -29,6 +29,12 @@ export const ORG_WIDE_GROUP_READER_ROLES: readonly Roles[] = [
   Roles.ACCOUNTANT,
 ];
 
+/** Roles seeded with UPDATE GROUP: they edit groups (details, students, teacher, content, readiness). */
+export const GROUP_EDITOR_ROLES: readonly Roles[] = [Roles.SUPER_ADMIN, Roles.PLATFORM_ADMIN, Roles.ADMIN, Roles.OWNER, Roles.MANAGER, Roles.COORDINATOR];
+
+/** Roles seeded with UPDATE GROUP_PAYMENT_STATUS: they toggle a student's payment status in a group. */
+export const GROUP_PAYMENT_EDITOR_ROLES: readonly Roles[] = [Roles.SUPER_ADMIN, Roles.PLATFORM_ADMIN, Roles.ADMIN, Roles.OWNER, Roles.MANAGER, Roles.ACCOUNTANT];
+
 export function hasRole(user: RoleHolder | null | undefined, role: Roles): boolean {
   if (!user) return false;
   return user.roleName === role || (user.additionalRoles ?? []).includes(role);

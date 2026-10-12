@@ -1,4 +1,4 @@
-import { Actions, Roles, Subjects } from '@darnozom/shared-types';
+import { Actions, GROUP_EDITOR_ROLES, GROUP_PAYMENT_EDITOR_ROLES, Roles, Subjects } from '@darnozom/shared-types';
 import { ROLE_SEED_DEFINITIONS } from './roles.config';
 
 const rulesOf = (role: Roles) => ROLE_SEED_DEFINITIONS.find((r) => r.name === role)?.permissions ?? [];
@@ -51,5 +51,15 @@ describe('ROLE_SEED_DEFINITIONS', () => {
     expect(rulesOf(Roles.CONTENT_OFFICER)).toEqual([]);
     expect(rulesOf(Roles.SHARIA_REVIEWER)).toEqual([]);
     expect(rulesOf(Roles.HR)).toEqual([]);
+  });
+
+  it.each([
+    ['GROUP_EDITOR_ROLES', GROUP_EDITOR_ROLES, Subjects.GROUP],
+    ['GROUP_PAYMENT_EDITOR_ROLES', GROUP_PAYMENT_EDITOR_ROLES, Subjects.GROUP_PAYMENT_STATUS],
+  ] as const)('%s lists exactly the roles seeded with UPDATE on its subject', (_name, roles, subject) => {
+    const canUpdate = (role: Roles) =>
+      [Actions.MANAGE, Actions.UPDATE].some((action) => has(role, action, subject) || has(role, action, Subjects.ALL));
+    const seeded = ROLE_SEED_DEFINITIONS.map((r) => r.name as Roles).filter(canUpdate).sort();
+    expect([...roles].sort()).toEqual(seeded);
   });
 });

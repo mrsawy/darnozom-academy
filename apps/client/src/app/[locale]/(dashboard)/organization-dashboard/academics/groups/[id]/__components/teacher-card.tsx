@@ -20,7 +20,7 @@ import {
 
 export function TeacherCard({ group, disabled }: { group: IGroupDetail; disabled: boolean }) {
   const t = useTranslations('Academics');
-  const { data: candidates = [] } = useTeacherCandidates(group._id);
+  const { data: candidates = [] } = useTeacherCandidates(disabled ? '' : group._id);
   const assign = useAssignTeacher();
   const unassign = useUnassignTeacher();
   const [teacherId, setTeacherId] = useState('');

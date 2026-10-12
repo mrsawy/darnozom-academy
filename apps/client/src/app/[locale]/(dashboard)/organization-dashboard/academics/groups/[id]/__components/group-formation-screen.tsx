@@ -2,7 +2,8 @@
 
 import { useTranslations } from 'next-intl';
 import { safeHref } from '@/lib/utils/academics/safe-href';
-import { GroupStatus } from '@darnozom/shared-types';
+import { groupScreenAccess } from '@/lib/utils/academics/group-access';
+import { useAuthUser } from '@/lib/hooks/user/use-user.hook';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/card';
 import {
   useCancelGroup,
@@ -21,13 +22,14 @@ import { TeacherCard } from './teacher-card';
 export function GroupFormationScreen({ groupId }: { groupId: string }) {
   const t = useTranslations('Academics');
   const { data: group, isLoading } = useGroup(groupId);
+  const { data: user } = useAuthUser();
   const updateGroup = useUpdateGroup();
   const markReady = useMarkGroupReady();
   const cancelGroup = useCancelGroup();
   const setContentSent = useSetContentSent();
 
   if (isLoading || !group) return <p className="p-4">{t('loading')}</p>;
-  const cancelled = group.status === GroupStatus.CANCELLED;
+  const { locked, paymentLocked } = groupScreenAccess(user, group.status);
 
   return (
     <div className="space-y-6 p-4">
@@ -36,7 +38,7 @@ export function GroupFormationScreen({ groupId }: { groupId: string }) {
           <h1 className="text-2xl font-semibold">{group.name}</h1>
           <StatusBadge status={group.status} />
         </div>
-        {cancelled ? null : (
+        {locked ? null : (
           <CancelGroupDialog
             pending={cancelGroup.isPending}
             onConfirm={(reason) => cancelGroup.mutate({ id: group._id, reason })}
@@ -59,23 +61,23 @@ export function GroupFormationScreen({ groupId }: { groupId: string }) {
                   whatsappGroupLink: group.whatsappGroupLink ?? null,
                 }}
                 submitLabel={t('save')}
-                pending={updateGroup.isPending || cancelled}
+                pending={updateGroup.isPending || locked}
                 onSubmit={(data) => updateGroup.mutate({ id: group._id, data })}
               />
             </CardContent>
           </Card>
-          <StudentsCard group={group} disabled={cancelled} />
+          <StudentsCard group={group} disabled={locked} paymentDisabled={paymentLocked} />
         </div>
         <div className="space-y-6">
           <ReadinessPanel
             readiness={group.readiness}
             status={group.status}
             contentSent={group.contentSent.done}
-            disabled={cancelled || markReady.isPending}
+            disabled={locked || markReady.isPending}
             onToggleContentSent={(done) => setContentSent.mutate({ id: group._id, done })}
             onMarkReady={() => markReady.mutate(group._id)}
           />
-          <TeacherCard group={group} disabled={cancelled} />
+          <TeacherCard group={group} disabled={locked} />
           <Card>
             <CardHeader>
               <CardTitle>{t('form.whatsappGroupLink')}</CardTitle>
