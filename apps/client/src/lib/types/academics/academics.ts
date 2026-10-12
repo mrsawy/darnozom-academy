@@ -67,6 +67,7 @@ export interface GroupQuery {
   cohortId?: string;
   status?: GroupStatus;
   childId?: string;
+  teacherId?: string;
 }
 
 export interface GroupFormValues {
