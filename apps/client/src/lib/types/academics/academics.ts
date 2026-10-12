@@ -1,4 +1,11 @@
-import type { AvailabilitySlot, GroupPaymentStatus, GroupStatus, Readiness, ScheduleSlot, TeacherFitReason } from '@darnozom/shared-types';
+import type {
+  AvailabilitySlot,
+  GroupPaymentStatus,
+  GroupStatus,
+  Readiness,
+  ScheduleSlot,
+  TeacherFitReason,
+} from '@darnozom/shared-types';
 
 export interface IProgram {
   _id: string;

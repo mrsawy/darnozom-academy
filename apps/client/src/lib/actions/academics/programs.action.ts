@@ -22,8 +22,13 @@ export async function getCourseOptions() {
   return createAuthorizedNatsRequest<ICourseOption[]>('academics.programs.courseOptions', {});
 }
 export async function linkCourse(programId: string, courseId: string) {
-  return createAuthorizedNatsRequest<{ programId: string; courseId: string }>('academics.programs.linkCourse', { programId, courseId });
+  return createAuthorizedNatsRequest<{ programId: string; courseId: string }>(
+    'academics.programs.linkCourse',
+    { programId, courseId }
+  );
 }
 export async function unlinkCourse(courseId: string) {
-  return createAuthorizedNatsRequest<{ courseId: string }>('academics.programs.unlinkCourse', { courseId });
+  return createAuthorizedNatsRequest<{ courseId: string }>('academics.programs.unlinkCourse', {
+    courseId,
+  });
 }

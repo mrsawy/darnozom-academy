@@ -7,7 +7,7 @@ export interface RoleGatedNavItem {
   [key: string]: unknown;
 }
 
-export function isNavItemVisible(item: RoleGatedNavItem, user: RoleHolder | null | undefined): boolean {
+export function isNavItemVisible(item: RoleGatedNavItem, user?: RoleHolder | null): boolean {
   if (item.instructorOnly && !hasRole(user, Roles.INSTRUCTOR)) return false;
   if (item.requiredRoles && !hasAnyRole(user, item.requiredRoles)) return false;
   return true;

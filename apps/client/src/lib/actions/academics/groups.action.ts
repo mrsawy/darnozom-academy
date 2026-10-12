@@ -2,7 +2,14 @@
 
 import type { GroupPaymentStatus } from '@darnozom/shared-types';
 import { createAuthorizedNatsRequest } from '@/lib/utils/createNatsRequest';
-import type { GroupFormValues, GroupQuery, IGroup, IGroupDetail, IStudentCandidate, ITeacherCandidate } from '@/lib/types/academics/academics';
+import type {
+  GroupFormValues,
+  GroupQuery,
+  IGroup,
+  IGroupDetail,
+  IStudentCandidate,
+  ITeacherCandidate,
+} from '@/lib/types/academics/academics';
 
 export async function getGroups(query: GroupQuery) {
   return createAuthorizedNatsRequest<IGroup[]>('academics.groups.findAll', query);
@@ -26,7 +33,10 @@ export async function setContentSent(id: string, done: boolean) {
   return createAuthorizedNatsRequest<IGroup>('academics.groups.setContentSent', { id, done });
 }
 export async function getStudentCandidates(id: string, q: string) {
-  return createAuthorizedNatsRequest<IStudentCandidate[]>('academics.groups.studentCandidates', { id, q });
+  return createAuthorizedNatsRequest<IStudentCandidate[]>('academics.groups.studentCandidates', {
+    id,
+    q,
+  });
 }
 export async function addStudent(id: string, studentId: string) {
   return createAuthorizedNatsRequest<IGroup>('academics.groups.addStudent', { id, studentId });
@@ -34,11 +44,23 @@ export async function addStudent(id: string, studentId: string) {
 export async function removeStudent(id: string, studentId: string) {
   return createAuthorizedNatsRequest<IGroup>('academics.groups.removeStudent', { id, studentId });
 }
-export async function setPaymentStatus(id: string, studentId: string, paymentStatus: GroupPaymentStatus) {
-  return createAuthorizedNatsRequest<IGroup>('academics.groups.setPaymentStatus', { id, studentId, paymentStatus });
+export async function setPaymentStatus(
+  id: string,
+  studentId: string,
+  paymentStatus: GroupPaymentStatus
+) {
+  return createAuthorizedNatsRequest<IGroup>('academics.groups.setPaymentStatus', {
+    id,
+    studentId,
+    paymentStatus,
+  });
 }
 export async function setWhatsapp(id: string, studentId: string, whatsappAdded: boolean) {
-  return createAuthorizedNatsRequest<IGroup>('academics.groups.setWhatsapp', { id, studentId, whatsappAdded });
+  return createAuthorizedNatsRequest<IGroup>('academics.groups.setWhatsapp', {
+    id,
+    studentId,
+    whatsappAdded,
+  });
 }
 export async function assignTeacher(id: string, teacherId: string) {
   return createAuthorizedNatsRequest<IGroup>('academics.groups.assignTeacher', { id, teacherId });
@@ -47,5 +69,7 @@ export async function unassignTeacher(id: string) {
   return createAuthorizedNatsRequest<IGroup>('academics.groups.unassignTeacher', { id });
 }
 export async function getTeacherCandidates(id: string) {
-  return createAuthorizedNatsRequest<ITeacherCandidate[]>('academics.groups.teacherCandidates', { id });
+  return createAuthorizedNatsRequest<ITeacherCandidate[]>('academics.groups.teacherCandidates', {
+    id,
+  });
 }

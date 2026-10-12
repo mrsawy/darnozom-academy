@@ -96,7 +96,10 @@ export function translateApiMessage(message: string, t: TranslateFn): string {
     return t(key, { max: Number(param) });
   }
 
-  if ((key as AcademicsErrors) === AcademicsErrors.AVAILABILITY_CONFLICTS_WITH_GROUPS && param !== undefined) {
+  if (
+    (key as AcademicsErrors) === AcademicsErrors.AVAILABILITY_CONFLICTS_WITH_GROUPS &&
+    param !== undefined
+  ) {
     return t(key, { details: param });
   }
 
