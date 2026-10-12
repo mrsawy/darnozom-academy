@@ -1827,7 +1827,8 @@
       "attendWithScanner": "Attend with Scanner",
       "attendanceHistory": "Attendance History",
       "booksStore": "Books Store",
-      "myGroups": "My groups"
+      "myGroups": "My groups",
+      "mySessions": "My sessions"
     },
     "navSecondary": {
       "settings": "Settings",
@@ -2344,7 +2345,8 @@
       "academicsGroups": "Groups",
       "academicsPrograms": "Programs",
       "myGroups": "My groups",
-      "myAvailability": "My availability"
+      "myAvailability": "My availability",
+      "mySessions": "My sessions"
     },
     "navSecondary": {
       "getHelp": "Get Help",
@@ -6917,7 +6919,9 @@
       "statuses": {
         "FORMING": "Forming",
         "READY_TO_START": "Ready to start",
-        "CANCELLED": "Cancelled"
+        "CANCELLED": "Cancelled",
+        "RUNNING": "Running",
+        "COMPLETED": "Completed"
       }
     },
     "form": {
@@ -6931,7 +6935,8 @@
       "maxStudents": "Maximum students",
       "meetingLink": "Meeting link",
       "whatsappGroupLink": "WhatsApp group link",
-      "missingCohort": "Open this page from a cohort to create a group."
+      "missingCohort": "Open this page from a cohort to create a group.",
+      "totalSessions": "Number of sessions"
     },
     "readiness": {
       "title": "Readiness checklist",
@@ -6953,7 +6958,8 @@
       "whatsapp": "Added to WhatsApp",
       "paid": "Paid",
       "unpaid": "Unpaid",
-      "noCandidates": "No matching students"
+      "noCandidates": "No matching students",
+      "withdrawn": "Withdrawn"
     },
     "teacher": {
       "title": "Teacher",
@@ -6987,6 +6993,85 @@
     "childGroups": {
       "title": "Groups",
       "empty": "Not in any group yet."
+    },
+    "sessions": {
+      "title": "Sessions",
+      "empty": "No sessions yet.",
+      "start": "Start group",
+      "startHint": "Generates all sessions from the weekly schedule.",
+      "startMissingTotal": "Set the number of sessions in the group details first.",
+      "number": "Session",
+      "when": "When",
+      "status": "Status",
+      "open": "Open",
+      "teacher": "Teacher",
+      "detailTitle": "Session {number}",
+      "statuses": {
+        "SCHEDULED": "Scheduled",
+        "REPORT_PENDING": "Report pending",
+        "COMPLETED": "Completed",
+        "CANCELLED": "Cancelled"
+      },
+      "cancel": "Cancel session",
+      "cancelReason": "Reason for cancelling",
+      "cancelConfirm": "Cancel session",
+      "attendance": {
+        "title": "Attendance",
+        "student": "Student",
+        "note": "Note (optional)",
+        "save": "Save attendance",
+        "teacher": "Teacher attendance",
+        "locked": "Attendance is closed.",
+        "statuses": {
+          "PRESENT": "Present",
+          "LATE": "Late",
+          "EXCUSED": "Excused",
+          "ABSENT": "Absent"
+        }
+      },
+      "report": {
+        "title": "Session report",
+        "participation": "Participation",
+        "understanding": "Understanding",
+        "behavior": "Behavior",
+        "homework": "Homework",
+        "note": "Note (optional)",
+        "summary": "Class summary (optional)",
+        "submit": "Submit report",
+        "saveChanges": "Save changes",
+        "editHint": "You can edit this report for 24 hours after submitting it.",
+        "pendingAttendance": "Record attendance for every student first.",
+        "submittedAt": "Submitted",
+        "empty": "No report yet."
+      },
+      "mySessions": {
+        "title": "My sessions",
+        "previousWeek": "Previous week",
+        "nextWeek": "Next week",
+        "thisWeek": "This week",
+        "noSessions": "No sessions this week."
+      },
+      "family": {
+        "title": "Sessions",
+        "empty": "No sessions yet.",
+        "attendance": "Attendance",
+        "evaluation": "Evaluation",
+        "notRecorded": "Not recorded yet"
+      }
+    },
+    "followUps": {
+      "title": "First-session follow-up",
+      "empty": "Follow-ups appear after the first session is completed.",
+      "student": "Student",
+      "parentFeedback": "Parent feedback",
+      "decision": "Decision",
+      "decisions": {
+        "CONTINUE": "Continue",
+        "WITHDRAW": "Withdraw"
+      },
+      "undecided": "Undecided",
+      "save": "Save",
+      "recorded": "Recorded"
     }
   }
 }

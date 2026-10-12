@@ -145,15 +145,18 @@ export const ROUTE_CART = '/cart';
 export const ROUTE_CHECKOUT = '/checkout';
 export const ROUTE_CHECKOUT_SUCCESS = '/checkout/success';
 
-export const URL_FACEBOOK =
-  'https://www.facebook.com/darnozom';
+export const URL_FACEBOOK = 'https://www.facebook.com/darnozom';
 export const URL_INSTAGRAM = 'https://www.instagram.com/darnozomlms';
 export const URL_TIKTOK = 'https://www.tiktok.com/@darnozomlms';
 export const ROUTE_ORG_ACADEMICS_PROGRAMS = '/organization-dashboard/academics/programs';
 export const ROUTE_ORG_ACADEMICS_PROGRAM = (id: string) => `${ROUTE_ORG_ACADEMICS_PROGRAMS}/${id}`;
 export const ROUTE_ORG_ACADEMICS_GROUPS = '/organization-dashboard/academics/groups';
 export const ROUTE_ORG_ACADEMICS_GROUP = (id: string) => `${ROUTE_ORG_ACADEMICS_GROUPS}/${id}`;
-export const ROUTE_ORG_ACADEMICS_GROUP_NEW = (cohortId: string) => `${ROUTE_ORG_ACADEMICS_GROUPS}/new?cohortId=${encodeURIComponent(cohortId)}`;
+export const ROUTE_ORG_ACADEMICS_GROUP_NEW = (cohortId: string) =>
+  `${ROUTE_ORG_ACADEMICS_GROUPS}/new?cohortId=${encodeURIComponent(cohortId)}`;
 export const ROUTE_ORG_MY_AVAILABILITY = '/organization-dashboard/my-availability';
 export const ROUTE_ORG_MY_GROUPS = '/organization-dashboard/my-groups';
 export const ROUTE_STUDENT_MY_GROUPS = '/student-dashboard/my-groups';
+export const ROUTE_ORG_MY_SESSIONS = '/organization-dashboard/my-sessions';
+export const ROUTE_ORG_SESSION = (id: string) => `/organization-dashboard/sessions/${id}`;
+export const ROUTE_STUDENT_MY_SESSIONS = '/student-dashboard/my-sessions';

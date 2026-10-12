@@ -1827,7 +1827,8 @@
       "attendWithScanner": "الحضور بالماسح",
       "attendanceHistory": "سجل الحضور",
       "booksStore": "متجر الكتب",
-      "myGroups": "مجموعاتي"
+      "myGroups": "مجموعاتي",
+      "mySessions": "جلساتي"
     },
     "navSecondary": {
       "settings": "الإعدادات",
@@ -2344,7 +2345,8 @@
       "academicsGroups": "المجموعات",
       "academicsPrograms": "البرامج",
       "myGroups": "مجموعاتي",
-      "myAvailability": "أوقات توفري"
+      "myAvailability": "أوقات توفري",
+      "mySessions": "جلساتي"
     },
     "navSecondary": {
       "getHelp": "الحصول على المساعدة",
@@ -6917,7 +6919,9 @@
       "statuses": {
         "FORMING": "قيد التشكيل",
         "READY_TO_START": "جاهزة للبدء",
-        "CANCELLED": "ملغاة"
+        "CANCELLED": "ملغاة",
+        "RUNNING": "جارية",
+        "COMPLETED": "مكتملة"
       }
     },
     "form": {
@@ -6931,7 +6935,8 @@
       "maxStudents": "الحد الأقصى للطلاب",
       "meetingLink": "رابط اللقاء",
       "whatsappGroupLink": "رابط مجموعة واتساب",
-      "missingCohort": "افتح هذه الصفحة من دفعة لإنشاء مجموعة."
+      "missingCohort": "افتح هذه الصفحة من دفعة لإنشاء مجموعة.",
+      "totalSessions": "عدد الجلسات"
     },
     "readiness": {
       "title": "قائمة الجاهزية",
@@ -6953,7 +6958,8 @@
       "whatsapp": "مضاف إلى واتساب",
       "paid": "مدفوع",
       "unpaid": "غير مدفوع",
-      "noCandidates": "لا يوجد طلاب مطابقون"
+      "noCandidates": "لا يوجد طلاب مطابقون",
+      "withdrawn": "منسحب"
     },
     "teacher": {
       "title": "المعلم",
@@ -6987,6 +6993,85 @@
     "childGroups": {
       "title": "المجموعات",
       "empty": "ليس في أي مجموعة بعد."
+    },
+    "sessions": {
+      "title": "الجلسات",
+      "empty": "لا توجد جلسات بعد.",
+      "start": "بدء المجموعة",
+      "startHint": "يُنشئ جميع الجلسات من الجدول الأسبوعي.",
+      "startMissingTotal": "حدّد عدد الجلسات في بيانات المجموعة أولًا.",
+      "number": "الجلسة",
+      "when": "الموعد",
+      "status": "الحالة",
+      "open": "فتح",
+      "teacher": "المعلم",
+      "detailTitle": "الجلسة {number}",
+      "statuses": {
+        "SCHEDULED": "مجدولة",
+        "REPORT_PENDING": "بانتظار التقرير",
+        "COMPLETED": "مكتملة",
+        "CANCELLED": "ملغاة"
+      },
+      "cancel": "إلغاء الجلسة",
+      "cancelReason": "سبب الإلغاء",
+      "cancelConfirm": "إلغاء الجلسة",
+      "attendance": {
+        "title": "الحضور",
+        "student": "الطالب",
+        "note": "ملاحظة (اختيارية)",
+        "save": "حفظ الحضور",
+        "teacher": "حضور المعلم",
+        "locked": "الحضور مغلق.",
+        "statuses": {
+          "PRESENT": "حاضر",
+          "LATE": "متأخر",
+          "EXCUSED": "معذور",
+          "ABSENT": "غائب"
+        }
+      },
+      "report": {
+        "title": "تقرير الجلسة",
+        "participation": "المشاركة",
+        "understanding": "الفهم",
+        "behavior": "السلوك",
+        "homework": "الواجب",
+        "note": "ملاحظة (اختيارية)",
+        "summary": "ملخص الحصة (اختياري)",
+        "submit": "إرسال التقرير",
+        "saveChanges": "حفظ التعديلات",
+        "editHint": "يمكنك تعديل هذا التقرير خلال 24 ساعة من إرساله.",
+        "pendingAttendance": "سجّل حضور جميع الطلاب أولًا.",
+        "submittedAt": "تاريخ الإرسال",
+        "empty": "لا يوجد تقرير بعد."
+      },
+      "mySessions": {
+        "title": "جلساتي",
+        "previousWeek": "الأسبوع السابق",
+        "nextWeek": "الأسبوع التالي",
+        "thisWeek": "هذا الأسبوع",
+        "noSessions": "لا توجد جلسات هذا الأسبوع."
+      },
+      "family": {
+        "title": "الجلسات",
+        "empty": "لا توجد جلسات بعد.",
+        "attendance": "الحضور",
+        "evaluation": "التقييم",
+        "notRecorded": "لم يُسجَّل بعد"
+      }
+    },
+    "followUps": {
+      "title": "متابعة الجلسة الأولى",
+      "empty": "تظهر المتابعات بعد اكتمال الجلسة الأولى.",
+      "student": "الطالب",
+      "parentFeedback": "ملاحظات ولي الأمر",
+      "decision": "القرار",
+      "decisions": {
+        "CONTINUE": "يستمر",
+        "WITHDRAW": "ينسحب"
+      },
+      "undecided": "لم يُحسم بعد",
+      "save": "حفظ",
+      "recorded": "تم التسجيل"
     }
   }
 }

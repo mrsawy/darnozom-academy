@@ -1,9 +1,13 @@
 import type {
+  AttendanceStatus,
   AvailabilitySlot,
+  FollowUpDecision,
   GroupPaymentStatus,
   GroupStatus,
+  GroupStudentStatus,
   Readiness,
   ScheduleSlot,
+  SessionStatus,
   TeacherFitReason,
 } from '@darnozom/shared-types';
 
@@ -38,6 +42,7 @@ export interface IGroupStudent {
   paymentStatus: GroupPaymentStatus;
   whatsappAdded: boolean;
   addedAt: string;
+  status?: GroupStudentStatus;
 }
 
 export interface IGroup {
@@ -51,6 +56,7 @@ export interface IGroup {
   timezone: string;
   minStudents: number;
   maxStudents: number;
+  totalSessions?: number | null;
   meetingLink?: string | null;
   whatsappGroupLink?: string | null;
   contentSent: { done: boolean };
@@ -76,6 +82,7 @@ export interface GroupFormValues {
   timezone: string;
   minStudents: number;
   maxStudents: number;
+  totalSessions: number;
   meetingLink: string | null;
   whatsappGroupLink: string | null;
 }
@@ -99,4 +106,82 @@ export interface ITeacherAvailability {
   teacherId: string;
   timezone: string | null;
   slots: AvailabilitySlot[];
+}
+
+export interface ISessionAttendance {
+  studentId: string;
+  status: AttendanceStatus;
+  note?: string;
+  markedAt: string;
+}
+
+export interface ISessionEvaluation {
+  studentId: string;
+  participation: number;
+  understanding: number;
+  behavior: number;
+  homework: number;
+  note?: string;
+}
+
+export interface ISession {
+  _id: string;
+  groupId: string;
+  groupName?: string;
+  teacherId: string;
+  sequence: number;
+  startsAt: string;
+  endsAt: string;
+  /** The effective status (SCHEDULED turns REPORT_PENDING once the session has ended). */
+  status: SessionStatus;
+  teacherAttendance?: AttendanceStatus | null;
+  attendance: ISessionAttendance[];
+  report?: {
+    evaluations: ISessionEvaluation[];
+    summary?: string;
+    submittedBy: string;
+    submittedAt: string;
+  } | null;
+  cancelReason?: string;
+}
+
+export interface ISessionDetail extends ISession {
+  /** ACTIVE students visible to the caller. */
+  roster: string[];
+  people: Record<string, string>;
+}
+
+export interface SessionQuery {
+  groupId?: string;
+  teacherId?: string;
+  from?: string;
+  to?: string;
+  status?: SessionStatus;
+  childId?: string;
+}
+
+export interface AttendanceEntry {
+  studentId: string;
+  status: AttendanceStatus;
+  note?: string;
+}
+
+export interface ReportValues {
+  evaluations: ISessionEvaluation[];
+  summary?: string;
+}
+
+export interface IFollowUp {
+  _id: string;
+  groupId: string;
+  sessionId: string;
+  studentId: string;
+  parentFeedback?: string;
+  decision?: FollowUpDecision;
+  recordedAt?: string;
+}
+
+export interface IFollowUps {
+  rows: IFollowUp[];
+  people: Record<string, string>;
 }

@@ -2,7 +2,13 @@
 
 import { toast } from 'react-toastify';
 import { useTranslations } from 'next-intl';
-import type { AvailabilitySlot, GroupPaymentStatus, Roles } from '@darnozom/shared-types';
+import type {
+  AttendanceStatus,
+  AvailabilitySlot,
+  FollowUpDecision,
+  GroupPaymentStatus,
+  Roles,
+} from '@darnozom/shared-types';
 import { useMutation, useQuery, useQueryClient } from '@/lib/utils';
 import { translateApiMessage } from '@/lib/utils/errors/translateApiMessage';
 import { unwrap } from '@/lib/utils/academics/unwrap';
@@ -10,8 +16,16 @@ import * as programsApi from '@/lib/actions/academics/programs.action';
 import * as structureApi from '@/lib/actions/academics/structure.action';
 import * as groupsApi from '@/lib/actions/academics/groups.action';
 import * as availabilityApi from '@/lib/actions/academics/teacher-availability.action';
+import * as sessionsApi from '@/lib/actions/academics/sessions.action';
+import * as followUpsApi from '@/lib/actions/academics/follow-ups.action';
 import { setAdditionalRoles } from '@/lib/actions/academics/additional-roles.action';
-import type { GroupFormValues, GroupQuery } from '@/lib/types/academics/academics';
+import type {
+  AttendanceEntry,
+  GroupFormValues,
+  GroupQuery,
+  ReportValues,
+  SessionQuery,
+} from '@/lib/types/academics/academics';
 
 const ROOT = 'academics';
 
@@ -27,6 +41,9 @@ export const academicsKeys = {
   studentCandidates: (id: string, q: string) => [ROOT, 'student-candidates', id, q] as const,
   teacherCandidates: (id: string) => [ROOT, 'teacher-candidates', id] as const,
   myAvailability: [ROOT, 'my-availability'] as const,
+  sessions: (query: SessionQuery) => [ROOT, 'sessions', query] as const,
+  session: (id: string) => [ROOT, 'session', id] as const,
+  followUps: (groupId: string) => [ROOT, 'follow-ups', groupId] as const,
 };
 
 export const usePrograms = () =>
@@ -183,4 +200,50 @@ export const useSaveMyAvailability = () =>
 export const useSetAdditionalRoles = () =>
   useAcademicsMutation(async (v: { userId: string; additionalRoles: Roles[] }) =>
     unwrap(await setAdditionalRoles(v.userId, v.additionalRoles))
+  );
+
+export const useSessions = (query: SessionQuery, enabled = true) =>
+  useQuery({
+    queryKey: academicsKeys.sessions(query),
+    queryFn: async () => unwrap(await sessionsApi.getSessions(query)),
+    enabled,
+  });
+export const useSession = (id: string) =>
+  useQuery({
+    queryKey: academicsKeys.session(id),
+    queryFn: async () => unwrap(await sessionsApi.getSession(id)),
+    enabled: !!id,
+  });
+export const useFollowUps = (groupId: string, enabled = true) =>
+  useQuery({
+    queryKey: academicsKeys.followUps(groupId),
+    queryFn: async () => unwrap(await followUpsApi.getFollowUps(groupId)),
+    enabled: enabled && !!groupId,
+  });
+export const useStartGroup = () =>
+  useAcademicsMutation(async (id: string) => unwrap(await sessionsApi.startGroup(id)));
+export const useCancelSession = () =>
+  useAcademicsMutation(async (v: { id: string; reason: string }) =>
+    unwrap(await sessionsApi.cancelSession(v.id, v.reason))
+  );
+export const useMarkAttendance = () =>
+  useAcademicsMutation(async (v: { id: string; entries: AttendanceEntry[] }) =>
+    unwrap(await sessionsApi.markAttendance(v.id, v.entries))
+  );
+export const useMarkTeacherAttendance = () =>
+  useAcademicsMutation(async (v: { id: string; status: AttendanceStatus }) =>
+    unwrap(await sessionsApi.markTeacherAttendance(v.id, v.status))
+  );
+export const useSubmitReport = () =>
+  useAcademicsMutation(async (v: { id: string; data: ReportValues }) =>
+    unwrap(await sessionsApi.submitReport(v.id, v.data))
+  );
+export const useEditReport = () =>
+  useAcademicsMutation(async (v: { id: string; data: ReportValues }) =>
+    unwrap(await sessionsApi.editReport(v.id, v.data))
+  );
+export const useUpdateFollowUp = () =>
+  useAcademicsMutation(
+    async (v: { id: string; data: { parentFeedback?: string; decision?: FollowUpDecision } }) =>
+      unwrap(await followUpsApi.updateFollowUp(v.id, v.data))
   );
