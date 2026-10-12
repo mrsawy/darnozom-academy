@@ -7,13 +7,27 @@ import { ApplyRpcErrorHandling } from 'src/utils/docerators/error-handeling/clas
 import { IUserContext } from 'src/utils/types/IUserContext.interface';
 import { actorFromContext } from '../common/actor';
 import { IdPayload } from '../common/payloads';
-import { CancelGroupPayload, ContentSentPayload, CreateGroupDto, FindGroupsPayload, UpdateGroupPayload } from './dto/group.dto';
+import {
+  CancelGroupPayload,
+  ContentSentPayload,
+  CreateGroupDto,
+  FindGroupsPayload,
+  GroupStudentPayload,
+  PaymentStatusPayload,
+  StudentCandidatesPayload,
+  UpdateGroupPayload,
+  WhatsappPayload,
+} from './dto/group.dto';
+import { GroupStudentsService } from './group-students.service';
 import { GroupService } from './group.service';
 
 @Controller()
 @ApplyRpcErrorHandling
 export class GroupControllerMessage {
-  constructor(private readonly groupService: GroupService) {}
+  constructor(
+    private readonly groupService: GroupService,
+    private readonly groupStudents: GroupStudentsService
+  ) {}
 
   @RequirePermissionsGuard({ action: Actions.READ, subject: Subjects.GROUP })
   @MessagePattern('academics.groups.findAll')
@@ -61,5 +75,35 @@ export class GroupControllerMessage {
   @MessagePattern('academics.groups.setContentSent')
   setContentSent(@Payload(new RpcValidationPipe()) payload: ContentSentPayload, @Ctx() context: IUserContext) {
     return this.groupService.setContentSent(actorFromContext(context), payload.id, payload.done);
+  }
+
+  @RequirePermissionsGuard({ action: Actions.UPDATE, subject: Subjects.GROUP })
+  @MessagePattern('academics.groups.studentCandidates')
+  studentCandidates(@Payload(new RpcValidationPipe()) payload: StudentCandidatesPayload, @Ctx() context: IUserContext) {
+    return this.groupStudents.studentCandidates(actorFromContext(context), payload.id, payload.q);
+  }
+
+  @RequirePermissionsGuard({ action: Actions.UPDATE, subject: Subjects.GROUP })
+  @MessagePattern('academics.groups.addStudent')
+  addStudent(@Payload(new RpcValidationPipe()) payload: GroupStudentPayload, @Ctx() context: IUserContext) {
+    return this.groupStudents.addStudent(actorFromContext(context), payload.id, payload.studentId);
+  }
+
+  @RequirePermissionsGuard({ action: Actions.UPDATE, subject: Subjects.GROUP })
+  @MessagePattern('academics.groups.removeStudent')
+  removeStudent(@Payload(new RpcValidationPipe()) payload: GroupStudentPayload, @Ctx() context: IUserContext) {
+    return this.groupStudents.removeStudent(actorFromContext(context), payload.id, payload.studentId);
+  }
+
+  @RequirePermissionsGuard({ action: Actions.UPDATE, subject: Subjects.GROUP_PAYMENT_STATUS })
+  @MessagePattern('academics.groups.setPaymentStatus')
+  setPaymentStatus(@Payload(new RpcValidationPipe()) payload: PaymentStatusPayload, @Ctx() context: IUserContext) {
+    return this.groupStudents.setPaymentStatus(actorFromContext(context), payload.id, payload.studentId, payload.paymentStatus);
+  }
+
+  @RequirePermissionsGuard({ action: Actions.UPDATE, subject: Subjects.GROUP })
+  @MessagePattern('academics.groups.setWhatsapp')
+  setWhatsapp(@Payload(new RpcValidationPipe()) payload: WhatsappPayload, @Ctx() context: IUserContext) {
+    return this.groupStudents.setWhatsapp(actorFromContext(context), payload.id, payload.studentId, payload.whatsappAdded);
   }
 }

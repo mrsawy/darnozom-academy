@@ -18,6 +18,7 @@ import { Group, GroupSchema } from './group/entities/group.entity';
 import { GroupStateService } from './group/group-state.service';
 import { GroupService } from './group/group.service';
 import { GroupTeacherService } from './group/group-teacher.service';
+import { GroupStudentsService } from './group/group-students.service';
 import { GroupControllerMessage } from './group/group.controller.message';
 import { TeacherAvailability, TeacherAvailabilitySchema } from './teacher-availability/entities/teacher-availability.entity';
 import { TeacherAvailabilityService } from './teacher-availability/teacher-availability.service';
@@ -39,6 +40,6 @@ import { TeacherAvailabilityControllerMessage } from './teacher-availability/tea
     RoleModule,
   ],
   controllers: [ProgramControllerMessage, LevelControllerMessage, CohortControllerMessage, TeacherAvailabilityControllerMessage, GroupControllerMessage],
-  providers: [ProgramService, LevelService, CohortService, TeacherAvailabilityService, GroupStateService, GroupService, GroupTeacherService],
+  providers: [ProgramService, LevelService, CohortService, TeacherAvailabilityService, GroupStateService, GroupService, GroupTeacherService, GroupStudentsService],
 })
 export class AcademicsModule {}
