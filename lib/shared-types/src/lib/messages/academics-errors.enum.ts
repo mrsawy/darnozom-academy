@@ -28,6 +28,23 @@ export enum AcademicsErrors {
   NOT_AN_INSTRUCTOR = 'notAnInstructor',
   ADDITIONAL_ROLES_INVALID = 'additionalRolesInvalid',
   USER_NOT_FOUND_IN_ORGANIZATION = 'userNotFoundInOrganization',
+  GROUP_COMPLETED = 'groupCompleted',
+  GROUP_TOTAL_SESSIONS_REQUIRED = 'groupTotalSessionsRequired',
+  GROUP_RUNNING_SCHEDULE_LOCKED = 'groupRunningScheduleLocked',
+  GROUP_RUNNING_TEACHER_LOCKED = 'groupRunningTeacherLocked',
+  SESSION_NOT_FOUND = 'sessionNotFound',
+  SESSION_CANCEL_NOT_ALLOWED = 'sessionCancelNotAllowed',
+  NOT_SESSION_TEACHER = 'notSessionTeacher',
+  ATTENDANCE_NOT_OPEN = 'attendanceNotOpen',
+  ATTENDANCE_CLOSED = 'attendanceClosed',
+  ATTENDANCE_STUDENT_INVALID = 'attendanceStudentInvalid',
+  ATTENDANCE_INCOMPLETE = 'attendanceIncomplete',
+  REPORT_NOT_OPEN = 'reportNotOpen',
+  REPORT_ALREADY_SUBMITTED = 'reportAlreadySubmitted',
+  REPORT_NOT_SUBMITTED = 'reportNotSubmitted',
+  REPORT_EDIT_WINDOW_CLOSED = 'reportEditWindowClosed',
+  REPORT_INVALID = 'reportInvalid',
+  FOLLOW_UP_NOT_FOUND = 'followUpNotFound',
 }
 
 export enum AcademicsSuccessMessages {

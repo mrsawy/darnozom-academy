@@ -62,4 +62,16 @@ describe('ROLE_SEED_DEFINITIONS', () => {
     const seeded = ROLE_SEED_DEFINITIONS.map((r) => r.name as Roles).filter(canUpdate).sort();
     expect([...roles].sort()).toEqual(seeded);
   });
+
+  it('seeds SESSION permissions: teachers update, staff manage, others read', () => {
+    expect(has(Roles.INSTRUCTOR, Actions.READ, Subjects.SESSION)).toBe(true);
+    expect(has(Roles.INSTRUCTOR, Actions.UPDATE, Subjects.SESSION)).toBe(true);
+    expect(has(Roles.COORDINATOR, Actions.MANAGE, Subjects.SESSION)).toBe(true);
+    expect(has(Roles.MANAGER, Actions.MANAGE, Subjects.SESSION)).toBe(true);
+    for (const role of [Roles.SUPERVISOR, Roles.ACCOUNTANT, Roles.PARENT, Roles.STUDENT]) {
+      expect({ role, read: has(role, Actions.READ, Subjects.SESSION) }).toEqual({ role, read: true });
+      expect({ role, update: has(role, Actions.UPDATE, Subjects.SESSION) }).toEqual({ role, update: false });
+    }
+    expect(has(Roles.CONTENT_OFFICER, Actions.READ, Subjects.SESSION)).toBe(false);
+  });
 });

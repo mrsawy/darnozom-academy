@@ -6,6 +6,7 @@ export const SUPERVISOR_PERMISSIONS: RolePermissionRule[] = [
   { action: Actions.READ, subject: Subjects.LEVEL },
   { action: Actions.READ, subject: Subjects.COHORT },
   { action: Actions.READ, subject: Subjects.GROUP },
+  { action: Actions.READ, subject: Subjects.SESSION },
 ];
 
 export const SUPERVISOR_SEED: RoleSeedEntry = { name: Roles.SUPERVISOR, permissions: SUPERVISOR_PERMISSIONS };

@@ -24,6 +24,7 @@ export const STUDENT_PERMISSIONS: RolePermissionRule[] = [
   { action: Actions.READ, subject: Subjects.STUDENT_REPORT },
   { action: Actions.READ, subject: Subjects.ORGANIZATION_MEMBER_REPORT },
   { action: Actions.READ, subject: Subjects.GROUP },
+  { action: Actions.READ, subject: Subjects.SESSION },
 ];
 
 export const STUDENT_SEED: RoleSeedEntry = {
