@@ -1826,7 +1826,8 @@
       "checkIn": "Check In",
       "attendWithScanner": "Attend with Scanner",
       "attendanceHistory": "Attendance History",
-      "booksStore": "Books Store"
+      "booksStore": "Books Store",
+      "myGroups": "My groups"
     },
     "navSecondary": {
       "settings": "Settings",
@@ -2338,7 +2339,12 @@
       "wallet": "Wallet",
       "privateSessions": "Private Sessions",
       "chat": "Messages",
-      "booksStore": "Books Store"
+      "booksStore": "Books Store",
+      "academics": "Academics",
+      "academicsGroups": "Groups",
+      "academicsPrograms": "Programs",
+      "myGroups": "My groups",
+      "myAvailability": "My availability"
     },
     "navSecondary": {
       "getHelp": "Get Help",
@@ -6830,6 +6836,140 @@
       "digitalOrdersDesc": "Digital download links are active and ready in your account.",
       "continueBrowsing": "Explore More Books",
       "backToHome": "Return to Home"
+    }
+  },
+  "Academics": {
+    "saved": "Saved",
+    "loading": "Loading…",
+    "empty": "Nothing here yet.",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "create": "Create",
+    "add": "Add",
+    "remove": "Remove",
+    "name": "Name",
+    "description": "Description",
+    "order": "Order",
+    "startDate": "Start date",
+    "confirmDelete": "Delete this item?",
+    "days": {
+      "0": "Sunday",
+      "1": "Monday",
+      "2": "Tuesday",
+      "3": "Wednesday",
+      "4": "Thursday",
+      "5": "Friday",
+      "6": "Saturday"
+    },
+    "roles": {
+      "OWNER": "Owner",
+      "MANAGER": "Academy manager",
+      "COORDINATOR": "Coordinator",
+      "SUPERVISOR": "Supervisor",
+      "CONTENT_OFFICER": "Content officer",
+      "SHARIA_REVIEWER": "Sharia reviewer",
+      "HR": "HR officer",
+      "ACCOUNTANT": "Accountant",
+      "INSTRUCTOR": "Teacher"
+    },
+    "programs": {
+      "title": "Programs",
+      "new": "New program",
+      "courses": "Courses",
+      "linkCourse": "Link course",
+      "selectCourse": "Select a course",
+      "unlink": "Unlink",
+      "levels": "Levels",
+      "newLevel": "New level",
+      "cohorts": "Cohorts",
+      "newCohort": "New cohort",
+      "newGroup": "New group",
+      "viewGroups": "View groups"
+    },
+    "groups": {
+      "title": "Groups",
+      "new": "New group",
+      "status": "Status",
+      "allStatuses": "All statuses",
+      "readiness": "Readiness",
+      "students": "Students",
+      "teacher": "Teacher",
+      "noTeacher": "No teacher assigned",
+      "open": "Open",
+      "statuses": {
+        "FORMING": "Forming",
+        "READY_TO_START": "Ready to start",
+        "CANCELLED": "Cancelled"
+      }
+    },
+    "form": {
+      "schedule": "Weekly schedule",
+      "day": "Day",
+      "startTime": "Start time",
+      "duration": "Duration (minutes)",
+      "addSlot": "Add time",
+      "timezone": "Time zone",
+      "minStudents": "Minimum students",
+      "maxStudents": "Maximum students",
+      "meetingLink": "Meeting link",
+      "whatsappGroupLink": "WhatsApp group link",
+      "missingCohort": "Open this page from a cohort to create a group."
+    },
+    "readiness": {
+      "title": "Readiness checklist",
+      "markReady": "Ready to start",
+      "notReadyHint": "Complete every item to mark the group ready.",
+      "contentSentToggle": "Content has been sent",
+      "items": {
+        "TEACHER_ASSIGNED": "Teacher assigned",
+        "MINIMUM_STUDENTS": "Minimum students reached",
+        "PAYMENTS_MADE": "Payments made",
+        "CONTENT_SENT": "Content sent",
+        "MEETING_LINK": "Meeting link created"
+      }
+    },
+    "students": {
+      "title": "Students",
+      "search": "Search students by name or email",
+      "payment": "Payment",
+      "whatsapp": "Added to WhatsApp",
+      "paid": "Paid",
+      "unpaid": "Unpaid",
+      "noCandidates": "No matching students"
+    },
+    "teacher": {
+      "title": "Teacher",
+      "select": "Select a teacher",
+      "assign": "Assign",
+      "unassign": "Unassign",
+      "reasons": {
+        "NOT_INSTRUCTOR": "Not a teacher",
+        "NO_AVAILABILITY": "No availability set",
+        "OUTSIDE_AVAILABILITY": "Outside availability",
+        "CONFLICT": "Schedule conflict"
+      }
+    },
+    "cancelGroup": {
+      "title": "Cancel group",
+      "reason": "Reason for cancelling",
+      "confirm": "Cancel group"
+    },
+    "availability": {
+      "title": "My weekly availability",
+      "addSlot": "Add time",
+      "endTime": "End time (HH:mm, 24:00 for midnight)"
+    },
+    "myGroups": {
+      "title": "My groups"
+    },
+    "additionalRoles": {
+      "title": "Additional roles",
+      "hint": "Extra roles this person holds in addition to their main role."
+    },
+    "childGroups": {
+      "title": "Groups",
+      "empty": "Not in any group yet."
     }
   }
 }

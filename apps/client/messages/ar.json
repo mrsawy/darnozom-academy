@@ -1826,7 +1826,8 @@
       "checkIn": "تسجيل الحضور",
       "attendWithScanner": "الحضور بالماسح",
       "attendanceHistory": "سجل الحضور",
-      "booksStore": "متجر الكتب"
+      "booksStore": "متجر الكتب",
+      "myGroups": "مجموعاتي"
     },
     "navSecondary": {
       "settings": "الإعدادات",
@@ -2338,7 +2339,12 @@
       "wallet": "المحفظة",
       "privateSessions": "الجلسات الخاصة",
       "chat": "الرسائل",
-      "booksStore": "متجر الكتب"
+      "booksStore": "متجر الكتب",
+      "academics": "الشؤون الأكاديمية",
+      "academicsGroups": "المجموعات",
+      "academicsPrograms": "البرامج",
+      "myGroups": "مجموعاتي",
+      "myAvailability": "أوقات توفري"
     },
     "navSecondary": {
       "getHelp": "الحصول على المساعدة",
@@ -6830,6 +6836,140 @@
       "digitalOrdersDesc": "روابط التحميل الرقمية جاهزة ومفعلة مباشرة في حسابك.",
       "continueBrowsing": "تصفح المزيد من الكتب",
       "backToHome": "العودة للرئيسية"
+    }
+  },
+  "Academics": {
+    "saved": "تم الحفظ",
+    "loading": "جارٍ التحميل…",
+    "empty": "لا يوجد شيء بعد.",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "create": "إنشاء",
+    "add": "إضافة",
+    "remove": "إزالة",
+    "name": "الاسم",
+    "description": "الوصف",
+    "order": "الترتيب",
+    "startDate": "تاريخ البدء",
+    "confirmDelete": "هل تريد حذف هذا العنصر؟",
+    "days": {
+      "0": "الأحد",
+      "1": "الاثنين",
+      "2": "الثلاثاء",
+      "3": "الأربعاء",
+      "4": "الخميس",
+      "5": "الجمعة",
+      "6": "السبت"
+    },
+    "roles": {
+      "OWNER": "المالك",
+      "MANAGER": "مدير الأكاديمية",
+      "COORDINATOR": "المنسق الإداري",
+      "SUPERVISOR": "المشرف التربوي",
+      "CONTENT_OFFICER": "مسؤول المحتوى",
+      "SHARIA_REVIEWER": "المراجع الشرعي",
+      "HR": "مسؤول الموارد البشرية",
+      "ACCOUNTANT": "المحاسب",
+      "INSTRUCTOR": "المعلم"
+    },
+    "programs": {
+      "title": "البرامج",
+      "new": "برنامج جديد",
+      "courses": "الدورات",
+      "linkCourse": "ربط دورة",
+      "selectCourse": "اختر دورة",
+      "unlink": "إلغاء الربط",
+      "levels": "المستويات",
+      "newLevel": "مستوى جديد",
+      "cohorts": "الدفعات",
+      "newCohort": "دفعة جديدة",
+      "newGroup": "مجموعة جديدة",
+      "viewGroups": "عرض المجموعات"
+    },
+    "groups": {
+      "title": "المجموعات",
+      "new": "مجموعة جديدة",
+      "status": "الحالة",
+      "allStatuses": "كل الحالات",
+      "readiness": "الجاهزية",
+      "students": "الطلاب",
+      "teacher": "المعلم",
+      "noTeacher": "لم يتم تعيين معلم",
+      "open": "فتح",
+      "statuses": {
+        "FORMING": "قيد التشكيل",
+        "READY_TO_START": "جاهزة للبدء",
+        "CANCELLED": "ملغاة"
+      }
+    },
+    "form": {
+      "schedule": "الجدول الأسبوعي",
+      "day": "اليوم",
+      "startTime": "وقت البدء",
+      "duration": "المدة (بالدقائق)",
+      "addSlot": "إضافة موعد",
+      "timezone": "المنطقة الزمنية",
+      "minStudents": "الحد الأدنى للطلاب",
+      "maxStudents": "الحد الأقصى للطلاب",
+      "meetingLink": "رابط اللقاء",
+      "whatsappGroupLink": "رابط مجموعة واتساب",
+      "missingCohort": "افتح هذه الصفحة من دفعة لإنشاء مجموعة."
+    },
+    "readiness": {
+      "title": "قائمة الجاهزية",
+      "markReady": "جاهزة للبدء",
+      "notReadyHint": "أكمل جميع البنود لتعليم المجموعة كجاهزة.",
+      "contentSentToggle": "تم إرسال المحتوى",
+      "items": {
+        "TEACHER_ASSIGNED": "تم تعيين المعلم",
+        "MINIMUM_STUDENTS": "بلوغ الحد الأدنى للطلاب",
+        "PAYMENTS_MADE": "سداد الدفعات",
+        "CONTENT_SENT": "إرسال المحتوى",
+        "MEETING_LINK": "إنشاء رابط اللقاء"
+      }
+    },
+    "students": {
+      "title": "الطلاب",
+      "search": "ابحث عن الطلاب بالاسم أو البريد الإلكتروني",
+      "payment": "الدفع",
+      "whatsapp": "مضاف إلى واتساب",
+      "paid": "مدفوع",
+      "unpaid": "غير مدفوع",
+      "noCandidates": "لا يوجد طلاب مطابقون"
+    },
+    "teacher": {
+      "title": "المعلم",
+      "select": "اختر معلمًا",
+      "assign": "تعيين",
+      "unassign": "إلغاء التعيين",
+      "reasons": {
+        "NOT_INSTRUCTOR": "ليس معلمًا",
+        "NO_AVAILABILITY": "لم تُحدَّد أوقات التوفر",
+        "OUTSIDE_AVAILABILITY": "خارج أوقات التوفر",
+        "CONFLICT": "تعارض في المواعيد"
+      }
+    },
+    "cancelGroup": {
+      "title": "إلغاء المجموعة",
+      "reason": "سبب الإلغاء",
+      "confirm": "إلغاء المجموعة"
+    },
+    "availability": {
+      "title": "أوقات توفري الأسبوعية",
+      "addSlot": "إضافة موعد",
+      "endTime": "وقت الانتهاء (HH:mm، و24:00 لمنتصف الليل)"
+    },
+    "myGroups": {
+      "title": "مجموعاتي"
+    },
+    "additionalRoles": {
+      "title": "أدوار إضافية",
+      "hint": "أدوار إضافية يحملها هذا الشخص بجانب دوره الأساسي."
+    },
+    "childGroups": {
+      "title": "المجموعات",
+      "empty": "ليس في أي مجموعة بعد."
     }
   }
 }

@@ -21,6 +21,7 @@ import {
   IconCalendar,
   IconHistory,
   IconBooks,
+  IconUsersGroup,
 } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
 import { useEffect } from 'react';
@@ -30,6 +31,7 @@ import {
   ROUTE_STUDENT_ATTENDANCE_WITH_SCANNER,
   ROUTE_STUDENT_ATTENDANCE_HISTORY,
   ROUTE_BOOKS,
+  ROUTE_STUDENT_MY_GROUPS,
 } from '@/lib/data/constants/routes.constants';
 
 function SidebarCalendar() {
@@ -57,6 +59,12 @@ export const useStudentSidebarData = () => {
         url: '/student-dashboard/courses',
         icon: IconDashboard,
         key: 'courses',
+      },
+      {
+        title: t('navMain.myGroups'),
+        url: ROUTE_STUDENT_MY_GROUPS,
+        icon: IconUsersGroup,
+        key: 'my-groups',
       },
       {
         title: t('navMain.wallet'),

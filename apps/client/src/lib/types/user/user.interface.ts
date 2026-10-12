@@ -57,6 +57,8 @@ export interface IUser {
   firstName: string;
   lastName: string;
   roleName: Roles;
+  /** Extra roles held in addition to roleName (staff roles + INSTRUCTOR). */
+  additionalRoles?: Roles[];
   /** False until the user finishes post-OAuth onboarding (role, phone, org). */
   onboardingComplete?: boolean;
   /** False until the SuperAdmin finishes the organization product tour. */

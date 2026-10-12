@@ -28,6 +28,10 @@ import {
   IconFolder,
   IconListCheck,
   IconBooks,
+  IconClockHour4,
+  IconSchool,
+  IconSitemap,
+  IconUsersGroup,
 } from '@tabler/icons-react';
 import {
   ROUTE_ORG_AI_BILLING,
@@ -51,11 +55,34 @@ import {
   ROUTE_ORG_PRIVATE_SESSIONS,
   ROUTE_ORG_CHAT,
   ROUTE_BOOKS,
+  ROUTE_ORG_ACADEMICS_GROUPS,
+  ROUTE_ORG_ACADEMICS_PROGRAMS,
+  ROUTE_ORG_MY_AVAILABILITY,
+  ROUTE_ORG_MY_GROUPS,
 } from '@/lib/data/constants/routes.constants';
-import { CourseContentType } from '@darnozom/shared-types';
+import { CourseContentType, ORG_WIDE_GROUP_READER_ROLES, Roles } from '@darnozom/shared-types';
 
 export const data = {
   navMain: [
+    {
+      titleKey: 'navMain.academics',
+      url: ROUTE_ORG_ACADEMICS_GROUPS,
+      icon: IconSchool,
+      key: 'academics',
+      requiredRoles: ORG_WIDE_GROUP_READER_ROLES,
+      children: [
+        { titleKey: 'navMain.academicsGroups', url: ROUTE_ORG_ACADEMICS_GROUPS, key: 'academics-groups', icon: IconUsersGroup },
+        {
+          titleKey: 'navMain.academicsPrograms',
+          url: ROUTE_ORG_ACADEMICS_PROGRAMS,
+          key: 'academics-programs',
+          icon: IconSitemap,
+          requiredRoles: [Roles.SUPER_ADMIN, Roles.ADMIN, Roles.OWNER, Roles.MANAGER, Roles.COORDINATOR, Roles.SUPERVISOR],
+        },
+      ],
+    },
+    { titleKey: 'navMain.myGroups', url: ROUTE_ORG_MY_GROUPS, icon: IconUsersGroup, key: 'my-groups', requiredRoles: [Roles.INSTRUCTOR] },
+    { titleKey: 'navMain.myAvailability', url: ROUTE_ORG_MY_AVAILABILITY, icon: IconClockHour4, key: 'my-availability', requiredRoles: [Roles.INSTRUCTOR] },
     { titleKey: 'navMain.courses', url: ROUTE_ORG_COURSES, icon: IconDashboard, key: 'courses' },
     {
       titleKey: 'navMain.content',
