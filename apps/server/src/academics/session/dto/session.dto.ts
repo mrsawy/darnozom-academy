@@ -6,6 +6,7 @@ import {
   IsDateString,
   IsEnum,
   IsMongoId,
+  IsNotEmpty,
   IsOptional,
   IsString,
   MaxLength,
@@ -73,4 +74,14 @@ export class TeacherAttendancePayload {
 
   @IsEnum(AttendanceStatus)
   status!: AttendanceStatus;
+}
+
+export class CancelSessionPayload {
+  @IsMongoId()
+  id!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(500)
+  reason!: string;
 }
