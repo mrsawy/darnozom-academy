@@ -1,6 +1,6 @@
-import { PartialType } from '@nestjs/mapped-types';
 import { Type } from 'class-transformer';
 import { IsMongoId, IsNotEmpty, IsOptional, IsString, MaxLength, ValidateNested } from 'class-validator';
+import { OptionalNonNull } from '../../common/optional-non-null';
 
 export class CreateProgramDto {
   @IsString()
@@ -14,7 +14,18 @@ export class CreateProgramDto {
   description?: string;
 }
 
-export class UpdateProgramDto extends PartialType(CreateProgramDto) {}
+export class UpdateProgramDto {
+  @OptionalNonNull()
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(120)
+  name?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(2000)
+  description?: string;
+}
 
 export class UpdateProgramPayload {
   @IsMongoId()

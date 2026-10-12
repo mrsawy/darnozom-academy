@@ -3,12 +3,6 @@ import { plainToInstance } from 'class-transformer';
 import { validateSync } from 'class-validator';
 import { CreateGroupDto } from './group.dto';
 
-// @nestjs/mapped-types is ESM-only and Jest cannot load it; the link decorators live on CreateGroupDto itself.
-jest.mock('@nestjs/mapped-types', () => ({
-  PartialType: (base: new () => object) => base,
-  OmitType: (base: new () => object) => base,
-}));
-
 const LINK_FIELDS = ['meetingLink', 'whatsappGroupLink'] as const;
 
 const linkErrors = (field: (typeof LINK_FIELDS)[number], value: unknown) =>

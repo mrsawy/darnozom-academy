@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
-import { IsInt, IsMongoId, IsNotEmpty, IsOptional, IsString, MaxLength, Min, ValidateNested } from 'class-validator';
+import { IsInt, IsMongoId, IsNotEmpty, IsString, MaxLength, Min, ValidateNested } from 'class-validator';
+import { OptionalNonNull } from '../../common/optional-non-null';
 
 export class CreateLevelDto {
   @IsMongoId()
@@ -16,13 +17,13 @@ export class CreateLevelDto {
 }
 
 export class UpdateLevelDto {
-  @IsOptional()
+  @OptionalNonNull()
   @IsString()
   @IsNotEmpty()
   @MaxLength(120)
   name?: string;
 
-  @IsOptional()
+  @OptionalNonNull()
   @IsInt()
   @Min(1)
   order?: number;

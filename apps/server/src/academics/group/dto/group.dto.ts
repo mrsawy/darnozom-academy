@@ -1,4 +1,3 @@
-import { OmitType, PartialType } from '@nestjs/mapped-types';
 import { Type } from 'class-transformer';
 import {
   ArrayMaxSize,
@@ -20,6 +19,7 @@ import {
 } from 'class-validator';
 import { GroupPaymentStatus, GroupStatus } from '@darnozom/shared-types';
 import { IsIanaTimeZone } from 'src/utils/validators/is-iana-timezone.validator';
+import { OptionalNonNull } from '../../common/optional-non-null';
 
 /** Links are rendered as hrefs: absolute http(s) only. */
 const WEB_LINK = { protocols: ['http', 'https'], require_protocol: true };
@@ -79,7 +79,48 @@ export class CreateGroupDto {
   whatsappGroupLink?: string | null;
 }
 
-export class UpdateGroupDto extends PartialType(OmitType(CreateGroupDto, ['cohortId'] as const)) {}
+/** cohortId cannot change; required fields may be omitted but never nulled. */
+export class UpdateGroupDto {
+  @OptionalNonNull()
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(120)
+  name?: string;
+
+  @OptionalNonNull()
+  @IsArray()
+  @ArrayMinSize(1)
+  @ArrayMaxSize(14)
+  @ValidateNested({ each: true })
+  @Type(() => ScheduleSlotDto)
+  schedule?: ScheduleSlotDto[];
+
+  @OptionalNonNull()
+  @IsIanaTimeZone()
+  timezone?: string;
+
+  @OptionalNonNull()
+  @IsInt()
+  @Min(1)
+  @Max(500)
+  minStudents?: number;
+
+  @OptionalNonNull()
+  @IsInt()
+  @Min(1)
+  @Max(500)
+  maxStudents?: number;
+
+  /** null clears the link */
+  @IsOptional()
+  @IsUrl(WEB_LINK)
+  meetingLink?: string | null;
+
+  /** null clears the link */
+  @IsOptional()
+  @IsUrl(WEB_LINK)
+  whatsappGroupLink?: string | null;
+}
 
 export class UpdateGroupPayload {
   @IsMongoId()

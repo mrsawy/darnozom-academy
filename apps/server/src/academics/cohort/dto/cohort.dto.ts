@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
-import { IsDateString, IsMongoId, IsNotEmpty, IsOptional, IsString, MaxLength, ValidateNested } from 'class-validator';
+import { IsDateString, IsMongoId, IsNotEmpty, IsString, MaxLength, ValidateNested } from 'class-validator';
+import { OptionalNonNull } from '../../common/optional-non-null';
 
 export class CreateCohortDto {
   @IsMongoId()
@@ -16,13 +17,13 @@ export class CreateCohortDto {
 }
 
 export class UpdateCohortDto {
-  @IsOptional()
+  @OptionalNonNull()
   @IsString()
   @IsNotEmpty()
   @MaxLength(120)
   name?: string;
 
-  @IsOptional()
+  @OptionalNonNull()
   @IsDateString()
   startDate?: string;
 }
