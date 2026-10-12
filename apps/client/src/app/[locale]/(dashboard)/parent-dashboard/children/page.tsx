@@ -5,6 +5,7 @@ import { ChildrenPageHeader } from './__components/children-page-header';
 import { ChildrenTable } from './__components/children-table';
 import { AddChildDialog } from './__components/add-child-dialog';
 import { ChildGroups } from './__components/child-groups';
+import { ChildSessions } from './__components/child-sessions';
 import { useChildren } from '@/lib/hooks/parent/useParent.hook';
 import { Alert, AlertDescription } from '@/components/atoms/alert';
 import { IconInfoCircle } from '@tabler/icons-react';
@@ -27,7 +28,10 @@ function ChildrenPage() {
       <ChildrenTable items={children} isLoading={isLoading} />
       <div className="mt-6 grid gap-4 md:grid-cols-2">
         {children.map((child) => (
-          <ChildGroups key={child._id} childId={child._id} childName={`${child.firstName ?? ''}`} />
+          <div key={child._id} className="space-y-4">
+            <ChildGroups childId={child._id} childName={`${child.firstName ?? ''}`} />
+            <ChildSessions childId={child._id} childName={`${child.firstName ?? ''}`} />
+          </div>
         ))}
       </div>
       <AddChildDialog open={addDialogOpen} onClose={() => setAddDialogOpen(false)} />

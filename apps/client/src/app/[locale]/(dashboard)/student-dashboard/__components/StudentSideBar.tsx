@@ -32,6 +32,7 @@ import {
   ROUTE_STUDENT_ATTENDANCE_HISTORY,
   ROUTE_BOOKS,
   ROUTE_STUDENT_MY_GROUPS,
+  ROUTE_STUDENT_MY_SESSIONS,
 } from '@/lib/data/constants/routes.constants';
 
 function SidebarCalendar() {
@@ -65,6 +66,12 @@ export const useStudentSidebarData = () => {
         url: ROUTE_STUDENT_MY_GROUPS,
         icon: IconUsersGroup,
         key: 'my-groups',
+      },
+      {
+        title: t('navMain.mySessions'),
+        url: ROUTE_STUDENT_MY_SESSIONS,
+        icon: IconCalendar,
+        key: 'my-sessions',
       },
       {
         title: t('navMain.wallet'),
