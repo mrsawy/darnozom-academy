@@ -1,6 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import { safeHref } from '@/lib/utils/academics/safe-href';
 import { GroupStatus } from '@darnozom/shared-types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/card';
 import {
@@ -80,10 +81,10 @@ export function GroupFormationScreen({ groupId }: { groupId: string }) {
               <CardTitle>{t('form.whatsappGroupLink')}</CardTitle>
             </CardHeader>
             <CardContent>
-              {group.whatsappGroupLink ? (
+              {safeHref(group.whatsappGroupLink) ? (
                 <a
                   className="break-all underline"
-                  href={group.whatsappGroupLink}
+                  href={safeHref(group.whatsappGroupLink)}
                   target="_blank"
                   rel="noreferrer">
                   {group.whatsappGroupLink}

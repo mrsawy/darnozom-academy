@@ -21,6 +21,9 @@ import {
 import { GroupPaymentStatus, GroupStatus } from '@darnozom/shared-types';
 import { IsIanaTimeZone } from 'src/utils/validators/is-iana-timezone.validator';
 
+/** Links are rendered as hrefs: absolute http(s) only. */
+const WEB_LINK = { protocols: ['http', 'https'], require_protocol: true };
+
 export class ScheduleSlotDto {
   @IsInt()
   @Min(0)
@@ -67,12 +70,12 @@ export class CreateGroupDto {
 
   /** null clears the link */
   @IsOptional()
-  @IsUrl()
+  @IsUrl(WEB_LINK)
   meetingLink?: string | null;
 
   /** null clears the link */
   @IsOptional()
-  @IsUrl()
+  @IsUrl(WEB_LINK)
   whatsappGroupLink?: string | null;
 }
 

@@ -2,6 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import type { IGroup } from '@/lib/types/academics/academics';
+import { safeHref } from '@/lib/utils/academics/safe-href';
 
 export function GroupSummaryList({ groups }: { groups: IGroup[] }) {
   const t = useTranslations('Academics');
@@ -17,10 +18,10 @@ export function GroupSummaryList({ groups }: { groups: IGroup[] }) {
           <p className="text-muted-foreground text-sm">
             {`${group.schedule.map((slot) => `${t(`days.${slot.dayOfWeek}`)} ${slot.startTime} (${slot.durationMinutes}′)`).join(' · ')} — ${group.timezone}`}
           </p>
-          {group.meetingLink ? (
+          {safeHref(group.meetingLink) ? (
             <a
               className="text-sm underline"
-              href={group.meetingLink}
+              href={safeHref(group.meetingLink)}
               target="_blank"
               rel="noreferrer">
               {t('form.meetingLink')}
