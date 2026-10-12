@@ -46,11 +46,13 @@ describe('checkTeacherFit', () => {
 
   it('compares across timezones (Riyadh group, London teacher, winter)', () => {
     // Group Mon 18:00 Riyadh = 15:00–16:00 UTC; teacher Mon 14:00–17:00 London (GMT) = 14:00–17:00 UTC
-    const result = checkTeacherFit(base({
-      groupTimezone: 'Asia/Riyadh',
-      groupSchedule: [{ dayOfWeek: 1, startTime: '18:00', durationMinutes: 60 }],
-      availability: { timezone: 'Europe/London', slots: [{ dayOfWeek: 1, startTime: '14:00', endTime: '17:00' }] },
-    }));
+    const result = checkTeacherFit(
+      base({
+        groupTimezone: 'Asia/Riyadh',
+        groupSchedule: [{ dayOfWeek: 1, startTime: '18:00', durationMinutes: 60 }],
+        availability: { timezone: 'Europe/London', slots: [{ dayOfWeek: 1, startTime: '14:00', endTime: '17:00' }] },
+      })
+    );
     expect(result.ok).toBe(true);
   });
 
@@ -68,13 +70,25 @@ describe('checkTeacherFit', () => {
   it('fits a slot that crosses midnight when availability is split at 24:00 / 00:00', () => {
     const saturdayLate = base({
       groupSchedule: [{ dayOfWeek: 6, startTime: '23:30', durationMinutes: 60 }],
-      availability: { timezone: 'UTC', slots: [{ dayOfWeek: 6, startTime: '23:00', endTime: '24:00' }, { dayOfWeek: 0, startTime: '00:00', endTime: '01:00' }] },
+      availability: {
+        timezone: 'UTC',
+        slots: [
+          { dayOfWeek: 6, startTime: '23:00', endTime: '24:00' },
+          { dayOfWeek: 0, startTime: '00:00', endTime: '01:00' },
+        ],
+      },
     });
     expect(checkTeacherFit(saturdayLate).ok).toBe(true);
 
     const mondayLate = base({
       groupSchedule: [{ dayOfWeek: 1, startTime: '23:30', durationMinutes: 60 }],
-      availability: { timezone: 'UTC', slots: [{ dayOfWeek: 1, startTime: '23:00', endTime: '24:00' }, { dayOfWeek: 2, startTime: '00:00', endTime: '01:00' }] },
+      availability: {
+        timezone: 'UTC',
+        slots: [
+          { dayOfWeek: 1, startTime: '23:00', endTime: '24:00' },
+          { dayOfWeek: 2, startTime: '00:00', endTime: '01:00' },
+        ],
+      },
     });
     expect(checkTeacherFit(mondayLate).ok).toBe(true);
 
@@ -86,11 +100,19 @@ describe('checkTeacherFit', () => {
   });
 
   it('detects a conflict across the week boundary', () => {
-    const result = checkTeacherFit(base({
-      groupSchedule: [{ dayOfWeek: 6, startTime: '23:30', durationMinutes: 60 }],
-      availability: { timezone: 'UTC', slots: [{ dayOfWeek: 6, startTime: '23:00', endTime: '24:00' }, { dayOfWeek: 0, startTime: '00:00', endTime: '01:00' }] },
-      otherGroups: [{ _id: 'g9', name: 'Early Sunday', timezone: 'UTC', schedule: [{ dayOfWeek: 0, startTime: '00:00', durationMinutes: 15 }] }],
-    }));
+    const result = checkTeacherFit(
+      base({
+        groupSchedule: [{ dayOfWeek: 6, startTime: '23:30', durationMinutes: 60 }],
+        availability: {
+          timezone: 'UTC',
+          slots: [
+            { dayOfWeek: 6, startTime: '23:00', endTime: '24:00' },
+            { dayOfWeek: 0, startTime: '00:00', endTime: '01:00' },
+          ],
+        },
+        otherGroups: [{ _id: 'g9', name: 'Early Sunday', timezone: 'UTC', schedule: [{ dayOfWeek: 0, startTime: '00:00', durationMinutes: 15 }] }],
+      })
+    );
     expect(result.reasons).toEqual([TeacherFitReason.CONFLICT]);
   });
 });

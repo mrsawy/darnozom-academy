@@ -16,13 +16,22 @@ describe('computeReadiness', () => {
     const result = computeReadiness(complete);
     expect(result.ready).toBe(true);
     expect(result.items.map((i) => i.key)).toEqual([
-      ReadinessKey.TEACHER_ASSIGNED, ReadinessKey.MINIMUM_STUDENTS, ReadinessKey.PAYMENTS_MADE, ReadinessKey.CONTENT_SENT, ReadinessKey.MEETING_LINK,
+      ReadinessKey.TEACHER_ASSIGNED,
+      ReadinessKey.MINIMUM_STUDENTS,
+      ReadinessKey.PAYMENTS_MADE,
+      ReadinessKey.CONTENT_SENT,
+      ReadinessKey.MEETING_LINK,
     ]);
   });
   it('flags each missing item', () => {
     expect(doneOf({ ...complete, teacherId: null }, ReadinessKey.TEACHER_ASSIGNED)).toBe(false);
     expect(doneOf({ ...complete, minStudents: 3 }, ReadinessKey.MINIMUM_STUDENTS)).toBe(false);
-    expect(doneOf({ ...complete, students: [{ paymentStatus: GroupPaymentStatus.PAID }, { paymentStatus: GroupPaymentStatus.UNPAID }] }, ReadinessKey.PAYMENTS_MADE)).toBe(false);
+    expect(
+      doneOf(
+        { ...complete, students: [{ paymentStatus: GroupPaymentStatus.PAID }, { paymentStatus: GroupPaymentStatus.UNPAID }] },
+        ReadinessKey.PAYMENTS_MADE
+      )
+    ).toBe(false);
     expect(doneOf({ ...complete, contentSent: { done: false } }, ReadinessKey.CONTENT_SENT)).toBe(false);
     expect(doneOf({ ...complete, meetingLink: '   ' }, ReadinessKey.MEETING_LINK)).toBe(false);
     expect(computeReadiness({ ...complete, meetingLink: undefined }).ready).toBe(false);

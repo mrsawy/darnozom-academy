@@ -16,15 +16,38 @@ describe('parseHHmm', () => {
 
 describe('interval helpers', () => {
   it('splits an interval that passes the end of the week', () => {
-    expect(splitWeek(10050, 10110)).toEqual([[10050, 10080], [0, 30]]);
+    expect(splitWeek(10_050, 10_110)).toEqual([
+      [10_050, 10_080],
+      [0, 30],
+    ]);
     expect(splitWeek(100, 200)).toEqual([[100, 200]]);
   });
   it('detects overlap even when a long interval hides behind a short one', () => {
-    expect(hasOverlap([[0, 100], [10, 20], [50, 60]])).toBe(true);
-    expect(hasOverlap([[0, 10], [10, 20]])).toBe(false);
+    expect(
+      hasOverlap([
+        [0, 100],
+        [10, 20],
+        [50, 60],
+      ])
+    ).toBe(true);
+    expect(
+      hasOverlap([
+        [0, 10],
+        [10, 20],
+      ])
+    ).toBe(false);
   });
   it('merges touching and overlapping intervals', () => {
-    expect(mergeIntervals([[2880, 2940], [2820, 2880], [0, 10]])).toEqual([[0, 10], [2820, 2940]]);
+    expect(
+      mergeIntervals([
+        [2880, 2940],
+        [2820, 2880],
+        [0, 10],
+      ])
+    ).toEqual([
+      [0, 10],
+      [2820, 2940],
+    ]);
   });
 });
 
@@ -39,11 +62,26 @@ describe('isValidSchedule', () => {
     expect(isValidSchedule([{ dayOfWeek: 1, startTime: '10:0', durationMinutes: 60 }])).toBe(false);
   });
   it('rejects overlapping slots, including across the week boundary', () => {
-    expect(isValidSchedule([{ dayOfWeek: 1, startTime: '10:00', durationMinutes: 60 }, { dayOfWeek: 1, startTime: '10:30', durationMinutes: 60 }])).toBe(false);
-    expect(isValidSchedule([{ dayOfWeek: 6, startTime: '23:30', durationMinutes: 60 }, { dayOfWeek: 0, startTime: '00:00', durationMinutes: 15 }])).toBe(false);
+    expect(
+      isValidSchedule([
+        { dayOfWeek: 1, startTime: '10:00', durationMinutes: 60 },
+        { dayOfWeek: 1, startTime: '10:30', durationMinutes: 60 },
+      ])
+    ).toBe(false);
+    expect(
+      isValidSchedule([
+        { dayOfWeek: 6, startTime: '23:30', durationMinutes: 60 },
+        { dayOfWeek: 0, startTime: '00:00', durationMinutes: 15 },
+      ])
+    ).toBe(false);
   });
   it('accepts two separate weekly slots', () => {
-    expect(isValidSchedule([{ dayOfWeek: 6, startTime: '17:00', durationMinutes: 60 }, { dayOfWeek: 1, startTime: '17:00', durationMinutes: 60 }])).toBe(true);
+    expect(
+      isValidSchedule([
+        { dayOfWeek: 6, startTime: '17:00', durationMinutes: 60 },
+        { dayOfWeek: 1, startTime: '17:00', durationMinutes: 60 },
+      ])
+    ).toBe(true);
   });
 });
 
@@ -56,6 +94,11 @@ describe('isValidAvailability', () => {
   });
   it('rejects end <= start and same-day overlap', () => {
     expect(isValidAvailability([{ dayOfWeek: 1, startTime: '10:00', endTime: '10:00' }])).toBe(false);
-    expect(isValidAvailability([{ dayOfWeek: 1, startTime: '09:00', endTime: '12:00' }, { dayOfWeek: 1, startTime: '11:00', endTime: '13:00' }])).toBe(false);
+    expect(
+      isValidAvailability([
+        { dayOfWeek: 1, startTime: '09:00', endTime: '12:00' },
+        { dayOfWeek: 1, startTime: '11:00', endTime: '13:00' },
+      ])
+    ).toBe(false);
   });
 });

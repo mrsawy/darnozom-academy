@@ -11,7 +11,9 @@ describe('checkStatusTransition', () => {
   });
   it('requires a non-blank reason to cancel', () => {
     expect(checkStatusTransition(GroupStatus.FORMING, GroupStatus.CANCELLED, { ready: false, reason: 'no teacher' })).toBeNull();
-    expect(checkStatusTransition(GroupStatus.READY_TO_START, GroupStatus.CANCELLED, { ready: true, reason: '  ' })).toBe(AcademicsErrors.CANCEL_REASON_REQUIRED);
+    expect(checkStatusTransition(GroupStatus.READY_TO_START, GroupStatus.CANCELLED, { ready: true, reason: '  ' })).toBe(
+      AcademicsErrors.CANCEL_REASON_REQUIRED
+    );
   });
   it('rejects every change out of CANCELLED', () => {
     for (const to of Object.values(GroupStatus)) {

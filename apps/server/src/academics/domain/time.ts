@@ -28,7 +28,7 @@ export function splitWeek(start: number, end: number): [number, number][] {
 
 const byStart = (intervals: [number, number][]) => {
   const copy = [...intervals];
-  // eslint-disable-next-line unicorn/no-array-sort -- sorting a local copy
+
   copy.sort((a, b) => a[0] - b[0]);
   return copy;
 };
