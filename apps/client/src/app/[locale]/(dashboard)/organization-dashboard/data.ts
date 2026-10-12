@@ -59,6 +59,7 @@ import {
   ROUTE_ORG_ACADEMICS_PROGRAMS,
   ROUTE_ORG_MY_AVAILABILITY,
   ROUTE_ORG_MY_GROUPS,
+  ROUTE_ORG_MY_SESSIONS,
 } from '@/lib/data/constants/routes.constants';
 import { CourseContentType, ORG_WIDE_GROUP_READER_ROLES, Roles } from '@darnozom/shared-types';
 
@@ -98,6 +99,13 @@ export const data = {
       url: ROUTE_ORG_MY_GROUPS,
       icon: IconUsersGroup,
       key: 'my-groups',
+      requiredRoles: [Roles.INSTRUCTOR],
+    },
+    {
+      titleKey: 'navMain.mySessions',
+      url: ROUTE_ORG_MY_SESSIONS,
+      icon: IconCalendarEvent,
+      key: 'my-sessions',
       requiredRoles: [Roles.INSTRUCTOR],
     },
     {
