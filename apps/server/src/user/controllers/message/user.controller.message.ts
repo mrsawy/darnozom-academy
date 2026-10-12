@@ -58,7 +58,15 @@ export class UserControllerMessage {
     payload: Partial<CreateUserDto>
   ) {
     const filter = { _id: new mongoose.Types.ObjectId(context.userPayload._id) };
-    const { preferredCurrency, ...rest } = payload;
+    // Roles are never self-assigned here: roleName is set at onboarding, additionalRoles via users.setAdditionalRoles.
+    const {
+      preferredCurrency,
+      roleName: _roleName,
+      additionalRoles: _additionalRoles,
+      ...rest
+    } = payload as Partial<CreateUserDto> & {
+      additionalRoles?: unknown;
+    };
     const currencyChanged = preferredCurrency !== undefined && preferredCurrency !== context.userPayload.preferredCurrency;
 
     if (!currencyChanged) {
@@ -181,12 +189,14 @@ export class UserControllerMessage {
       throw new BadRequestException(UserErrors.CANNOT_ASSIGN_PLATFORM_ADMIN);
     }
 
+    // additionalRoles only through users.setAdditionalRoles (UPDATE ROLE guard + role-mix rules).
+    const { additionalRoles: _additionalRoles, ...userData } = payload.userData as Partial<CreateUserDto> & { additionalRoles?: unknown };
     return await this.userService.update(
       {
         _id: new mongoose.Types.ObjectId(payload.userId),
         organizationId: new mongoose.Types.ObjectId(context.userPayload.organizationId),
       },
-      payload.userData
+      userData
     );
   }
 
