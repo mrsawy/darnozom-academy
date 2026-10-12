@@ -5,6 +5,7 @@ import { AcademicsErrors, AcademicsSuccessMessages } from '@darnozom/shared-type
 import { buildSoftDeleteSet, withNotDeletedFilter } from 'src/utils/soft-delete';
 import { AcademicsActor } from '../common/actor';
 import { Group } from '../group/entities/group.entity';
+import { GroupTeacherService } from '../group/group-teacher.service';
 import { Level } from '../level/entities/level.entity';
 import { CreateCohortDto, UpdateCohortDto } from './dto/cohort.dto';
 import { Cohort } from './entities/cohort.entity';
@@ -16,7 +17,8 @@ export class CohortService {
   constructor(
     @InjectModel(Cohort.name) private readonly cohortModel: Model<Cohort>,
     @InjectModel(Level.name) private readonly levelModel: Model<Level>,
-    @InjectModel(Group.name) private readonly groupModel: Model<Group>
+    @InjectModel(Group.name) private readonly groupModel: Model<Group>,
+    private readonly groupTeacher: GroupTeacherService
   ) {}
 
   async findAll(actor: AcademicsActor, levelId: string) {
@@ -56,7 +58,10 @@ export class CohortService {
     const cohort = await this.findOne(actor, id);
     const changes: { name?: string; startDate?: Date } = {};
     if (dto.name !== undefined) changes.name = dto.name.trim();
-    if (dto.startDate !== undefined) changes.startDate = new Date(dto.startDate);
+    if (dto.startDate !== undefined) {
+      changes.startDate = new Date(dto.startDate);
+      await this.groupTeacher.assertCohortStartDateFits(actor, cohort._id, changes.startDate);
+    }
     return this.cohortModel.findOneAndUpdate({ _id: cohort._id }, { $set: changes }, { new: true, runValidators: true }).lean().exec();
   }
 

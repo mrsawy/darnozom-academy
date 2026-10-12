@@ -12,8 +12,9 @@ function setup() {
   const cohortModel = { find: jest.fn(), findOne: jest.fn(), findOneAndUpdate: jest.fn(), create: jest.fn(), updateOne: jest.fn() };
   const levelModel = { findOne: jest.fn() };
   const groupModel = { countDocuments: jest.fn() };
-  const service = new CohortService(cohortModel as never, levelModel as never, groupModel as never);
-  return { service, cohortModel, levelModel, groupModel };
+  const groupTeacher = { assertCohortStartDateFits: jest.fn().mockResolvedValue(undefined) };
+  const service = new CohortService(cohortModel as never, levelModel as never, groupModel as never, groupTeacher as never);
+  return { service, cohortModel, levelModel, groupModel, groupTeacher };
 }
 
 describe('CohortService', () => {
@@ -36,5 +37,13 @@ describe('CohortService', () => {
     cohortModel.findOne.mockReturnValue(mockQuery({ _id: cohortId }));
     groupModel.countDocuments.mockReturnValue(mockQuery(3));
     await expect(service.remove(actor, cohortId)).rejects.toThrow(new ConflictException(AcademicsErrors.HAS_DEPENDENTS));
+  });
+
+  it('re-checks assigned teachers when the start date changes', async () => {
+    const { service, cohortModel, groupTeacher } = setup();
+    cohortModel.findOne.mockReturnValue(mockQuery({ _id: cohortId }));
+    cohortModel.findOneAndUpdate.mockReturnValue(mockQuery({ _id: cohortId }));
+    await service.update(actor, cohortId, { startDate: '2027-03-01' });
+    expect(groupTeacher.assertCohortStartDateFits).toHaveBeenCalledWith(actor, cohortId, new Date('2027-03-01'));
   });
 });

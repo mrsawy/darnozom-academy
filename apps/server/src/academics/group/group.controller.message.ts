@@ -8,6 +8,7 @@ import { IUserContext } from 'src/utils/types/IUserContext.interface';
 import { actorFromContext } from '../common/actor';
 import { IdPayload } from '../common/payloads';
 import {
+  AssignTeacherPayload,
   CancelGroupPayload,
   ContentSentPayload,
   CreateGroupDto,
@@ -19,6 +20,7 @@ import {
   WhatsappPayload,
 } from './dto/group.dto';
 import { GroupStudentsService } from './group-students.service';
+import { GroupTeacherService } from './group-teacher.service';
 import { GroupService } from './group.service';
 
 @Controller()
@@ -26,7 +28,8 @@ import { GroupService } from './group.service';
 export class GroupControllerMessage {
   constructor(
     private readonly groupService: GroupService,
-    private readonly groupStudents: GroupStudentsService
+    private readonly groupStudents: GroupStudentsService,
+    private readonly groupTeacher: GroupTeacherService
   ) {}
 
   @RequirePermissionsGuard({ action: Actions.READ, subject: Subjects.GROUP })
@@ -105,5 +108,23 @@ export class GroupControllerMessage {
   @MessagePattern('academics.groups.setWhatsapp')
   setWhatsapp(@Payload(new RpcValidationPipe()) payload: WhatsappPayload, @Ctx() context: IUserContext) {
     return this.groupStudents.setWhatsapp(actorFromContext(context), payload.id, payload.studentId, payload.whatsappAdded);
+  }
+
+  @RequirePermissionsGuard({ action: Actions.UPDATE, subject: Subjects.GROUP })
+  @MessagePattern('academics.groups.assignTeacher')
+  assignTeacher(@Payload(new RpcValidationPipe()) payload: AssignTeacherPayload, @Ctx() context: IUserContext) {
+    return this.groupTeacher.assign(actorFromContext(context), payload.id, payload.teacherId);
+  }
+
+  @RequirePermissionsGuard({ action: Actions.UPDATE, subject: Subjects.GROUP })
+  @MessagePattern('academics.groups.unassignTeacher')
+  unassignTeacher(@Payload(new RpcValidationPipe()) payload: IdPayload, @Ctx() context: IUserContext) {
+    return this.groupTeacher.unassign(actorFromContext(context), payload.id);
+  }
+
+  @RequirePermissionsGuard({ action: Actions.UPDATE, subject: Subjects.GROUP })
+  @MessagePattern('academics.groups.teacherCandidates')
+  teacherCandidates(@Payload(new RpcValidationPipe()) payload: IdPayload, @Ctx() context: IUserContext) {
+    return this.groupTeacher.candidates(actorFromContext(context), payload.id);
   }
 }
