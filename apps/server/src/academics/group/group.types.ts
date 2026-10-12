@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { GroupPaymentStatus, GroupStatus, Readiness, ScheduleSlot } from '@darnozom/shared-types';
+import { GroupPaymentStatus, GroupStatus, GroupStudentStatus, Readiness, ScheduleSlot } from '@darnozom/shared-types';
 
 export interface GroupStudentLean {
   studentId: Types.ObjectId;
@@ -7,6 +7,8 @@ export interface GroupStudentLean {
   whatsappAdded: boolean;
   addedAt: Date;
   addedBy?: Types.ObjectId;
+  status?: GroupStudentStatus;
+  withdrawnAt?: Date;
 }
 
 export interface GroupLean {
@@ -21,6 +23,7 @@ export interface GroupLean {
   timezone: string;
   minStudents: number;
   maxStudents: number;
+  totalSessions?: number | null;
   meetingLink?: string | null;
   whatsappGroupLink?: string | null;
   contentSent: { done: boolean; by?: Types.ObjectId; at?: Date };

@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { GroupPaymentStatus, GroupStatus } from '@darnozom/shared-types';
+import { GroupPaymentStatus, GroupStatus, GroupStudentStatus } from '@darnozom/shared-types';
 import { applySoftDeleteMiddleware } from 'src/utils/soft-delete';
 
 @Schema({ _id: false })
@@ -32,6 +32,12 @@ export class GroupStudent {
 
   @Prop({ type: Types.ObjectId, ref: 'User', required: false })
   addedBy?: Types.ObjectId;
+
+  @Prop({ type: String, enum: Object.values(GroupStudentStatus), default: GroupStudentStatus.ACTIVE })
+  status: GroupStudentStatus;
+
+  @Prop({ type: Date, required: false })
+  withdrawnAt?: Date;
 }
 export const GroupStudentSchema = SchemaFactory.createForClass(GroupStudent);
 
@@ -98,6 +104,10 @@ export class Group extends Document<Types.ObjectId> {
 
   @Prop({ type: Number, required: true, min: 1 })
   maxStudents: number;
+
+  /** Sessions generated when the group starts; null on groups created before sub-project 2. */
+  @Prop({ type: Number, required: false, min: 1, max: 500, default: null })
+  totalSessions?: number | null;
 
   @Prop({ type: String, required: false, trim: true })
   meetingLink?: string;

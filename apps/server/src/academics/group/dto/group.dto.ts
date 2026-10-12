@@ -68,6 +68,11 @@ export class CreateGroupDto {
   @Max(500)
   maxStudents!: number;
 
+  @IsInt()
+  @Min(1)
+  @Max(500)
+  totalSessions!: number;
+
   /** null clears the link */
   @IsOptional()
   @IsUrl(WEB_LINK)
@@ -110,6 +115,12 @@ export class UpdateGroupDto {
   @Min(1)
   @Max(500)
   maxStudents?: number;
+
+  @OptionalNonNull()
+  @IsInt()
+  @Min(1)
+  @Max(500)
+  totalSessions?: number;
 
   /** null clears the link */
   @IsOptional()

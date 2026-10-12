@@ -33,3 +33,11 @@ describe('shouldRevertToForming', () => {
     expect(shouldRevertToForming(GroupStatus.CANCELLED, false)).toBe(false);
   });
 });
+
+describe('checkStatusTransition out of started groups', () => {
+  it('refuses user-driven transitions out of RUNNING and COMPLETED', () => {
+    expect(checkStatusTransition(GroupStatus.RUNNING, GroupStatus.CANCELLED, { ready: true, reason: 'x' })).toBe(AcademicsErrors.INVALID_STATUS_TRANSITION);
+    expect(checkStatusTransition(GroupStatus.RUNNING, GroupStatus.READY_TO_START, { ready: true })).toBe(AcademicsErrors.INVALID_STATUS_TRANSITION);
+    expect(checkStatusTransition(GroupStatus.COMPLETED, GroupStatus.CANCELLED, { ready: true, reason: 'x' })).toBe(AcademicsErrors.GROUP_COMPLETED);
+  });
+});

@@ -31,6 +31,7 @@ export class GroupStateService {
   async loadForWrite(actor: AcademicsActor, id: string): Promise<GroupLean> {
     const group = await this.loadInOrg(actor, id);
     if (group.status === GroupStatus.CANCELLED) throw new ConflictException(AcademicsErrors.GROUP_CANCELLED);
+    if (group.status === GroupStatus.COMPLETED) throw new ConflictException(AcademicsErrors.GROUP_COMPLETED);
     return group;
   }
 

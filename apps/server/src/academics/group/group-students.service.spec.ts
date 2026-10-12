@@ -1,6 +1,6 @@
 import { BadRequestException, ConflictException, NotFoundException } from '@nestjs/common';
 import { Types } from 'mongoose';
-import { AcademicsErrors, GroupPaymentStatus, GroupStatus, Roles } from '@darnozom/shared-types';
+import { AcademicsErrors, GroupPaymentStatus, GroupStatus, GroupStudentStatus, Roles } from '@darnozom/shared-types';
 import { mockQuery } from '__test__/academics/mock-query';
 import { AcademicsActor } from '../common/actor';
 import { GroupStudentsService } from './group-students.service';
@@ -75,7 +75,9 @@ describe('GroupStudentsService', () => {
 
       await expect(service.addStudent(staff, String(groupId), studentId)).rejects.toThrow(new ConflictException(AcademicsErrors.GROUP_FULL));
       const filter = groupModel.updateOne.mock.calls[0][0];
-      expect(filter.$expr).toEqual({ $lt: [{ $size: '$students' }, '$maxStudents'] });
+      expect(filter.$expr).toEqual({
+        $lt: [{ $size: { $filter: { input: '$students', cond: { $ne: ['$$this.status', GroupStudentStatus.WITHDRAWN] } } } }, '$maxStudents'],
+      });
       expect(filter.status).toEqual({ $ne: GroupStatus.CANCELLED });
     });
 
@@ -115,5 +117,56 @@ describe('GroupStudentsService', () => {
     state.loadForWrite.mockResolvedValue(group());
     groupModel.updateOne.mockReturnValue(mockQuery({ matchedCount: 0 }));
     await expect(service.setPaymentStatus(staff, String(groupId), studentId, GroupPaymentStatus.PAID)).rejects.toThrow(new NotFoundException(AcademicsErrors.STUDENT_NOT_IN_GROUP));
+  });
+});
+
+describe('GroupStudentsService with withdrawn students', () => {
+  // eslint-disable-next-line unicorn/consistent-function-scoping -- builder local to this describe
+  const entry = (status?: GroupStudentStatus) => ({ studentId: existingStudent, paymentStatus: GroupPaymentStatus.UNPAID, ...(status ? { status } : {}) });
+
+  it('counts only ACTIVE students against maxStudents in the conditional push', async () => {
+    const { service, groupModel, state, userModel } = setup();
+    state.loadForWrite.mockResolvedValue(group({ students: [] }));
+    userModel.findOne.mockReturnValue(mockQuery({ _id: new Types.ObjectId(studentId) }));
+    groupModel.updateOne.mockReturnValue(mockQuery({ modifiedCount: 1 }));
+    await service.addStudent(staff, String(groupId), studentId);
+    const [filter, update] = groupModel.updateOne.mock.calls[0];
+    expect(JSON.stringify(filter.$expr)).toContain('WITHDRAWN');
+    expect(update.$push.students.status).toBe(GroupStudentStatus.ACTIVE);
+  });
+
+  it('marks a student WITHDRAWN instead of deleting them once the group is RUNNING', async () => {
+    const { service, groupModel, state } = setup();
+    state.loadForWrite.mockResolvedValue(group({ status: GroupStatus.RUNNING, students: [entry(GroupStudentStatus.ACTIVE)] }));
+    groupModel.updateOne.mockReturnValue(mockQuery({ modifiedCount: 1 }));
+    await service.removeStudent(staff, String(groupId), String(existingStudent));
+    const [filter, update] = groupModel.updateOne.mock.calls[0];
+    expect(update.$pull).toBeUndefined();
+    expect(update.$set['students.$.status']).toBe(GroupStudentStatus.WITHDRAWN);
+    expect(update.$set['students.$.withdrawnAt']).toBeInstanceOf(Date);
+    expect(filter['students.studentId']).toEqual(existingStudent);
+  });
+
+  it('still deletes the entry before the group starts', async () => {
+    const { service, groupModel, state } = setup();
+    state.loadForWrite.mockResolvedValue(group({ students: [entry(GroupStudentStatus.ACTIVE)] }));
+    groupModel.updateOne.mockReturnValue(mockQuery({ modifiedCount: 1 }));
+    await service.removeStudent(staff, String(groupId), String(existingStudent));
+    expect(groupModel.updateOne.mock.calls[0][1].$pull).toBeDefined();
+  });
+
+  it('cannot remove a student who is already WITHDRAWN', async () => {
+    const { service, state } = setup();
+    state.loadForWrite.mockResolvedValue(group({ status: GroupStatus.RUNNING, students: [entry(GroupStudentStatus.WITHDRAWN)] }));
+    await expect(service.removeStudent(staff, String(groupId), String(existingStudent))).rejects.toThrow(new NotFoundException(AcademicsErrors.STUDENT_NOT_IN_GROUP));
+  });
+
+  it('markWithdrawn flips only that student entry', async () => {
+    const { service, groupModel } = setup();
+    groupModel.updateOne.mockReturnValue(mockQuery({ modifiedCount: 1 }));
+    await service.markWithdrawn(groupId, String(existingStudent));
+    const [filter, update] = groupModel.updateOne.mock.calls[0];
+    expect(filter).toEqual({ _id: groupId, 'students.studentId': existingStudent });
+    expect(update.$set['students.$.status']).toBe(GroupStudentStatus.WITHDRAWN);
   });
 });

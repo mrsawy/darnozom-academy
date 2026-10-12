@@ -40,3 +40,19 @@ describe('computeReadiness', () => {
     expect(doneOf({ ...complete, students: [] }, ReadinessKey.PAYMENTS_MADE)).toBe(false);
   });
 });
+
+describe('computeReadiness with withdrawn students', () => {
+  it('counts only ACTIVE students for the minimum and for payments', () => {
+    const group = {
+      ...complete,
+      minStudents: 2,
+      students: [
+        { paymentStatus: GroupPaymentStatus.PAID, status: 'ACTIVE' },
+        { paymentStatus: GroupPaymentStatus.UNPAID, status: 'WITHDRAWN' },
+        { paymentStatus: GroupPaymentStatus.PAID }, // legacy entry without a status is ACTIVE
+      ],
+    };
+    expect(computeReadiness(group).ready).toBe(true);
+    expect(doneOf({ ...group, minStudents: 3 }, ReadinessKey.MINIMUM_STUDENTS)).toBe(false);
+  });
+});

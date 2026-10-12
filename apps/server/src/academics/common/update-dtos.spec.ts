@@ -18,6 +18,7 @@ describe('update DTOs', () => {
     ['group', UpdateGroupDto, 'timezone'],
     ['group', UpdateGroupDto, 'minStudents'],
     ['group', UpdateGroupDto, 'maxStudents'],
+    ['group', UpdateGroupDto, 'totalSessions'],
     ['program', UpdateProgramDto, 'name'],
     ['cohort', UpdateCohortDto, 'name'],
     ['cohort', UpdateCohortDto, 'startDate'],
@@ -40,5 +41,13 @@ describe('update DTOs', () => {
     expect(
       validateSync(plainToInstance(UpdateGroupDto, { cohortId: '0123456789abcdef01234567' }), { whitelist: true, forbidNonWhitelisted: true })
     ).not.toHaveLength(0);
+  });
+});
+
+describe('totalSessions bounds', () => {
+  it('rejects values outside 1-500', () => {
+    expect(fieldErrors(UpdateGroupDto, 'totalSessions', 0).length).toBeGreaterThan(0);
+    expect(fieldErrors(UpdateGroupDto, 'totalSessions', 501).length).toBeGreaterThan(0);
+    expect(fieldErrors(UpdateGroupDto, 'totalSessions', 12)).toHaveLength(0);
   });
 });

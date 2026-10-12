@@ -71,6 +71,7 @@ export class GroupTeacherService {
 
   async assign(actor: AcademicsActor, id: string, teacherId: string): Promise<GroupView> {
     const group = await this.state.loadForWrite(actor, id);
+    if (group.status === GroupStatus.RUNNING) throw new ConflictException(AcademicsErrors.GROUP_RUNNING_TEACHER_LOCKED);
     const teacher = await this.loadTeacher(actor, teacherId);
     const fit = await this.evaluateFit(group, teacher);
     if (!fit.ok) throw new ConflictException(AcademicsErrors.TEACHER_NOT_ASSIGNABLE);
@@ -80,6 +81,7 @@ export class GroupTeacherService {
 
   async unassign(actor: AcademicsActor, id: string): Promise<GroupView> {
     const group = await this.state.loadForWrite(actor, id);
+    if (group.status === GroupStatus.RUNNING) throw new ConflictException(AcademicsErrors.GROUP_RUNNING_TEACHER_LOCKED);
     await this.groupModel.updateOne({ _id: group._id }, { $set: { teacherId: null } }).exec();
     return this.state.syncReadiness(group._id);
   }

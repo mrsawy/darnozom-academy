@@ -111,3 +111,12 @@ describe('GroupTeacherService', () => {
     await expect(service.assertCohortStartDateFits(staff, cohortId, WINTER)).rejects.toThrow(new ConflictException(AcademicsErrors.TEACHER_NOT_ASSIGNABLE));
   });
 });
+
+describe('GroupTeacherService while the group is RUNNING', () => {
+  it('refuses to assign or unassign a teacher', async () => {
+    const { service, state } = setup();
+    state.loadForWrite.mockResolvedValue(group({ status: GroupStatus.RUNNING, teacherId }));
+    await expect(service.assign(staff, String(groupId), String(teacherId))).rejects.toThrow(new ConflictException(AcademicsErrors.GROUP_RUNNING_TEACHER_LOCKED));
+    await expect(service.unassign(staff, String(groupId))).rejects.toThrow(new ConflictException(AcademicsErrors.GROUP_RUNNING_TEACHER_LOCKED));
+  });
+});

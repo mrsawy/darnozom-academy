@@ -1,7 +1,7 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model, Types } from 'mongoose';
-import { AcademicsErrors, AcademicsSuccessMessages, GroupStatus } from '@darnozom/shared-types';
+import { AcademicsErrors, AcademicsSuccessMessages, GroupStatus, GroupStudentStatus } from '@darnozom/shared-types';
 import { User } from 'src/user/entities/user.entity';
 import { ParentService } from 'src/user/services/parent.service';
 import { buildSoftDeleteSet, withNotDeletedFilter } from 'src/utils/soft-delete';
@@ -10,6 +10,7 @@ import { Cohort } from '../cohort/entities/cohort.entity';
 import { resolveGroupScope } from '../domain/group-scope';
 import { checkStatusTransition } from '../domain/group-status';
 import { computeReadiness } from '../domain/readiness';
+import { isScheduleChange } from '../domain/schedule-change';
 import { isValidSchedule } from '../domain/time';
 import { Level } from '../level/entities/level.entity';
 import { CreateGroupDto, FindGroupsPayload, UpdateGroupDto } from './dto/group.dto';
@@ -125,6 +126,7 @@ export class GroupService {
       timezone: dto.timezone,
       minStudents: dto.minStudents,
       maxStudents: dto.maxStudents,
+      totalSessions: dto.totalSessions,
       meetingLink: dto.meetingLink ?? null,
       whatsappGroupLink: dto.whatsappGroupLink ?? null,
     });
@@ -134,10 +136,16 @@ export class GroupService {
   async update(actor: AcademicsActor, id: string, dto: UpdateGroupDto): Promise<GroupView> {
     const group = await this.state.loadForWrite(actor, id);
     if (dto.schedule !== undefined && !isValidSchedule(dto.schedule)) throw new BadRequestException(AcademicsErrors.INVALID_SCHEDULE);
+    const scheduleChanged = isScheduleChange(group, dto);
+    const totalChanged = dto.totalSessions !== undefined && dto.totalSessions !== group.totalSessions;
+    if (group.status === GroupStatus.RUNNING && (scheduleChanged || totalChanged)) {
+      throw new ConflictException(AcademicsErrors.GROUP_RUNNING_SCHEDULE_LOCKED);
+    }
     const minStudents = dto.minStudents ?? group.minStudents;
     const maxStudents = dto.maxStudents ?? group.maxStudents;
-    if (maxStudents < minStudents || maxStudents < group.students.length) throw new BadRequestException(AcademicsErrors.INVALID_STUDENT_LIMITS);
-    if (dto.schedule !== undefined || dto.timezone !== undefined) {
+    const activeCount = group.students.filter((s) => s.status !== GroupStudentStatus.WITHDRAWN).length;
+    if (maxStudents < minStudents || maxStudents < activeCount) throw new BadRequestException(AcademicsErrors.INVALID_STUDENT_LIMITS);
+    if (scheduleChanged) {
       await this.groupTeacher.assertScheduleChangeFits(actor, group, { schedule: dto.schedule ?? group.schedule, timezone: dto.timezone ?? group.timezone });
     }
     const changes: UpdateGroupDto = { ...dto, ...(dto.name === undefined ? {} : { name: dto.name.trim() }) };

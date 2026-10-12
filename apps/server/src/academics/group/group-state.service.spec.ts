@@ -56,3 +56,11 @@ describe('GroupStateService', () => {
     expect(groupModel.updateOne).not.toHaveBeenCalled();
   });
 });
+
+describe('GroupStateService on completed groups', () => {
+  it('treats a COMPLETED group as read-only for writes', async () => {
+    const { service, groupModel } = setup();
+    groupModel.findOne.mockReturnValue(mockQuery(group({ status: GroupStatus.COMPLETED })));
+    await expect(service.loadForWrite(actor, String(groupId))).rejects.toThrow(new ConflictException(AcademicsErrors.GROUP_COMPLETED));
+  });
+});

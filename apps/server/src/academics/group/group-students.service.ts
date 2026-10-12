@@ -1,7 +1,7 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model, Types } from 'mongoose';
-import { AcademicsErrors, GroupPaymentStatus, GroupStatus, Roles } from '@darnozom/shared-types';
+import { AcademicsErrors, GroupPaymentStatus, GroupStatus, GroupStudentStatus, Roles } from '@darnozom/shared-types';
 import { User } from 'src/user/entities/user.entity';
 import { AcademicsActor } from '../common/actor';
 import { escapeRegex } from '../common/escape-regex';
@@ -58,9 +58,22 @@ export class GroupStudentsService {
           status: { $ne: GroupStatus.CANCELLED },
           deletedAt: null,
           'students.studentId': { $ne: oid(studentId) },
-          $expr: { $lt: [{ $size: '$students' }, '$maxStudents'] },
+          $expr: {
+            $lt: [{ $size: { $filter: { input: '$students', cond: { $ne: ['$$this.status', GroupStudentStatus.WITHDRAWN] } } } }, '$maxStudents'],
+          },
         },
-        { $push: { students: { studentId: oid(studentId), paymentStatus: GroupPaymentStatus.UNPAID, whatsappAdded: false, addedAt: new Date(), addedBy: oid(actor._id) } } }
+        {
+          $push: {
+            students: {
+              studentId: oid(studentId),
+              paymentStatus: GroupPaymentStatus.UNPAID,
+              whatsappAdded: false,
+              status: GroupStudentStatus.ACTIVE,
+              addedAt: new Date(),
+              addedBy: oid(actor._id),
+            },
+          },
+        }
       )
       .exec();
 
@@ -76,9 +89,23 @@ export class GroupStudentsService {
 
   async removeStudent(actor: AcademicsActor, id: string, studentId: string): Promise<GroupView> {
     const group = await this.state.loadForWrite(actor, id);
-    if (!this.hasStudent(group, studentId)) throw new NotFoundException(AcademicsErrors.STUDENT_NOT_IN_GROUP);
-    await this.groupModel.updateOne({ _id: group._id }, { $pull: { students: { studentId: oid(studentId) } } }).exec();
+    const entry = group.students.find((s) => String(s.studentId) === studentId);
+    if (!entry || entry.status === GroupStudentStatus.WITHDRAWN) throw new NotFoundException(AcademicsErrors.STUDENT_NOT_IN_GROUP);
+    // A running group keeps the entry (as WITHDRAWN) so attendance history still points at a student.
+    await (group.status === GroupStatus.RUNNING
+      ? this.markWithdrawn(group._id, studentId)
+      : this.groupModel.updateOne({ _id: group._id }, { $pull: { students: { studentId: oid(studentId) } } }).exec());
     return this.state.syncReadiness(group._id);
+  }
+
+  /** Sets the student's entry to WITHDRAWN (kept for history). Used when removing from a running group and by follow-up decisions. */
+  async markWithdrawn(groupId: Types.ObjectId, studentId: string): Promise<void> {
+    await this.groupModel
+      .updateOne(
+        { _id: groupId, 'students.studentId': oid(studentId) },
+        { $set: { 'students.$.status': GroupStudentStatus.WITHDRAWN, 'students.$.withdrawnAt': new Date() } }
+      )
+      .exec();
   }
 
   private async setStudentField(actor: AcademicsActor, id: string, studentId: string, field: 'paymentStatus' | 'whatsappAdded', value: unknown) {

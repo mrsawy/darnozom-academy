@@ -22,7 +22,7 @@ const baseGroup = (over: Record<string, unknown> = {}) => ({
 });
 
 const validDto = {
-  cohortId, name: ' Group A ', schedule: [{ dayOfWeek: 1, startTime: '17:00', durationMinutes: 60 }], timezone: 'Asia/Riyadh', minStudents: 3, maxStudents: 8,
+  cohortId, name: ' Group A ', schedule: [{ dayOfWeek: 1, startTime: '17:00', durationMinutes: 60 }], timezone: 'Asia/Riyadh', minStudents: 3, maxStudents: 8, totalSessions: 12,
 };
 
 function setup() {
@@ -221,5 +221,61 @@ describe('GroupService', () => {
     expect(set.done).toBe(true);
     expect(String(set.by)).toBe(staff._id);
     expect(state.syncReadiness).toHaveBeenCalledWith(groupId);
+  });
+});
+
+describe('GroupService totalSessions and running locks', () => {
+  it('create stores totalSessions', async () => {
+    const { service, cohortModel, levelModel, groupModel } = setup();
+    cohortModel.findOne.mockReturnValue(mockQuery({ _id: cohortId, levelId }));
+    levelModel.findOne.mockReturnValue(mockQuery({ _id: levelId, courseId }));
+    groupModel.create.mockResolvedValue({ toObject: () => baseGroup({ totalSessions: 12 }) });
+    await service.create(staff, validDto);
+    expect(groupModel.create).toHaveBeenCalledWith(expect.objectContaining({ totalSessions: 12 }));
+  });
+
+  // eslint-disable-next-line unicorn/consistent-function-scoping -- builder local to this describe
+  const running = (over = {}) =>
+    baseGroup({ status: GroupStatus.RUNNING, totalSessions: 12, timezone: 'UTC', schedule: [{ dayOfWeek: 1, startTime: '10:00', durationMinutes: 60 }], ...over });
+
+  it('update rejects a real schedule, timezone or totalSessions change while RUNNING', async () => {
+    const { service, state, groupModel } = setup();
+    state.loadForWrite.mockResolvedValue(running());
+    await expect(service.update(staff, String(groupId), { timezone: 'Asia/Riyadh' })).rejects.toThrow(new ConflictException(AcademicsErrors.GROUP_RUNNING_SCHEDULE_LOCKED));
+    await expect(service.update(staff, String(groupId), { schedule: [{ dayOfWeek: 2, startTime: '10:00', durationMinutes: 60 }] })).rejects.toThrow(
+      new ConflictException(AcademicsErrors.GROUP_RUNNING_SCHEDULE_LOCKED)
+    );
+    await expect(service.update(staff, String(groupId), { totalSessions: 20 })).rejects.toThrow(new ConflictException(AcademicsErrors.GROUP_RUNNING_SCHEDULE_LOCKED));
+    expect(groupModel.updateOne).not.toHaveBeenCalled();
+  });
+
+  it('update accepts the unchanged schedule re-posted with another field and skips the teacher-fit re-check', async () => {
+    const { service, state, groupModel, groupTeacher } = setup();
+    state.loadForWrite.mockResolvedValue(running());
+    groupModel.updateOne.mockReturnValue(mockQuery({ modifiedCount: 1 }));
+    await service.update(staff, String(groupId), {
+      meetingLink: 'https://meet.example.com/x',
+      timezone: 'UTC',
+      schedule: [{ dayOfWeek: 1, startTime: '10:00', durationMinutes: 60 }],
+      totalSessions: 12,
+    });
+    expect(groupModel.updateOne).toHaveBeenCalled();
+    expect(groupTeacher.assertScheduleChangeFits).not.toHaveBeenCalled();
+  });
+
+  it('update counts only ACTIVE students when lowering maxStudents', async () => {
+    const { service, state, groupModel } = setup();
+    state.loadForWrite.mockResolvedValue(
+      baseGroup({
+        maxStudents: 3,
+        students: [
+          { studentId: new Types.ObjectId(), status: 'ACTIVE' },
+          { studentId: new Types.ObjectId(), status: 'WITHDRAWN' },
+          { studentId: new Types.ObjectId(), status: 'WITHDRAWN' },
+        ],
+      })
+    );
+    groupModel.updateOne.mockReturnValue(mockQuery({ modifiedCount: 1 }));
+    await expect(service.update(staff, String(groupId), { maxStudents: 1 })).resolves.toBeDefined();
   });
 });
