@@ -1,5 +1,17 @@
-import { IsDateString, IsEnum, IsMongoId, IsOptional } from 'class-validator';
-import { SessionStatus } from '@darnozom/shared-types';
+import { Type } from 'class-transformer';
+import {
+  ArrayMaxSize,
+  ArrayMinSize,
+  IsArray,
+  IsDateString,
+  IsEnum,
+  IsMongoId,
+  IsOptional,
+  IsString,
+  MaxLength,
+  ValidateNested,
+} from 'class-validator';
+import { AttendanceStatus, SessionStatus } from '@darnozom/shared-types';
 
 export class FindSessionsPayload {
   @IsOptional()
@@ -28,4 +40,37 @@ export class FindSessionsPayload {
   @IsOptional()
   @IsMongoId()
   childId?: string;
+}
+
+export class AttendanceEntryDto {
+  @IsMongoId()
+  studentId!: string;
+
+  @IsEnum(AttendanceStatus)
+  status!: AttendanceStatus;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(500)
+  note?: string;
+}
+
+export class MarkAttendancePayload {
+  @IsMongoId()
+  id!: string;
+
+  @IsArray()
+  @ArrayMinSize(1)
+  @ArrayMaxSize(500)
+  @ValidateNested({ each: true })
+  @Type(() => AttendanceEntryDto)
+  entries!: AttendanceEntryDto[];
+}
+
+export class TeacherAttendancePayload {
+  @IsMongoId()
+  id!: string;
+
+  @IsEnum(AttendanceStatus)
+  status!: AttendanceStatus;
 }
