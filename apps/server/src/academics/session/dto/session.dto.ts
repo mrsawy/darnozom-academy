@@ -5,11 +5,14 @@ import {
   IsArray,
   IsDateString,
   IsEnum,
+  IsInt,
   IsMongoId,
   IsNotEmpty,
   IsOptional,
   IsString,
+  Max,
   MaxLength,
+  Min,
   ValidateNested,
 } from 'class-validator';
 import { AttendanceStatus, SessionStatus } from '@darnozom/shared-types';
@@ -84,4 +87,56 @@ export class CancelSessionPayload {
   @IsNotEmpty()
   @MaxLength(500)
   reason!: string;
+}
+
+export class EvaluationDto {
+  @IsMongoId()
+  studentId!: string;
+
+  @IsInt()
+  @Min(1)
+  @Max(5)
+  participation!: number;
+
+  @IsInt()
+  @Min(1)
+  @Max(5)
+  understanding!: number;
+
+  @IsInt()
+  @Min(1)
+  @Max(5)
+  behavior!: number;
+
+  @IsInt()
+  @Min(1)
+  @Max(5)
+  homework!: number;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(1000)
+  note?: string;
+}
+
+export class ReportDto {
+  @IsArray()
+  @ArrayMaxSize(500)
+  @ValidateNested({ each: true })
+  @Type(() => EvaluationDto)
+  evaluations!: EvaluationDto[];
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(2000)
+  summary?: string;
+}
+
+export class ReportPayload {
+  @IsMongoId()
+  id!: string;
+
+  @ValidateNested()
+  @Type(() => ReportDto)
+  data!: ReportDto;
 }
