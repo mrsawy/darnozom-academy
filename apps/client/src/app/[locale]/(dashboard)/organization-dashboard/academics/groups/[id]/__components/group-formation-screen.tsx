@@ -1,20 +1,25 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { safeHref } from '@/lib/utils/academics/safe-href';
-import { groupScreenAccess } from '@/lib/utils/academics/group-access';
-import { useAuthUser } from '@/lib/hooks/user/use-user.hook';
+import { GroupStatus } from '@darnozom/shared-types';
+import { Button } from '@/components/atoms/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/card';
 import {
   useCancelGroup,
   useGroup,
   useMarkGroupReady,
   useSetContentSent,
+  useStartGroup,
   useUpdateGroup,
 } from '@/lib/hooks/academics/use-academics.hook';
+import { useAuthUser } from '@/lib/hooks/user/use-user.hook';
+import { groupScreenAccess } from '@/lib/utils/academics/group-access';
+import { safeHref } from '@/lib/utils/academics/safe-href';
 import { GroupForm } from '../../__components/group-form';
 import { StatusBadge } from '../../__components/status-badge';
 import { CancelGroupDialog } from './cancel-group-dialog';
+import { FollowUpsCard } from './follow-ups-card';
+import { GroupSessionsCard } from './group-sessions-card';
 import { ReadinessPanel } from './readiness-panel';
 import { StudentsCard } from './students-card';
 import { TeacherCard } from './teacher-card';
@@ -25,11 +30,15 @@ export function GroupFormationScreen({ groupId }: { groupId: string }) {
   const { data: user } = useAuthUser();
   const updateGroup = useUpdateGroup();
   const markReady = useMarkGroupReady();
+  const startGroup = useStartGroup();
   const cancelGroup = useCancelGroup();
   const setContentSent = useSetContentSent();
 
   if (isLoading || !group) return <p className="p-4">{t('loading')}</p>;
-  const { locked, paymentLocked } = groupScreenAccess(user, group.status);
+  const { locked, paymentLocked, scheduleLocked, canStart, canCancel, canManage } =
+    groupScreenAccess(user, group.status);
+  const started = group.status === GroupStatus.RUNNING || group.status === GroupStatus.COMPLETED;
+  const missingTotal = !group.totalSessions;
 
   return (
     <div className="space-y-6 p-4">
@@ -38,12 +47,22 @@ export function GroupFormationScreen({ groupId }: { groupId: string }) {
           <h1 className="text-2xl font-semibold">{group.name}</h1>
           <StatusBadge status={group.status} />
         </div>
-        {locked ? null : (
-          <CancelGroupDialog
-            pending={cancelGroup.isPending}
-            onConfirm={(reason) => cancelGroup.mutate({ id: group._id, reason })}
-          />
-        )}
+        <div className="flex items-center gap-2">
+          {canStart ? (
+            <Button
+              disabled={startGroup.isPending || missingTotal}
+              title={missingTotal ? t('sessions.startMissingTotal') : t('sessions.startHint')}
+              onClick={() => startGroup.mutate(group._id)}>
+              {t('sessions.start')}
+            </Button>
+          ) : null}
+          {canCancel ? (
+            <CancelGroupDialog
+              pending={cancelGroup.isPending}
+              onConfirm={(reason) => cancelGroup.mutate({ id: group._id, reason })}
+            />
+          ) : null}
+        </div>
       </div>
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
@@ -57,27 +76,33 @@ export function GroupFormationScreen({ groupId }: { groupId: string }) {
                   timezone: group.timezone,
                   minStudents: group.minStudents,
                   maxStudents: group.maxStudents,
+                  totalSessions: group.totalSessions ?? 12,
                   meetingLink: group.meetingLink ?? null,
                   whatsappGroupLink: group.whatsappGroupLink ?? null,
                 }}
                 submitLabel={t('save')}
                 pending={updateGroup.isPending || locked}
+                lockSchedule={scheduleLocked}
                 onSubmit={(data) => updateGroup.mutate({ id: group._id, data })}
               />
             </CardContent>
           </Card>
           <StudentsCard group={group} disabled={locked} paymentDisabled={paymentLocked} />
+          {started ? <GroupSessionsCard group={group} canManage={canManage} /> : null}
+          {started && canManage ? <FollowUpsCard groupId={group._id} /> : null}
         </div>
         <div className="space-y-6">
-          <ReadinessPanel
-            readiness={group.readiness}
-            status={group.status}
-            contentSent={group.contentSent.done}
-            disabled={locked || markReady.isPending}
-            onToggleContentSent={(done) => setContentSent.mutate({ id: group._id, done })}
-            onMarkReady={() => markReady.mutate(group._id)}
-          />
-          <TeacherCard group={group} disabled={locked} />
+          {started ? null : (
+            <ReadinessPanel
+              readiness={group.readiness}
+              status={group.status}
+              contentSent={group.contentSent.done}
+              disabled={locked || markReady.isPending}
+              onToggleContentSent={(done) => setContentSent.mutate({ id: group._id, done })}
+              onMarkReady={() => markReady.mutate(group._id)}
+            />
+          )}
+          <TeacherCard group={group} disabled={locked || scheduleLocked} />
           <Card>
             <CardHeader>
               <CardTitle>{t('form.whatsappGroupLink')}</CardTitle>

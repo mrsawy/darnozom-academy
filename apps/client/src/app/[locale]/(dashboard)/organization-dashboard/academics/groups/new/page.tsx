@@ -25,6 +25,7 @@ export default function NewGroupPage() {
           timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
           minStudents: 1,
           maxStudents: 10,
+          totalSessions: 12,
           meetingLink: null,
           whatsappGroupLink: null,
         }}

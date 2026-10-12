@@ -12,10 +12,18 @@ interface GroupFormProps {
   initial: GroupFormValues;
   submitLabel: string;
   pending: boolean;
+  /** Running groups: schedule, time zone and number of sessions cannot change. */
+  lockSchedule?: boolean;
   onSubmit: (values: GroupFormValues) => void;
 }
 
-export function GroupForm({ initial, submitLabel, pending, onSubmit }: GroupFormProps) {
+export function GroupForm({
+  initial,
+  submitLabel,
+  pending,
+  lockSchedule = false,
+  onSubmit,
+}: GroupFormProps) {
   const t = useTranslations('Academics');
   const [values, setValues] = useState<GroupFormValues>(initial);
   const set = <K extends keyof GroupFormValues>(key: K, value: GroupFormValues[K]) =>
@@ -48,15 +56,18 @@ export function GroupForm({ initial, submitLabel, pending, onSubmit }: GroupForm
           id="group-timezone"
           value={values.timezone}
           onChange={(e) => set('timezone', e.target.value)}
+          disabled={lockSchedule}
           required
         />
       </div>
       <div className="space-y-1 md:col-span-2">
         <Label>{t('form.schedule')}</Label>
-        <ScheduleEditor
-          value={values.schedule}
-          onChange={(schedule) => set('schedule', schedule)}
-        />
+        <fieldset disabled={lockSchedule}>
+          <ScheduleEditor
+            value={values.schedule}
+            onChange={(schedule) => set('schedule', schedule)}
+          />
+        </fieldset>
       </div>
       <div className="space-y-1">
         <Label htmlFor="group-min">{t('form.minStudents')}</Label>
@@ -77,6 +88,19 @@ export function GroupForm({ initial, submitLabel, pending, onSubmit }: GroupForm
           min={1}
           value={values.maxStudents}
           onChange={(e) => set('maxStudents', Number(e.target.value))}
+          required
+        />
+      </div>
+      <div className="space-y-1">
+        <Label htmlFor="group-total">{t('form.totalSessions')}</Label>
+        <Input
+          id="group-total"
+          type="number"
+          min={1}
+          max={500}
+          value={values.totalSessions}
+          onChange={(e) => set('totalSessions', Number(e.target.value))}
+          disabled={lockSchedule}
           required
         />
       </div>

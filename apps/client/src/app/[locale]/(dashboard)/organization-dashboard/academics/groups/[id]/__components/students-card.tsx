@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { GroupPaymentStatus } from '@darnozom/shared-types';
+import { GroupPaymentStatus, GroupStudentStatus } from '@darnozom/shared-types';
 import { Button } from '@/components/atoms/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/card';
 import { Input } from '@/components/atoms/input';
@@ -16,7 +16,7 @@ import {
   TableRow,
 } from '@/components/atoms/table';
 import { useDebounce } from '@/lib/hooks/use-debounce';
-import type { IGroupDetail } from '@/lib/types/academics/academics';
+import type { IGroupDetail, IGroupStudent } from '@/lib/types/academics/academics';
 import {
   useAddStudent,
   useRemoveStudent,
@@ -24,6 +24,8 @@ import {
   useSetWhatsapp,
   useStudentCandidates,
 } from '@/lib/hooks/academics/use-academics.hook';
+
+const isWithdrawn = (student: IGroupStudent) => student.status === GroupStudentStatus.WITHDRAWN;
 
 export function StudentsCard({
   group,
@@ -61,12 +63,19 @@ export function StudentsCard({
           <TableBody>
             {group.students.map((student) => (
               <TableRow key={student.studentId}>
-                <TableCell>{group.people[student.studentId] ?? student.studentId}</TableCell>
+                <TableCell>
+                  {group.people[student.studentId] ?? student.studentId}
+                  {isWithdrawn(student) ? (
+                    <span className="text-muted-foreground ms-2 text-sm">
+                      {t('students.withdrawn')}
+                    </span>
+                  ) : null}
+                </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
                     <Switch
                       checked={student.paymentStatus === GroupPaymentStatus.PAID}
-                      disabled={paymentDisabled}
+                      disabled={paymentDisabled || isWithdrawn(student)}
                       onCheckedChange={(paid) =>
                         setPayment.mutate({
                           id: group._id,
@@ -86,7 +95,7 @@ export function StudentsCard({
                 <TableCell>
                   <Switch
                     checked={student.whatsappAdded}
-                    disabled={disabled}
+                    disabled={disabled || isWithdrawn(student)}
                     onCheckedChange={(whatsappAdded) =>
                       setWhatsapp.mutate({
                         id: group._id,
@@ -101,7 +110,7 @@ export function StudentsCard({
                   <Button
                     variant="ghost"
                     size="sm"
-                    disabled={disabled}
+                    disabled={disabled || isWithdrawn(student)}
                     onClick={() =>
                       removeStudent.mutate({ id: group._id, studentId: student.studentId })
                     }>
