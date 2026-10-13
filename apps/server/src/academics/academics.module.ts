@@ -25,6 +25,7 @@ import { TeacherAvailability, TeacherAvailabilitySchema } from './teacher-availa
 import { TeacherAvailabilityService } from './teacher-availability/teacher-availability.service';
 import { TeacherAvailabilityControllerMessage } from './teacher-availability/teacher-availability.controller.message';
 import { FollowUp, FollowUpSchema } from './follow-up/entities/follow-up.entity';
+import { Task, TaskSchema } from './task/entities/task.entity';
 import { FollowUpService } from './follow-up/follow-up.service';
 import { Session, SessionSchema } from './session/entities/session.entity';
 import { GroupStartService } from './session/group-start.service';
@@ -50,6 +51,7 @@ import { SESSION_STATUS_QUEUE } from './session/session.queue';
       { name: User.name, schema: UserSchema },
       { name: Session.name, schema: SessionSchema },
       { name: FollowUp.name, schema: FollowUpSchema },
+      { name: Task.name, schema: TaskSchema },
     ]),
     BullModule.registerQueue({ name: SESSION_STATUS_QUEUE }),
     forwardRef(() => AuthModule),

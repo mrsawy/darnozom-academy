@@ -1,8 +1,8 @@
-import * as path from 'path';
+const path = require('path');
 
 const rootDir = __dirname;
 
-export default {
+module.exports = {
   moduleFileExtensions: ['js', 'json', 'ts'],
   rootDir,
   roots: [path.join(rootDir, 'src')],

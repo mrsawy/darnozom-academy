@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { GroupPaymentStatus, GroupStatus, GroupStudentStatus } from '@darnozom/shared-types';
+import { AtRiskReason, GroupPaymentStatus, GroupStatus, GroupStudentStatus } from '@darnozom/shared-types';
 import { applySoftDeleteMiddleware } from 'src/utils/soft-delete';
 
 @Schema({ _id: false })
@@ -93,6 +93,23 @@ export class Group extends Document<Types.ObjectId> {
   @Prop({ type: Types.ObjectId, ref: 'User', required: false, default: null })
   teacherId: Types.ObjectId | null;
 
+  /** Owns the group's pre-start tasks (escalation level 0). Must hold COORDINATOR. */
+  @Prop({ type: Types.ObjectId, ref: 'User', required: false, default: null })
+  coordinatorId: Types.ObjectId | null;
+
+  /** Escalation level 1, and the evaluator in sub-project 5. Must hold SUPERVISOR. */
+  @Prop({ type: Types.ObjectId, ref: 'User', required: false, default: null })
+  supervisorId: Types.ObjectId | null;
+
+  @Prop({ type: Boolean, default: false, index: true })
+  atRisk: boolean;
+
+  @Prop({ type: Date, required: false, default: null })
+  atRiskSince: Date | null;
+
+  @Prop({ type: String, enum: Object.values(AtRiskReason), required: false, default: null })
+  atRiskReason: AtRiskReason | null;
+
   @Prop({ type: [GroupScheduleSlotSchema], required: true })
   schedule: GroupScheduleSlot[];
 
@@ -136,6 +153,7 @@ export class Group extends Document<Types.ObjectId> {
 
 export const GroupSchema = SchemaFactory.createForClass(Group);
 GroupSchema.index({ organizationId: 1, status: 1 });
+GroupSchema.index({ organizationId: 1, atRisk: 1 });
 GroupSchema.index({ teacherId: 1, status: 1 });
 GroupSchema.index({ cohortId: 1 });
 GroupSchema.index({ 'students.studentId': 1 });

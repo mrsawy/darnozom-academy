@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { GroupPaymentStatus, GroupStatus, GroupStudentStatus, Readiness, ScheduleSlot } from '@darnozom/shared-types';
+import { AtRiskReason, GroupPaymentStatus, GroupStatus, GroupStudentStatus, Readiness, ScheduleSlot } from '@darnozom/shared-types';
 
 export interface GroupStudentLean {
   studentId: Types.ObjectId;
@@ -19,6 +19,11 @@ export interface GroupLean {
   courseId: Types.ObjectId;
   name: string;
   teacherId: Types.ObjectId | null;
+  coordinatorId: Types.ObjectId | null;
+  supervisorId: Types.ObjectId | null;
+  atRisk: boolean;
+  atRiskSince: Date | null;
+  atRiskReason: AtRiskReason | null;
   schedule: ScheduleSlot[];
   timezone: string;
   minStudents: number;
