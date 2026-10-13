@@ -45,6 +45,11 @@ export enum AcademicsErrors {
   REPORT_EDIT_WINDOW_CLOSED = 'reportEditWindowClosed',
   REPORT_INVALID = 'reportInvalid',
   FOLLOW_UP_NOT_FOUND = 'followUpNotFound',
+  TASK_NOT_FOUND = 'taskNotFound',
+  READINESS_ITEM_STILL_MISSING = 'readinessItemStillMissing',
+  TASK_NOT_ASSIGNED_TO_YOU = 'taskNotAssignedToYou',
+  COORDINATOR_NOT_FOUND_IN_ORGANIZATION = 'coordinatorNotFoundInOrganization',
+  SUPERVISOR_NOT_FOUND_IN_ORGANIZATION = 'supervisorNotFoundInOrganization',
 }
 
 export enum AcademicsSuccessMessages {

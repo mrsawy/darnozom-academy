@@ -13,4 +13,8 @@ export enum NotificationTextKey {
   CHAT_MESSAGE_TITLE = 'chatMessageTitle',
   CHAT_MESSAGE_BODY = 'chatMessageBody',
   CHAT_MESSAGE_ATTACHMENT_BODY = 'chatMessageAttachmentBody',
+  TASK_ASSIGNED_TITLE = 'taskAssignedTitle',
+  TASK_ASSIGNED_BODY = 'taskAssignedBody',
+  TASK_ESCALATED_TITLE = 'taskEscalatedTitle',
+  TASK_ESCALATED_BODY = 'taskEscalatedBody',
 }

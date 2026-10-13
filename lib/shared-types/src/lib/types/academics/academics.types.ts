@@ -77,3 +77,36 @@ export interface Readiness {
   ready: boolean;
   items: ReadinessItem[];
 }
+
+export enum TaskKind {
+  PRE_START_READINESS = 'PRE_START_READINESS',
+}
+
+export enum TaskStatus {
+  OPEN = 'OPEN',
+  DONE = 'DONE',
+  CANCELLED = 'CANCELLED',
+}
+
+export enum TaskClosedReason {
+  ITEM_DONE = 'ITEM_DONE',
+  GROUP_STARTED = 'GROUP_STARTED',
+  GROUP_CANCELLED = 'GROUP_CANCELLED',
+}
+
+/** Why a group carries the at-risk flag. */
+export enum AtRiskReason {
+  /** Nobody holds the coordinator seat, so pre-start tasks cannot be assigned. */
+  NO_COORDINATOR = 'NO_COORDINATOR',
+  /** A pre-start task went unanswered all the way to the manager level. */
+  TASK_ESCALATED = 'TASK_ESCALATED',
+}
+
+/** Days before the cohort start date at which pre-start tasks are created, earliest first. */
+export const TASK_MILESTONE_DAYS = [7, 3, 1] as const;
+export type TaskMilestoneDay = (typeof TASK_MILESTONE_DAYS)[number];
+
+/** An open task is overdue this many hours after it was created or last escalated. */
+export const TASK_ESCALATION_HOURS = 24;
+/** Level 2 is the manager queue; nothing escalates past it. */
+export const TASK_MAX_ESCALATION_LEVEL = 2;
