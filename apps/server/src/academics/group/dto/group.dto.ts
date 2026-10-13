@@ -15,6 +15,7 @@ import {
   Max,
   MaxLength,
   Min,
+  ValidateIf,
   ValidateNested,
 } from 'class-validator';
 import { GroupPaymentStatus, GroupStatus } from '@darnozom/shared-types';
@@ -131,6 +132,18 @@ export class UpdateGroupDto {
   @IsOptional()
   @IsUrl(WEB_LINK)
   whatsappGroupLink?: string | null;
+
+  /** null vacates the seat */
+  @IsOptional()
+  @ValidateIf((_, value) => value !== null)
+  @IsMongoId()
+  coordinatorId?: string | null;
+
+  /** null vacates the seat */
+  @IsOptional()
+  @ValidateIf((_, value) => value !== null)
+  @IsMongoId()
+  supervisorId?: string | null;
 }
 
 export class UpdateGroupPayload {

@@ -1,7 +1,7 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model, Types } from 'mongoose';
-import { AcademicsErrors, AcademicsSuccessMessages, GroupStatus, GroupStudentStatus, TaskClosedReason } from '@darnozom/shared-types';
+import { AcademicsErrors, AcademicsSuccessMessages, GroupStatus, GroupStudentStatus, Roles, TaskClosedReason } from '@darnozom/shared-types';
 import { User } from 'src/user/entities/user.entity';
 import { ParentService } from 'src/user/services/parent.service';
 import { buildSoftDeleteSet, withNotDeletedFilter } from 'src/utils/soft-delete';
@@ -16,6 +16,7 @@ import { Level } from '../level/entities/level.entity';
 import { CreateGroupDto, FindGroupsPayload, UpdateGroupDto } from './dto/group.dto';
 import { Group } from './entities/group.entity';
 import { GroupStateService } from './group-state.service';
+import { assertStaffAssignable } from './group-staff';
 import { GroupTeacherService } from './group-teacher.service';
 import { GroupDetailView, GroupLean, GroupView } from './group.types';
 import { TaskClosingService } from '../task/task-closing.service';
@@ -170,6 +171,16 @@ export class GroupService {
         timezone: dto.timezone ?? group.timezone,
       });
     }
+    if (dto.coordinatorId !== undefined && dto.coordinatorId !== null) {
+      assertStaffAssignable(
+        await this.findOrgUser(actor, dto.coordinatorId),
+        Roles.COORDINATOR,
+        AcademicsErrors.COORDINATOR_NOT_FOUND_IN_ORGANIZATION
+      );
+    }
+    if (dto.supervisorId !== undefined && dto.supervisorId !== null) {
+      assertStaffAssignable(await this.findOrgUser(actor, dto.supervisorId), Roles.SUPERVISOR, AcademicsErrors.SUPERVISOR_NOT_FOUND_IN_ORGANIZATION);
+    }
     const changes: UpdateGroupDto = { ...dto, ...(dto.name === undefined ? {} : { name: dto.name.trim() }) };
     await this.groupModel.updateOne({ _id: group._id }, { $set: changes }).exec();
     return this.state.syncReadiness(group._id);
@@ -225,5 +236,13 @@ export class GroupService {
     const contentSent = done ? { done: true, by: oid(actor._id), at: new Date() } : { done: false };
     await this.groupModel.updateOne({ _id: group._id }, { $set: { contentSent } }).exec();
     return this.state.syncReadiness(group._id);
+  }
+
+  private async findOrgUser(actor: AcademicsActor, userId: string) {
+    return this.userModel
+      .findOne({ _id: oid(userId), organizationId: oid(actor.organizationId) })
+      .select('_id roleName additionalRoles')
+      .lean<{ _id: Types.ObjectId; roleName: Roles; additionalRoles: Roles[] }>()
+      .exec();
   }
 }
