@@ -1,4 +1,5 @@
 import type {
+  AtRiskReason,
   AttendanceStatus,
   AvailabilitySlot,
   FollowUpDecision,
@@ -6,8 +7,12 @@ import type {
   GroupStatus,
   GroupStudentStatus,
   Readiness,
+  ReadinessKey,
   ScheduleSlot,
   SessionStatus,
+  TaskClosedReason,
+  TaskKind,
+  TaskStatus,
   TeacherFitReason,
 } from '@darnozom/shared-types';
 
@@ -52,6 +57,8 @@ export interface IGroup {
   courseId: string;
   name: string;
   teacherId: string | null;
+  coordinatorId: string | null;
+  supervisorId: string | null;
   schedule: ScheduleSlot[];
   timezone: string;
   minStudents: number;
@@ -63,6 +70,9 @@ export interface IGroup {
   students: IGroupStudent[];
   status: GroupStatus;
   readiness: Readiness;
+  atRisk: boolean;
+  atRiskSince: string | null;
+  atRiskReason: AtRiskReason | null;
 }
 
 export interface IGroupDetail extends IGroup {
@@ -74,6 +84,31 @@ export interface GroupQuery {
   status?: GroupStatus;
   childId?: string;
   teacherId?: string;
+  atRisk?: boolean;
+}
+
+export interface ITask {
+  _id: string;
+  organizationId: string;
+  groupId: string;
+  groupName: string;
+  kind: TaskKind;
+  readinessKey: ReadinessKey;
+  milestoneDays: number;
+  assigneeId: string | null;
+  escalationLevel: number;
+  dueAt: string;
+  status: TaskStatus;
+  closedAt: string | null;
+  closedReason: TaskClosedReason | null;
+  createdAt: string;
+}
+
+export type ITasks = ITask[];
+
+export interface TaskQuery {
+  status?: TaskStatus;
+  groupId?: string;
 }
 
 export interface GroupFormValues {

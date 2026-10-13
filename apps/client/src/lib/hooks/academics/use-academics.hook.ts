@@ -18,13 +18,17 @@ import * as groupsApi from '@/lib/actions/academics/groups.action';
 import * as availabilityApi from '@/lib/actions/academics/teacher-availability.action';
 import * as sessionsApi from '@/lib/actions/academics/sessions.action';
 import * as followUpsApi from '@/lib/actions/academics/follow-ups.action';
+import * as tasksApi from '@/lib/actions/academics/tasks.action';
 import { setAdditionalRoles } from '@/lib/actions/academics/additional-roles.action';
 import type {
   AttendanceEntry,
   GroupFormValues,
   GroupQuery,
+  ITask,
+  ITasks,
   ReportValues,
   SessionQuery,
+  TaskQuery,
 } from '@/lib/types/academics/academics';
 
 const ROOT = 'academics';
@@ -44,6 +48,8 @@ export const academicsKeys = {
   sessions: (query: SessionQuery) => [ROOT, 'sessions', query] as const,
   session: (id: string) => [ROOT, 'session', id] as const,
   followUps: (groupId: string) => [ROOT, 'follow-ups', groupId] as const,
+  myTasks: (query: TaskQuery) => [ROOT, 'my-tasks', query] as const,
+  groupTasks: (groupId: string) => [ROOT, 'group-tasks', groupId] as const,
 };
 
 export const usePrograms = () =>
@@ -246,4 +252,20 @@ export const useUpdateFollowUp = () =>
   useAcademicsMutation(
     async (v: { id: string; data: { parentFeedback?: string; decision?: FollowUpDecision } }) =>
       unwrap(await followUpsApi.updateFollowUp(v.id, v.data))
+  );
+export const useMyTasks = (query: TaskQuery, enabled = true) =>
+  useQuery({
+    queryKey: academicsKeys.myTasks(query),
+    queryFn: async (): Promise<ITasks> => unwrap(await tasksApi.getMyTasks(query)),
+    enabled,
+  });
+export const useGroupTasks = (groupId: string, enabled = true) =>
+  useQuery({
+    queryKey: academicsKeys.groupTasks(groupId),
+    queryFn: async (): Promise<ITasks> => unwrap(await tasksApi.getGroupTasks(groupId)),
+    enabled: enabled && Boolean(groupId),
+  });
+export const useMarkTaskDone = () =>
+  useAcademicsMutation(async (id: string): Promise<ITask> =>
+    unwrap(await tasksApi.markTaskDone(id))
   );

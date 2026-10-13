@@ -22,6 +22,7 @@ const vitestConfig = {
     alias: {
       '@': path.resolve(__dirname, './src'),
       '@/assets': path.resolve(__dirname, './public'),
+      '@darnozom/shared-types': path.resolve(__dirname, '../../lib/shared-types/src/index.ts'),
     },
   },
 } as unknown as ViteUserConfig;
