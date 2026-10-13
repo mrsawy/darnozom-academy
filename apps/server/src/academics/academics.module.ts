@@ -31,6 +31,8 @@ import { TaskEscalationService } from './task/task-escalation.service';
 import { TaskGenerationService } from './task/task-generation.service';
 import { TaskNotificationService } from './task/task-notification.service';
 import { TaskRiskService } from './task/task-risk.service';
+import { TaskControllerMessage } from './task/task.controller.message';
+import { TaskService } from './task/task.service';
 import { TaskUserService } from './task/task-user.service';
 import { FollowUpService } from './follow-up/follow-up.service';
 import { Session, SessionSchema } from './session/entities/session.entity';
@@ -77,6 +79,7 @@ import { NotificationModule } from 'src/notification/notification.module';
     TeacherAvailabilityControllerMessage,
     GroupControllerMessage,
     SessionControllerMessage,
+    TaskControllerMessage,
   ],
   providers: [
     ProgramService,
@@ -104,6 +107,7 @@ import { NotificationModule } from 'src/notification/notification.module';
     TaskUserService,
     PreStartTaskProcessor,
     PreStartTaskScheduler,
+    TaskService,
   ],
 })
 export class AcademicsModule {}

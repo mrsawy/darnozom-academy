@@ -8,8 +8,17 @@ describe('ROLE_SEED_DEFINITIONS', () => {
   it('seeds every concept role', () => {
     const names = ROLE_SEED_DEFINITIONS.map((r) => r.name);
     for (const role of [
-      Roles.OWNER, Roles.MANAGER, Roles.COORDINATOR, Roles.SUPERVISOR, Roles.CONTENT_OFFICER,
-      Roles.SHARIA_REVIEWER, Roles.HR, Roles.ACCOUNTANT, Roles.INSTRUCTOR, Roles.PARENT, Roles.STUDENT,
+      Roles.OWNER,
+      Roles.MANAGER,
+      Roles.COORDINATOR,
+      Roles.SUPERVISOR,
+      Roles.CONTENT_OFFICER,
+      Roles.SHARIA_REVIEWER,
+      Roles.HR,
+      Roles.ACCOUNTANT,
+      Roles.INSTRUCTOR,
+      Roles.PARENT,
+      Roles.STUDENT,
     ]) {
       expect(names).toContain(role);
     }
@@ -33,9 +42,11 @@ describe('ROLE_SEED_DEFINITIONS', () => {
     expect(has(Roles.COORDINATOR, Actions.MANAGE, Subjects.GROUP_PAYMENT_STATUS)).toBe(false);
   });
 
-  it('keeps SUPERVISOR read-only and ACCOUNTANT on payment status', () => {
+  it('keeps SUPERVISOR read-only except for tasks, and ACCOUNTANT on payment status', () => {
     expect(has(Roles.SUPERVISOR, Actions.READ, Subjects.GROUP)).toBe(true);
-    expect(rulesOf(Roles.SUPERVISOR).some((p) => p.action !== Actions.READ)).toBe(false);
+    // Supervisors receive escalated tasks, so they need UPDATE on TASK (SP3); everything else stays READ.
+    const nonReadNonTask = rulesOf(Roles.SUPERVISOR).filter((p) => p.action !== Actions.READ && p.subject !== Subjects.TASK);
+    expect(nonReadNonTask).toHaveLength(0);
     expect(has(Roles.ACCOUNTANT, Actions.MANAGE, Subjects.GROUP_PAYMENT_STATUS)).toBe(true);
     expect(has(Roles.ACCOUNTANT, Actions.READ, Subjects.GROUP)).toBe(true);
   });
@@ -59,8 +70,23 @@ describe('ROLE_SEED_DEFINITIONS', () => {
   ] as const)('%s lists exactly the roles seeded with UPDATE on its subject', (_name, roles, subject) => {
     const canUpdate = (role: Roles) =>
       [Actions.MANAGE, Actions.UPDATE].some((action) => has(role, action, subject) || has(role, action, Subjects.ALL));
-    const seeded = ROLE_SEED_DEFINITIONS.map((r) => r.name as Roles).filter(canUpdate).sort();
-    expect([...roles].sort()).toEqual(seeded);
+    const seeded = ROLE_SEED_DEFINITIONS.map((r) => r.name as Roles)
+      .filter(canUpdate)
+      .toSorted();
+    expect([...roles].toSorted()).toEqual(seeded);
+  });
+
+  it('lets the coordinator, the supervisor and the manager read and update tasks', () => {
+    for (const role of [Roles.COORDINATOR, Roles.SUPERVISOR, Roles.MANAGER]) {
+      expect(has(role, Actions.READ, Subjects.TASK)).toBe(true);
+      expect(has(role, Actions.UPDATE, Subjects.TASK)).toBe(true);
+    }
+  });
+
+  it('keeps tasks away from roles with no part in the escalation chain', () => {
+    for (const role of [Roles.ACCOUNTANT, Roles.INSTRUCTOR, Roles.PARENT, Roles.STUDENT]) {
+      expect(rulesOf(role).some((p) => p.subject === Subjects.TASK)).toBe(false);
+    }
   });
 
   it('seeds SESSION permissions: teachers update, staff manage, others read', () => {
