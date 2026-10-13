@@ -18,7 +18,7 @@
     "format": "prettier --write \"src/**/*.{js,ts}\"",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "lint:format": "pnpm format && eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "test": "jest",
+    "test": "jest --config jest.config.js",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
@@ -140,33 +140,5 @@
     "tsx": "^4.19.2",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.20.0"
-  },
-  "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
-    "rootDir": ".",
-    "modulePaths": [
-      "<rootDir>"
-    ],
-    "testMatch": [
-      "<rootDir>/src/**/*.spec.ts",
-      "<rootDir>/__test__/**/*.(spec|test).ts"
-    ],
-    "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
-    },
-    "moduleNameMapper": {
-      "^src/(.*)$": "<rootDir>/src/$1",
-      "^@darnozom/shared-types/dto$": "<rootDir>/../../lib/shared-types/src/lib/dto/index.ts",
-      "^@darnozom/shared-types$": "<rootDir>/../../lib/shared-types/src/index.ts"
-    },
-    "collectCoverageFrom": [
-      "src/**/*.(t|j)s"
-    ],
-    "coverageDirectory": "./coverage",
-    "testEnvironment": "node"
   }
 }
