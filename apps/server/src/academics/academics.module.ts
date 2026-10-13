@@ -44,6 +44,9 @@ import { SessionStatusProcessor } from './session/session-status.processor';
 import { SessionStatusScheduler } from './session/session-status.scheduler';
 import { SessionControllerMessage } from './session/session.controller.message';
 import { SESSION_STATUS_QUEUE } from './session/session.queue';
+import { PreStartTaskProcessor } from './task/task.processor';
+import { PreStartTaskScheduler } from './task/task.scheduler';
+import { PRE_START_TASK_QUEUE } from './task/task.queue';
 import { NotificationModule } from 'src/notification/notification.module';
 
 @Module({
@@ -61,6 +64,7 @@ import { NotificationModule } from 'src/notification/notification.module';
       { name: Task.name, schema: TaskSchema },
     ]),
     BullModule.registerQueue({ name: SESSION_STATUS_QUEUE }),
+    BullModule.registerQueue({ name: PRE_START_TASK_QUEUE }),
     NotificationModule,
     forwardRef(() => AuthModule),
     forwardRef(() => UserModule),
@@ -98,6 +102,8 @@ import { NotificationModule } from 'src/notification/notification.module';
     TaskNotificationService,
     TaskRiskService,
     TaskUserService,
+    PreStartTaskProcessor,
+    PreStartTaskScheduler,
   ],
 })
 export class AcademicsModule {}
