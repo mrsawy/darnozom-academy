@@ -1828,7 +1828,8 @@
       "attendanceHistory": "سجل الحضور",
       "booksStore": "متجر الكتب",
       "myGroups": "مجموعاتي",
-      "mySessions": "جلساتي"
+      "mySessions": "جلساتي",
+      "myTasks": "مهامي"
     },
     "navSecondary": {
       "settings": "الإعدادات",
@@ -6985,6 +6986,27 @@
     },
     "myGroups": {
       "title": "مجموعاتي"
+    },
+    "tasks": {
+      "title": "مهامي",
+      "empty": "لا يوجد شيء يحتاج إلى اهتمامك.",
+      "due": "موعد التسليم: {date}",
+      "markDone": "تم الإنجاز",
+      "level": {
+        "0": "المنسق",
+        "1": "المشرف",
+        "2": "المدير"
+      },
+      "atRisk": "في خطر",
+      "atRiskReason": {
+        "NO_COORDINATOR": "لا يوجد منسق معيّن",
+        "TASK_ESCALATED": "وصلت مهمة إلى المدير"
+      },
+      "openTasks": "المهام المفتوحة",
+      "coordinator": "المنسق",
+      "supervisor": "المشرف",
+      "staff": "الطاقم",
+      "unassigned": "غير معيّن"
     },
     "additionalRoles": {
       "title": "أدوار إضافية",

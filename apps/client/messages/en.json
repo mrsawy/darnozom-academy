@@ -1828,7 +1828,8 @@
       "attendanceHistory": "Attendance History",
       "booksStore": "Books Store",
       "myGroups": "My groups",
-      "mySessions": "My sessions"
+      "mySessions": "My sessions",
+      "myTasks": "My tasks"
     },
     "navSecondary": {
       "settings": "Settings",
@@ -6985,6 +6986,27 @@
     },
     "myGroups": {
       "title": "My groups"
+    },
+    "tasks": {
+      "title": "My tasks",
+      "empty": "Nothing needs your attention.",
+      "due": "Due {date}",
+      "markDone": "Mark done",
+      "level": {
+        "0": "Coordinator",
+        "1": "Supervisor",
+        "2": "Manager"
+      },
+      "atRisk": "At risk",
+      "atRiskReason": {
+        "NO_COORDINATOR": "No coordinator assigned",
+        "TASK_ESCALATED": "A task reached the manager"
+      },
+      "openTasks": "Open tasks",
+      "coordinator": "Coordinator",
+      "supervisor": "Supervisor",
+      "staff": "Staff",
+      "unassigned": "Not assigned"
     },
     "additionalRoles": {
       "title": "Additional roles",
