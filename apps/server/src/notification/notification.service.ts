@@ -16,7 +16,7 @@ export interface CreateNotificationDto {
   data?: Record<string, string>;
   type?: NotificationType;
   relatedId?: string;
-  relatedModel?: 'Course' | 'Enrollment' | 'CourseContent' | 'PrivateSession' | 'SessionBooking';
+  relatedModel?: 'Course' | 'Enrollment' | 'CourseContent' | 'PrivateSession' | 'SessionBooking' | 'Group';
 }
 
 @Injectable()

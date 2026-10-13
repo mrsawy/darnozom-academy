@@ -26,6 +26,9 @@ import { TeacherAvailabilityService } from './teacher-availability/teacher-avail
 import { TeacherAvailabilityControllerMessage } from './teacher-availability/teacher-availability.controller.message';
 import { FollowUp, FollowUpSchema } from './follow-up/entities/follow-up.entity';
 import { Task, TaskSchema } from './task/entities/task.entity';
+import { TaskGenerationService } from './task/task-generation.service';
+import { TaskNotificationService } from './task/task-notification.service';
+import { TaskUserService } from './task/task-user.service';
 import { FollowUpService } from './follow-up/follow-up.service';
 import { Session, SessionSchema } from './session/entities/session.entity';
 import { GroupStartService } from './session/group-start.service';
@@ -38,6 +41,7 @@ import { SessionStatusProcessor } from './session/session-status.processor';
 import { SessionStatusScheduler } from './session/session-status.scheduler';
 import { SessionControllerMessage } from './session/session.controller.message';
 import { SESSION_STATUS_QUEUE } from './session/session.queue';
+import { NotificationModule } from 'src/notification/notification.module';
 
 @Module({
   imports: [
@@ -54,6 +58,7 @@ import { SESSION_STATUS_QUEUE } from './session/session.queue';
       { name: Task.name, schema: TaskSchema },
     ]),
     BullModule.registerQueue({ name: SESSION_STATUS_QUEUE }),
+    NotificationModule,
     forwardRef(() => AuthModule),
     forwardRef(() => UserModule),
     RoleModule,
@@ -84,6 +89,9 @@ import { SESSION_STATUS_QUEUE } from './session/session.queue';
     FollowUpService,
     SessionStatusProcessor,
     SessionStatusScheduler,
+    TaskGenerationService,
+    TaskNotificationService,
+    TaskUserService,
   ],
 })
 export class AcademicsModule {}
