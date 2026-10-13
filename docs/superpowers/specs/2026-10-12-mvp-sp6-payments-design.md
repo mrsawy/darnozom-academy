@@ -88,7 +88,7 @@ When a payment reaches `CONFIRMED`, exactly one `PAYMENT` ledger entry is writte
 |---|---|
 | `FULL_COURSE` | one charge of `amount` when the subscription is created, due at the cohort's `startDate` |
 | `MONTHLY` | one charge of `amount` when the subscription is created, due at `startDate`; then another on the 1st of each later month (group timezone) while the group is `RUNNING` |
-| `PER_SESSION` | one charge of `amount` per `COMPLETED` session where the student's attendance is `PRESENT` or `LATE` (assumption A2), due when posted |
+| `PER_SESSION` | one charge of `amount` for every session that reaches `COMPLETED`, whatever the student's attendance was (decision D1), due when posted |
 | `FAMILY` | one charge of `amount` for all the listed children when the subscription is created, due at the earliest `startDate` of their groups (assumption A1) |
 | `SCHOLARSHIP` | the same as `FULL_COURSE`, but the amount may be 0, meaning a full scholarship |
 
@@ -134,7 +134,7 @@ A daily job sends one in-app notification per family per day, to the parent, whe
 
 ## 9. Testing
 
-- **Charges:** each subscription type posts the right charges; monthly posting is idempotent; per-session charges count only `PRESENT`/`LATE` attendance.
+- **Charges:** each subscription type posts the right charges; monthly posting is idempotent; a per-session charge is posted for a session the student was `ABSENT` from, and none for a `CANCELLED` session.
 - **Allocation:** FIFO allocation, including a partial payment.
 - **Payment status:** derivation, including a 0-amount scholarship.
 - **Receipts:** approval writes exactly one ledger entry; rejection writes none.
@@ -145,5 +145,5 @@ A daily job sends one in-app notification per family per day, to the parent, whe
 ## 10. Assumptions to confirm
 
 - **A1:** `FAMILY` is one charge covering two or more children of the same parent.
-- **A2:** `PER_SESSION` charges only sessions the student attended (`PRESENT`/`LATE`).
+- **D1 (decided 2026-10-13, supersedes the original assumption A2):** `PER_SESSION` bills every held session, including ones the student missed. A reserved seat is billable, and this keeps revenue aligned with payroll, which pays the teacher per held session. `CANCELLED` sessions are never billed.
 - **A3:** Reminders are sent on the due date, then every 3 days, in-app only.
