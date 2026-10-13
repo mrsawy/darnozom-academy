@@ -27,6 +27,7 @@ import { TeacherAvailabilityControllerMessage } from './teacher-availability/tea
 import { FollowUp, FollowUpSchema } from './follow-up/entities/follow-up.entity';
 import { Task, TaskSchema } from './task/entities/task.entity';
 import { TaskClosingService } from './task/task-closing.service';
+import { TaskEscalationService } from './task/task-escalation.service';
 import { TaskGenerationService } from './task/task-generation.service';
 import { TaskNotificationService } from './task/task-notification.service';
 import { TaskRiskService } from './task/task-risk.service';
@@ -92,6 +93,7 @@ import { NotificationModule } from 'src/notification/notification.module';
     SessionStatusProcessor,
     SessionStatusScheduler,
     TaskClosingService,
+    TaskEscalationService,
     TaskGenerationService,
     TaskNotificationService,
     TaskRiskService,
