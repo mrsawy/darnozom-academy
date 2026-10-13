@@ -28,6 +28,7 @@ import { FollowUp, FollowUpSchema } from './follow-up/entities/follow-up.entity'
 import { Task, TaskSchema } from './task/entities/task.entity';
 import { TaskGenerationService } from './task/task-generation.service';
 import { TaskNotificationService } from './task/task-notification.service';
+import { TaskRiskService } from './task/task-risk.service';
 import { TaskUserService } from './task/task-user.service';
 import { FollowUpService } from './follow-up/follow-up.service';
 import { Session, SessionSchema } from './session/entities/session.entity';
@@ -91,6 +92,7 @@ import { NotificationModule } from 'src/notification/notification.module';
     SessionStatusScheduler,
     TaskGenerationService,
     TaskNotificationService,
+    TaskRiskService,
     TaskUserService,
   ],
 })

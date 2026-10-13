@@ -53,8 +53,16 @@ const makeService = (groups: Record<string, unknown>[], startDate: Date, existin
   };
   const notifications = { taskAssigned: jest.fn().mockResolvedValue(null), taskEscalated: jest.fn().mockResolvedValue(null) };
   const users = { managerIdsInOrg: jest.fn(async () => []) };
-  const service = new TaskGenerationService(taskModel as never, groupModel as never, cohortModel as never, notifications as never, users as never);
-  return { service, taskModel, groupModel, notifications, created };
+  const risk = { flag: jest.fn().mockResolvedValue(null), refresh: jest.fn().mockResolvedValue(null) };
+  const service = new TaskGenerationService(
+    taskModel as never,
+    groupModel as never,
+    cohortModel as never,
+    notifications as never,
+    users as never,
+    risk as never
+  );
+  return { service, taskModel, groupModel, notifications, created, risk };
 };
 
 const START = new Date('2026-03-15T00:00:00.000Z');
@@ -121,13 +129,12 @@ describe('TaskGenerationService.run', () => {
   });
 
   it('flags a group with no coordinator at risk and creates no tasks', async () => {
-    const { service, groupModel, created } = makeService([groupDoc({ coordinatorId: null })], START);
-    await expect(service.run(new Date('2026-03-08T00:00:00.000Z'))).resolves.toBe(0);
+    const now = new Date('2026-03-08T00:00:00.000Z');
+    const doc = groupDoc({ coordinatorId: null });
+    const { service, created, risk } = makeService([doc], START);
+    await expect(service.run(now)).resolves.toBe(0);
     expect(created).toHaveLength(0);
-    expect(groupModel.updateOne).toHaveBeenCalledWith(
-      expect.objectContaining({ atRisk: false }),
-      expect.objectContaining({ $set: expect.objectContaining({ atRisk: true, atRiskReason: AtRiskReason.NO_COORDINATOR }) })
-    );
+    expect(risk.flag).toHaveBeenCalledWith(doc._id, AtRiskReason.NO_COORDINATOR, now);
   });
 
   it('notifies the coordinator once per created task', async () => {

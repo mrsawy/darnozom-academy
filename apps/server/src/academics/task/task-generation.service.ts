@@ -11,6 +11,7 @@ import { GroupLean } from '../group/group.types';
 import { Task } from './entities/task.entity';
 import { TaskLean } from './task.types';
 import { TaskNotificationService } from './task-notification.service';
+import { TaskRiskService } from './task-risk.service';
 import { TaskUserService } from './task-user.service';
 
 const DUPLICATE_KEY = 11_000;
@@ -24,7 +25,8 @@ export class TaskGenerationService {
     @InjectModel(Group.name) private readonly groupModel: Model<Group>,
     @InjectModel(Cohort.name) private readonly cohortModel: Model<Cohort>,
     private readonly notifications: TaskNotificationService,
-    private readonly users: TaskUserService
+    private readonly users: TaskUserService,
+    private readonly risk: TaskRiskService
   ) {}
 
   /** Creates a task for every missing readiness item of every group past a milestone. Returns how many. */
@@ -64,7 +66,7 @@ export class TaskGenerationService {
 
     if (group.coordinatorId == null) {
       // Nobody can receive the tasks, so the group itself is the problem (spec §5.1, assumption A3).
-      await this.flagNoCoordinator(group._id, now);
+      await this.risk.flag(group._id, AtRiskReason.NO_COORDINATOR, now);
       return 0;
     }
     if (missing.length === 0) return 0;
@@ -102,11 +104,5 @@ export class TaskGenerationService {
         .exec();
       return false;
     }
-  }
-
-  private async flagNoCoordinator(groupId: Types.ObjectId, now: Date): Promise<void> {
-    await this.groupModel
-      .updateOne({ _id: groupId, atRisk: false }, { $set: { atRisk: true, atRiskSince: now, atRiskReason: AtRiskReason.NO_COORDINATOR } })
-      .exec();
   }
 }
