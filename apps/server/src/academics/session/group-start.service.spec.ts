@@ -33,7 +33,8 @@ function setup(group = readyGroup()) {
     loadInOrg: jest.fn().mockResolvedValue(group),
     syncReadiness: jest.fn(async (id) => ({ _id: id, status: GroupStatus.RUNNING })),
   };
-  const service = new GroupStartService(groupModel as never, cohortModel as never, sessionModel as never, connection as never, state as never);
+  const taskClosing = { closeDoneItems: jest.fn(async () => 0), closeAll: jest.fn(async () => 0) };
+  const service = new GroupStartService(groupModel as never, cohortModel as never, sessionModel as never, connection as never, state as never, taskClosing as never);
   return { service, groupModel, cohortModel, sessionModel, state, dbSession, connection };
 }
 

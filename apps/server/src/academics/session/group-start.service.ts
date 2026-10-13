@@ -1,13 +1,14 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Connection, Model, Types } from 'mongoose';
-import { AcademicsErrors, GroupStatus, SessionStatus } from '@darnozom/shared-types';
+import { AcademicsErrors, GroupStatus, SessionStatus, TaskClosedReason } from '@darnozom/shared-types';
 import { AcademicsActor } from '../common/actor';
 import { Cohort } from '../cohort/entities/cohort.entity';
 import { generateSessions } from '../domain/session-generation';
 import { Group } from '../group/entities/group.entity';
 import { GroupStateService } from '../group/group-state.service';
 import { GroupView } from '../group/group.types';
+import { TaskClosingService } from '../task/task-closing.service';
 import { Session } from './entities/session.entity';
 
 const oid = (id: string | Types.ObjectId) => new Types.ObjectId(String(id));
@@ -19,7 +20,8 @@ export class GroupStartService {
     @InjectModel(Cohort.name) private readonly cohortModel: Model<Cohort>,
     @InjectModel(Session.name) private readonly sessionModel: Model<Session>,
     @InjectConnection() private readonly connection: Connection,
-    private readonly state: GroupStateService
+    private readonly state: GroupStateService,
+    private readonly taskClosing: TaskClosingService
   ) {}
 
   /** READY_TO_START → RUNNING and every session created in one transaction. */
@@ -67,6 +69,7 @@ export class GroupStartService {
     } finally {
       await dbSession.endSession();
     }
+    await this.taskClosing.closeAll(group._id, TaskClosedReason.GROUP_STARTED, now);
     return this.state.syncReadiness(group._id);
   }
 }

@@ -14,7 +14,8 @@ const group = (over: Record<string, unknown> = {}) => ({
 
 function setup() {
   const groupModel = { findOne: jest.fn(), updateOne: jest.fn() };
-  return { service: new GroupStateService(groupModel as never), groupModel };
+  const taskClosing = { closeDoneItems: jest.fn(async () => 0), closeAll: jest.fn(async () => 0) };
+  return { service: new GroupStateService(groupModel as never, taskClosing as never), groupModel };
 }
 
 describe('GroupStateService', () => {

@@ -1,7 +1,7 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model, Types } from 'mongoose';
-import { AcademicsErrors, AcademicsSuccessMessages, GroupStatus, GroupStudentStatus } from '@darnozom/shared-types';
+import { AcademicsErrors, AcademicsSuccessMessages, GroupStatus, GroupStudentStatus, TaskClosedReason } from '@darnozom/shared-types';
 import { User } from 'src/user/entities/user.entity';
 import { ParentService } from 'src/user/services/parent.service';
 import { buildSoftDeleteSet, withNotDeletedFilter } from 'src/utils/soft-delete';
@@ -18,6 +18,7 @@ import { Group } from './entities/group.entity';
 import { GroupStateService } from './group-state.service';
 import { GroupTeacherService } from './group-teacher.service';
 import { GroupDetailView, GroupLean, GroupView } from './group.types';
+import { TaskClosingService } from '../task/task-closing.service';
 
 const oid = (id: string | Types.ObjectId) => new Types.ObjectId(String(id));
 
@@ -30,15 +31,22 @@ export class GroupService {
     @InjectModel(User.name) private readonly userModel: Model<User>,
     private readonly state: GroupStateService,
     private readonly parentService: ParentService,
-    private readonly groupTeacher: GroupTeacherService
+    private readonly groupTeacher: GroupTeacherService,
+    private readonly taskClosing: TaskClosingService
   ) {}
 
   /** Null means the actor may not read any group. visibleStudentIds limits which student entries are returned (null = all). */
-  private async resolveScope(actor: AcademicsActor, childId?: string): Promise<{ filter: FilterQuery<Group>; visibleStudentIds: string[] | null } | null> {
+  private async resolveScope(
+    actor: AcademicsActor,
+    childId?: string
+  ): Promise<{ filter: FilterQuery<Group>; visibleStudentIds: string[] | null } | null> {
     const scope = resolveGroupScope(actor);
     switch (scope.kind) {
       case 'ORG': {
-        return { filter: { organizationId: oid(actor.organizationId), ...(childId ? { 'students.studentId': oid(childId) } : {}) }, visibleStudentIds: null };
+        return {
+          filter: { organizationId: oid(actor.organizationId), ...(childId ? { 'students.studentId': oid(childId) } : {}) },
+          visibleStudentIds: null,
+        };
       }
       case 'TEACHER': {
         return { filter: { teacherId: oid(scope.teacherId) }, visibleStudentIds: null };
@@ -48,7 +56,11 @@ export class GroupService {
           await this.parentService.validateParentChildLink(oid(scope.parentId), oid(childId));
           return { filter: { 'students.studentId': oid(childId) }, visibleStudentIds: [childId] };
         }
-        const parentDoc = await this.userModel.findOne({ _id: oid(scope.parentId) }).select('childUsersIds').lean<{ childUsersIds?: Types.ObjectId[] }>().exec();
+        const parentDoc = await this.userModel
+          .findOne({ _id: oid(scope.parentId) })
+          .select('childUsersIds')
+          .lean<{ childUsersIds?: Types.ObjectId[] }>()
+          .exec();
         const childIds = parentDoc?.childUsersIds ?? [];
         return { filter: { 'students.studentId': { $in: childIds } }, visibleStudentIds: childIds.map(String) };
       }
@@ -99,7 +111,10 @@ export class GroupService {
   async findOne(actor: AcademicsActor, id: string): Promise<GroupDetailView> {
     const resolved = await this.resolveScope(actor);
     if (!resolved) throw new NotFoundException(AcademicsErrors.GROUP_NOT_FOUND);
-    const group = await this.groupModel.findOne(withNotDeletedFilter({ ...resolved.filter, _id: oid(id) })).lean<GroupLean>().exec();
+    const group = await this.groupModel
+      .findOne(withNotDeletedFilter({ ...resolved.filter, _id: oid(id) }))
+      .lean<GroupLean>()
+      .exec();
     if (!group) throw new NotFoundException(AcademicsErrors.GROUP_NOT_FOUND);
     const view = this.present(group, resolved.visibleStudentIds);
     return { ...view, people: await this.peopleNames(view) };
@@ -111,7 +126,11 @@ export class GroupService {
       .lean<{ _id: Types.ObjectId; levelId: Types.ObjectId }>()
       .exec();
     if (!cohort) throw new NotFoundException(AcademicsErrors.COHORT_NOT_FOUND);
-    const level = await this.levelModel.findOne({ _id: cohort.levelId }).select('_id courseId').lean<{ _id: Types.ObjectId; courseId: Types.ObjectId }>().exec();
+    const level = await this.levelModel
+      .findOne({ _id: cohort.levelId })
+      .select('_id courseId')
+      .lean<{ _id: Types.ObjectId; courseId: Types.ObjectId }>()
+      .exec();
     if (!level) throw new NotFoundException(AcademicsErrors.LEVEL_NOT_FOUND);
     if (!isValidSchedule(dto.schedule)) throw new BadRequestException(AcademicsErrors.INVALID_SCHEDULE);
     if (dto.maxStudents < dto.minStudents) throw new BadRequestException(AcademicsErrors.INVALID_STUDENT_LIMITS);
@@ -146,7 +165,10 @@ export class GroupService {
     const activeCount = group.students.filter((s) => s.status !== GroupStudentStatus.WITHDRAWN).length;
     if (maxStudents < minStudents || maxStudents < activeCount) throw new BadRequestException(AcademicsErrors.INVALID_STUDENT_LIMITS);
     if (scheduleChanged) {
-      await this.groupTeacher.assertScheduleChangeFits(actor, group, { schedule: dto.schedule ?? group.schedule, timezone: dto.timezone ?? group.timezone });
+      await this.groupTeacher.assertScheduleChangeFits(actor, group, {
+        schedule: dto.schedule ?? group.schedule,
+        timezone: dto.timezone ?? group.timezone,
+      });
     }
     const changes: UpdateGroupDto = { ...dto, ...(dto.name === undefined ? {} : { name: dto.name.trim() }) };
     await this.groupModel.updateOne({ _id: group._id }, { $set: changes }).exec();
@@ -184,15 +206,17 @@ export class GroupService {
     const error = checkStatusTransition(group.status, GroupStatus.CANCELLED, { ready: false, reason });
     if (error === AcademicsErrors.CANCEL_REASON_REQUIRED) throw new BadRequestException(error);
     if (error) throw new ConflictException(error);
+    const now = new Date();
     await this.groupModel
       .updateOne(
         { _id: group._id, status: group.status },
         {
           $set: { status: GroupStatus.CANCELLED },
-          $push: { statusHistory: { from: group.status, to: GroupStatus.CANCELLED, by: oid(actor._id), at: new Date(), reason: reason.trim() } },
+          $push: { statusHistory: { from: group.status, to: GroupStatus.CANCELLED, by: oid(actor._id), at: now, reason: reason.trim() } },
         }
       )
       .exec();
+    await this.taskClosing.closeAll(group._id, TaskClosedReason.GROUP_CANCELLED, now);
     return this.state.syncReadiness(group._id);
   }
 

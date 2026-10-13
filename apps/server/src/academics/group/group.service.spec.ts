@@ -38,7 +38,8 @@ function setup() {
   };
   const parentService = { validateParentChildLink: jest.fn() };
   const groupTeacher = { assertScheduleChangeFits: jest.fn().mockResolvedValue(undefined) };
-  const service = new GroupService(groupModel as never, cohortModel as never, levelModel as never, userModel as never, state as never, parentService as never, groupTeacher as never);
+  const taskClosing = { closeDoneItems: jest.fn(async () => 0), closeAll: jest.fn(async () => 0) };
+  const service = new GroupService(groupModel as never, cohortModel as never, levelModel as never, userModel as never, state as never, parentService as never, groupTeacher as never, taskClosing as never);
   return { service, groupModel, cohortModel, levelModel, userModel, state, parentService, groupTeacher };
 }
 
