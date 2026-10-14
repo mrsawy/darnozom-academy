@@ -17,12 +17,29 @@ const levelId = new Types.ObjectId('64b000000000000000000033');
 const courseId = new Types.ObjectId('64b000000000000000000044');
 
 const baseGroup = (over: Record<string, unknown> = {}) => ({
-  _id: groupId, organizationId: new Types.ObjectId(ORG), name: 'G', status: GroupStatus.FORMING, teacherId: null, minStudents: 1, maxStudents: 2,
-  students: [], contentSent: { done: false }, meetingLink: null, schedule: [{ dayOfWeek: 1, startTime: '10:00', durationMinutes: 60 }], timezone: 'UTC', ...over,
+  _id: groupId,
+  organizationId: new Types.ObjectId(ORG),
+  name: 'G',
+  status: GroupStatus.FORMING,
+  teacherId: null,
+  minStudents: 1,
+  maxStudents: 2,
+  students: [],
+  contentSent: { done: false },
+  meetingLink: null,
+  schedule: [{ dayOfWeek: 1, startTime: '10:00', durationMinutes: 60 }],
+  timezone: 'UTC',
+  ...over,
 });
 
 const validDto = {
-  cohortId, name: ' Group A ', schedule: [{ dayOfWeek: 1, startTime: '17:00', durationMinutes: 60 }], timezone: 'Asia/Riyadh', minStudents: 3, maxStudents: 8, totalSessions: 12,
+  cohortId,
+  name: ' Group A ',
+  schedule: [{ dayOfWeek: 1, startTime: '17:00', durationMinutes: 60 }],
+  timezone: 'Asia/Riyadh',
+  minStudents: 3,
+  maxStudents: 8,
+  totalSessions: 12,
 };
 
 function setup() {
@@ -31,15 +48,25 @@ function setup() {
   const levelModel = { findOne: jest.fn() };
   const userModel = { findOne: jest.fn(), find: jest.fn() };
   const state = {
-    toView: jest.fn((g) => ({ ...g, readiness: computeReadiness(g) })),
+    toView: jest.fn(async (g) => ({ ...g, readiness: computeReadiness(g) })),
+    withDerivedPaymentStatus: jest.fn(async (g) => g),
     loadInOrg: jest.fn(),
     loadForWrite: jest.fn(),
     syncReadiness: jest.fn(async (id) => ({ _id: id, synced: true })),
   };
   const parentService = { validateParentChildLink: jest.fn() };
-  const groupTeacher = { assertScheduleChangeFits: jest.fn().mockResolvedValue(undefined) };
+  const groupTeacher = { assertScheduleChangeFits: jest.fn().mockResolvedValue() };
   const taskClosing = { closeDoneItems: jest.fn(async () => 0), closeAll: jest.fn(async () => 0) };
-  const service = new GroupService(groupModel as never, cohortModel as never, levelModel as never, userModel as never, state as never, parentService as never, groupTeacher as never, taskClosing as never);
+  const service = new GroupService(
+    groupModel as never,
+    cohortModel as never,
+    levelModel as never,
+    userModel as never,
+    state as never,
+    parentService as never,
+    groupTeacher as never,
+    taskClosing as never
+  );
   return { service, groupModel, cohortModel, levelModel, userModel, state, parentService, groupTeacher };
 }
 
@@ -55,9 +82,16 @@ describe('GroupService', () => {
       const { service, cohortModel, levelModel, groupModel } = setup();
       cohortModel.findOne.mockReturnValue(mockQuery({ _id: cohortId, levelId }));
       levelModel.findOne.mockReturnValue(mockQuery({ _id: levelId, courseId }));
-      const overlapping = [{ dayOfWeek: 1, startTime: '17:00', durationMinutes: 60 }, { dayOfWeek: 1, startTime: '17:30', durationMinutes: 60 }];
-      await expect(service.create(staff, { ...validDto, schedule: overlapping })).rejects.toThrow(new BadRequestException(AcademicsErrors.INVALID_SCHEDULE));
-      await expect(service.create(staff, { ...validDto, minStudents: 5, maxStudents: 4 })).rejects.toThrow(new BadRequestException(AcademicsErrors.INVALID_STUDENT_LIMITS));
+      const overlapping = [
+        { dayOfWeek: 1, startTime: '17:00', durationMinutes: 60 },
+        { dayOfWeek: 1, startTime: '17:30', durationMinutes: 60 },
+      ];
+      await expect(service.create(staff, { ...validDto, schedule: overlapping })).rejects.toThrow(
+        new BadRequestException(AcademicsErrors.INVALID_SCHEDULE)
+      );
+      await expect(service.create(staff, { ...validDto, minStudents: 5, maxStudents: 4 })).rejects.toThrow(
+        new BadRequestException(AcademicsErrors.INVALID_STUDENT_LIMITS)
+      );
       expect(groupModel.create).not.toHaveBeenCalled();
     });
 
@@ -65,7 +99,9 @@ describe('GroupService', () => {
       const { service, cohortModel, levelModel, groupModel } = setup();
       cohortModel.findOne.mockReturnValue(mockQuery({ _id: cohortId, levelId }));
       levelModel.findOne.mockReturnValue(mockQuery({ _id: levelId, courseId }));
-      groupModel.create.mockImplementation(async (doc) => ({ toObject: () => ({ ...doc, _id: groupId, students: [], contentSent: { done: false }, status: GroupStatus.FORMING }) }));
+      groupModel.create.mockImplementation(async (doc) => ({
+        toObject: () => ({ ...doc, _id: groupId, students: [], contentSent: { done: false }, status: GroupStatus.FORMING }),
+      }));
 
       const view = await service.create(staff, validDto);
 
@@ -88,7 +124,9 @@ describe('GroupService', () => {
     it('parent filtering by a child that is not theirs is rejected', async () => {
       const { service, parentService, groupModel } = setup();
       parentService.validateParentChildLink.mockRejectedValue(new ForbiddenException(ParentErrors.CHILD_NOT_LINKED));
-      await expect(service.findAll(parent, { childId: '64b0000000000000000000c9' })).rejects.toThrow(new ForbiddenException(ParentErrors.CHILD_NOT_LINKED));
+      await expect(service.findAll(parent, { childId: '64b0000000000000000000c9' })).rejects.toThrow(
+        new ForbiddenException(ParentErrors.CHILD_NOT_LINKED)
+      );
       expect(groupModel.find).not.toHaveBeenCalled();
     });
 
@@ -105,12 +143,17 @@ describe('GroupService', () => {
       const { service, userModel, groupModel } = setup();
       const child = new Types.ObjectId();
       userModel.findOne.mockReturnValue(mockQuery({ childUsersIds: [child] }));
-      groupModel.find.mockReturnValue(mockQuery([
-        baseGroup({
-          students: [{ studentId: child, paymentStatus: GroupPaymentStatus.PAID }, { studentId: new Types.ObjectId(), paymentStatus: GroupPaymentStatus.UNPAID }],
-          statusHistory: [{ to: GroupStatus.FORMING }],
-        }),
-      ]));
+      groupModel.find.mockReturnValue(
+        mockQuery([
+          baseGroup({
+            students: [
+              { studentId: child, paymentStatus: GroupPaymentStatus.PAID },
+              { studentId: new Types.ObjectId(), paymentStatus: GroupPaymentStatus.UNPAID },
+            ],
+            statusHistory: [{ to: GroupStatus.FORMING }],
+          }),
+        ])
+      );
       const [view] = await service.findAll(parent, {});
       expect(view.students).toHaveLength(1);
       expect(String(view.students[0].studentId)).toBe(String(child));
@@ -122,10 +165,12 @@ describe('GroupService', () => {
       const teacherId = new Types.ObjectId();
       const studentId = new Types.ObjectId();
       groupModel.findOne.mockReturnValue(mockQuery(baseGroup({ teacherId, students: [{ studentId, paymentStatus: GroupPaymentStatus.UNPAID }] })));
-      userModel.find.mockReturnValue(mockQuery([
-        { _id: teacherId, firstName: 'Amina', lastName: 'K' },
-        { _id: studentId, firstName: 'Sara' },
-      ]));
+      userModel.find.mockReturnValue(
+        mockQuery([
+          { _id: teacherId, firstName: 'Amina', lastName: 'K' },
+          { _id: studentId, firstName: 'Sara' },
+        ])
+      );
       const view = await service.findOne(staff, String(groupId));
       expect(view.people).toEqual({ [String(teacherId)]: 'Amina K', [String(studentId)]: 'Sara' });
     });
@@ -154,9 +199,14 @@ describe('GroupService', () => {
 
     it('moves a ready group to READY_TO_START with history', async () => {
       const { service, state, groupModel } = setup();
-      state.loadInOrg.mockResolvedValue(baseGroup({
-        teacherId: new Types.ObjectId(), students: [{ studentId: new Types.ObjectId(), paymentStatus: GroupPaymentStatus.PAID }], contentSent: { done: true }, meetingLink: 'https://m.example/x',
-      }));
+      state.loadInOrg.mockResolvedValue(
+        baseGroup({
+          teacherId: new Types.ObjectId(),
+          students: [{ studentId: new Types.ObjectId(), paymentStatus: GroupPaymentStatus.PAID }],
+          contentSent: { done: true },
+          meetingLink: 'https://m.example/x',
+        })
+      );
       groupModel.updateOne.mockReturnValue(mockQuery({ modifiedCount: 1 }));
       await service.markReady(staff, String(groupId));
       const [filter, update] = groupModel.updateOne.mock.calls[0];
@@ -184,7 +234,9 @@ describe('GroupService', () => {
     it('rejects maxStudents below the current number of students', async () => {
       const { service, state } = setup();
       state.loadForWrite.mockResolvedValue(baseGroup({ students: [{}, {}] }));
-      await expect(service.update(staff, String(groupId), { maxStudents: 1, minStudents: 1 })).rejects.toThrow(new BadRequestException(AcademicsErrors.INVALID_STUDENT_LIMITS));
+      await expect(service.update(staff, String(groupId), { maxStudents: 1, minStudents: 1 })).rejects.toThrow(
+        new BadRequestException(AcademicsErrors.INVALID_STUDENT_LIMITS)
+      );
     });
 
     it('re-checks teacher fit when the schedule or timezone changes', async () => {
@@ -237,16 +289,26 @@ describe('GroupService totalSessions and running locks', () => {
 
   // eslint-disable-next-line unicorn/consistent-function-scoping -- builder local to this describe
   const running = (over = {}) =>
-    baseGroup({ status: GroupStatus.RUNNING, totalSessions: 12, timezone: 'UTC', schedule: [{ dayOfWeek: 1, startTime: '10:00', durationMinutes: 60 }], ...over });
+    baseGroup({
+      status: GroupStatus.RUNNING,
+      totalSessions: 12,
+      timezone: 'UTC',
+      schedule: [{ dayOfWeek: 1, startTime: '10:00', durationMinutes: 60 }],
+      ...over,
+    });
 
   it('update rejects a real schedule, timezone or totalSessions change while RUNNING', async () => {
     const { service, state, groupModel } = setup();
     state.loadForWrite.mockResolvedValue(running());
-    await expect(service.update(staff, String(groupId), { timezone: 'Asia/Riyadh' })).rejects.toThrow(new ConflictException(AcademicsErrors.GROUP_RUNNING_SCHEDULE_LOCKED));
+    await expect(service.update(staff, String(groupId), { timezone: 'Asia/Riyadh' })).rejects.toThrow(
+      new ConflictException(AcademicsErrors.GROUP_RUNNING_SCHEDULE_LOCKED)
+    );
     await expect(service.update(staff, String(groupId), { schedule: [{ dayOfWeek: 2, startTime: '10:00', durationMinutes: 60 }] })).rejects.toThrow(
       new ConflictException(AcademicsErrors.GROUP_RUNNING_SCHEDULE_LOCKED)
     );
-    await expect(service.update(staff, String(groupId), { totalSessions: 20 })).rejects.toThrow(new ConflictException(AcademicsErrors.GROUP_RUNNING_SCHEDULE_LOCKED));
+    await expect(service.update(staff, String(groupId), { totalSessions: 20 })).rejects.toThrow(
+      new ConflictException(AcademicsErrors.GROUP_RUNNING_SCHEDULE_LOCKED)
+    );
     expect(groupModel.updateOne).not.toHaveBeenCalled();
   });
 

@@ -12,7 +12,11 @@ const studentId = '64b000000000000000000055';
 const existingStudent = new Types.ObjectId('64b000000000000000000066');
 
 const group = (over: Record<string, unknown> = {}) => ({
-  _id: groupId, status: GroupStatus.FORMING, maxStudents: 2, students: [{ studentId: existingStudent, paymentStatus: GroupPaymentStatus.UNPAID }], ...over,
+  _id: groupId,
+  status: GroupStatus.FORMING,
+  maxStudents: 2,
+  students: [{ studentId: existingStudent, paymentStatus: GroupPaymentStatus.UNPAID }],
+  ...over,
 });
 
 function setup() {
@@ -56,14 +60,18 @@ describe('GroupStudentsService', () => {
       const { service, state, userModel } = setup();
       state.loadForWrite.mockResolvedValue(group());
       userModel.findOne.mockReturnValue(mockQuery(null));
-      await expect(service.addStudent(staff, String(groupId), studentId)).rejects.toThrow(new BadRequestException(AcademicsErrors.STUDENT_NOT_FOUND_IN_ORGANIZATION));
+      await expect(service.addStudent(staff, String(groupId), studentId)).rejects.toThrow(
+        new BadRequestException(AcademicsErrors.STUDENT_NOT_FOUND_IN_ORGANIZATION)
+      );
     });
 
     it('rejects a student already in the group', async () => {
       const { service, state, userModel } = setup();
       state.loadForWrite.mockResolvedValue(group());
       userModel.findOne.mockReturnValue(mockQuery({ _id: existingStudent }));
-      await expect(service.addStudent(staff, String(groupId), String(existingStudent))).rejects.toThrow(new ConflictException(AcademicsErrors.STUDENT_ALREADY_IN_GROUP));
+      await expect(service.addStudent(staff, String(groupId), String(existingStudent))).rejects.toThrow(
+        new ConflictException(AcademicsErrors.STUDENT_ALREADY_IN_GROUP)
+      );
     });
 
     it('rejects when the conditional push matches nothing because the group is full', async () => {
@@ -98,31 +106,19 @@ describe('GroupStudentsService', () => {
   it('404s removing a student who is not in the group', async () => {
     const { service, state } = setup();
     state.loadForWrite.mockResolvedValue(group());
-    await expect(service.removeStudent(staff, String(groupId), studentId)).rejects.toThrow(new NotFoundException(AcademicsErrors.STUDENT_NOT_IN_GROUP));
-  });
-
-  it('sets payment status with a positional update and re-evaluates readiness', async () => {
-    const { service, state, groupModel } = setup();
-    state.loadForWrite.mockResolvedValue(group());
-    groupModel.updateOne.mockReturnValue(mockQuery({ matchedCount: 1 }));
-    await service.setPaymentStatus(staff, String(groupId), String(existingStudent), GroupPaymentStatus.PAID);
-    const [filter, update] = groupModel.updateOne.mock.calls[0];
-    expect(filter['students.studentId']).toEqual(existingStudent);
-    expect(update).toEqual({ $set: { 'students.$.paymentStatus': GroupPaymentStatus.PAID } });
-    expect(state.syncReadiness).toHaveBeenCalledWith(groupId);
-  });
-
-  it('404s payment status for a student not in the group', async () => {
-    const { service, state, groupModel } = setup();
-    state.loadForWrite.mockResolvedValue(group());
-    groupModel.updateOne.mockReturnValue(mockQuery({ matchedCount: 0 }));
-    await expect(service.setPaymentStatus(staff, String(groupId), studentId, GroupPaymentStatus.PAID)).rejects.toThrow(new NotFoundException(AcademicsErrors.STUDENT_NOT_IN_GROUP));
+    await expect(service.removeStudent(staff, String(groupId), studentId)).rejects.toThrow(
+      new NotFoundException(AcademicsErrors.STUDENT_NOT_IN_GROUP)
+    );
   });
 });
 
 describe('GroupStudentsService with withdrawn students', () => {
   // eslint-disable-next-line unicorn/consistent-function-scoping -- builder local to this describe
-  const entry = (status?: GroupStudentStatus) => ({ studentId: existingStudent, paymentStatus: GroupPaymentStatus.UNPAID, ...(status ? { status } : {}) });
+  const entry = (status?: GroupStudentStatus) => ({
+    studentId: existingStudent,
+    paymentStatus: GroupPaymentStatus.UNPAID,
+    ...(status ? { status } : {}),
+  });
 
   it('counts only ACTIVE students against maxStudents in the conditional push', async () => {
     const { service, groupModel, state, userModel } = setup();
@@ -158,7 +154,9 @@ describe('GroupStudentsService with withdrawn students', () => {
   it('cannot remove a student who is already WITHDRAWN', async () => {
     const { service, state } = setup();
     state.loadForWrite.mockResolvedValue(group({ status: GroupStatus.RUNNING, students: [entry(GroupStudentStatus.WITHDRAWN)] }));
-    await expect(service.removeStudent(staff, String(groupId), String(existingStudent))).rejects.toThrow(new NotFoundException(AcademicsErrors.STUDENT_NOT_IN_GROUP));
+    await expect(service.removeStudent(staff, String(groupId), String(existingStudent))).rejects.toThrow(
+      new NotFoundException(AcademicsErrors.STUDENT_NOT_IN_GROUP)
+    );
   });
 
   it('markWithdrawn flips only that student entry', async () => {

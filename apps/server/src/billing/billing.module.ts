@@ -15,6 +15,7 @@ import { ReceiptUploadMethod } from './payment/methods/receipt-upload.method';
 import { OnlineGatewayMethod } from './payment/methods/online-gateway.method';
 import { AcademyFeeWebhookService } from './payment/academy-fee-webhook.service';
 import { FamilyPaymentService } from './payment/family-payment.service';
+import { FamilyPaymentStatusService } from './status/family-payment-status.service';
 import { FamilyPaymentMethodRegistry } from './payment/payment-method.registry';
 import { FAMILY_PAYMENT_METHODS } from './payment/payment-method.interface';
 import { PaymentModule } from '../payment/payment.module';
@@ -45,6 +46,7 @@ import { FileModule } from '../file/file.module';
     OnlineGatewayMethod,
     AcademyFeeWebhookService,
     FamilyPaymentService,
+    FamilyPaymentStatusService,
     FamilyPaymentMethodRegistry,
     {
       provide: FAMILY_PAYMENT_METHODS,
@@ -63,6 +65,7 @@ import { FileModule } from '../file/file.module';
     OnlineGatewayMethod,
     AcademyFeeWebhookService,
     FamilyPaymentService,
+    FamilyPaymentStatusService,
   ],
 })
 export class BillingModule {}

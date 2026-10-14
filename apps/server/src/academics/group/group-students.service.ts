@@ -108,20 +108,12 @@ export class GroupStudentsService {
       .exec();
   }
 
-  private async setStudentField(actor: AcademicsActor, id: string, studentId: string, field: 'paymentStatus' | 'whatsappAdded', value: unknown) {
+  async setWhatsapp(actor: AcademicsActor, id: string, studentId: string, whatsappAdded: boolean): Promise<GroupView> {
     const group = await this.state.loadForWrite(actor, id);
     const result = await this.groupModel
-      .updateOne({ _id: group._id, 'students.studentId': oid(studentId) }, { $set: { [`students.$.${field}`]: value } })
+      .updateOne({ _id: group._id, 'students.studentId': oid(studentId) }, { $set: { 'students.$.whatsappAdded': whatsappAdded } })
       .exec();
     if (result.matchedCount === 0) throw new NotFoundException(AcademicsErrors.STUDENT_NOT_IN_GROUP);
     return this.state.syncReadiness(group._id);
-  }
-
-  setPaymentStatus(actor: AcademicsActor, id: string, studentId: string, paymentStatus: GroupPaymentStatus): Promise<GroupView> {
-    return this.setStudentField(actor, id, studentId, 'paymentStatus', paymentStatus);
-  }
-
-  setWhatsapp(actor: AcademicsActor, id: string, studentId: string, whatsappAdded: boolean): Promise<GroupView> {
-    return this.setStudentField(actor, id, studentId, 'whatsappAdded', whatsappAdded);
   }
 }

@@ -6,7 +6,6 @@ import type {
   AttendanceStatus,
   AvailabilitySlot,
   FollowUpDecision,
-  GroupPaymentStatus,
   Roles,
 } from '@darnozom/shared-types';
 import { useMutation, useQuery, useQueryClient } from '@/lib/utils';
@@ -194,11 +193,6 @@ export const useAddStudent = () =>
 export const useRemoveStudent = () =>
   useAcademicsMutation(async (v: { id: string; studentId: string }) =>
     unwrap(await groupsApi.removeStudent(v.id, v.studentId))
-  );
-export const useSetPaymentStatus = () =>
-  useAcademicsMutation(
-    async (v: { id: string; studentId: string; paymentStatus: GroupPaymentStatus }) =>
-      unwrap(await groupsApi.setPaymentStatus(v.id, v.studentId, v.paymentStatus))
   );
 export const useSetWhatsapp = () =>
   useAcademicsMutation(async (v: { id: string; studentId: string; whatsappAdded: boolean }) =>

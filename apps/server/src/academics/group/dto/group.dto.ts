@@ -18,7 +18,7 @@ import {
   ValidateIf,
   ValidateNested,
 } from 'class-validator';
-import { GroupPaymentStatus, GroupStatus } from '@darnozom/shared-types';
+import { GroupStatus } from '@darnozom/shared-types';
 import { IsIanaTimeZone } from 'src/utils/validators/is-iana-timezone.validator';
 import { OptionalNonNull } from '../../common/optional-non-null';
 
@@ -210,11 +210,6 @@ export class GroupStudentPayload {
 
   @IsMongoId()
   studentId!: string;
-}
-
-export class PaymentStatusPayload extends GroupStudentPayload {
-  @IsEnum(GroupPaymentStatus)
-  paymentStatus!: GroupPaymentStatus;
 }
 
 export class WhatsappPayload extends GroupStudentPayload {

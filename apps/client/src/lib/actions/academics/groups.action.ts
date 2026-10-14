@@ -1,6 +1,5 @@
 'use server';
 
-import type { GroupPaymentStatus } from '@darnozom/shared-types';
 import { createAuthorizedNatsRequest } from '@/lib/utils/createNatsRequest';
 import type {
   GroupFormValues,
@@ -22,7 +21,7 @@ export async function createGroup(data: GroupFormValues & { cohortId: string }) 
 }
 export async function updateGroup(
   id: string,
-  data: Partial<GroupFormValues> & { coordinatorId?: string | null; supervisorId?: string | null },
+  data: Partial<GroupFormValues> & { coordinatorId?: string | null; supervisorId?: string | null }
 ) {
   return createAuthorizedNatsRequest<IGroup>('academics.groups.update', { id, data });
 }
@@ -46,17 +45,6 @@ export async function addStudent(id: string, studentId: string) {
 }
 export async function removeStudent(id: string, studentId: string) {
   return createAuthorizedNatsRequest<IGroup>('academics.groups.removeStudent', { id, studentId });
-}
-export async function setPaymentStatus(
-  id: string,
-  studentId: string,
-  paymentStatus: GroupPaymentStatus
-) {
-  return createAuthorizedNatsRequest<IGroup>('academics.groups.setPaymentStatus', {
-    id,
-    studentId,
-    paymentStatus,
-  });
 }
 export async function setWhatsapp(id: string, studentId: string, whatsappAdded: boolean) {
   return createAuthorizedNatsRequest<IGroup>('academics.groups.setWhatsapp', {

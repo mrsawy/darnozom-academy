@@ -48,8 +48,10 @@ export function GroupFormationScreen({ groupId }: { groupId: string }) {
   const { data: groupTasks = [], isLoading: tasksLoading } = useGroupTasks(groupId);
 
   if (isLoading || !group) return <p className="p-4">{t('loading')}</p>;
-  const { locked, paymentLocked, scheduleLocked, canStart, canCancel, canManage } =
-    groupScreenAccess(user, group.status);
+  const { locked, scheduleLocked, canStart, canCancel, canManage } = groupScreenAccess(
+    user,
+    group.status
+  );
   const started = group.status === GroupStatus.RUNNING || group.status === GroupStatus.COMPLETED;
   const missingTotal = !group.totalSessions;
 
@@ -100,7 +102,7 @@ export function GroupFormationScreen({ groupId }: { groupId: string }) {
               />
             </CardContent>
           </Card>
-          <StudentsCard group={group} disabled={locked} paymentDisabled={paymentLocked} />
+          <StudentsCard group={group} disabled={locked} />
           {started ? <GroupSessionsCard group={group} canManage={canManage} /> : null}
           {started && canManage ? <FollowUpsCard groupId={group._id} /> : null}
         </div>

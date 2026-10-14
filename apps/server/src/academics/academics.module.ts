@@ -53,6 +53,8 @@ import { NotificationModule } from 'src/notification/notification.module';
 import { SupervisionEvaluation, SupervisionEvaluationSchema } from './supervision/entities/supervision-evaluation.entity';
 import { SupervisionService } from './supervision/supervision.service';
 import { SupervisionControllerMessage } from './supervision/supervision.controller.message';
+import { BillingModule } from 'src/billing/billing.module';
+import { BillingLedgerListener } from './events/billing-ledger.listener';
 
 @Module({
   imports: [
@@ -75,6 +77,7 @@ import { SupervisionControllerMessage } from './supervision/supervision.controll
     forwardRef(() => AuthModule),
     forwardRef(() => UserModule),
     RoleModule,
+    BillingModule,
   ],
   controllers: [
     ProgramControllerMessage,
@@ -114,6 +117,7 @@ import { SupervisionControllerMessage } from './supervision/supervision.controll
     PreStartTaskScheduler,
     TaskService,
     SupervisionService,
+    BillingLedgerListener,
   ],
 })
 export class AcademicsModule {}

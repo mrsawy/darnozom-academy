@@ -1,14 +1,16 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { AcademicsErrors, GroupStatus, READINESS_LOST_REASON } from '@darnozom/shared-types';
+import { AcademicsErrors, GroupPaymentStatus, GroupStatus, READINESS_LOST_REASON } from '@darnozom/shared-types';
 import { withNotDeletedFilter } from 'src/utils/soft-delete';
 import { AcademicsActor } from '../common/actor';
 import { shouldRevertToForming } from '../domain/group-status';
 import { computeReadiness } from '../domain/readiness';
 import { Group } from './entities/group.entity';
+import { Cohort } from '../cohort/entities/cohort.entity';
 import { GroupLean, GroupView } from './group.types';
 import { TaskClosingService } from '../task/task-closing.service';
+import { FamilyPaymentStatusService } from 'src/billing/status/family-payment-status.service';
 
 const oid = (id: string | Types.ObjectId) => new Types.ObjectId(String(id));
 
@@ -16,11 +18,36 @@ const oid = (id: string | Types.ObjectId) => new Types.ObjectId(String(id));
 export class GroupStateService {
   constructor(
     @InjectModel(Group.name) private readonly groupModel: Model<Group>,
+    @InjectModel(Cohort.name) private readonly cohortModel: Model<Cohort>,
+    private readonly paymentStatus: FamilyPaymentStatusService,
     private readonly taskClosing: TaskClosingService
   ) {}
 
-  toView(group: GroupLean): GroupView {
-    return { ...group, readiness: computeReadiness(group) };
+  /**
+   * Replaces the group's stored `students[].paymentStatus` with the value derived from the ledger,
+   * so `computeReadiness` stays a pure function reading a field while the field itself is now a
+   * fact about money rather than something a person toggled (plan decision D4).
+   */
+  async withDerivedPaymentStatus(group: GroupLean): Promise<GroupLean> {
+    if (group.students.length === 0) return group;
+    const cohort = await this.cohortModel.findOne({ _id: group.cohortId }).lean<{ startDate: Date } | null>().exec();
+    const statuses = await this.paymentStatus.forGroup(
+      group._id,
+      group.students.map((student) => String(student.studentId)),
+      cohort?.startDate ?? null
+    );
+    return {
+      ...group,
+      students: group.students.map((student) => ({
+        ...student,
+        paymentStatus: (statuses.get(String(student.studentId)) ?? student.paymentStatus) as unknown as GroupPaymentStatus,
+      })),
+    };
+  }
+
+  async toView(group: GroupLean): Promise<GroupView> {
+    const derived = await this.withDerivedPaymentStatus(group);
+    return { ...derived, readiness: computeReadiness(derived) };
   }
 
   async loadInOrg(actor: AcademicsActor, id: string): Promise<GroupLean> {
@@ -46,15 +73,16 @@ export class GroupStateService {
       .lean<GroupLean>()
       .exec();
     if (!group) throw new NotFoundException(AcademicsErrors.GROUP_NOT_FOUND);
-    const readiness = computeReadiness(group);
+    const derived = await this.withDerivedPaymentStatus(group);
+    const readiness = computeReadiness(derived);
     // The single point sub-project 1 calls after every readiness-affecting write, so no caller
     // needs to know pre-start tasks exist.
-    await this.taskClosing.closeDoneItems(group, new Date());
-    if (!shouldRevertToForming(group.status, readiness.ready)) return { ...group, readiness };
+    await this.taskClosing.closeDoneItems(derived, new Date());
+    if (!shouldRevertToForming(derived.status, readiness.ready)) return { ...derived, readiness };
 
     await this.groupModel
       .updateOne(
-        { _id: group._id, status: GroupStatus.READY_TO_START },
+        { _id: derived._id, status: GroupStatus.READY_TO_START },
         {
           $set: { status: GroupStatus.FORMING },
           $push: {
@@ -63,6 +91,6 @@ export class GroupStateService {
         }
       )
       .exec();
-    return { ...group, status: GroupStatus.FORMING, readiness };
+    return { ...derived, status: GroupStatus.FORMING, readiness };
   }
 }

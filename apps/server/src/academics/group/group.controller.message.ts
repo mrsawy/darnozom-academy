@@ -14,7 +14,6 @@ import {
   CreateGroupDto,
   FindGroupsPayload,
   GroupStudentPayload,
-  PaymentStatusPayload,
   StudentCandidatesPayload,
   UpdateGroupPayload,
   WhatsappPayload,
@@ -96,12 +95,6 @@ export class GroupControllerMessage {
   @MessagePattern('academics.groups.removeStudent')
   removeStudent(@Payload(new RpcValidationPipe()) payload: GroupStudentPayload, @Ctx() context: IUserContext) {
     return this.groupStudents.removeStudent(actorFromContext(context), payload.id, payload.studentId);
-  }
-
-  @RequirePermissionsGuard({ action: Actions.UPDATE, subject: Subjects.GROUP_PAYMENT_STATUS })
-  @MessagePattern('academics.groups.setPaymentStatus')
-  setPaymentStatus(@Payload(new RpcValidationPipe()) payload: PaymentStatusPayload, @Ctx() context: IUserContext) {
-    return this.groupStudents.setPaymentStatus(actorFromContext(context), payload.id, payload.studentId, payload.paymentStatus);
   }
 
   @RequirePermissionsGuard({ action: Actions.UPDATE, subject: Subjects.GROUP })

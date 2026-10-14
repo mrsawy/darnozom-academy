@@ -76,8 +76,8 @@ export class GroupService {
   }
 
   /** Families see only their own children's entries (not other children's payment status) and no status history. */
-  private present(group: GroupLean, visibleStudentIds: string[] | null): GroupView {
-    const view = this.state.toView(group);
+  private async present(group: GroupLean, visibleStudentIds: string[] | null): Promise<GroupView> {
+    const view = await this.state.toView(group);
     if (!visibleStudentIds) return view;
     return { ...view, students: view.students.filter((s) => visibleStudentIds.includes(String(s.studentId))), statusHistory: [] };
   }
@@ -107,7 +107,7 @@ export class GroupService {
       .sort({ createdAt: -1 })
       .lean<GroupLean[]>()
       .exec();
-    return groups.map((group) => this.present(group, resolved.visibleStudentIds));
+    return Promise.all(groups.map((group) => this.present(group, resolved.visibleStudentIds)));
   }
 
   async findOne(actor: AcademicsActor, id: string): Promise<GroupDetailView> {
@@ -118,7 +118,7 @@ export class GroupService {
       .lean<GroupLean>()
       .exec();
     if (!group) throw new NotFoundException(AcademicsErrors.GROUP_NOT_FOUND);
-    const view = this.present(group, resolved.visibleStudentIds);
+    const view = await this.present(group, resolved.visibleStudentIds);
     return { ...view, people: await this.peopleNames(view) };
   }
 
@@ -151,7 +151,7 @@ export class GroupService {
       meetingLink: dto.meetingLink ?? null,
       whatsappGroupLink: dto.whatsappGroupLink ?? null,
     });
-    return this.state.toView(created.toObject() as unknown as GroupLean);
+    return await this.state.toView(created.toObject() as unknown as GroupLean);
   }
 
   async update(actor: AcademicsActor, id: string, dto: UpdateGroupDto): Promise<GroupView> {
@@ -198,9 +198,10 @@ export class GroupService {
 
   async markReady(actor: AcademicsActor, id: string): Promise<GroupView> {
     const group = await this.state.loadInOrg(actor, id);
-    const error = checkStatusTransition(group.status, GroupStatus.READY_TO_START, { ready: computeReadiness(group).ready });
+    const derived = await this.state.withDerivedPaymentStatus(group);
+    const error = checkStatusTransition(derived.status, GroupStatus.READY_TO_START, { ready: computeReadiness(derived).ready });
     if (error) throw new ConflictException(error);
-    if (group.status === GroupStatus.READY_TO_START) return this.state.toView(group);
+    if (derived.status === GroupStatus.READY_TO_START) return await this.state.toView(derived);
     await this.groupModel
       .updateOne(
         { _id: group._id, status: GroupStatus.FORMING },

@@ -1,8 +1,10 @@
-import { Actions, GROUP_EDITOR_ROLES, GROUP_PAYMENT_EDITOR_ROLES, Roles, Subjects } from '@darnozom/shared-types';
+import { Actions, GROUP_EDITOR_ROLES, Roles, Subjects } from '@darnozom/shared-types';
 import { ROLE_SEED_DEFINITIONS } from './roles.config';
 
 const rulesOf = (role: Roles) => ROLE_SEED_DEFINITIONS.find((r) => r.name === role)?.permissions ?? [];
 const has = (role: Roles, action: Actions, subject: Subjects) => rulesOf(role).some((p) => p.action === action && p.subject === subject);
+const canUpdateGroup = (role: Roles) =>
+  [Actions.MANAGE, Actions.UPDATE].some((action) => has(role, action, Subjects.GROUP) || has(role, action, Subjects.ALL));
 
 describe('ROLE_SEED_DEFINITIONS', () => {
   it('seeds every concept role', () => {
@@ -28,28 +30,29 @@ describe('ROLE_SEED_DEFINITIONS', () => {
     expect(has(Roles.OWNER, Actions.MANAGE, Subjects.ALL)).toBe(true);
   });
 
-  it('gives MANAGER academics management', () => {
-    for (const s of [Subjects.PROGRAM, Subjects.LEVEL, Subjects.COHORT, Subjects.GROUP, Subjects.GROUP_PAYMENT_STATUS]) {
+  it('gives MANAGER academics management and billing read', () => {
+    for (const s of [Subjects.PROGRAM, Subjects.LEVEL, Subjects.COHORT, Subjects.GROUP]) {
       expect(has(Roles.MANAGER, Actions.MANAGE, s)).toBe(true);
     }
     expect(has(Roles.MANAGER, Actions.READ, Subjects.TEACHER_AVAILABILITY)).toBe(true);
+    expect(has(Roles.MANAGER, Actions.READ, Subjects.BILLING)).toBe(true);
   });
 
   it('gives COORDINATOR group management but read-only structure', () => {
     expect(has(Roles.COORDINATOR, Actions.MANAGE, Subjects.GROUP)).toBe(true);
     expect(has(Roles.COORDINATOR, Actions.READ, Subjects.PROGRAM)).toBe(true);
     expect(has(Roles.COORDINATOR, Actions.MANAGE, Subjects.PROGRAM)).toBe(false);
-    expect(has(Roles.COORDINATOR, Actions.MANAGE, Subjects.GROUP_PAYMENT_STATUS)).toBe(false);
   });
 
-  it('keeps SUPERVISOR read-only except for tasks, and ACCOUNTANT on payment status', () => {
+  it('keeps SUPERVISOR read-only except for tasks, and ACCOUNTANT on billing and family payments', () => {
     expect(has(Roles.SUPERVISOR, Actions.READ, Subjects.GROUP)).toBe(true);
     // Supervisors receive escalated tasks (SP3) and manage evaluations (SP5); everything else stays READ.
     const nonReadNonTask = rulesOf(Roles.SUPERVISOR).filter(
       (p) => p.action !== Actions.READ && p.subject !== Subjects.TASK && p.subject !== Subjects.SESSION_EVALUATION
     );
     expect(nonReadNonTask).toHaveLength(0);
-    expect(has(Roles.ACCOUNTANT, Actions.MANAGE, Subjects.GROUP_PAYMENT_STATUS)).toBe(true);
+    expect(has(Roles.ACCOUNTANT, Actions.MANAGE, Subjects.BILLING)).toBe(true);
+    expect(has(Roles.ACCOUNTANT, Actions.MANAGE, Subjects.FAMILY_PAYMENT)).toBe(true);
     expect(has(Roles.ACCOUNTANT, Actions.READ, Subjects.GROUP)).toBe(true);
   });
 
@@ -87,16 +90,11 @@ describe('ROLE_SEED_DEFINITIONS', () => {
     expect(permissions).not.toContainEqual({ action: Actions.MANAGE, subject: Subjects.SHARIA_REVIEW });
   });
 
-  it.each([
-    ['GROUP_EDITOR_ROLES', GROUP_EDITOR_ROLES, Subjects.GROUP],
-    ['GROUP_PAYMENT_EDITOR_ROLES', GROUP_PAYMENT_EDITOR_ROLES, Subjects.GROUP_PAYMENT_STATUS],
-  ] as const)('%s lists exactly the roles seeded with UPDATE on its subject', (_name, roles, subject) => {
-    const canUpdate = (role: Roles) =>
-      [Actions.MANAGE, Actions.UPDATE].some((action) => has(role, action, subject) || has(role, action, Subjects.ALL));
+  it('GROUP_EDITOR_ROLES lists exactly the roles seeded with UPDATE on GROUP', () => {
     const seeded = ROLE_SEED_DEFINITIONS.map((r) => r.name as Roles)
-      .filter(canUpdate)
+      .filter(canUpdateGroup)
       .toSorted();
-    expect([...roles].toSorted()).toEqual(seeded);
+    expect([...GROUP_EDITOR_ROLES].toSorted()).toEqual(seeded);
   });
 
   it('lets the coordinator, the supervisor and the manager read and update tasks', () => {
@@ -142,6 +140,12 @@ describe('ROLE_SEED_DEFINITIONS', () => {
     for (const role of [Roles.ACCOUNTANT, Roles.PARENT, Roles.STUDENT, Roles.CONTENT_OFFICER, Roles.SHARIA_REVIEWER]) {
       const permissions = ROLE_SEED_DEFINITIONS.find((seed) => seed.name === role)?.permissions ?? [];
       expect(permissions.some((rule) => rule.subject === Subjects.SESSION_EVALUATION)).toBe(false);
+    }
+  });
+
+  it('no longer grants the removed manual payment-status subject', () => {
+    for (const seed of ROLE_SEED_DEFINITIONS) {
+      expect(seed.permissions.some((rule) => String(rule.subject) === 'GROUP_PAYMENT_STATUS')).toBe(false);
     }
   });
 });

@@ -20,29 +20,19 @@ import type { IGroupDetail, IGroupStudent } from '@/lib/types/academics/academic
 import {
   useAddStudent,
   useRemoveStudent,
-  useSetPaymentStatus,
   useSetWhatsapp,
   useStudentCandidates,
 } from '@/lib/hooks/academics/use-academics.hook';
 
 const isWithdrawn = (student: IGroupStudent) => student.status === GroupStudentStatus.WITHDRAWN;
 
-export function StudentsCard({
-  group,
-  disabled,
-  paymentDisabled,
-}: {
-  group: IGroupDetail;
-  disabled: boolean;
-  paymentDisabled: boolean;
-}) {
+export function StudentsCard({ group, disabled }: { group: IGroupDetail; disabled: boolean }) {
   const t = useTranslations('Academics');
   const [search, setSearch] = useState('');
   const debounced = useDebounce(search, 300);
   const { data: candidates = [] } = useStudentCandidates(disabled ? '' : group._id, debounced);
   const addStudent = useAddStudent();
   const removeStudent = useRemoveStudent();
-  const setPayment = useSetPaymentStatus();
   const setWhatsapp = useSetWhatsapp();
 
   return (
@@ -72,25 +62,11 @@ export function StudentsCard({
                   ) : null}
                 </TableCell>
                 <TableCell>
-                  <div className="flex items-center gap-2">
-                    <Switch
-                      checked={student.paymentStatus === GroupPaymentStatus.PAID}
-                      disabled={paymentDisabled || isWithdrawn(student)}
-                      onCheckedChange={(paid) =>
-                        setPayment.mutate({
-                          id: group._id,
-                          studentId: student.studentId,
-                          paymentStatus: paid ? GroupPaymentStatus.PAID : GroupPaymentStatus.UNPAID,
-                        })
-                      }
-                      aria-label={t('students.payment')}
-                    />
-                    <span>
-                      {student.paymentStatus === GroupPaymentStatus.PAID
-                        ? t('students.paid')
-                        : t('students.unpaid')}
-                    </span>
-                  </div>
+                  <span>
+                    {student.paymentStatus === GroupPaymentStatus.PAID
+                      ? t('students.paid')
+                      : t('students.unpaid')}
+                  </span>
                 </TableCell>
                 <TableCell>
                   <Switch
