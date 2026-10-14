@@ -3,7 +3,7 @@
 import { CourseContentType } from './enum/CourseContentType.enum';
 import { VideoType } from './enum/VideoType.enum';
 import type { IUserReview } from '../review/review.types';
-import type { ApprovalStatusType as ApprovalStatus } from '@darnozom/shared-types';
+import type { ApprovalStatusType as ApprovalStatus, ShariaStatus } from '@darnozom/shared-types';
 import { PublishStatus } from '@darnozom/shared-types';
 import type { IModuleContentSettings } from './modules.interface';
 
@@ -82,6 +82,10 @@ export interface IContent {
   content?: unknown;
 
   approvalStatus?: ApprovalStatus;
+  approvalComment?: string | null;
+  shariaStatus?: ShariaStatus;
+  currentVersion?: number | null;
+  pendingVersion?: number | null;
   publishStatus?: PublishStatus;
   publishedAt?: string | null;
   settings?: IModuleContentSettings;

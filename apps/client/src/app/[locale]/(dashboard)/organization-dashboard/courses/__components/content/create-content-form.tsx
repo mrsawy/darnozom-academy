@@ -39,6 +39,14 @@ import { MeetingProvider } from '@darnozom/shared-types';
 import { ROUTE_ORG_LIVE_CALL } from '@/lib/data/constants/routes.constants';
 import { Link } from '@/i18n/navigation';
 import { Video } from 'lucide-react';
+import { ShariaStatusBadge } from '@/components/organs/course/sharia-status-badge';
+import { ContentVersionsDrawer } from '@/components/organs/course/content-versions-drawer';
+import { useContentVersions } from '@/lib/hooks/course/use-sharia.hook';
+import {
+  Collapsible,
+  CollapsibleTrigger,
+  CollapsibleContent,
+} from '@/components/atoms/collapsible';
 
 export interface CreateContentFormProps {
   courseId: string;
@@ -54,8 +62,13 @@ export default function CreateContentForm({
   initialContent = null,
 }: CreateContentFormProps) {
   const t = useTranslations('CreateContentForm');
+  const tSharia = useTranslations('Sharia');
   const locale = useLocale();
   const direction = locale === 'ar' ? 'rtl' : 'ltr';
+  const { data: versions = [], isLoading: isVersionsLoading } = useContentVersions(
+    initialContent?._id ?? '',
+    mode === 'edit' && Boolean(initialContent?._id)
+  );
   const [contentType, setContentType] = useState<CourseContentType>(
     initialContent?.type ?? CourseContentType.ARTICLE
   );
@@ -320,16 +333,29 @@ export default function CreateContentForm({
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2">
-            <div className="mb-6">
-              <div className="mb-2 flex items-center space-x-3">
-                {getContentTypeIcon(contentType)}
-                <h1 className="text-3xl font-bold">
-                  {mode === 'edit' ? t('edit') : t('create')}{' '}
-                  {t(`contentTypes.${contentType}`) ||
-                    contentType.charAt(0).toUpperCase() + contentType.slice(1)}
-                </h1>
+            <div className="mb-6 space-y-2">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex items-center space-x-3">
+                  {getContentTypeIcon(contentType)}
+                  <h1 className="text-3xl font-bold">
+                    {mode === 'edit' ? t('edit') : t('create')}{' '}
+                    {t(`contentTypes.${contentType}`) ||
+                      contentType.charAt(0).toUpperCase() + contentType.slice(1)}
+                  </h1>
+                </div>
+                {mode === 'edit' && initialContent?.shariaStatus ? (
+                  <ShariaStatusBadge
+                    status={initialContent.shariaStatus}
+                    reviewComment={initialContent.approvalComment ?? null}
+                  />
+                ) : null}
               </div>
               <p>{t('addEngagingContent')}</p>
+              {mode === 'edit' && initialContent?.pendingVersion ? (
+                <p className="text-sm font-medium text-amber-600 dark:text-amber-400">
+                  {tSharia('sharia.status.PENDING')}
+                </p>
+              ) : null}
             </div>
 
             <Tabs defaultValue="content" className="w-full" dir={direction}>
@@ -464,6 +490,17 @@ export default function CreateContentForm({
               publishStatus={initialContent?.publishStatus}
               approvalStatus={initialContent?.approvalStatus}
             />
+            {mode === 'edit' && initialContent?._id ? (
+              <Collapsible className="rounded-xl border p-4">
+                <CollapsibleTrigger className="flex w-full items-center justify-between font-medium">
+                  <span>{tSharia('sharia.versions')}</span>
+                  <span className="text-muted-foreground text-xs">{versions.length}</span>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="pt-3">
+                  <ContentVersionsDrawer versions={versions} isLoading={isVersionsLoading} />
+                </CollapsibleContent>
+              </Collapsible>
+            ) : null}
             <ContentTipsCard contentType={contentType} />
           </div>
         </div>
