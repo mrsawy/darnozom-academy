@@ -1,7 +1,14 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
 import mongoose, { Document, Types } from 'mongoose';
-import { VerificationStatus, IdentityDocumentType, EntityStatus, ApprovalStatus } from '@darnozom/shared-types';
+import {
+  VerificationStatus,
+  IdentityDocumentType,
+  EntityStatus,
+  ApprovalStatus,
+  PAYMENT_METHOD_RECEIPT_UPLOAD,
+  PaymentProvider,
+} from '@darnozom/shared-types';
 
 @Schema({ timestamps: true })
 export class Organization extends Document<Types.ObjectId> {
@@ -152,6 +159,14 @@ export class Organization extends Document<Types.ObjectId> {
 
   @Prop({ type: Date, default: null })
   approvalReviewedAt: Date | null;
+
+  /** Which family payment methods this academy offers. Empty or unset means receipt upload only. */
+  @Prop({ type: [String], default: [PAYMENT_METHOD_RECEIPT_UPLOAD] })
+  enabledFamilyPaymentMethods: string[];
+
+  /** Which configured provider the online gateway method uses for academy fees. */
+  @Prop({ type: String, enum: Object.values(PaymentProvider), required: false, default: null })
+  academyFeeGatewayProvider: PaymentProvider | null;
 }
 
 export const OrganizationSchema = SchemaFactory.createForClass(Organization);
