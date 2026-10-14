@@ -43,6 +43,7 @@ export const ROUTE_ORG_USERS_CREATE = '/organization-dashboard/users/create';
 export const ROUTE_ORG_COURSES = '/organization-dashboard/courses';
 export const ROUTE_ORG_COURSES_CREATE = '/organization-dashboard/courses/create';
 export const ROUTE_ORG_CONTENT = '/organization-dashboard/content';
+export const ROUTE_ORG_SHARIA_REVIEW = '/organization-dashboard/sharia-review';
 export const ROUTE_ORG_CONTENT_BY_TYPE = (contentType: string) =>
   `/organization-dashboard/content/${contentType}`;
 export const ROUTE_ORG_COURSE_MODULE_CONTENT_EDIT = (

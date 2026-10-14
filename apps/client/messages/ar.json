@@ -2347,7 +2347,8 @@
       "academicsPrograms": "البرامج",
       "myGroups": "مجموعاتي",
       "myAvailability": "أوقات توفري",
-      "mySessions": "جلساتي"
+      "mySessions": "جلساتي",
+      "shariaReview": "المراجعة الشرعية"
     },
     "navSecondary": {
       "getHelp": "الحصول على المساعدة",
@@ -4725,7 +4726,12 @@
     "reportNotSubmitted": "لا يوجد تقرير لهذه الجلسة بعد.",
     "reportEditWindowClosed": "يمكن تعديل التقرير خلال 24 ساعة من إرساله فقط.",
     "reportInvalid": "يتطلب التقرير تقييمًا واحدًا لكل طالب نشط، بدرجات من 1 إلى 5.",
-    "followUpNotFound": "المتابعة غير موجودة."
+    "followUpNotFound": "المتابعة غير موجودة.",
+    "shariaContentNotFound": "المحتوى غير موجود",
+    "shariaVersionNotFound": "النسخة غير موجودة",
+    "shariaVersionAlreadyReviewed": "تمت مراجعة هذه النسخة بالفعل",
+    "shariaVersionNotPending": "هذه النسخة ليست قيد المراجعة",
+    "shariaRejectCommentRequired": "يجب ذكر سبب للرفض"
   },
   "mutations": {
     "moduleCreated": "تم إنشاء الوحدة بنجاح",
@@ -7094,6 +7100,36 @@
       "undecided": "لم يُحسم بعد",
       "save": "حفظ",
       "recorded": "تم التسجيل"
+    }
+  },
+  "Sharia": {
+    "saved": "حُفظ",
+    "sharia": {
+      "title": "المراجعة الشرعية",
+      "empty": "لا يوجد ما ينتظر المراجعة.",
+      "loading": "جارٍ التحميل…",
+      "approve": "اعتماد",
+      "reject": "رفض",
+      "commentLabel": "سبب الرفض",
+      "commentRequired": "يجب ذكر سبب للرفض.",
+      "submitted": "أُرسل في {date}",
+      "live": "الحالي",
+      "proposed": "المقترح",
+      "notSet": "غير محدد",
+      "noChanges": "هذه النسخة لا تغيّر شيئًا.",
+      "kind": {
+        "new": "محتوى جديد",
+        "edit": "تعديل"
+      },
+      "status": {
+        "PENDING": "بانتظار المراجعة",
+        "APPROVED": "معتمد",
+        "REJECTED": "مرفوض"
+      },
+      "versions": "النسخ",
+      "version": "النسخة {number}",
+      "superseded": "استُبدلت بتعديل أحدث",
+      "migrated": "اعتُمدت تلقائيًا عند تطبيق المراجعة الشرعية"
     }
   }
 }

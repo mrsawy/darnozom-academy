@@ -40,6 +40,7 @@ import {
   ROUTE_ORG_CATEGORIES,
   ROUTE_ORG_ALL_CATEGORIES,
   ROUTE_ORG_CONTENT,
+  ROUTE_ORG_SHARIA_REVIEW,
   ROUTE_ORG_CONTENT_BY_TYPE,
   ROUTE_ORG_COURSES,
   ROUTE_ORG_ENROLLMENTS,
@@ -173,6 +174,13 @@ export const data = {
           icon: IconPaperclip,
         },
       ],
+    },
+    {
+      titleKey: 'navMain.shariaReview',
+      url: ROUTE_ORG_SHARIA_REVIEW,
+      icon: IconShieldCheck,
+      key: 'sharia-review',
+      requiredRoles: [Roles.SHARIA_REVIEWER, Roles.MANAGER, Roles.OWNER],
     },
     { titleKey: 'navMain.users', url: ROUTE_ORG_USERS, icon: IconUsers, key: 'users' },
     {

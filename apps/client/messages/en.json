@@ -2347,7 +2347,8 @@
       "academicsPrograms": "Programs",
       "myGroups": "My groups",
       "myAvailability": "My availability",
-      "mySessions": "My sessions"
+      "mySessions": "My sessions",
+      "shariaReview": "Sharia review"
     },
     "navSecondary": {
       "getHelp": "Get Help",
@@ -4725,7 +4726,12 @@
     "reportNotSubmitted": "This session has no report yet.",
     "reportEditWindowClosed": "The report can only be edited within 24 hours of submitting it.",
     "reportInvalid": "The report needs one evaluation per active student, with every score from 1 to 5.",
-    "followUpNotFound": "Follow-up not found."
+    "followUpNotFound": "Follow-up not found.",
+    "shariaContentNotFound": "Content not found",
+    "shariaVersionNotFound": "Version not found",
+    "shariaVersionAlreadyReviewed": "This version has already been reviewed",
+    "shariaVersionNotPending": "This version is not pending review",
+    "shariaRejectCommentRequired": "A reason is required to reject"
   },
   "mutations": {
     "moduleCreated": "Module created successfully",
@@ -7094,6 +7100,36 @@
       "undecided": "Undecided",
       "save": "Save",
       "recorded": "Recorded"
+    }
+  },
+  "Sharia": {
+    "saved": "Saved",
+    "sharia": {
+      "title": "Sharia review",
+      "empty": "Nothing is waiting for review.",
+      "loading": "Loading…",
+      "approve": "Approve",
+      "reject": "Reject",
+      "commentLabel": "Reason for rejection",
+      "commentRequired": "A reason is required to reject.",
+      "submitted": "Submitted {date}",
+      "live": "Live",
+      "proposed": "Proposed",
+      "notSet": "Not set",
+      "noChanges": "This version changes nothing.",
+      "kind": {
+        "new": "New content",
+        "edit": "Edit"
+      },
+      "status": {
+        "PENDING": "Pending review",
+        "APPROVED": "Approved",
+        "REJECTED": "Rejected"
+      },
+      "versions": "Versions",
+      "version": "Version {number}",
+      "superseded": "Replaced by a newer edit",
+      "migrated": "Approved automatically when Sharia review was introduced"
     }
   }
 }
