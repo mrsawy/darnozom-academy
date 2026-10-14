@@ -163,8 +163,11 @@ export const useCreateGroup = () =>
     unwrap(await groupsApi.createGroup(v))
   );
 export const useUpdateGroup = () =>
-  useAcademicsMutation(async (v: { id: string; data: Partial<GroupFormValues> }) =>
-    unwrap(await groupsApi.updateGroup(v.id, v.data))
+  useAcademicsMutation(
+    async (v: {
+      id: string;
+      data: Partial<GroupFormValues> & { coordinatorId?: string | null; supervisorId?: string | null };
+    }) => unwrap(await groupsApi.updateGroup(v.id, v.data)),
   );
 export const useMarkGroupReady = () =>
   useAcademicsMutation(async (id: string) => unwrap(await groupsApi.markGroupReady(id)));

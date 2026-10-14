@@ -20,7 +20,10 @@ export async function getGroup(id: string) {
 export async function createGroup(data: GroupFormValues & { cohortId: string }) {
   return createAuthorizedNatsRequest<IGroup>('academics.groups.create', data);
 }
-export async function updateGroup(id: string, data: Partial<GroupFormValues>) {
+export async function updateGroup(
+  id: string,
+  data: Partial<GroupFormValues> & { coordinatorId?: string | null; supervisorId?: string | null },
+) {
   return createAuthorizedNatsRequest<IGroup>('academics.groups.update', { id, data });
 }
 export async function markGroupReady(id: string) {

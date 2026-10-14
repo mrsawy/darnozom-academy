@@ -38,7 +38,13 @@ export function GroupFormationScreen({ groupId }: { groupId: string }) {
   const cancelGroup = useCancelGroup();
   const setContentSent = useSetContentSent();
   const { data: staffPage } = useUsersByOrganization(withDefaults({ page: 1, limit: 100 }));
-  const staffCandidates = staffPage?.docs ?? [];
+  const staffCandidates = (staffPage?.docs ?? []).map((u) => ({
+    _id: u._id,
+    firstName: u.firstName,
+    lastName: u.lastName,
+    roleName: u.roleName as string,
+    additionalRoles: (u.additionalRoles ?? []) as string[],
+  }));
   const { data: groupTasks = [], isLoading: tasksLoading } = useGroupTasks(groupId);
 
   if (isLoading || !group) return <p className="p-4">{t('loading')}</p>;
