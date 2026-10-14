@@ -14,10 +14,12 @@ import { SubscriptionService } from './subscription/subscription.service';
 import { ReceiptUploadMethod } from './payment/methods/receipt-upload.method';
 import { OnlineGatewayMethod } from './payment/methods/online-gateway.method';
 import { AcademyFeeWebhookService } from './payment/academy-fee-webhook.service';
+import { FamilyPaymentService } from './payment/family-payment.service';
 import { FamilyPaymentMethodRegistry } from './payment/payment-method.registry';
 import { FAMILY_PAYMENT_METHODS } from './payment/payment-method.interface';
 import { PaymentModule } from '../payment/payment.module';
 import { NotificationModule } from '../notification/notification.module';
+import { FileModule } from '../file/file.module';
 
 @Module({
   imports: [
@@ -33,6 +35,7 @@ import { NotificationModule } from '../notification/notification.module';
     ]),
     forwardRef(() => PaymentModule),
     NotificationModule,
+    FileModule,
   ],
   providers: [
     FamilyService,
@@ -41,6 +44,7 @@ import { NotificationModule } from '../notification/notification.module';
     ReceiptUploadMethod,
     OnlineGatewayMethod,
     AcademyFeeWebhookService,
+    FamilyPaymentService,
     FamilyPaymentMethodRegistry,
     {
       provide: FAMILY_PAYMENT_METHODS,
@@ -58,6 +62,7 @@ import { NotificationModule } from '../notification/notification.module';
     ReceiptUploadMethod,
     OnlineGatewayMethod,
     AcademyFeeWebhookService,
+    FamilyPaymentService,
   ],
 })
 export class BillingModule {}

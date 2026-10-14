@@ -40,3 +40,22 @@ export class FamilyIdPayload {
 export class GroupIdPayload {
   @IsMongoId() groupId: string;
 }
+
+export class InitiatePaymentPayload {
+  @IsString() @MinLength(1) method: string;
+  @IsInt() @Min(1) amountMinor: number;
+  @IsEnum(Currency) currency: Currency;
+}
+
+export class AttachReceiptPayload {
+  @IsMongoId() paymentId: string;
+  @IsString() @MinLength(1) fileKey: string;
+}
+
+export class ReviewPaymentPayload {
+  @IsMongoId() paymentId: string;
+}
+
+export class RejectPaymentPayload extends ReviewPaymentPayload {
+  @IsString() @MinLength(1) reason: string;
+}
