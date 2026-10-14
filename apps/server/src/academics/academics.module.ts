@@ -50,6 +50,7 @@ import { PreStartTaskProcessor } from './task/task.processor';
 import { PreStartTaskScheduler } from './task/task.scheduler';
 import { PRE_START_TASK_QUEUE } from './task/task.queue';
 import { NotificationModule } from 'src/notification/notification.module';
+import { SupervisionEvaluation, SupervisionEvaluationSchema } from './supervision/entities/supervision-evaluation.entity';
 
 @Module({
   imports: [
@@ -64,6 +65,7 @@ import { NotificationModule } from 'src/notification/notification.module';
       { name: Session.name, schema: SessionSchema },
       { name: FollowUp.name, schema: FollowUpSchema },
       { name: Task.name, schema: TaskSchema },
+      { name: SupervisionEvaluation.name, schema: SupervisionEvaluationSchema },
     ]),
     BullModule.registerQueue({ name: SESSION_STATUS_QUEUE }),
     BullModule.registerQueue({ name: PRE_START_TASK_QUEUE }),
