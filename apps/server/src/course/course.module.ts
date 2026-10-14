@@ -45,6 +45,7 @@ import { SubscriptionModule } from 'src/subscription/subscription.module';
 import { AssignmentService } from './services/content/assignment/assignment.service';
 import { EnrollmentModule } from 'src/enrollment/enrollment.module';
 import { TranscriptionModule } from 'src/transcription/transcription.module';
+import { ContentVersionService } from './services/content/sharia/content-version.service';
 
 @Module({
   imports: [
@@ -102,6 +103,7 @@ import { TranscriptionModule } from 'src/transcription/transcription.module';
     ProjectService,
     LiveSessionService,
     AssignmentService,
+    ContentVersionService,
   ],
   exports: [
     MongooseModule,
