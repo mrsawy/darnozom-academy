@@ -4,6 +4,7 @@ import { AcademicsErrors, GroupStatus, Roles, SessionStatus } from '@darnozom/sh
 import { mockQuery } from '__test__/academics/mock-query';
 import { AcademicsActor } from '../common/actor';
 import { SessionCompletionService } from './session-completion.service';
+import { SESSION_COMPLETED_EVENT } from '../events/session.events';
 
 const ORG = new Types.ObjectId('64b0000000000000000000bb');
 const id = (n: number) => new Types.ObjectId(`64b0000000000000000000${String(n).padStart(2, '0')}`);
@@ -41,8 +42,9 @@ function setup(openSessions = 0) {
     activeStudentIds: jest.fn().mockResolvedValue([String(A), String(B)]),
     reload: jest.fn().mockResolvedValue({ reloaded: true }),
   };
-  const service = new SessionCompletionService(sessionModel as never, groupModel as never, followUpModel as never, state as never);
-  return { service, sessionModel, groupModel, followUpModel, state };
+  const events = { emit: jest.fn() };
+  const service = new SessionCompletionService(sessionModel as never, groupModel as never, followUpModel as never, state as never, events as never);
+  return { service, sessionModel, groupModel, followUpModel, state, events };
 }
 
 describe('SessionCompletionService.onClosed', () => {
@@ -68,7 +70,10 @@ describe('SessionCompletionService.onClosed', () => {
   it('completes the RUNNING group once no session is left open', async () => {
     const { service, sessionModel, groupModel } = setup(0);
     await service.onClosed(sessionDoc({ sequence: 5 }) as never, SessionStatus.COMPLETED);
-    expect(sessionModel.countDocuments).toHaveBeenCalledWith({ groupId: GROUP, status: { $nin: [SessionStatus.COMPLETED, SessionStatus.CANCELLED] } });
+    expect(sessionModel.countDocuments).toHaveBeenCalledWith({
+      groupId: GROUP,
+      status: { $nin: [SessionStatus.COMPLETED, SessionStatus.CANCELLED] },
+    });
     const [filter, update] = groupModel.updateOne.mock.calls[0];
     expect(filter).toEqual({ _id: GROUP, status: GroupStatus.RUNNING });
     expect(update.$set).toEqual({ status: GroupStatus.COMPLETED });
@@ -79,6 +84,20 @@ describe('SessionCompletionService.onClosed', () => {
     const { service, groupModel } = setup(1);
     await service.onClosed(sessionDoc({ sequence: 2 }) as never, SessionStatus.COMPLETED);
     expect(groupModel.updateOne).not.toHaveBeenCalled();
+  });
+
+  it('emits SESSION_COMPLETED_EVENT on COMPLETED and not on CANCELLED', async () => {
+    const { service, events } = setup(1);
+    await service.onClosed(sessionDoc() as never, SessionStatus.COMPLETED);
+    expect(events.emit).toHaveBeenCalledWith(SESSION_COMPLETED_EVENT, {
+      sessionId: String(SESSION),
+      groupId: String(GROUP),
+      organizationId: String(ORG),
+    });
+
+    events.emit.mockClear();
+    await service.onClosed(sessionDoc() as never, SessionStatus.CANCELLED);
+    expect(events.emit).not.toHaveBeenCalled();
   });
 });
 
@@ -93,7 +112,9 @@ describe('SessionCompletionService.cancel', () => {
 
   it('needs a reason', async () => {
     const { service, sessionModel } = setup();
-    await expect(service.cancel(actor, String(SESSION), '   ', new Date('2026-10-12T13:00:00Z'))).rejects.toThrow(new BadRequestException(AcademicsErrors.CANCEL_REASON_REQUIRED));
+    await expect(service.cancel(actor, String(SESSION), '   ', new Date('2026-10-12T13:00:00Z'))).rejects.toThrow(
+      new BadRequestException(AcademicsErrors.CANCEL_REASON_REQUIRED)
+    );
     expect(sessionModel.updateOne).not.toHaveBeenCalled();
   });
 

@@ -4,6 +4,7 @@ import { User, UserSchema } from '../user/entities/user.entity';
 import { Organization, OrganizationSchema } from '../organization/entities/organization.entity';
 import { Group, GroupSchema } from '../academics/group/entities/group.entity';
 import { Cohort, CohortSchema } from '../academics/cohort/entities/cohort.entity';
+import { Session, SessionSchema } from '../academics/session/entities/session.entity';
 import { BillingSubscription, BillingSubscriptionSchema } from './entities/subscription.entity';
 import { LedgerEntry, LedgerEntrySchema } from './entities/ledger-entry.entity';
 import { FamilyPayment, FamilyPaymentSchema } from './entities/payment.entity';
@@ -18,6 +19,9 @@ import { FamilyPaymentService } from './payment/family-payment.service';
 import { FamilyPaymentStatusService } from './status/family-payment-status.service';
 import { FamilyPaymentMethodRegistry } from './payment/payment-method.registry';
 import { FAMILY_PAYMENT_METHODS } from './payment/payment-method.interface';
+import { MonthlyChargesService } from './jobs/monthly-charges.service';
+import { SessionChargesService } from './jobs/session-charges.service';
+import { SessionCompletedBillingListener } from './events/session-completed.listener';
 import { PaymentModule } from '../payment/payment.module';
 import { NotificationModule } from '../notification/notification.module';
 import { FileModule } from '../file/file.module';
@@ -29,6 +33,7 @@ import { FileModule } from '../file/file.module';
       { name: Organization.name, schema: OrganizationSchema },
       { name: Group.name, schema: GroupSchema },
       { name: Cohort.name, schema: CohortSchema },
+      { name: Session.name, schema: SessionSchema },
       { name: BillingSubscription.name, schema: BillingSubscriptionSchema },
       { name: LedgerEntry.name, schema: LedgerEntrySchema },
       { name: FamilyPayment.name, schema: FamilyPaymentSchema },
@@ -48,6 +53,9 @@ import { FileModule } from '../file/file.module';
     FamilyPaymentService,
     FamilyPaymentStatusService,
     FamilyPaymentMethodRegistry,
+    MonthlyChargesService,
+    SessionChargesService,
+    SessionCompletedBillingListener,
     {
       provide: FAMILY_PAYMENT_METHODS,
       useFactory: (receipt: ReceiptUploadMethod, gateway: OnlineGatewayMethod) => [receipt, gateway],
@@ -66,6 +74,8 @@ import { FileModule } from '../file/file.module';
     AcademyFeeWebhookService,
     FamilyPaymentService,
     FamilyPaymentStatusService,
+    MonthlyChargesService,
+    SessionChargesService,
   ],
 })
 export class BillingModule {}

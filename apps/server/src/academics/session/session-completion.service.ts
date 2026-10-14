@@ -1,6 +1,7 @@
 import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { AcademicsErrors, GroupStatus, SessionStatus } from '@darnozom/shared-types';
 import { AcademicsActor } from '../common/actor';
 import { effectiveSessionStatus } from '../domain/session-rules';
@@ -9,6 +10,7 @@ import { Group } from '../group/entities/group.entity';
 import { Session } from './entities/session.entity';
 import { SessionStateService } from './session-state.service';
 import { SessionLean, SessionView } from './session.types';
+import { SESSION_COMPLETED_EVENT } from '../events/session.events';
 
 const oid = (id: string | Types.ObjectId) => new Types.ObjectId(String(id));
 
@@ -18,12 +20,20 @@ export class SessionCompletionService {
     @InjectModel(Session.name) private readonly sessionModel: Model<Session>,
     @InjectModel(Group.name) private readonly groupModel: Model<Group>,
     @InjectModel(FollowUp.name) private readonly followUpModel: Model<FollowUp>,
-    private readonly state: SessionStateService
+    private readonly state: SessionStateService,
+    private readonly events: EventEmitter2
   ) {}
 
   /** Runs after a session became COMPLETED (report submitted) or CANCELLED. */
   async onClosed(session: SessionLean, closedAs: SessionStatus.COMPLETED | SessionStatus.CANCELLED): Promise<void> {
     if (closedAs === SessionStatus.COMPLETED && session.sequence === 1) await this.createFollowUps(session);
+    if (closedAs === SessionStatus.COMPLETED) {
+      this.events.emit(SESSION_COMPLETED_EVENT, {
+        sessionId: String(session._id),
+        groupId: String(session.groupId),
+        organizationId: String(session.organizationId),
+      });
+    }
     await this.completeGroupIfDone(session.groupId);
   }
 
