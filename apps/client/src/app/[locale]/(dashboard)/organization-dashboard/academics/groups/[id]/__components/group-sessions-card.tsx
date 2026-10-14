@@ -19,6 +19,7 @@ import { useCancelSession, useSessions } from '@/lib/hooks/academics/use-academi
 import type { IGroupDetail } from '@/lib/types/academics/academics';
 import { formatSessionTime } from '@/lib/utils/academics/session-time';
 import { CancelSessionDialog } from './cancel-session-dialog';
+import { EvaluateSessionDialog } from './evaluate-session-dialog';
 
 export function GroupSessionsCard({
   group,
@@ -72,6 +73,10 @@ export function GroupSessionsCard({
                           pending={cancelSession.isPending}
                           onConfirm={(reason) => cancelSession.mutate({ id: session._id, reason })}
                         />
+                      ) : null}
+                      {session.status === SessionStatus.REPORT_PENDING ||
+                      session.status === SessionStatus.COMPLETED ? (
+                        <EvaluateSessionDialog session={session} />
                       ) : null}
                     </div>
                   </TableCell>

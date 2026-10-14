@@ -62,6 +62,7 @@ import {
   ROUTE_ORG_MY_GROUPS,
   ROUTE_ORG_MY_SESSIONS,
   ROUTE_ORG_MY_TASKS,
+  ROUTE_ORG_MY_EVALUATIONS,
 } from '@/lib/data/constants/routes.constants';
 import { CourseContentType, ORG_WIDE_GROUP_READER_ROLES, Roles } from '@darnozom/shared-types';
 
@@ -123,6 +124,13 @@ export const data = {
       icon: IconListCheck,
       key: 'my-tasks',
       requiredRoles: [Roles.COORDINATOR, Roles.SUPERVISOR, Roles.MANAGER, Roles.OWNER],
+    },
+    {
+      titleKey: 'navMain.myEvaluations',
+      url: ROUTE_ORG_MY_EVALUATIONS,
+      icon: IconChecklist,
+      key: 'my-evaluations',
+      requiredRoles: [Roles.INSTRUCTOR, Roles.SUPERVISOR, Roles.MANAGER, Roles.OWNER],
     },
     { titleKey: 'navMain.courses', url: ROUTE_ORG_COURSES, icon: IconDashboard, key: 'courses' },
     {

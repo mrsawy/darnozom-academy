@@ -160,5 +160,6 @@ export const ROUTE_ORG_MY_GROUPS = '/organization-dashboard/my-groups';
 export const ROUTE_STUDENT_MY_GROUPS = '/student-dashboard/my-groups';
 export const ROUTE_ORG_MY_SESSIONS = '/organization-dashboard/my-sessions';
 export const ROUTE_ORG_MY_TASKS = '/organization-dashboard/my-tasks';
+export const ROUTE_ORG_MY_EVALUATIONS = '/organization-dashboard/my-evaluations';
 export const ROUTE_ORG_SESSION = (id: string) => `/organization-dashboard/sessions/${id}`;
 export const ROUTE_STUDENT_MY_SESSIONS = '/student-dashboard/my-sessions';

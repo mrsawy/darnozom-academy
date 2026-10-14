@@ -2348,6 +2348,8 @@
       "myGroups": "My groups",
       "myAvailability": "My availability",
       "mySessions": "My sessions",
+      "myTasks": "My tasks",
+      "myEvaluations": "My evaluations",
       "shariaReview": "Sharia review"
     },
     "navSecondary": {
