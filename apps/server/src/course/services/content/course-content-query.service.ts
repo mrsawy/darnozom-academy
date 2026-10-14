@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { ClientSession, Model, PaginateModel } from 'mongoose';
 import { FileService } from 'src/file/file.service';
-import { APPROVED_STATUSES } from 'src/utils/approval.utils';
+import { STUDENT_VISIBLE_CONTENT_FILTER } from './sharia/student-visible-filter';
 import { CourseContentDocument } from 'src/utils/types/content.interface';
 import { CourseContent } from '../../entities/course-content.entity';
 import { CourseModuleEntity } from '../../entities/course-module.entity';
@@ -102,7 +102,7 @@ export class CourseContentQueryService {
       ...NOT_DELETED_CONTENT_FILTER,
     };
     if (requireApproved) {
-      matchStage.approvalStatus = { $in: APPROVED_STATUSES };
+      Object.assign(matchStage, STUDENT_VISIBLE_CONTENT_FILTER);
     }
 
     const pipeline: mongoose.PipelineStage[] = [

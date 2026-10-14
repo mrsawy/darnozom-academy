@@ -99,7 +99,7 @@ describe('ShariaReviewService.approve — content that was never approved', () =
     const neverApproved = contentDoc({ shariaStatus: ShariaStatus.PENDING, currentVersion: 3, pendingVersion: null });
     const { service, notifications } = makeService(version(), neverApproved);
     await service.approve(String(REVIEWER), String(ORG), String(CONTENT), 3);
-    expect(notifications.notifyStudentsIfVisible).toHaveBeenCalledWith(String(CONTENT), undefined);
+    expect(notifications.notifyStudentsIfVisible).toHaveBeenCalledWith(String(CONTENT));
   });
 });
 
