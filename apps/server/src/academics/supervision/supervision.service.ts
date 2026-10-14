@@ -7,7 +7,7 @@ import { Group } from '../group/entities/group.entity';
 import { Session } from '../session/entities/session.entity';
 import { SupervisionEvaluation } from './entities/supervision-evaluation.entity';
 import { SupervisionEvaluationLean } from './supervision.types';
-import { areScoresValid, canEvaluate, isHeldSession } from './supervision-rules';
+import { areScoresValid, canEvaluate, isHeldSession, isWithinEditWindow } from './supervision-rules';
 import { SupervisionScoresDto } from './dto/supervision.dto';
 
 const oid = (id: string | Types.ObjectId) => new Types.ObjectId(String(id));
@@ -77,5 +77,38 @@ export class SupervisionService {
       }
       throw error;
     }
+  }
+
+  /**
+   * The author revises their own evaluation inside the edit window. Nobody else may, not even a
+   * manager: an evaluation is one named person's judgment, and a second hand editing it silently
+   * would make the record a lie.
+   */
+  async update(actor: AcademicsActor, id: string, dto: SupervisionScoresDto, now: Date = new Date()): Promise<SupervisionEvaluationLean> {
+    const evaluation = await this.evaluationModel
+      .findOne({ _id: oid(id), organizationId: oid(actor.organizationId) })
+      .lean<SupervisionEvaluationLean | null>()
+      .exec();
+    if (!evaluation) throw new NotFoundException(AcademicsErrors.EVALUATION_NOT_FOUND);
+
+    if (String(evaluation.supervisorId) !== actor._id) throw new ForbiddenException(AcademicsErrors.NOT_GROUP_SUPERVISOR);
+    if (!isWithinEditWindow(evaluation.createdAt, now)) {
+      throw new ConflictException(AcademicsErrors.EVALUATION_EDIT_WINDOW_CLOSED);
+    }
+    if (!areScoresValid(dto as unknown as Record<string, unknown>)) {
+      throw new BadRequestException(AcademicsErrors.EVALUATION_INVALID);
+    }
+
+    // Only the scores and the notes. The session, group, teacher and author are fixed for ever.
+    const set = {
+      commitment: dto.commitment,
+      teaching: dto.teaching,
+      pedagogy: dto.pedagogy,
+      contentAdherence: dto.contentAdherence,
+      technicalQuality: dto.technicalQuality,
+      notes: dto.notes ?? {},
+    };
+    await this.evaluationModel.updateOne({ _id: evaluation._id }, { $set: set }).exec();
+    return { ...evaluation, ...set };
   }
 }
