@@ -7,12 +7,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/car
 import {
   useCancelGroup,
   useGroup,
+  useGroupTasks,
   useMarkGroupReady,
   useSetContentSent,
   useStartGroup,
   useUpdateGroup,
 } from '@/lib/hooks/academics/use-academics.hook';
-import { useAuthUser } from '@/lib/hooks/user/use-user.hook';
+import { useAuthUser, useUsersByOrganization } from '@/lib/hooks/user/use-user.hook';
+import { withDefaults } from '@/lib/types/Paginated';
 import { groupScreenAccess } from '@/lib/utils/academics/group-access';
 import { safeHref } from '@/lib/utils/academics/safe-href';
 import { GroupForm } from '../../__components/group-form';
@@ -20,7 +22,9 @@ import { StatusBadge } from '../../__components/status-badge';
 import { CancelGroupDialog } from './cancel-group-dialog';
 import { FollowUpsCard } from './follow-ups-card';
 import { GroupSessionsCard } from './group-sessions-card';
+import { OpenTasksCard } from './open-tasks-card';
 import { ReadinessPanel } from './readiness-panel';
+import { StaffCard } from './staff-card';
 import { StudentsCard } from './students-card';
 import { TeacherCard } from './teacher-card';
 
@@ -33,6 +37,9 @@ export function GroupFormationScreen({ groupId }: { groupId: string }) {
   const startGroup = useStartGroup();
   const cancelGroup = useCancelGroup();
   const setContentSent = useSetContentSent();
+  const { data: staffPage } = useUsersByOrganization(withDefaults({ page: 1, limit: 100 }));
+  const staffCandidates = staffPage?.docs ?? [];
+  const { data: groupTasks = [], isLoading: tasksLoading } = useGroupTasks(groupId);
 
   if (isLoading || !group) return <p className="p-4">{t('loading')}</p>;
   const { locked, paymentLocked, scheduleLocked, canStart, canCancel, canManage } =
@@ -103,6 +110,12 @@ export function GroupFormationScreen({ groupId }: { groupId: string }) {
             />
           )}
           <TeacherCard group={group} disabled={locked || scheduleLocked} />
+          <StaffCard
+            group={group}
+            candidates={staffCandidates}
+            onChange={(patch) => updateGroup.mutate({ id: group._id, data: patch })}
+          />
+          <OpenTasksCard tasks={groupTasks} isLoading={tasksLoading} />
           <Card>
             <CardHeader>
               <CardTitle>{t('form.whatsappGroupLink')}</CardTitle>
