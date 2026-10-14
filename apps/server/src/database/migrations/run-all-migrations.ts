@@ -29,6 +29,7 @@ const MIGRATION_FILES = [
   'migrate-course-school-type-ids.ts',
   'migrate-private-session-instants.ts',
   'migrate-private-session-soft-delete.ts',
+  'migrate-content-sharia-approved.ts',
 ] as const;
 
 function forwardArgs(): string[] {

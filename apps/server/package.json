@@ -36,6 +36,7 @@
     "migrate:user-unique-if-not-deleted": "pnpm exec tsx -r tsconfig-paths/register src/database/migrations/migrate-user-unique-if-not-deleted.ts",
     "migrate:enrollment-unique-if-not-deleted": "pnpm exec tsx -r tsconfig-paths/register src/database/migrations/migrate-enrollment-unique-if-not-deleted.ts",
     "migrate:grade-schooltype-unique-if-not-deleted": "pnpm exec tsx -r tsconfig-paths/register src/database/migrations/migrate-grade-schooltype-unique-if-not-deleted.ts",
+    "migrate:content-sharia": "pnpm exec tsx -r tsconfig-paths/register src/database/migrations/migrate-content-sharia-approved.ts",
     "migrate:all": "pnpm exec tsx -r tsconfig-paths/register src/database/migrations/run-all-migrations.ts",
     "tsc": "tsc"
   },
