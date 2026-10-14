@@ -44,8 +44,10 @@ describe('ROLE_SEED_DEFINITIONS', () => {
 
   it('keeps SUPERVISOR read-only except for tasks, and ACCOUNTANT on payment status', () => {
     expect(has(Roles.SUPERVISOR, Actions.READ, Subjects.GROUP)).toBe(true);
-    // Supervisors receive escalated tasks, so they need UPDATE on TASK (SP3); everything else stays READ.
-    const nonReadNonTask = rulesOf(Roles.SUPERVISOR).filter((p) => p.action !== Actions.READ && p.subject !== Subjects.TASK);
+    // Supervisors receive escalated tasks (SP3) and manage evaluations (SP5); everything else stays READ.
+    const nonReadNonTask = rulesOf(Roles.SUPERVISOR).filter(
+      (p) => p.action !== Actions.READ && p.subject !== Subjects.TASK && p.subject !== Subjects.SESSION_EVALUATION
+    );
     expect(nonReadNonTask).toHaveLength(0);
     expect(has(Roles.ACCOUNTANT, Actions.MANAGE, Subjects.GROUP_PAYMENT_STATUS)).toBe(true);
     expect(has(Roles.ACCOUNTANT, Actions.READ, Subjects.GROUP)).toBe(true);
@@ -120,5 +122,26 @@ describe('ROLE_SEED_DEFINITIONS', () => {
       expect({ role, update: has(role, Actions.UPDATE, Subjects.SESSION) }).toEqual({ role, update: false });
     }
     expect(has(Roles.CONTENT_OFFICER, Actions.READ, Subjects.SESSION)).toBe(false);
+  });
+
+  it('lets the supervisor, the manager and the owner manage session evaluations', () => {
+    for (const role of [Roles.SUPERVISOR, Roles.MANAGER]) {
+      const permissions = ROLE_SEED_DEFINITIONS.find((seed) => seed.name === role)?.permissions ?? [];
+      expect(permissions).toContainEqual({ action: Actions.MANAGE, subject: Subjects.SESSION_EVALUATION });
+    }
+  });
+
+  it('lets a teacher read evaluations but never write one', () => {
+    const permissions = ROLE_SEED_DEFINITIONS.find((seed) => seed.name === Roles.INSTRUCTOR)?.permissions ?? [];
+    expect(permissions).toContainEqual({ action: Actions.READ, subject: Subjects.SESSION_EVALUATION });
+    expect(permissions).not.toContainEqual({ action: Actions.MANAGE, subject: Subjects.SESSION_EVALUATION });
+    expect(permissions).not.toContainEqual({ action: Actions.CREATE, subject: Subjects.SESSION_EVALUATION });
+  });
+
+  it('keeps evaluations away from the accountant, the parent and the student', () => {
+    for (const role of [Roles.ACCOUNTANT, Roles.PARENT, Roles.STUDENT, Roles.CONTENT_OFFICER, Roles.SHARIA_REVIEWER]) {
+      const permissions = ROLE_SEED_DEFINITIONS.find((seed) => seed.name === role)?.permissions ?? [];
+      expect(permissions.some((rule) => rule.subject === Subjects.SESSION_EVALUATION)).toBe(false);
+    }
   });
 });

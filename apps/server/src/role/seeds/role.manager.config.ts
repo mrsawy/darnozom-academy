@@ -12,6 +12,7 @@ export const MANAGER_PERMISSIONS: RolePermissionRule[] = [
   { action: Actions.READ, subject: Subjects.TASK },
   { action: Actions.UPDATE, subject: Subjects.TASK },
   { action: Actions.READ, subject: Subjects.SHARIA_REVIEW },
+  { action: Actions.MANAGE, subject: Subjects.SESSION_EVALUATION },
 ];
 
 export const MANAGER_SEED: RoleSeedEntry = { name: Roles.MANAGER, permissions: MANAGER_PERMISSIONS };

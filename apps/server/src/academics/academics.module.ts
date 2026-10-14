@@ -52,6 +52,7 @@ import { PRE_START_TASK_QUEUE } from './task/task.queue';
 import { NotificationModule } from 'src/notification/notification.module';
 import { SupervisionEvaluation, SupervisionEvaluationSchema } from './supervision/entities/supervision-evaluation.entity';
 import { SupervisionService } from './supervision/supervision.service';
+import { SupervisionControllerMessage } from './supervision/supervision.controller.message';
 
 @Module({
   imports: [
@@ -83,6 +84,7 @@ import { SupervisionService } from './supervision/supervision.service';
     GroupControllerMessage,
     SessionControllerMessage,
     TaskControllerMessage,
+    SupervisionControllerMessage,
   ],
   providers: [
     ProgramService,
