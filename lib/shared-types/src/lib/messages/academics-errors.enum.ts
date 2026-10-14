@@ -50,6 +50,12 @@ export enum AcademicsErrors {
   TASK_NOT_ASSIGNED_TO_YOU = 'taskNotAssignedToYou',
   COORDINATOR_NOT_FOUND_IN_ORGANIZATION = 'coordinatorNotFoundInOrganization',
   SUPERVISOR_NOT_FOUND_IN_ORGANIZATION = 'supervisorNotFoundInOrganization',
+  EVALUATION_NOT_FOUND = 'evaluationNotFound',
+  NOT_GROUP_SUPERVISOR = 'notGroupSupervisor',
+  SESSION_NOT_HELD = 'sessionNotHeld',
+  EVALUATION_ALREADY_EXISTS = 'evaluationAlreadyExists',
+  EVALUATION_INVALID = 'evaluationInvalid',
+  EVALUATION_EDIT_WINDOW_CLOSED = 'evaluationEditWindowClosed',
 }
 
 export enum AcademicsSuccessMessages {

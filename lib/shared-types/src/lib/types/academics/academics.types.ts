@@ -110,3 +110,24 @@ export type TaskMilestoneDay = (typeof TASK_MILESTONE_DAYS)[number];
 export const TASK_ESCALATION_HOURS = 24;
 /** Level 2 is the manager queue; nothing escalates past it. */
 export const TASK_MAX_ESCALATION_LEVEL = 2;
+
+/** The five criteria the concept names for supervisor evaluation of a held session. */
+export enum SupervisionCriterion {
+  COMMITMENT = 'commitment',
+  TEACHING = 'teaching',
+  PEDAGOGY = 'pedagogy',
+  CONTENT_ADHERENCE = 'contentAdherence',
+  TECHNICAL_QUALITY = 'technicalQuality',
+}
+
+/** In the concept's own order. The form renders them in this order too. */
+export const SUPERVISION_CRITERIA = [
+  SupervisionCriterion.COMMITMENT,
+  SupervisionCriterion.TEACHING,
+  SupervisionCriterion.PEDAGOGY,
+  SupervisionCriterion.CONTENT_ADHERENCE,
+  SupervisionCriterion.TECHNICAL_QUALITY,
+] as const;
+
+/** An evaluation stays editable by its author for this many hours after it was written. */
+export const SUPERVISION_EDIT_WINDOW_HOURS = 7 * 24;
