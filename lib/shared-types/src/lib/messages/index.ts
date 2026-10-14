@@ -30,6 +30,7 @@ export * from './school-type-errors.enum';
 export * from './admin-review-errors.enum';
 export * from './payment-errors.enum';
 export * from './academics-errors.enum';
+export * from './sharia-errors.enum';
 
 import { CommonErrors } from './common-errors.enum';
 import { CategoryErrors } from './category-errors.enum';
