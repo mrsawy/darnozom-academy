@@ -16,6 +16,7 @@ import { Level } from '../level/entities/level.entity';
 import { CreateGroupDto, FindGroupsPayload, UpdateGroupDto } from './dto/group.dto';
 import { Group } from './entities/group.entity';
 import { GroupStateService } from './group-state.service';
+import { buildGroupFilter } from './group-filter';
 import { assertStaffAssignable } from './group-staff';
 import { GroupTeacherService } from './group-teacher.service';
 import { GroupDetailView, GroupLean, GroupView } from './group.types';
@@ -95,7 +96,7 @@ export class GroupService {
   async findAll(actor: AcademicsActor, query: FindGroupsPayload): Promise<GroupView[]> {
     const resolved = await this.resolveScope(actor, query.childId);
     if (!resolved) return [];
-    const requested: FilterQuery<Group> = {};
+    const requested: FilterQuery<Group> = { ...buildGroupFilter(query) };
     if (query.cohortId) requested.cohortId = oid(query.cohortId);
     if (query.status) requested.status = query.status;
     if (query.teacherId) requested.teacherId = oid(query.teacherId);

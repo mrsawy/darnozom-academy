@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { GroupStatus } from '@darnozom/shared-types';
 import { Link } from '@/i18n/navigation';
+import { Checkbox } from '@/components/atoms/checkbox';
 import {
   Select,
   SelectContent,
@@ -30,15 +31,21 @@ export function GroupsManager() {
   const t = useTranslations('Academics');
   const cohortId = useSearchParams().get('cohortId') ?? undefined;
   const [status, setStatus] = useState<string>(ALL);
+  const [atRisk, setAtRisk] = useState(false);
   const { data: groups = [], isLoading } = useGroups({
     cohortId,
     status: status === ALL ? undefined : (status as GroupStatus),
+    atRisk: atRisk || undefined,
   });
 
   return (
     <div className="space-y-4 p-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-semibold">{t('groups.title')}</h1>
+        <label className="flex items-center gap-2 text-sm">
+          <Checkbox checked={atRisk} onCheckedChange={(value) => setAtRisk(value === true)} />
+          {t('tasks.atRisk')}
+        </label>
         <Select value={status} onValueChange={setStatus}>
           <SelectTrigger className="w-48" aria-label={t('groups.status')}>
             <SelectValue />

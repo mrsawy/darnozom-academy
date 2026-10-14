@@ -171,6 +171,10 @@ export class FindGroupsPayload {
   @IsOptional()
   @IsMongoId()
   childId?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  atRisk?: boolean;
 }
 
 export class CancelGroupPayload {
