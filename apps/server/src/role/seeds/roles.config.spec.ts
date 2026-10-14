@@ -58,10 +58,31 @@ describe('ROLE_SEED_DEFINITIONS', () => {
     expect(has(Roles.STUDENT, Actions.READ, Subjects.GROUP)).toBe(true);
   });
 
-  it('gives CONTENT_OFFICER, SHARIA_REVIEWER and HR no permissions yet', () => {
-    expect(rulesOf(Roles.CONTENT_OFFICER)).toEqual([]);
-    expect(rulesOf(Roles.SHARIA_REVIEWER)).toEqual([]);
+  it('gives HR no permissions yet', () => {
     expect(rulesOf(Roles.HR)).toEqual([]);
+  });
+
+  it('lets the Sharia reviewer manage reviews and read content, and nothing financial', () => {
+    const permissions = ROLE_SEED_DEFINITIONS.find((seed) => seed.name === Roles.SHARIA_REVIEWER)?.permissions ?? [];
+    expect(permissions).toContainEqual({ action: Actions.MANAGE, subject: Subjects.SHARIA_REVIEW });
+    expect(permissions).toContainEqual({ action: Actions.READ, subject: Subjects.CONTENT });
+    for (const financial of [Subjects.PAYMENT, Subjects.WALLET, Subjects.PLAN]) {
+      expect(permissions.some((rule) => rule.subject === financial)).toBe(false);
+    }
+  });
+
+  it('lets the content officer manage content and modules but not review it', () => {
+    const permissions = ROLE_SEED_DEFINITIONS.find((seed) => seed.name === Roles.CONTENT_OFFICER)?.permissions ?? [];
+    expect(permissions).toContainEqual({ action: Actions.MANAGE, subject: Subjects.CONTENT });
+    expect(permissions).toContainEqual({ action: Actions.MANAGE, subject: Subjects.MODULE });
+    expect(permissions).toContainEqual({ action: Actions.READ, subject: Subjects.COURSE });
+    expect(permissions.some((rule) => rule.subject === Subjects.SHARIA_REVIEW)).toBe(false);
+  });
+
+  it('lets the manager watch the review queue without approving anything', () => {
+    const permissions = ROLE_SEED_DEFINITIONS.find((seed) => seed.name === Roles.MANAGER)?.permissions ?? [];
+    expect(permissions).toContainEqual({ action: Actions.READ, subject: Subjects.SHARIA_REVIEW });
+    expect(permissions).not.toContainEqual({ action: Actions.MANAGE, subject: Subjects.SHARIA_REVIEW });
   });
 
   it.each([

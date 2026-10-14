@@ -33,6 +33,7 @@ import { LiveSessionService } from './services/content/live-session/live-session
 
 import { CourseControllerMessage } from './controller/message/course.controller.message';
 import { ModuleControllerMessage } from './controller/message/module.controller.message';
+import { ShariaControllerMessage } from './controller/message/sharia.controller.message';
 import { CourseControllerHttp } from './controller/http/course.controller.http';
 import { ContentControllerHttp } from './controller/http/content.controller.http';
 import { ModuleControllerHttp } from './controller/http/module.controller.http';
@@ -92,6 +93,7 @@ import { ShariaFileCleanupService } from './services/content/sharia/sharia-file-
     CourseControllerMessage,
     ContentControllerMessage,
     ModuleControllerMessage,
+    ShariaControllerMessage,
   ],
   providers: [
     CourseService,
