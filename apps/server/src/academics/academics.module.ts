@@ -51,6 +51,7 @@ import { PreStartTaskScheduler } from './task/task.scheduler';
 import { PRE_START_TASK_QUEUE } from './task/task.queue';
 import { NotificationModule } from 'src/notification/notification.module';
 import { SupervisionEvaluation, SupervisionEvaluationSchema } from './supervision/entities/supervision-evaluation.entity';
+import { SupervisionService } from './supervision/supervision.service';
 
 @Module({
   imports: [
@@ -110,6 +111,7 @@ import { SupervisionEvaluation, SupervisionEvaluationSchema } from './supervisio
     PreStartTaskProcessor,
     PreStartTaskScheduler,
     TaskService,
+    SupervisionService,
   ],
 })
 export class AcademicsModule {}
