@@ -31,6 +31,7 @@ export * from './admin-review-errors.enum';
 export * from './payment-errors.enum';
 export * from './academics-errors.enum';
 export * from './sharia-errors.enum';
+export * from './billing-errors.enum';
 
 import { CommonErrors } from './common-errors.enum';
 import { CategoryErrors } from './category-errors.enum';
@@ -59,6 +60,8 @@ import { SchoolTypeErrors, SchoolTypeSuccessMessages } from './school-type-error
 import { AdminReviewErrors, AdminReviewSuccessMessages } from './admin-review-errors.enum';
 import { PaymentErrors } from './payment-errors.enum';
 import { AcademicsErrors, AcademicsSuccessMessages } from './academics-errors.enum';
+import { ShariaErrors } from './sharia-errors.enum';
+import { BillingErrors } from './billing-errors.enum';
 
 export const ALL_ERROR_KEYS: readonly string[] = [
   ...Object.values(CommonErrors),
@@ -101,6 +104,8 @@ export const ALL_ERROR_KEYS: readonly string[] = [
   ...Object.values(PaymentErrors),
   ...Object.values(AcademicsErrors),
   ...Object.values(AcademicsSuccessMessages),
+  ...Object.values(ShariaErrors),
+  ...Object.values(BillingErrors),
 ] as const;
 
 export const ALL_ERROR_KEYS_SET = new Set(ALL_ERROR_KEYS);
