@@ -94,6 +94,40 @@ export class ShariaReviewService {
     return this.versionService.listForContent(organizationId, contentId);
   }
 
+  /**
+   * Approves a version. For a held-back edit the stored change-set is replayed through
+   * `CourseContentService.update`, so the platform `applyUpdateWithApproval` path, the storage
+   * accounting, the file cleanup and the transcription re-enqueue all behave exactly as they do
+   * for a normal edit. Nothing here writes `approvalStatus` itself.
+   */
+  async approve(reviewerId: string, organizationId: string, contentId: string, version: number): Promise<void> {
+    const { versionDoc, content } = await this.loadPending(organizationId, contentId, version);
+
+    const isHeldEdit = content.shariaStatus === ShariaStatus.APPROVED;
+    // A held edit is only approvable while it is still the one the content points at. If a newer
+    // edit arrived, this one was superseded and approving it would overwrite the newer values.
+    if (isHeldEdit && content.pendingVersion !== versionDoc.version) {
+      throw new ConflictException(ShariaErrors.VERSION_NOT_PENDING);
+    }
+
+    // Claim the review before touching the content, so a lost race changes nothing.
+    const won = await this.versionService.markReviewed(versionDoc._id, ShariaStatus.APPROVED, reviewerId, null);
+    if (!won) throw new ConflictException(ShariaErrors.VERSION_ALREADY_REVIEWED);
+
+    if (isHeldEdit) {
+      await this.contentService.update(String(content._id), versionDoc.changes as never, { shariaBypass: true });
+    }
+
+    await this.contentModel
+      .updateOne({ _id: content._id }, { $set: { shariaStatus: ShariaStatus.APPROVED, currentVersion: versionDoc.version, pendingVersion: null } })
+      .exec();
+
+    if (!isHeldEdit) {
+      // The replay already fires this from inside update; for a first approval nothing else would.
+      await this.notifications.notifyStudentsIfVisible(String(content._id));
+    }
+  }
+
   /** Rejects a version. A comment is required: the author needs to know what to change. */
   async reject(reviewerId: string, organizationId: string, contentId: string, version: number, comment: string): Promise<void> {
     const trimmed = comment?.trim();
