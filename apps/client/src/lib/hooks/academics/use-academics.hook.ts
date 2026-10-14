@@ -19,15 +19,18 @@ import * as availabilityApi from '@/lib/actions/academics/teacher-availability.a
 import * as sessionsApi from '@/lib/actions/academics/sessions.action';
 import * as followUpsApi from '@/lib/actions/academics/follow-ups.action';
 import * as tasksApi from '@/lib/actions/academics/tasks.action';
+import * as supervisionApi from '@/lib/actions/academics/supervision.action';
 import { setAdditionalRoles } from '@/lib/actions/academics/additional-roles.action';
 import type {
   AttendanceEntry,
+  EvaluationQuery,
   GroupFormValues,
   GroupQuery,
   ITask,
   ITasks,
   ReportValues,
   SessionQuery,
+  SupervisionScores,
   TaskQuery,
 } from '@/lib/types/academics/academics';
 
@@ -50,6 +53,8 @@ export const academicsKeys = {
   followUps: (groupId: string) => [ROOT, 'follow-ups', groupId] as const,
   myTasks: (query: TaskQuery) => [ROOT, 'my-tasks', query] as const,
   groupTasks: (groupId: string) => [ROOT, 'group-tasks', groupId] as const,
+  evaluations: (query: EvaluationQuery) => [ROOT, 'evaluations', query] as const,
+  sessionEvaluations: (sessionId: string) => [ROOT, 'session-evaluations', sessionId] as const,
 };
 
 export const usePrograms = () =>
@@ -166,8 +171,11 @@ export const useUpdateGroup = () =>
   useAcademicsMutation(
     async (v: {
       id: string;
-      data: Partial<GroupFormValues> & { coordinatorId?: string | null; supervisorId?: string | null };
-    }) => unwrap(await groupsApi.updateGroup(v.id, v.data)),
+      data: Partial<GroupFormValues> & {
+        coordinatorId?: string | null;
+        supervisorId?: string | null;
+      };
+    }) => unwrap(await groupsApi.updateGroup(v.id, v.data))
   );
 export const useMarkGroupReady = () =>
   useAcademicsMutation(async (id: string) => unwrap(await groupsApi.markGroupReady(id)));
@@ -271,4 +279,28 @@ export const useGroupTasks = (groupId: string, enabled = true) =>
 export const useMarkTaskDone = () =>
   useAcademicsMutation(async (id: string): Promise<ITask> =>
     unwrap(await tasksApi.markTaskDone(id))
+  );
+
+export const useEvaluations = (query: EvaluationQuery, enabled = true) =>
+  useQuery({
+    queryKey: academicsKeys.evaluations(query),
+    queryFn: async () => unwrap(await supervisionApi.getEvaluations(query)),
+    enabled,
+  });
+
+export const useSessionEvaluations = (sessionId: string, enabled = true) =>
+  useQuery({
+    queryKey: academicsKeys.sessionEvaluations(sessionId),
+    queryFn: async () => unwrap(await supervisionApi.getSessionEvaluations(sessionId)),
+    enabled: enabled && Boolean(sessionId),
+  });
+
+export const useCreateEvaluation = () =>
+  useAcademicsMutation(async (vars: { sessionId: string; data: SupervisionScores }) =>
+    unwrap(await supervisionApi.createEvaluation(vars.sessionId, vars.data))
+  );
+
+export const useUpdateEvaluation = () =>
+  useAcademicsMutation(async (vars: { id: string; data: SupervisionScores }) =>
+    unwrap(await supervisionApi.updateEvaluation(vars.id, vars.data))
   );

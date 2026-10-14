@@ -220,3 +220,41 @@ export interface IFollowUps {
   rows: IFollowUp[];
   people: Record<string, string>;
 }
+
+export interface SupervisionNotes {
+  commitment?: string;
+  teaching?: string;
+  pedagogy?: string;
+  contentAdherence?: string;
+  technicalQuality?: string;
+  general?: string;
+}
+
+export interface SupervisionScores {
+  commitment: number;
+  teaching: number;
+  pedagogy: number;
+  contentAdherence: number;
+  technicalQuality: number;
+  notes?: SupervisionNotes;
+}
+
+export interface ISupervisionEvaluation extends SupervisionScores {
+  _id: string;
+  sessionId: string;
+  groupId: string;
+  groupName: string;
+  sessionSequence: number;
+  sessionStartsAt: string;
+  teacherId: string;
+  supervisorId: string;
+  notes: SupervisionNotes;
+  createdAt: string;
+}
+
+export interface EvaluationQuery {
+  groupId?: string;
+  teacherId?: string;
+  from?: string;
+  to?: string;
+}
