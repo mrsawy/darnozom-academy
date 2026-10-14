@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema, Types } from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
 import { ContentType } from '../enum/contentType.enum';
-import { ActiveStatus, ApprovalStatus, PublishStatus, EntityStatus } from '@darnozom/shared-types';
+import { ActiveStatus, ApprovalStatus, PublishStatus, EntityStatus, ShariaStatus } from '@darnozom/shared-types';
 import { Quiz } from './quiz.schema';
 import { Video } from './video.schema';
 import { Article } from './article.schema';
@@ -105,6 +105,15 @@ export class CourseContent extends Document<Types.ObjectId> {
 
   @Prop({ type: ModuleContentSettingsSchemaPlain, default: () => ({}) })
   settings: ModuleContentSettings;
+
+  @Prop({ type: String, enum: Object.values(ShariaStatus), default: ShariaStatus.PENDING, index: true })
+  shariaStatus: ShariaStatus;
+
+  @Prop({ type: Number, required: false, default: null })
+  currentVersion: number | null;
+
+  @Prop({ type: Number, required: false, default: null })
+  pendingVersion: number | null;
 }
 
 export const CourseContentSchema = SchemaFactory.createForClass(CourseContent);

@@ -4,6 +4,7 @@ import { CourseFeaturedService } from './services/course/course-featured.service
 import { MongooseModule } from '@nestjs/mongoose';
 import { Course, CourseSchema } from './entities/course.entity';
 import { CourseContent, CourseContentSchema } from './entities/course-content.entity';
+import { ContentVersion, ContentVersionSchema } from './entities/content-version.entity';
 import { ContentType } from './enum/contentType.enum';
 import { VideoSchema } from './entities/video.schema';
 import { ArticleSchema } from './entities/article.schema';
@@ -55,6 +56,7 @@ import { TranscriptionModule } from 'src/transcription/transcription.module';
       { name: Grade.name, schema: GradeSchema },
       { name: SchoolType.name, schema: SchoolTypeSchema },
       { name: Enrollment.name, schema: EnrollmentSchema },
+      { name: ContentVersion.name, schema: ContentVersionSchema },
       {
         name: CourseContent.name,
         schema: CourseContentSchema,
