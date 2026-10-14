@@ -6,6 +6,7 @@ import { LedgerEntry, LedgerEntrySchema } from './entities/ledger-entry.entity';
 import { FamilyPayment, FamilyPaymentSchema } from './entities/payment.entity';
 import { Allocation, AllocationSchema } from './entities/allocation.entity';
 import { FamilyService } from './family/family.service';
+import { LedgerService } from './ledger/ledger.service';
 
 @Module({
   imports: [
@@ -17,8 +18,8 @@ import { FamilyService } from './family/family.service';
       { name: Allocation.name, schema: AllocationSchema },
     ]),
   ],
-  providers: [FamilyService],
+  providers: [FamilyService, LedgerService],
   controllers: [],
-  exports: [MongooseModule, FamilyService],
+  exports: [MongooseModule, FamilyService, LedgerService],
 })
 export class BillingModule {}
