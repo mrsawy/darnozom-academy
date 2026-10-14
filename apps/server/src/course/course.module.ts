@@ -47,6 +47,8 @@ import { EnrollmentModule } from 'src/enrollment/enrollment.module';
 import { TranscriptionModule } from 'src/transcription/transcription.module';
 import { ContentVersionService } from './services/content/sharia/content-version.service';
 import { ShariaGateService } from './services/content/sharia/sharia-gate.service';
+import { ShariaReviewService } from './services/content/sharia/sharia-review.service';
+import { ShariaFileCleanupService } from './services/content/sharia/sharia-file-cleanup.service';
 
 @Module({
   imports: [
@@ -106,6 +108,8 @@ import { ShariaGateService } from './services/content/sharia/sharia-gate.service
     AssignmentService,
     ContentVersionService,
     ShariaGateService,
+    ShariaReviewService,
+    ShariaFileCleanupService,
   ],
   exports: [
     MongooseModule,
