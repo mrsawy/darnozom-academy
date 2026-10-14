@@ -44,6 +44,7 @@ import { AgoraModule } from './agora/agora.module';
 import { GradeModule } from './grade/grade.module';
 import { AcademicsModule } from './academics/academics.module';
 import { SchoolTypeModule } from './school-type/school-type.module';
+import { BillingModule } from './billing/billing.module';
 import { BullModule } from '@nestjs/bullmq';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ErrorHandlerInterceptor } from './utils/interceptors/errorHandler.interceptor';
@@ -116,6 +117,7 @@ import { getMongoUri, MONGO_CONNECTION_OPTIONS } from './config/mongo.config';
     GradeModule,
     AcademicsModule,
     SchoolTypeModule,
+    BillingModule,
   ],
   controllers: [AppController],
   providers: [
