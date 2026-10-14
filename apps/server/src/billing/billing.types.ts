@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { BillingSubscriptionStatus, Currency, FamilyPaymentState, LedgerEntryType, SubscriptionType } from '@darnozom/shared-types';
+import { BillingSubscriptionStatus, Currency, FamilyPaymentState, LedgerEntryType, Roles, SubscriptionType } from '@darnozom/shared-types';
 
 export interface SubscriptionItemLean {
   studentId: Types.ObjectId | string;
@@ -77,4 +77,11 @@ export interface LedgerBalance {
   chargedMinor: number;
   paidMinor: number;
   balanceMinor: number;
+}
+
+export interface BillingActor {
+  _id: string;
+  organizationId: string;
+  roleName: Roles;
+  additionalRoles: Roles[];
 }
