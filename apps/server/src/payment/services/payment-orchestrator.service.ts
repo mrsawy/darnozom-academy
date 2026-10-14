@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, Inject, forwardRef, Optional } from '@nestjs/common';
 import { InjectConnection } from '@nestjs/mongoose';
 import { Connection } from 'mongoose';
 import {
@@ -16,12 +16,18 @@ import type { SubscribeToPlanPayload } from '../dto/subscribe-to-plan.interface'
 import type { ISubscribeToAiPlanPayload } from '../dto/subscribe-to-ai-plan.interface';
 import type { SubscriptionWebhookDto } from 'src/subscription/dto/subscription-webhook.dto';
 import type { SubscriptionCheckoutResult } from '../strategies/interfaces/payment-strategy.interface';
+import { AcademyFeeWebhookService } from 'src/billing/payment/academy-fee-webhook.service';
 
 @Injectable()
 export class PaymentOrchestratorService {
   private strategies = new Map<PaymentProvider, IPaymentStrategy>();
 
-  constructor(@InjectConnection() private readonly connection: Connection) {}
+  constructor(
+    @InjectConnection() private readonly connection: Connection,
+    @Optional()
+    @Inject(forwardRef(() => AcademyFeeWebhookService))
+    private readonly academyFeeWebhookService?: AcademyFeeWebhookService
+  ) {}
 
   registerStrategy(strategy: IPaymentStrategy): void {
     this.strategies.set(strategy.getProvider(), strategy);
@@ -123,11 +129,17 @@ export class PaymentOrchestratorService {
   async processWebhook(provider: PaymentProvider, payload: unknown) {
     const strategy = this.getStrategy(provider);
     const payloadObj = payload as { type?: string };
-    return strategy.processWebhook({
+    const processed = await strategy.processWebhook({
       provider,
       rawPayload: payload,
       eventType: payloadObj.type ?? '',
     });
+
+    if (processed.success && processed.metadata?.purpose === PaymentPurpose.ACADEMY_FEE) {
+      await this.academyFeeWebhookService?.onConfirmed(processed.transactionId);
+    }
+
+    return processed;
   }
 
   async getSubscriptionPaymentUrl(provider: PaymentProvider, dto: SubscribeToPlanPayload, user: UserDocument): Promise<SubscriptionCheckoutResult> {

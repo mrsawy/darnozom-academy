@@ -22,6 +22,7 @@ import { UserModule } from 'src/user/user.module';
 import { PrivateSessionModule } from 'src/private-session/private-session.module';
 import { TransactionModule } from 'src/transaction/transaction.module';
 import { AiSubscriptionModule } from 'src/ai-subscription/ai-subscription.module';
+import { BillingModule } from 'src/billing/billing.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { AiSubscriptionModule } from 'src/ai-subscription/ai-subscription.module
     forwardRef(() => UserModule),
     forwardRef(() => PrivateSessionModule),
     TransactionModule,
+    forwardRef(() => BillingModule),
   ],
   controllers: [PaymentMessageController, PaymentHttpController, PaymobHttpController],
   providers: [
