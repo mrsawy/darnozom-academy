@@ -4731,7 +4731,13 @@
     "shariaVersionNotFound": "Version not found",
     "shariaVersionAlreadyReviewed": "This version has already been reviewed",
     "shariaVersionNotPending": "This version is not pending review",
-    "shariaRejectCommentRequired": "A reason is required to reject"
+    "shariaRejectCommentRequired": "A reason is required to reject",
+    "evaluationNotFound": "Evaluation not found.",
+    "notGroupSupervisor": "Only the group's supervisor can evaluate its sessions.",
+    "sessionNotHeld": "Only a held session can be evaluated.",
+    "evaluationAlreadyExists": "You have already evaluated this session.",
+    "evaluationInvalid": "Evaluation requires all five criteria scored between 1 and 5.",
+    "evaluationEditWindowClosed": "Evaluations can only be edited within 7 days."
   },
   "mutations": {
     "moduleCreated": "Module created successfully",
@@ -7100,6 +7106,30 @@
       "undecided": "Undecided",
       "save": "Save",
       "recorded": "Recorded"
+    },
+    "supervision": {
+      "title": "Supervision",
+      "evaluate": "Evaluate",
+      "submit": "Save evaluation",
+      "myEvaluations": "My evaluations",
+      "empty": "No evaluations yet.",
+      "alreadyEvaluated": "You have already evaluated this session.",
+      "editWindow": "You can revise this evaluation for 7 days.",
+      "criteria": {
+        "commitment": "Commitment",
+        "teaching": "Teaching",
+        "pedagogy": "Pedagogy",
+        "contentAdherence": "Content adherence",
+        "technicalQuality": "Technical quality"
+      },
+      "notes": {
+        "commitment": "Note on commitment",
+        "teaching": "Note on teaching",
+        "pedagogy": "Note on pedagogy",
+        "contentAdherence": "Note on content adherence",
+        "technicalQuality": "Note on technical quality",
+        "general": "General note"
+      }
     }
   },
   "Sharia": {

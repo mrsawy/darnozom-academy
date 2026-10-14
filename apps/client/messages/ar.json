@@ -4731,7 +4731,13 @@
     "shariaVersionNotFound": "النسخة غير موجودة",
     "shariaVersionAlreadyReviewed": "تمت مراجعة هذه النسخة بالفعل",
     "shariaVersionNotPending": "هذه النسخة ليست قيد المراجعة",
-    "shariaRejectCommentRequired": "يجب ذكر سبب للرفض"
+    "shariaRejectCommentRequired": "يجب ذكر سبب للرفض",
+    "evaluationNotFound": "التقييم غير موجود.",
+    "notGroupSupervisor": "مشرف المجموعة وحده يمكنه تقييم حصصها.",
+    "sessionNotHeld": "يمكن تقييم الحصة التي عُقدت فقط.",
+    "evaluationAlreadyExists": "لقد قيّمت هذه الحصة بالفعل.",
+    "evaluationInvalid": "يتطلب التقييم درجات لجميع المعايير الخمسة بين 1 و 5.",
+    "evaluationEditWindowClosed": "يمكن تعديل التقييم خلال 7 أيام فقط."
   },
   "mutations": {
     "moduleCreated": "تم إنشاء الوحدة بنجاح",
@@ -7100,6 +7106,30 @@
       "undecided": "لم يُحسم بعد",
       "save": "حفظ",
       "recorded": "تم التسجيل"
+    },
+    "supervision": {
+      "title": "الإشراف",
+      "evaluate": "تقييم",
+      "submit": "حفظ التقييم",
+      "myEvaluations": "تقييماتي",
+      "empty": "لا توجد تقييمات بعد.",
+      "alreadyEvaluated": "لقد قيّمت هذه الحصة بالفعل.",
+      "editWindow": "يمكنك تعديل هذا التقييم خلال 7 أيام.",
+      "criteria": {
+        "commitment": "الالتزام",
+        "teaching": "التدريس",
+        "pedagogy": "الأساليب التربوية",
+        "contentAdherence": "الالتزام بالمحتوى",
+        "technicalQuality": "الجودة التقنية"
+      },
+      "notes": {
+        "commitment": "ملاحظة على الالتزام",
+        "teaching": "ملاحظة على التدريس",
+        "pedagogy": "ملاحظة على الأساليب التربوية",
+        "contentAdherence": "ملاحظة على الالتزام بالمحتوى",
+        "technicalQuality": "ملاحظة على الجودة التقنية",
+        "general": "ملاحظة عامة"
+      }
     }
   },
   "Sharia": {
