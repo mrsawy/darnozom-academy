@@ -1,14 +1,15 @@
 import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { FilterQuery, Model, Types } from 'mongoose';
 import { AcademicsErrors, SessionStatus } from '@darnozom/shared-types';
 import { AcademicsActor } from '../common/actor';
 import { Group } from '../group/entities/group.entity';
 import { Session } from '../session/entities/session.entity';
 import { SupervisionEvaluation } from './entities/supervision-evaluation.entity';
-import { SupervisionEvaluationLean } from './supervision.types';
+import { SupervisionEvaluationLean, SupervisionEvaluationView } from './supervision.types';
 import { areScoresValid, canEvaluate, isHeldSession, isWithinEditWindow } from './supervision-rules';
-import { SupervisionScoresDto } from './dto/supervision.dto';
+import { FindEvaluationsPayload, SupervisionScoresDto } from './dto/supervision.dto';
+import { resolveEvaluationScope } from './supervision-scope';
 
 const oid = (id: string | Types.ObjectId) => new Types.ObjectId(String(id));
 const DUPLICATE_KEY = 11_000;
@@ -110,5 +111,72 @@ export class SupervisionService {
     };
     await this.evaluationModel.updateOne({ _id: evaluation._id }, { $set: set }).exec();
     return { ...evaluation, ...set };
+  }
+
+  /** Every evaluation the caller is allowed to see, newest first, with the names a list needs. */
+  async findAll(actor: AcademicsActor, query: FindEvaluationsPayload): Promise<SupervisionEvaluationView[]> {
+    const scope = resolveEvaluationScope(actor);
+    if (scope.kind === 'NONE') throw new ForbiddenException(AcademicsErrors.NOT_GROUP_SUPERVISOR);
+
+    const filter: FilterQuery<SupervisionEvaluation> = { organizationId: oid(actor.organizationId) };
+    if (query.groupId) filter.groupId = oid(query.groupId);
+    // A teacher's own id wins over whatever they asked for, so the filter cannot be widened.
+    if (scope.kind === 'OWN_TEACHING') filter.teacherId = oid(scope.teacherId);
+    else if (query.teacherId) filter.teacherId = oid(query.teacherId);
+
+    if (query.from || query.to) {
+      filter.createdAt = {
+        ...(query.from ? { $gte: new Date(query.from) } : {}),
+        ...(query.to ? { $lte: new Date(query.to) } : {}),
+      };
+    }
+
+    // eslint-disable-next-line unicorn/no-array-sort -- Mongoose Query.prototype.sort, not Array#sort
+    const rows = await this.evaluationModel.find(filter).sort({ createdAt: -1 }).lean<SupervisionEvaluationLean[]>().exec();
+    return this.decorate(rows);
+  }
+
+  /** The evaluations of one session, for the read-only panel beside the report. */
+  async findForSession(actor: AcademicsActor, sessionId: string): Promise<SupervisionEvaluationView[]> {
+    const scope = resolveEvaluationScope(actor);
+    if (scope.kind === 'NONE') throw new ForbiddenException(AcademicsErrors.NOT_GROUP_SUPERVISOR);
+
+    const filter: FilterQuery<SupervisionEvaluation> = {
+      organizationId: oid(actor.organizationId),
+      sessionId: oid(sessionId),
+    };
+    if (scope.kind === 'OWN_TEACHING') filter.teacherId = oid(scope.teacherId);
+
+    // eslint-disable-next-line unicorn/no-array-sort -- Mongoose Query.prototype.sort, not Array#sort
+    const rows = await this.evaluationModel.find(filter).sort({ createdAt: -1 }).lean<SupervisionEvaluationLean[]>().exec();
+    return this.decorate(rows);
+  }
+
+  private async decorate(rows: SupervisionEvaluationLean[]): Promise<SupervisionEvaluationView[]> {
+    if (rows.length === 0) return [];
+
+    const groups = await this.groupModel
+      .find({ _id: { $in: rows.map((row) => row.groupId) } })
+      .select('_id name')
+      .lean<{ _id: Types.ObjectId; name: string }[]>()
+      .exec();
+    const sessions = await this.sessionModel
+      .find({ _id: { $in: rows.map((row) => row.sessionId) } })
+      .select('_id sequence startsAt')
+      .lean<{ _id: Types.ObjectId; sequence: number; startsAt: Date }[]>()
+      .exec();
+
+    const names = new Map(groups.map((group) => [String(group._id), group.name]));
+    const bySession = new Map(sessions.map((session) => [String(session._id), session]));
+
+    return rows.map((row) => {
+      const session = bySession.get(String(row.sessionId));
+      return {
+        ...row,
+        groupName: names.get(String(row.groupId)) ?? '',
+        sessionSequence: session?.sequence ?? 0,
+        sessionStartsAt: session?.startsAt ?? row.createdAt,
+      };
+    });
   }
 }
