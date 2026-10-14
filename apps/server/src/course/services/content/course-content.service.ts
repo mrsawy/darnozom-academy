@@ -19,6 +19,7 @@ import { buildSoftDeleteSet } from 'src/utils/soft-delete';
 import { CourseContentStorageService } from './course-content-storage.service';
 import { bytesToGB, hasFileStorage } from './course-content-storage.util';
 import { CourseContentNotificationService } from './notification/course-content-notification.service';
+import { ShariaGateService } from './sharia/sharia-gate.service';
 
 /** Create / update / delete of course content. Reads live in CourseContentQueryService. */
 @Injectable()
@@ -38,7 +39,8 @@ export class CourseContentService {
     private readonly subscriptionService: SubscriptionService,
     private readonly transcriptionService: TranscriptionService,
     private readonly storageService: CourseContentStorageService,
-    private readonly notificationService: CourseContentNotificationService
+    private readonly notificationService: CourseContentNotificationService,
+    private readonly shariaGate: ShariaGateService
   ) {}
 
   async createCourseContent(createCourseContentDto: CreateCourseContentDto) {
@@ -111,6 +113,18 @@ export class CourseContentService {
 
       await session.commitTransaction();
 
+      const { authorization: _auth, ...creationPayload } = createCourseContentDto as unknown as Record<string, unknown>;
+      await this.shariaGate.onCreated(
+        {
+          _id: createdContent._id,
+          organizationId: createdContent.organizationId,
+          courseId: createdContent.courseId,
+          shariaStatus: createdContent.shariaStatus,
+        },
+        creationPayload,
+        createCourseContentDto.createdBy
+      );
+
       void this.notificationService
         .notifyStudentsIfVisible(createdContent._id.toString(), createCourseContentDto.createdBy?.toString())
         .catch((err: unknown) => {
@@ -132,7 +146,11 @@ export class CourseContentService {
     }
   }
 
-  async updateCourseContent(createCourseContentDto: CreateCourseContentDto & { contentId: string }) {
+  async update(contentId: string, createCourseContentDto: Partial<CreateCourseContentDto>, options: { shariaBypass?: boolean } = {}) {
+    return this.updateCourseContent({ ...createCourseContentDto, contentId } as CreateCourseContentDto & { contentId: string }, options);
+  }
+
+  async updateCourseContent(createCourseContentDto: CreateCourseContentDto & { contentId: string }, options: { shariaBypass?: boolean } = {}) {
     const { contentId, type: discriminatorKey, ...updateData } = createCourseContentDto;
 
     const existingDoc = await this.courseContentModel.findById(contentId);
@@ -150,6 +168,25 @@ export class CourseContentService {
     const organizationId = existing.organizationId?.toString();
     if (!organizationId) throw new NotFoundException('Organization not found for this content');
 
+    const { authorization, organizationId: _orgId, courseId: _cId, moduleId: _mId, createdBy: _cb, ...changes } = updateData;
+
+    // options.shariaBypass is set only by ShariaReviewService.approve, replaying a change-set a
+    // reviewer has already passed. Without it the gate would hold the replay back for ever.
+    const proceed = options.shariaBypass
+      ? true
+      : await this.shariaGate.beforeUpdate(
+          {
+            _id: existingDoc._id,
+            organizationId: existingDoc.organizationId,
+            courseId: existingDoc.courseId,
+            shariaStatus: existingDoc.shariaStatus,
+          },
+          changes as Record<string, unknown>,
+          createCourseContentDto.createdBy
+        );
+    // The edit is parked for review; the live content, its files and its quota stay as they are.
+    if (!proceed) return existingDoc;
+
     const isFileContent =
       (existing.type === ContentType.VIDEO && (existing.videoType === VideoType.UPLOAD || updateData.videoType === VideoType.UPLOAD)) ||
       (existing.type === ContentType.ASSIGNMENT && !!(existing.fileKey ?? updateData.fileKey)) ||
@@ -160,8 +197,6 @@ export class CourseContentService {
     if (deltaBytes > 0 && isFileContent) {
       await this.storageService.checkAndReserveStorage(organizationId, deltaBytes);
     }
-
-    const { authorization, organizationId: _orgId, courseId: _cId, moduleId: _mId, createdBy: _cb, ...changes } = updateData;
 
     const raw = changes as Record<string, unknown>;
     if (raw.settings && typeof raw.settings === 'object' && !Array.isArray(raw.settings)) {

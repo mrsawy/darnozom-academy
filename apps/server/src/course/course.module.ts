@@ -46,6 +46,7 @@ import { AssignmentService } from './services/content/assignment/assignment.serv
 import { EnrollmentModule } from 'src/enrollment/enrollment.module';
 import { TranscriptionModule } from 'src/transcription/transcription.module';
 import { ContentVersionService } from './services/content/sharia/content-version.service';
+import { ShariaGateService } from './services/content/sharia/sharia-gate.service';
 
 @Module({
   imports: [
@@ -104,6 +105,7 @@ import { ContentVersionService } from './services/content/sharia/content-version
     LiveSessionService,
     AssignmentService,
     ContentVersionService,
+    ShariaGateService,
   ],
   exports: [
     MongooseModule,
