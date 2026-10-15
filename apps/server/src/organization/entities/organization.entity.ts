@@ -167,6 +167,10 @@ export class Organization extends Document<Types.ObjectId> {
   /** Which configured provider the online gateway method uses for academy fees. */
   @Prop({ type: String, enum: Object.values(PaymentProvider), required: false, default: null })
   academyFeeGatewayProvider: PaymentProvider | null;
+
+  /** IANA timezone for this organization (e.g. 'Africa/Cairo', 'Asia/Riyadh'). Defaults to 'UTC'. */
+  @Prop({ type: String, default: 'UTC' })
+  timezone: string;
 }
 
 export const OrganizationSchema = SchemaFactory.createForClass(Organization);

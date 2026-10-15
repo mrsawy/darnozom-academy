@@ -97,6 +97,24 @@ export class Session extends Document<Types.ObjectId> {
 
   @Prop({ type: Types.ObjectId, ref: 'User', required: false })
   cancelledBy?: Types.ObjectId;
+
+  @Prop({ type: Boolean, default: false, index: true })
+  disputed: boolean;
+
+  @Prop({ type: String, required: false })
+  disputeReason?: string;
+
+  @Prop({ type: Types.ObjectId, ref: 'User', required: false })
+  disputedBy?: Types.ObjectId;
+
+  @Prop({ type: Date, required: false })
+  disputedAt?: Date;
+
+  @Prop({ type: Types.ObjectId, ref: 'User', required: false })
+  disputeResolvedBy?: Types.ObjectId;
+
+  @Prop({ type: Date, required: false })
+  disputeResolvedAt?: Date;
 }
 
 export const SessionSchema = SchemaFactory.createForClass(Session);
