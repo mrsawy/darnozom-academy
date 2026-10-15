@@ -175,5 +175,6 @@ export const ROUTE_STUDENT_MY_CERTIFICATES = '/student-dashboard/my-certificates
 export const ROUTE_PARENT_MY_CERTIFICATES = '/parent-dashboard/my-certificates';
 export const ROUTE_PUBLIC_CERTIFICATE = (id: string) => `/certificates/${id}`;
 export const ROUTE_PUBLIC_VERIFY_CERTIFICATE = (token: string) => `/verify/${token}`;
+export const ROUTE_ORG_MESSAGE_TEMPLATES = '/organization-dashboard/message-templates';
 
 
