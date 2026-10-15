@@ -47,6 +47,7 @@ import { SchoolTypeModule } from './school-type/school-type.module';
 import { BillingModule } from './billing/billing.module';
 import { PayrollModule } from './payroll/payroll.module';
 import { CertificateModule } from './certificate/certificate.module';
+import { MessageTemplateModule } from './message-template/message-template.module';
 import { BullModule } from '@nestjs/bullmq';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ErrorHandlerInterceptor } from './utils/interceptors/errorHandler.interceptor';
@@ -122,6 +123,7 @@ import { getMongoUri, MONGO_CONNECTION_OPTIONS } from './config/mongo.config';
     BillingModule,
     PayrollModule,
     CertificateModule,
+    MessageTemplateModule,
   ],
   controllers: [AppController],
   providers: [
