@@ -217,6 +217,16 @@ export class CertificateService {
       .exec();
   }
 
+  /** Returns the child user IDs that belong to this parent actor. */
+  private async getParentChildIds(parentId: string): Promise<Types.ObjectId[]> {
+    const parentDoc = await this.userModel
+      .findOne({ _id: oid(parentId) })
+      .select('childUsersIds')
+      .lean<{ childUsersIds?: Types.ObjectId[] }>()
+      .exec();
+    return parentDoc?.childUsersIds ?? [];
+  }
+
   /**
    * Query certificates for organization, group, or student.
    */
@@ -230,6 +240,11 @@ export class CertificateService {
 
     if (actor.roleName === Roles.STUDENT) {
       query.studentId = oid(actor._id);
+    } else if (actor.roleName === Roles.PARENT) {
+      const childIds = await this.getParentChildIds(actor._id);
+      query.studentId = filter.studentId
+        ? oid(filter.studentId)
+        : { $in: childIds };
     } else if (filter.studentId) {
       query.studentId = oid(filter.studentId);
     }
@@ -262,6 +277,14 @@ export class CertificateService {
       throw new ForbiddenException();
     }
 
+    if (actor.roleName === Roles.PARENT) {
+      const childIds = await this.getParentChildIds(actor._id);
+      const certStudentId = String(cert.studentId);
+      if (!childIds.some((id) => String(id) === certStudentId)) {
+        throw new ForbiddenException();
+      }
+    }
+
     return cert;
   }
 
@@ -286,8 +309,12 @@ export class CertificateService {
       throw new ConflictException(CertificateErrors.CERTIFICATE_IMMUTABLE);
     }
 
-    const isStudent = String(cert.studentId) === actor._id;
-    if (!isStudent && !this.isPrivilegedStaff(actor)) {
+    const certStudentId = String(cert.studentId);
+    const isStudent = certStudentId === actor._id;
+    const isParentOfStudent =
+      actor.roleName === Roles.PARENT &&
+      (await this.getParentChildIds(actor._id)).some((id) => String(id) === certStudentId);
+    if (!isStudent && !isParentOfStudent && !this.isPrivilegedStaff(actor)) {
       throw new ForbiddenException();
     }
 
@@ -327,8 +354,12 @@ export class CertificateService {
       throw new ConflictException(CertificateErrors.CERTIFICATE_IMMUTABLE);
     }
 
-    const isStudent = String(cert.studentId) === actor._id;
-    if (!isStudent && !this.isPrivilegedStaff(actor)) {
+    const certStudentId2 = String(cert.studentId);
+    const isStudent2 = certStudentId2 === actor._id;
+    const isParentOfStudent2 =
+      actor.roleName === Roles.PARENT &&
+      (await this.getParentChildIds(actor._id)).some((id) => String(id) === certStudentId2);
+    if (!isStudent2 && !isParentOfStudent2 && !this.isPrivilegedStaff(actor)) {
       throw new ForbiddenException();
     }
 
