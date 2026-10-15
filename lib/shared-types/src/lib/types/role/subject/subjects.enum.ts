@@ -52,5 +52,6 @@ export enum Subjects {
   BILLING = 'BILLING',
   FAMILY_PAYMENT = 'FAMILY_PAYMENT',
   PAYROLL = 'PAYROLL',
+  CERTIFICATE = 'CERTIFICATE',
   ALL = '*',
 }
