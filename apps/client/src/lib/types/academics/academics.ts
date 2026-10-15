@@ -178,6 +178,12 @@ export interface ISession {
     submittedAt: string;
   } | null;
   cancelReason?: string;
+  disputed?: boolean;
+  disputeReason?: string;
+  disputedBy?: string;
+  disputedAt?: string;
+  disputeResolvedBy?: string;
+  disputeResolvedAt?: string;
 }
 
 export interface ISessionDetail extends ISession {

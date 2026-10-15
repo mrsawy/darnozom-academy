@@ -1,16 +1,20 @@
 'use client';
 
+import { useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import {
   AttendanceStatus,
   GROUP_EDITOR_ROLES,
   hasAnyRole,
   REPORT_EDIT_WINDOW_HOURS,
+  Roles,
   SessionStatus,
 } from '@darnozom/shared-types';
+import { Badge } from '@/components/atoms/badge';
 import { Button } from '@/components/atoms/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/card';
 import { SessionStatusBadge } from '@/components/organs/academics/session-status-badge';
+import { SessionDisputeModal } from '@/components/organs/payroll/session-dispute-modal';
 import {
   useCancelSession,
   useEditReport,
@@ -30,9 +34,11 @@ const HOUR_MS = 60 * 60 * 1000;
 
 export function SessionDetailScreen({ sessionId }: { sessionId: string }) {
   const t = useTranslations('Academics');
+  const tPayroll = useTranslations('Payroll');
   const locale = useLocale();
   const { data: session, isLoading } = useSession(sessionId);
   const { data: user } = useAuthUser();
+  const [disputeModalOpen, setDisputeModalOpen] = useState(false);
   const markAttendance = useMarkAttendance();
   const markTeacher = useMarkTeacherAttendance();
   const submitReport = useSubmitReport();
@@ -44,6 +50,14 @@ export function SessionDetailScreen({ sessionId }: { sessionId: string }) {
   const now = Date.now();
   const isTeacher = !!user && session.teacherId === user._id;
   const canManage = hasAnyRole(user, GROUP_EDITOR_ROLES);
+  const canDispute = hasAnyRole(user, [
+    Roles.OWNER,
+    Roles.MANAGER,
+    Roles.ADMIN,
+    Roles.SUPER_ADMIN,
+    Roles.ACCOUNTANT,
+    Roles.SUPERVISOR,
+  ]);
   const closed =
     session.status === SessionStatus.COMPLETED || session.status === SessionStatus.CANCELLED;
   const started = now >= new Date(session.startsAt).getTime();
@@ -71,6 +85,24 @@ export function SessionDetailScreen({ sessionId }: { sessionId: string }) {
         </div>
         <div className="flex items-center gap-2">
           <SessionStatusBadge status={session.status} />
+          {session.disputed ? (
+            <Badge
+              variant="destructive"
+              className="cursor-pointer"
+              onClick={() => setDisputeModalOpen(true)}
+            >
+              {tPayroll('disputedBadge')}
+            </Badge>
+          ) : null}
+          {canDispute && session.status === SessionStatus.COMPLETED && !session.disputed ? (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setDisputeModalOpen(true)}
+            >
+              {tPayroll('dispute')}
+            </Button>
+          ) : null}
           {canManage && session.status === SessionStatus.SCHEDULED ? (
             <CancelSessionDialog
               pending={cancelSession.isPending}
@@ -163,6 +195,13 @@ export function SessionDetailScreen({ sessionId }: { sessionId: string }) {
           )}
         </CardContent>
       </Card>
+
+      <SessionDisputeModal
+        open={disputeModalOpen}
+        onOpenChange={setDisputeModalOpen}
+        session={session}
+        canManageDispute={canDispute}
+      />
     </div>
   );
 }
