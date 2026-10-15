@@ -181,4 +181,25 @@ describe('ROLE_SEED_DEFINITIONS', () => {
     const permissions = ROLE_SEED_DEFINITIONS.find((seed) => seed.name === Roles.STUDENT)?.permissions ?? [];
     expect(permissions.some((rule) => rule.subject === Subjects.BILLING)).toBe(false);
   });
+
+  it('lets the accountant and the manager manage payroll', () => {
+    for (const role of [Roles.ACCOUNTANT, Roles.MANAGER]) {
+      const permissions = ROLE_SEED_DEFINITIONS.find((seed) => seed.name === role)?.permissions ?? [];
+      expect(permissions).toContainEqual({ action: Actions.MANAGE, subject: Subjects.PAYROLL });
+    }
+  });
+
+  it('lets the instructor read payroll but not manage it', () => {
+    const permissions = ROLE_SEED_DEFINITIONS.find((seed) => seed.name === Roles.INSTRUCTOR)?.permissions ?? [];
+    expect(permissions).toContainEqual({ action: Actions.READ, subject: Subjects.PAYROLL });
+    expect(permissions).not.toContainEqual({ action: Actions.MANAGE, subject: Subjects.PAYROLL });
+    expect(permissions).not.toContainEqual({ action: Actions.CREATE, subject: Subjects.PAYROLL });
+  });
+
+  it('keeps payroll away from supervisor, parents, students and content staff', () => {
+    for (const role of [Roles.SUPERVISOR, Roles.PARENT, Roles.STUDENT, Roles.CONTENT_OFFICER, Roles.SHARIA_REVIEWER]) {
+      const permissions = ROLE_SEED_DEFINITIONS.find((seed) => seed.name === role)?.permissions ?? [];
+      expect(permissions.some((rule) => rule.subject === Subjects.PAYROLL)).toBe(false);
+    }
+  });
 });

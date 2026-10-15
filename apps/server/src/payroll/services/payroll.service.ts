@@ -253,7 +253,7 @@ export class PayrollService {
 
   async findStatements(
     organizationId: string,
-    query: { month?: string; teacherId?: string; status?: PayStatementStatus },
+    query: { month?: string; teacherId?: string; status?: PayStatementStatus } = {},
     actor: DisputeActor
   ): Promise<PayStatement[]> {
     const orgOid = new Types.ObjectId(organizationId);

@@ -6,6 +6,7 @@ export const ACCOUNTANT_PERMISSIONS: RolePermissionRule[] = [
   { action: Actions.READ, subject: Subjects.SESSION },
   { action: Actions.MANAGE, subject: Subjects.BILLING },
   { action: Actions.MANAGE, subject: Subjects.FAMILY_PAYMENT },
+  { action: Actions.MANAGE, subject: Subjects.PAYROLL },
 ];
 
 export const ACCOUNTANT_SEED: RoleSeedEntry = { name: Roles.ACCOUNTANT, permissions: ACCOUNTANT_PERMISSIONS };
