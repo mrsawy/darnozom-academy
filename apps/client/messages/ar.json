@@ -2355,7 +2355,8 @@
       "billing": "المالية",
       "billingReceipts": "إيصالات السداد",
       "payroll": "مستحقات المعلمين",
-      "myPayStatements": "مستحقاتي الشهرية"
+      "myPayStatements": "مستحقاتي الشهرية",
+      "myCertificates": "شهاداتي"
     },
     "navSecondary": {
       "getHelp": "الحصول على المساعدة",
@@ -4779,7 +4780,16 @@
     "DISPUTE_REASON_REQUIRED": "سبب الاعتراض مطلوب",
     "SESSION_ALREADY_DISPUTED": "تم تسجيل الاعتراض على هذه الحصة بالفعل",
     "SESSION_NOT_DISPUTED": "هذه الحصة ليست محل اعتراض حالياً",
-    "DISPUTE_BLOCKED_MONTH_APPROVED": "لا يمكن الاعتراض على الحصة: تم اعتماد أو صرف مستحقات هذا الشهر بالفعل"
+    "DISPUTE_BLOCKED_MONTH_APPROVED": "لا يمكن الاعتراض على الحصة: تم اعتماد أو صرف مستحقات هذا الشهر بالفعل",
+    "CERTIFICATE_NOT_FOUND": "لم يتم العثور على الشهادة",
+    "CERTIFICATE_ALREADY_ISSUED": "تم إصدار الشهادة بالفعل ولا يمكن تعديلها",
+    "CERTIFICATE_NOT_ELIGIBLE": "الطالب غير مستوفٍ لشروط استحقاق الشهادة",
+    "CERTIFICATE_NAME_NOT_CONFIRMED": "يجب مراجعة وتأكيد اسم الطالب قبل إصدار الشهادة",
+    "CERTIFICATE_NAME_ALREADY_CONFIRMED": "تم تأكيد اسم الشهادة مسبقاً",
+    "CERTIFICATE_GROUP_NOT_COMPLETED": "لا يمكن تقييم الشهادات إلا للمجموعات الجارية أو المكتملة",
+    "FINAL_RESULT_GROUP_NOT_STARTED": "لا يمكن رصد النتيجة النهائية إلا للمجموعات الجارية أو المكتملة",
+    "FINAL_RESULT_NOT_AUTHORIZED": "ليس لديك صلاحية رصد النتيجة النهائية لهذا الطالب",
+    "FINAL_RESULT_STUDENT_NOT_ACTIVE": "الطالب غير نشط في هذه المجموعة"
   },
   "mutations": {
     "moduleCreated": "تم إنشاء الوحدة بنجاح",
@@ -7344,5 +7354,122 @@
     "disputeResolved": "تم حل الاعتراض بنجاح",
     "disputedBadge": "محل اعتراض",
     "disputeBlockedNotice": "لا يمكن الاعتراض على هذه الحصة لأن كشف المستحقات لهذا الشهر قد تم اعتماده أو صرفه بالفعل."
+  },
+  "Certificates": {
+    "rules": {
+      "title": "شروط الشهادة",
+      "description": "ضبط شروط ومعايير التخرج لهذا المستوى ({name})",
+      "button": "شروط الشهادة",
+      "minAttendancePercent": "الحد الأدنى لنسبة الحضور (%)",
+      "minHomeworkAverage": "الحد الأدنى لمتوسط الواجبات (1-5)",
+      "requireExamPass": "اشتراط اجتياز الاختبار النهائي",
+      "requireExamPassHint": "يجب أن يحصل الطالب على تقييم ناجح من المعلم",
+      "requireFullyPaid": "اشتراط سداد رسوم المجموعة بالكامل",
+      "requireFullyPaidHint": "يجب تسوية جميع مستحقات المجموعة في سجل الحسابات"
+    },
+    "finalResult": {
+      "title": "النتيجة النهائية",
+      "pass": "ناجح",
+      "fail": "راسب"
+    },
+    "nameReview": {
+      "title": "مراجعة الاسم على الشهادة",
+      "description": "يرجى التأكد من كتابة الاسم باللغتين العربية والإنجليزية بشكل دقيق للطباعة على الشهادة",
+      "nameAr": "الاسم الكامل (باللغة العربية)",
+      "nameArPlaceholder": "الاسم الرباعي بالعربية",
+      "nameArHint": "سيظهر هذا الاسم على الشهادة باللغة العربية",
+      "nameEn": "الاسم الكامل (باللغة الإنجليزية)",
+      "nameEnPlaceholder": "Full Name in English",
+      "nameEnHint": "سيظهر هذا الاسم على الشهادة باللغة الإنجليزية",
+      "alreadyConfirmed": "تم تأكيد وتوثيق الاسم بتاريخ {date}",
+      "confirmationWarning": "تنبيه: بعد تأكيد الاسم لن تتمكن من تعديله إلا عبر مراجعة إدارة الأكاديمية.",
+      "confirmButton": "تأكيد واعتماد الاسم"
+    },
+    "common": {
+      "save": "حفظ",
+      "saving": "جاري الحفظ...",
+      "cancel": "إلغاء",
+      "loading": "جاري التحميل..."
+    },
+    "groupTab": {
+      "title": "الشهادات والتخرج",
+      "subtitle": "مراجعة معايير أهلية الطلاب وإصدار الشهادات المعتمدة",
+      "evaluateButton": "فحص وتقييم الأهلية",
+      "evaluating": "جاري الفحص...",
+      "empty": "لم يتم تقييم الأهلية بعد. اضغط على زر الفحص لمعالجة أهلية طلاب المجموعة."
+    },
+    "table": {
+      "student": "الطالب",
+      "attendance": "الحضور",
+      "homework": "الواجبات",
+      "exam": "الاختبار",
+      "examPassed": "ناجح",
+      "examFailed": "راسب",
+      "payment": "الرسوم",
+      "paid": "مسدد",
+      "unpaid": "غير مسدد",
+      "status": "حالة الشهادة",
+      "nameConfirmed": "مراجعة الاسم",
+      "confirmed": "تم الاعتماد",
+      "pendingReview": "بانتظار التأكيد",
+      "actions": "الإجراءات",
+      "editName": "مراجعة الاسم",
+      "viewCertificate": "عرض الشهادة",
+      "issue": "إصدار الشهادة",
+      "nameMustBeConfirmed": "يجب مراجعة وتأكيد الاسم قبل إصدار الشهادة"
+    },
+    "status": {
+      "ELIGIBLE": "مؤهل",
+      "NAME_REVIEW": "مراجعة الاسم",
+      "ISSUED": "مصدرة"
+    },
+    "card": {
+      "unnamed": "شهادة إتمام",
+      "attendance": "نسبة الحضور",
+      "homework": "متوسط الواجبات",
+      "nameActionRequired": "مطلوب مراجعة وتأكيد الاسم",
+      "nameActionRequiredDesc": "يرجى مراجعة الاسم المعتمد لطباعته على الشهادة الرسمية",
+      "issuedOn": "صدرت بتاريخ {date}",
+      "editName": "تعديل الاسم",
+      "confirmName": "مراجعة وتأكيد الاسم",
+      "viewCertificate": "عرض وطباعة الشهادة"
+    },
+    "myCertificates": {
+      "title": "شهاداتي",
+      "description": "استعرض وحمّل شهاداتك المعتمدة وتابع حالات إصدار الشهادات",
+      "emptyTitle": "لا توجد شهادات حتى الآن",
+      "emptyDescription": "عند إتمام متطلبات المجموعة والنجاح فيها، ستظهر شهادتك الرسمية هنا."
+    },
+    "printable": {
+      "back": "رجوع",
+      "shareVerification": "نسخ رابط التحقق",
+      "printPdf": "طباعة / حفظ PDF",
+      "linkCopied": "تم نسخ رابط التحقق إلى الحافظة!",
+      "notFound": "لم يتم العثور على الشهادة المطلوبة",
+      "institutionHeader": "وثيقة إتمام أكاديمي معتمدة",
+      "certificateTitleAr": "شهادة إتمام واجتياز مسار تعليمي",
+      "certificateTitleEn": "Certificate of Academic Completion",
+      "certifyThat": "تشهد إدارة الأكاديمية بأن الطالب",
+      "bodyText": "قد اجتاز بنجاح كافة المتطلبات الأكاديمية، وحقق نسبة الحضور المطلوبة وأتم دراسة المسار التعليمي بتفوق وتقدير متميز.",
+      "issueDate": "تاريخ الإصدار",
+      "serialNumber": "الرقم التسلسلي المعتمد",
+      "verifiedSeal": "معتمد وموثق",
+      "officialCertification": "توثيق رسمي معتمد",
+      "scanToVerify": "امسح الرمز للتحقق من صحة وموثوقية الشهادة"
+    },
+    "verification": {
+      "validTitle": "شهادة رسمية معتمدة وموثقة",
+      "validSubtitle": "هذه الشهادة موثقة وصادرة رسميًا ومسجلة في السجلات الأكاديمية",
+      "invalidTitle": "شهادة غير صالحة أو غير موثقة",
+      "invalidDescription": "رمز التحقق غير صالح أو لم يتم العثور على أي سجل لهذه الشهادة في قاعدة البيانات.",
+      "backHome": "العودة للرئيسية",
+      "awardedTo": "صُدرت باسم",
+      "organization": "المؤسسة الأكاديمية",
+      "course": "الدورة التعليمية",
+      "level": "المستوى",
+      "serial": "الرقم التسلسلي",
+      "issueDate": "تاريخ الإصدار",
+      "officialRecordNotice": "هذا فحص مباشر وموثق يؤكد صحة بيانات هذه الشهادة وصدورها من الجهة التعليمية المعتمدة."
+    }
   }
 }

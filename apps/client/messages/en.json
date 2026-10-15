@@ -2355,7 +2355,8 @@
       "billing": "Billing",
       "billingReceipts": "Receipts",
       "payroll": "Teacher Payroll",
-      "myPayStatements": "My Pay Statements"
+      "myPayStatements": "My Pay Statements",
+      "myCertificates": "My Certificates"
     },
     "navSecondary": {
       "getHelp": "Get Help",
@@ -4779,7 +4780,16 @@
     "DISPUTE_REASON_REQUIRED": "Dispute reason is required",
     "SESSION_ALREADY_DISPUTED": "This session is already marked as disputed",
     "SESSION_NOT_DISPUTED": "This session is not currently disputed",
-    "DISPUTE_BLOCKED_MONTH_APPROVED": "Cannot dispute session: monthly payroll for this period is already approved or paid"
+    "DISPUTE_BLOCKED_MONTH_APPROVED": "Cannot dispute session: monthly payroll for this period is already approved or paid",
+    "CERTIFICATE_NOT_FOUND": "Certificate not found",
+    "CERTIFICATE_ALREADY_ISSUED": "Certificate has already been issued and is immutable",
+    "CERTIFICATE_NOT_ELIGIBLE": "Student is not eligible for a certificate under current rules",
+    "CERTIFICATE_NAME_NOT_CONFIRMED": "Certificate name must be reviewed and confirmed before issuance",
+    "CERTIFICATE_NAME_ALREADY_CONFIRMED": "Certificate name has already been confirmed",
+    "CERTIFICATE_GROUP_NOT_COMPLETED": "Certificates can only be evaluated for running or completed groups",
+    "FINAL_RESULT_GROUP_NOT_STARTED": "Final result can only be set for running or completed groups",
+    "FINAL_RESULT_NOT_AUTHORIZED": "You are not authorized to grade this student",
+    "FINAL_RESULT_STUDENT_NOT_ACTIVE": "Student is not active in this group"
   },
   "mutations": {
     "moduleCreated": "Module created successfully",
@@ -7344,5 +7354,122 @@
     "disputeResolved": "Dispute resolved successfully",
     "disputedBadge": "Disputed",
     "disputeBlockedNotice": "This session cannot be disputed because payroll for this month has already been approved or paid."
+  },
+  "Certificates": {
+    "rules": {
+      "title": "Certificate Rules",
+      "description": "Configure completion rules for {name}",
+      "button": "Certificate Rules",
+      "minAttendancePercent": "Minimum Attendance Percentage (%)",
+      "minHomeworkAverage": "Minimum Homework Score (1-5)",
+      "requireExamPass": "Require Passing Final Exam",
+      "requireExamPassHint": "Student must receive PASS grade from teacher",
+      "requireFullyPaid": "Require Full Payment",
+      "requireFullyPaidHint": "All group ledger charges must be cleared"
+    },
+    "finalResult": {
+      "title": "Final Result",
+      "pass": "Pass",
+      "fail": "Fail"
+    },
+    "nameReview": {
+      "title": "Review Certificate Name",
+      "description": "Ensure your Arabic and English names appear correctly on the official certificate",
+      "nameAr": "Full Name (Arabic)",
+      "nameArPlaceholder": "الاسم الرباعي بالعربية",
+      "nameArHint": "Used on Arabic certificate prints",
+      "nameEn": "Full Name (English)",
+      "nameEnPlaceholder": "Full Name in English",
+      "nameEnHint": "Used on English certificate prints",
+      "alreadyConfirmed": "Name confirmed on {date}",
+      "confirmationWarning": "Once confirmed, the name cannot be modified without contacting administration.",
+      "confirmButton": "Confirm & Finalize"
+    },
+    "common": {
+      "save": "Save",
+      "saving": "Saving...",
+      "cancel": "Cancel",
+      "loading": "Loading..."
+    },
+    "groupTab": {
+      "title": "Certificates & Completion",
+      "subtitle": "Evaluate student eligibility and issue authenticated certificates",
+      "evaluateButton": "Evaluate Certificates",
+      "evaluating": "Evaluating...",
+      "empty": "No certificates evaluated yet. Click evaluate to process eligible students."
+    },
+    "table": {
+      "student": "Student",
+      "attendance": "Attendance",
+      "homework": "Homework",
+      "exam": "Exam",
+      "examPassed": "Passed",
+      "examFailed": "Failed",
+      "payment": "Tuition",
+      "paid": "Paid",
+      "unpaid": "Unpaid",
+      "status": "Certificate Status",
+      "nameConfirmed": "Name Review",
+      "confirmed": "Confirmed",
+      "pendingReview": "Pending Review",
+      "actions": "Actions",
+      "editName": "Edit Name",
+      "viewCertificate": "View",
+      "issue": "Issue Certificate",
+      "nameMustBeConfirmed": "Name must be reviewed and confirmed before issuance"
+    },
+    "status": {
+      "ELIGIBLE": "Eligible",
+      "NAME_REVIEW": "Name Review",
+      "ISSUED": "Issued"
+    },
+    "card": {
+      "unnamed": "Certificate",
+      "attendance": "Attendance",
+      "homework": "Homework Avg",
+      "nameActionRequired": "Name Confirmation Required",
+      "nameActionRequiredDesc": "Please review how your name will appear on the printed certificate",
+      "issuedOn": "Issued on {date}",
+      "editName": "Edit Name",
+      "confirmName": "Review Name",
+      "viewCertificate": "View Certificate"
+    },
+    "myCertificates": {
+      "title": "My Certificates",
+      "description": "View and download your issued certificates and track completion status",
+      "emptyTitle": "No Certificates Yet",
+      "emptyDescription": "Once you successfully complete a group and fulfill all requirements, your certificate will appear here."
+    },
+    "printable": {
+      "back": "Back",
+      "shareVerification": "Share Verification Link",
+      "printPdf": "Print / Save PDF",
+      "linkCopied": "Verification link copied to clipboard!",
+      "notFound": "Certificate not found",
+      "institutionHeader": "Verified Academic Completion Certificate",
+      "certificateTitleAr": "شهادة إتمام واجتياز مسار تعليمي",
+      "certificateTitleEn": "Certificate of Academic Completion",
+      "certifyThat": "This is to certify that",
+      "bodyText": "has successfully completed all coursework, attendance criteria, and academic milestones with distinction.",
+      "issueDate": "Date of Issue",
+      "serialNumber": "Certificate Serial",
+      "verifiedSeal": "Authentic & Verified",
+      "officialCertification": "Official Certification",
+      "scanToVerify": "Scan QR code to verify authenticity"
+    },
+    "verification": {
+      "validTitle": "Officially Verified Certificate",
+      "validSubtitle": "This certificate is officially authenticated and registered in the academy records",
+      "invalidTitle": "Invalid Certificate",
+      "invalidDescription": "The verification token is invalid or the certificate does not exist in our registry.",
+      "backHome": "Return to Home",
+      "awardedTo": "Awarded To",
+      "organization": "Organization",
+      "course": "Course",
+      "level": "Level",
+      "serial": "Certificate Serial",
+      "issueDate": "Date of Issue",
+      "officialRecordNotice": "This is a live cryptographic verification confirming that this certificate was issued by the institution."
+    }
   }
 }

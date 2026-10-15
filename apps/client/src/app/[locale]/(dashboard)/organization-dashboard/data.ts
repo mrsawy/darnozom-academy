@@ -32,6 +32,7 @@ import {
   IconSchool,
   IconSitemap,
   IconUsersGroup,
+  IconCertificate,
 } from '@tabler/icons-react';
 import {
   ROUTE_ORG_AI_BILLING,
@@ -66,6 +67,7 @@ import {
   ROUTE_ORG_BILLING_RECEIPTS,
   ROUTE_ORG_PAYROLL,
   ROUTE_ORG_MY_PAY_STATEMENTS,
+  ROUTE_ORG_MY_CERTIFICATES,
 } from '@/lib/data/constants/routes.constants';
 import { CourseContentType, ORG_WIDE_GROUP_READER_ROLES, Roles } from '@darnozom/shared-types';
 
@@ -162,6 +164,12 @@ export const data = {
       icon: IconChecklist,
       key: 'my-evaluations',
       requiredRoles: [Roles.INSTRUCTOR, Roles.SUPERVISOR, Roles.MANAGER, Roles.OWNER],
+    },
+    {
+      titleKey: 'navMain.myCertificates',
+      url: ROUTE_ORG_MY_CERTIFICATES,
+      icon: IconCertificate,
+      key: 'my-certificates',
     },
     { titleKey: 'navMain.courses', url: ROUTE_ORG_COURSES, icon: IconDashboard, key: 'courses' },
     {

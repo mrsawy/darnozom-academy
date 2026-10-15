@@ -170,4 +170,10 @@ export const ROUTE_ORG_BILLING_FAMILY = (familyId: string) =>
   `${ROUTE_ORG_BILLING_FAMILIES}/${familyId}`;
 export const ROUTE_ORG_PAYROLL = '/organization-dashboard/payroll';
 export const ROUTE_ORG_MY_PAY_STATEMENTS = '/organization-dashboard/my-pay-statements';
+export const ROUTE_ORG_MY_CERTIFICATES = '/organization-dashboard/my-certificates';
+export const ROUTE_STUDENT_MY_CERTIFICATES = '/student-dashboard/my-certificates';
+export const ROUTE_PARENT_MY_CERTIFICATES = '/parent-dashboard/my-certificates';
+export const ROUTE_PUBLIC_CERTIFICATE = (id: string) => `/certificates/${id}`;
+export const ROUTE_PUBLIC_VERIFY_CERTIFICATE = (token: string) => `/verify/${token}`;
+
 

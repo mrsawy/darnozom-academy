@@ -151,8 +151,19 @@ export const useUnlinkCourse = () =>
     unwrap(await programsApi.unlinkCourse(courseId))
   );
 export const useCreateLevel = () =>
-  useAcademicsMutation(async (v: { courseId: string; name: string; order: number }) =>
+  useAcademicsMutation(async (v: { courseId: string; name: string; order: number; certificateRules?: import('@darnozom/shared-types').ICertificateRules }) =>
     unwrap(await structureApi.createLevel(v))
+  );
+export const useUpdateLevel = () =>
+  useAcademicsMutation(
+    async (v: {
+      id: string;
+      data: {
+        name?: string;
+        order?: number;
+        certificateRules?: import('@darnozom/shared-types').ICertificateRules;
+      };
+    }) => unwrap(await structureApi.updateLevel(v.id, v.data))
   );
 export const useDeleteLevel = () =>
   useAcademicsMutation(async (id: string) => unwrap(await structureApi.deleteLevel(id)));

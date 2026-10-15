@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { GroupPaymentStatus, GroupStudentStatus } from '@darnozom/shared-types';
+import { FinalResult, GroupPaymentStatus, GroupStatus, GroupStudentStatus } from '@darnozom/shared-types';
 import { Button } from '@/components/atoms/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/card';
 import { Input } from '@/components/atoms/input';
@@ -23,17 +23,22 @@ import {
   useSetWhatsapp,
   useStudentCandidates,
 } from '@/lib/hooks/academics/use-academics.hook';
+import { useSetFinalResultMutation } from '@/lib/hooks/certificate/use-certificate.hook';
 
 const isWithdrawn = (student: IGroupStudent) => student.status === GroupStudentStatus.WITHDRAWN;
 
 export function StudentsCard({ group, disabled }: { group: IGroupDetail; disabled: boolean }) {
   const t = useTranslations('Academics');
+  const tCert = useTranslations('Certificates');
   const [search, setSearch] = useState('');
   const debounced = useDebounce(search, 300);
   const { data: candidates = [] } = useStudentCandidates(disabled ? '' : group._id, debounced);
   const addStudent = useAddStudent();
   const removeStudent = useRemoveStudent();
   const setWhatsapp = useSetWhatsapp();
+  const setFinalResult = useSetFinalResultMutation();
+
+  const started = group.status === GroupStatus.RUNNING || group.status === GroupStatus.COMPLETED;
 
   return (
     <Card>
@@ -47,6 +52,7 @@ export function StudentsCard({ group, disabled }: { group: IGroupDetail; disable
               <TableHead>{t('name')}</TableHead>
               <TableHead>{t('students.payment')}</TableHead>
               <TableHead>{t('students.whatsapp')}</TableHead>
+              {started ? <TableHead>{tCert('finalResult.title')}</TableHead> : null}
               <TableHead />
             </TableRow>
           </TableHeader>
@@ -82,6 +88,43 @@ export function StudentsCard({ group, disabled }: { group: IGroupDetail; disable
                     aria-label={t('students.whatsapp')}
                   />
                 </TableCell>
+                {started ? (
+                  <TableCell>
+                    <div className="flex items-center gap-1">
+                      <Button
+                        size="sm"
+                        variant={student.finalResult === FinalResult.PASS ? 'default' : 'outline'}
+                        className={
+                          student.finalResult === FinalResult.PASS
+                            ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                            : ''
+                        }
+                        disabled={disabled || isWithdrawn(student) || setFinalResult.isPending}
+                        onClick={() =>
+                          setFinalResult.mutate({
+                            groupId: group._id,
+                            studentId: student.studentId,
+                            finalResult: FinalResult.PASS,
+                          })
+                        }>
+                        {tCert('finalResult.pass')}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant={student.finalResult === FinalResult.FAIL ? 'destructive' : 'outline'}
+                        disabled={disabled || isWithdrawn(student) || setFinalResult.isPending}
+                        onClick={() =>
+                          setFinalResult.mutate({
+                            groupId: group._id,
+                            studentId: student.studentId,
+                            finalResult: FinalResult.FAIL,
+                          })
+                        }>
+                        {tCert('finalResult.fail')}
+                      </Button>
+                    </div>
+                  </TableCell>
+                ) : null}
                 <TableCell>
                   <Button
                     variant="ghost"

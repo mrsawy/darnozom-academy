@@ -2,6 +2,8 @@ import type {
   AtRiskReason,
   AttendanceStatus,
   AvailabilitySlot,
+  FinalResult,
+  ICertificateRules,
   FollowUpDecision,
   GroupPaymentStatus,
   GroupStatus,
@@ -33,6 +35,7 @@ export interface ILevel {
   courseId: string;
   name: string;
   order: number;
+  certificateRules?: ICertificateRules;
 }
 
 export interface ICohort {
@@ -48,6 +51,9 @@ export interface IGroupStudent {
   whatsappAdded: boolean;
   addedAt: string;
   status?: GroupStudentStatus;
+  finalResult?: FinalResult;
+  finalResultBy?: string;
+  finalResultAt?: string | Date;
 }
 
 export interface IGroup {

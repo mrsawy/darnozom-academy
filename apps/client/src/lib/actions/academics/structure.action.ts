@@ -6,8 +6,11 @@ import type { ICohort, ILevel } from '@/lib/types/academics/academics';
 export async function getLevels(courseId: string) {
   return createAuthorizedNatsRequest<ILevel[]>('academics.levels.findAll', { courseId });
 }
-export async function createLevel(data: { courseId: string; name: string; order: number }) {
+export async function createLevel(data: { courseId: string; name: string; order: number; certificateRules?: import('@darnozom/shared-types').ICertificateRules }) {
   return createAuthorizedNatsRequest<ILevel>('academics.levels.create', data);
+}
+export async function updateLevel(id: string, data: { name?: string; order?: number; certificateRules?: import('@darnozom/shared-types').ICertificateRules }) {
+  return createAuthorizedNatsRequest<ILevel>('academics.levels.update', { id, data });
 }
 export async function deleteLevel(id: string) {
   return createAuthorizedNatsRequest<{ message: string }>('academics.levels.delete', { id });

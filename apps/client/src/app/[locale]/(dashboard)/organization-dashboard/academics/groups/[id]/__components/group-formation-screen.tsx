@@ -28,6 +28,7 @@ import { StaffCard } from './staff-card';
 import { StudentsCard } from './students-card';
 import { SubscriptionsCard } from './subscriptions-card';
 import { TeacherCard } from './teacher-card';
+import { GroupCertificatesCard } from '@/components/organs/certificate/group-certificates-card';
 
 export function GroupFormationScreen({ groupId }: { groupId: string }) {
   const t = useTranslations('Academics');
@@ -107,6 +108,7 @@ export function GroupFormationScreen({ groupId }: { groupId: string }) {
           <SubscriptionsCard group={group} disabled={locked} />
           {started ? <GroupSessionsCard group={group} canManage={canManage} /> : null}
           {started && canManage ? <FollowUpsCard groupId={group._id} /> : null}
+          {started ? <GroupCertificatesCard group={group} canManage={canManage} /> : null}
         </div>
         <div className="space-y-6">
           {started ? null : (

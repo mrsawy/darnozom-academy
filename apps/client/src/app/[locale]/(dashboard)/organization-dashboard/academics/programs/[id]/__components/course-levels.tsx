@@ -10,14 +10,18 @@ import {
   useLevels,
 } from '@/lib/hooks/academics/use-academics.hook';
 import { LevelCohorts } from './level-cohorts';
+import { LevelCertificateRulesModal } from '@/components/organs/certificate/level-certificate-rules-modal';
+import type { ILevel } from '@/lib/types/academics/academics';
 
 export function CourseLevels({ courseId }: { courseId: string }) {
   const t = useTranslations('Academics');
+  const tCert = useTranslations('Certificates');
   const { data: levels = [] } = useLevels(courseId);
   const createLevel = useCreateLevel();
   const deleteLevel = useDeleteLevel();
   const [name, setName] = useState('');
   const [order, setOrder] = useState(String(levels.length + 1));
+  const [editingRulesLevel, setEditingRulesLevel] = useState<ILevel | null>(null);
 
   return (
     <div className="space-y-3">
@@ -56,6 +60,12 @@ export function CourseLevels({ courseId }: { courseId: string }) {
           <div className="flex items-center gap-3">
             <span className="font-medium">{`${level.order}. ${level.name}`}</span>
             <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setEditingRulesLevel(level)}>
+              {tCert('rules.button')}
+            </Button>
+            <Button
               variant="ghost"
               size="sm"
               onClick={() => {
@@ -67,6 +77,19 @@ export function CourseLevels({ courseId }: { courseId: string }) {
           <LevelCohorts levelId={level._id} />
         </div>
       ))}
+
+      {editingRulesLevel && (
+        <LevelCertificateRulesModal
+          levelId={editingRulesLevel._id}
+          levelName={editingRulesLevel.name}
+          rules={editingRulesLevel.certificateRules}
+          open={Boolean(editingRulesLevel)}
+          onOpenChange={(open) => {
+            if (!open) setEditingRulesLevel(null);
+          }}
+        />
+      )}
     </div>
   );
 }
+
