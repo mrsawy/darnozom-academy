@@ -63,6 +63,7 @@ import {
   ROUTE_ORG_MY_SESSIONS,
   ROUTE_ORG_MY_TASKS,
   ROUTE_ORG_MY_EVALUATIONS,
+  ROUTE_ORG_BILLING_RECEIPTS,
 } from '@/lib/data/constants/routes.constants';
 import { CourseContentType, ORG_WIDE_GROUP_READER_ROLES, Roles } from '@darnozom/shared-types';
 
@@ -94,6 +95,21 @@ export const data = {
             Roles.COORDINATOR,
             Roles.SUPERVISOR,
           ],
+        },
+      ],
+    },
+    {
+      titleKey: 'navMain.billing',
+      url: ROUTE_ORG_BILLING_RECEIPTS,
+      icon: IconCreditCard,
+      key: 'billing',
+      requiredRoles: [Roles.SUPER_ADMIN, Roles.ADMIN, Roles.OWNER, Roles.MANAGER, Roles.ACCOUNTANT],
+      children: [
+        {
+          titleKey: 'navMain.billingReceipts',
+          url: ROUTE_ORG_BILLING_RECEIPTS,
+          key: 'billing-receipts',
+          icon: IconCreditCard,
         },
       ],
     },

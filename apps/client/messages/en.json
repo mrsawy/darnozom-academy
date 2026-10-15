@@ -1938,7 +1938,8 @@
       "wallet": "Wallet",
       "aiSubscription": "AI Subscription",
       "chat": "Messages",
-      "booksStore": "Books Store"
+      "booksStore": "Books Store",
+      "payments": "Payments"
     }
   },
   "ParentDashboard": {
@@ -2350,7 +2351,9 @@
       "mySessions": "My sessions",
       "myTasks": "My tasks",
       "myEvaluations": "My evaluations",
-      "shariaReview": "Sharia review"
+      "shariaReview": "Sharia review",
+      "billing": "Billing",
+      "billingReceipts": "Receipts"
     },
     "navSecondary": {
       "getHelp": "Get Help",
@@ -4488,7 +4491,15 @@
     "chatMessageTitle": "New message",
     "chatMessageBody": "{preview}",
     "chatMessageAttachmentBody": "You received a new attachment",
-    "enrollmentInvalidToast": "Your enrollment for this course is no longer active."
+    "enrollmentInvalidToast": "Your enrollment for this course is no longer active.",
+    "billingPaymentApprovedTitle": "Payment Approved",
+    "billingPaymentApprovedBody": "Your payment receipt has been reviewed and approved.",
+    "billingPaymentRejectedTitle": "Payment Rejected",
+    "billingPaymentRejectedBody": "Your payment receipt was rejected.",
+    "billingPaymentConfirmedTitle": "Payment Confirmed",
+    "billingPaymentConfirmedBody": "Your online payment has been confirmed.",
+    "billingReminderTitle": "Payment Reminder",
+    "billingReminderBody": "You have tuition fees due. Please review your payments."
   },
   "errors": {
     "invalidCredentials": "Invalid email or password",
@@ -4739,7 +4750,23 @@
     "sessionNotHeld": "Only a held session can be evaluated.",
     "evaluationAlreadyExists": "You have already evaluated this session.",
     "evaluationInvalid": "Evaluation requires all five criteria scored between 1 and 5.",
-    "evaluationEditWindowClosed": "Evaluations can only be edited within 7 days."
+    "evaluationEditWindowClosed": "Evaluations can only be edited within 7 days.",
+    "billingSubscriptionNotFound": "Subscription not found.",
+    "billingSubscriptionAlreadyActive": "An active subscription already exists for this student.",
+    "billingSubscriptionItemsInvalid": "Subscription items are invalid.",
+    "billingFamilySubscriptionNeedsSiblings": "A family subscription requires at least two students from the same family.",
+    "billingAmountInvalid": "The amount entered is invalid.",
+    "billingAmountLocked": "The amount for this subscription is locked and cannot be changed.",
+    "billingPaymentNotFound": "Payment record not found.",
+    "billingPaymentNotReviewable": "This payment is not pending review.",
+    "billingPaymentMethodUnknown": "Unknown payment method.",
+    "billingPaymentMethodDisabled": "This payment method is currently disabled.",
+    "billingReceiptRequired": "A payment receipt file is required.",
+    "billingRejectReasonRequired": "A reason is required when rejecting a payment.",
+    "billingAdjustmentReasonRequired": "A reason is required for ledger adjustments.",
+    "billingNotYourFamily": "You can only view and manage payments for your own family.",
+    "billingCurrencyMismatch": "Payment currency does not match charge currency.",
+    "billingGatewayNotConfigured": "Payment gateway is not configured for this organization."
   },
   "mutations": {
     "moduleCreated": "Module created successfully",
@@ -7162,6 +7189,75 @@
       "version": "Version {number}",
       "superseded": "Replaced by a newer edit",
       "migrated": "Approved automatically when Sharia review was introduced"
+    }
+  },
+  "Billing": {
+    "title": "Billing",
+    "subscriptions": "Subscriptions",
+    "ledger": "Family Ledger",
+    "receipts": "Receipts Review",
+    "receiptQueueSubtitle": "Review pending parent payments and bank transfer receipts",
+    "balance": "Balance",
+    "settled": "Settled",
+    "amount": "Amount",
+    "amountInvalid": "Please enter a valid amount",
+    "studentRequired": "Please select at least one student",
+    "currency": "Currency",
+    "note": "Note",
+    "date": "Date",
+    "typeLabel": "Subscription Type",
+    "description": "Description",
+    "receipt": "View Receipt",
+    "reasonRequired": "Rejection reason is required",
+    "rejectReasonPlaceholder": "Reason for rejection",
+    "approve": "Approve",
+    "reject": "Reject",
+    "save": "Save",
+    "cancel": "Cancel",
+    "pay": "Pay",
+    "empty": "No records found",
+    "loading": "Loading...",
+    "saved": "Saved successfully",
+    "newSubscription": "New Subscription",
+    "student": "Student",
+    "students": "Students",
+    "paymentStatus": "Payment Status",
+    "statusLabel": "Status",
+    "active": "Active",
+    "ended": "Ended",
+    "end": "End",
+    "noMethods": "No payment methods available",
+    "uploadReceipt": "Upload Receipt",
+    "gatewayProvider": "Payment Gateway Provider",
+    "payDialogTitle": "Make a Payment",
+    "chooseMethod": "Select payment method",
+    "submitPayment": "Submit Payment",
+    "type": {
+      "FULL_COURSE": "Full Course",
+      "MONTHLY": "Monthly",
+      "PER_SESSION": "Per Session",
+      "FAMILY": "Family",
+      "SCHOLARSHIP": "Scholarship"
+    },
+    "entry": {
+      "charge": "Charge",
+      "payment": "Payment",
+      "adjustment": "Adjustment"
+    },
+    "status": {
+      "PAID": "Paid",
+      "UNPAID": "Unpaid"
+    },
+    "charge": {
+      "fullCourse": "Full course tuition fee",
+      "monthly": "Monthly subscription fee",
+      "perSession": "Session attendance fee",
+      "family": "Family bundle subscription fee",
+      "scholarship": "Scholarship waiver"
+    },
+    "method": {
+      "RECEIPT_UPLOAD": "Bank Transfer / Receipt",
+      "ONLINE_GATEWAY": "Online Payment Gateway"
     }
   }
 }

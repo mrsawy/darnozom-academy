@@ -1938,7 +1938,8 @@
       "wallet": "المحفظة",
       "aiSubscription": "اشتراك الذكاء الاصطناعي",
       "chat": "الرسائل",
-      "booksStore": "متجر الكتب"
+      "booksStore": "متجر الكتب",
+      "payments": "المدفوعات"
     }
   },
   "ParentDashboard": {
@@ -2350,7 +2351,9 @@
       "mySessions": "جلساتي",
       "myTasks": "مهامي",
       "myEvaluations": "تقييماتي",
-      "shariaReview": "المراجعة الشرعية"
+      "shariaReview": "المراجعة الشرعية",
+      "billing": "المالية",
+      "billingReceipts": "إيصالات السداد"
     },
     "navSecondary": {
       "getHelp": "الحصول على المساعدة",
@@ -4488,7 +4491,15 @@
     "chatMessageTitle": "رسالة جديدة",
     "chatMessageBody": "{preview}",
     "chatMessageAttachmentBody": "لقد استلمت مرفقًا جديدًا",
-    "enrollmentInvalidToast": "تسجيلك في هذه الدورة غير نشط حاليًا."
+    "enrollmentInvalidToast": "تسجيلك في هذه الدورة غير نشط حاليًا.",
+    "billingPaymentApprovedTitle": "تم اعتماد الدفعة",
+    "billingPaymentApprovedBody": "تمت مراجعة إيصال السداد الخاص بك واعتماده بنجاح.",
+    "billingPaymentRejectedTitle": "تم رفض الإيصال",
+    "billingPaymentRejectedBody": "تم رفض إيصال السداد الخاص بك.",
+    "billingPaymentConfirmedTitle": "تأكيد الدفع",
+    "billingPaymentConfirmedBody": "تم تأكيد عملية الدفع الإلكتروني بنجاح.",
+    "billingReminderTitle": "تذكير بالسداد",
+    "billingReminderBody": "توجد رسوم دراسية مستحقة السداد. يرجى مراجعة حسابك."
   },
   "errors": {
     "cannotBookOwnSession": "لا يمكنك حجز جلستك الخاصة",
@@ -4739,7 +4750,23 @@
     "sessionNotHeld": "يمكن تقييم الحصة التي عُقدت فقط.",
     "evaluationAlreadyExists": "لقد قيّمت هذه الحصة بالفعل.",
     "evaluationInvalid": "يتطلب التقييم درجات لجميع المعايير الخمسة بين 1 و 5.",
-    "evaluationEditWindowClosed": "يمكن تعديل التقييم خلال 7 أيام فقط."
+    "evaluationEditWindowClosed": "يمكن تعديل التقييم خلال 7 أيام فقط.",
+    "billingSubscriptionNotFound": "الاشتراك غير موجود.",
+    "billingSubscriptionAlreadyActive": "يوجد اشتراك نشط بالفعل لهذا الطالب.",
+    "billingSubscriptionItemsInvalid": "بيانات بنود الاشتراك غير صالحة.",
+    "billingFamilySubscriptionNeedsSiblings": "الاشتراك العائلي يتطلب طالبين على الأقل من نفس العائلة.",
+    "billingAmountInvalid": "المبلغ المدخل غير صحيح.",
+    "billingAmountLocked": "مبلغ هذا الاشتراك مقفل ولا يمكن تغييره.",
+    "billingPaymentNotFound": "سجل الدفعة غير موجود.",
+    "billingPaymentNotReviewable": "هذه الدفعة ليست في انتظار المراجعة.",
+    "billingPaymentMethodUnknown": "طريقة دفع غير معروفة.",
+    "billingPaymentMethodDisabled": "طريقة الدفع هذه معطلة حالياً.",
+    "billingReceiptRequired": "ملف إيصال السداد مطلوب.",
+    "billingRejectReasonRequired": "سبب الرفض مطلوب عند رفض الدفعة.",
+    "billingAdjustmentReasonRequired": "سبب التسوية مطلوب للتسويات المحاسبية.",
+    "billingNotYourFamily": "يمكنك فقط الاطلاع على وإدارة مدفوعات عائلتك.",
+    "billingCurrencyMismatch": "عملة الدفع لا تتطابق مع عملة الرسوم.",
+    "billingGatewayNotConfigured": "بوابة الدفع غير مهيأة لهذه المنشأة."
   },
   "mutations": {
     "moduleCreated": "تم إنشاء الوحدة بنجاح",
@@ -7162,6 +7189,75 @@
       "version": "النسخة {number}",
       "superseded": "استُبدلت بتعديل أحدث",
       "migrated": "اعتُمدت تلقائيًا عند تطبيق المراجعة الشرعية"
+    }
+  },
+  "Billing": {
+    "title": "المالية",
+    "subscriptions": "الاشتراكات",
+    "ledger": "سجل حساب العائلة",
+    "receipts": "مراجعة الإيصالات",
+    "receiptQueueSubtitle": "مراجعة مدفوعات أولياء الأمور وإيصالات التحويل البنكي المعلقة",
+    "balance": "الرصيد",
+    "settled": "مسدد بالكامل",
+    "amount": "المبلغ",
+    "amountInvalid": "يرجى إدخال مبلغ صحيح",
+    "studentRequired": "يرجى اختيار طالب واحد على الأقل",
+    "currency": "العملة",
+    "note": "ملاحظة",
+    "date": "التاريخ",
+    "typeLabel": "نوع الاشتراك",
+    "description": "الوصف",
+    "receipt": "عرض الإيصال",
+    "reasonRequired": "سبب الرفض مطلوب",
+    "rejectReasonPlaceholder": "سبب الرفض",
+    "approve": "اعتماد",
+    "reject": "رفض",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "pay": "سداد",
+    "empty": "لا توجد سجلات",
+    "loading": "جاري التحميل...",
+    "saved": "تم الحفظ بنجاح",
+    "newSubscription": "اشتراك جديد",
+    "student": "الطالب",
+    "students": "الطلاب",
+    "paymentStatus": "حالة السداد",
+    "statusLabel": "الحالة",
+    "active": "نشط",
+    "ended": "منتهي",
+    "end": "إنهاء",
+    "noMethods": "لا تتوفر طرق دفع حالياً",
+    "uploadReceipt": "رفع الإيصال",
+    "gatewayProvider": "بوابة الدفع الإلكتروني",
+    "payDialogTitle": "سداد الرسوم",
+    "chooseMethod": "اختر طريقة الدفع",
+    "submitPayment": "تأكيد الدفع",
+    "type": {
+      "FULL_COURSE": "دورة كاملة",
+      "MONTHLY": "شهري",
+      "PER_SESSION": "لكل جلسة",
+      "FAMILY": "عائلي",
+      "SCHOLARSHIP": "منحة دراسية"
+    },
+    "entry": {
+      "charge": "رسوم مستحقة",
+      "payment": "دفعة مسددة",
+      "adjustment": "تسوية محاسبية"
+    },
+    "status": {
+      "PAID": "مسدد",
+      "UNPAID": "غير مسدد"
+    },
+    "charge": {
+      "fullCourse": "رسوم الدورة الكاملة",
+      "monthly": "رسوم الاشتراك الشهري",
+      "perSession": "رسوم حضور الجلسة",
+      "family": "رسوم الباقة العائلية",
+      "scholarship": "إعفاء منحة دراسية"
+    },
+    "method": {
+      "RECEIPT_UPLOAD": "تحويل بنكي / إيصال",
+      "ONLINE_GATEWAY": "بوابة دفع إلكتروني"
     }
   }
 }

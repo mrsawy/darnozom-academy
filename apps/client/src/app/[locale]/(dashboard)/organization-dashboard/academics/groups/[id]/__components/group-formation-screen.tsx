@@ -26,6 +26,7 @@ import { OpenTasksCard } from './open-tasks-card';
 import { ReadinessPanel } from './readiness-panel';
 import { StaffCard } from './staff-card';
 import { StudentsCard } from './students-card';
+import { SubscriptionsCard } from './subscriptions-card';
 import { TeacherCard } from './teacher-card';
 
 export function GroupFormationScreen({ groupId }: { groupId: string }) {
@@ -103,6 +104,7 @@ export function GroupFormationScreen({ groupId }: { groupId: string }) {
             </CardContent>
           </Card>
           <StudentsCard group={group} disabled={locked} />
+          <SubscriptionsCard group={group} disabled={locked} />
           {started ? <GroupSessionsCard group={group} canManage={canManage} /> : null}
           {started && canManage ? <FollowUpsCard groupId={group._id} /> : null}
         </div>

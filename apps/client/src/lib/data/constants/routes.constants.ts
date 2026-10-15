@@ -163,3 +163,7 @@ export const ROUTE_ORG_MY_TASKS = '/organization-dashboard/my-tasks';
 export const ROUTE_ORG_MY_EVALUATIONS = '/organization-dashboard/my-evaluations';
 export const ROUTE_ORG_SESSION = (id: string) => `/organization-dashboard/sessions/${id}`;
 export const ROUTE_STUDENT_MY_SESSIONS = '/student-dashboard/my-sessions';
+export const ROUTE_ORG_BILLING_RECEIPTS = '/organization-dashboard/billing/receipts';
+export const ROUTE_ORG_BILLING_FAMILIES = '/organization-dashboard/billing/families';
+export const ROUTE_ORG_BILLING_FAMILY = (familyId: string) =>
+  `${ROUTE_ORG_BILLING_FAMILIES}/${familyId}`;
