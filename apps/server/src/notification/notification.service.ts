@@ -63,6 +63,19 @@ export class NotificationService {
     return new Set(rows.map((r) => r.userId.toString()));
   }
 
+  /** The most recent notification of a given title key for a user, or null. */
+  async findLast(userId: string, titleKey: string): Promise<{ createdAt: Date } | null> {
+    return (
+      this.notificationModel
+        .findOne({ userId: new mongoose.Types.ObjectId(userId), titleKey })
+        // eslint-disable-next-line unicorn/no-array-sort -- Mongoose Query.prototype.sort, not Array#sort
+        .sort({ createdAt: -1 })
+        .select('createdAt')
+        .lean<{ createdAt: Date } | null>()
+        .exec()
+    );
+  }
+
   async getForUser(
     userId: string,
     options: { page?: number; limit?: number; unreadOnly?: boolean }

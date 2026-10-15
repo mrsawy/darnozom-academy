@@ -1,5 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { BullModule } from '@nestjs/bullmq';
 import { User, UserSchema } from '../user/entities/user.entity';
 import { Organization, OrganizationSchema } from '../organization/entities/organization.entity';
 import { Group, GroupSchema } from '../academics/group/entities/group.entity';
@@ -21,6 +22,10 @@ import { FamilyPaymentMethodRegistry } from './payment/payment-method.registry';
 import { FAMILY_PAYMENT_METHODS } from './payment/payment-method.interface';
 import { MonthlyChargesService } from './jobs/monthly-charges.service';
 import { SessionChargesService } from './jobs/session-charges.service';
+import { RemindersService } from './jobs/reminders.service';
+import { BillingProcessor } from './jobs/billing.processor';
+import { BillingScheduler } from './jobs/billing.scheduler';
+import { BILLING_QUEUE } from './jobs/billing.queue';
 import { SessionCompletedBillingListener } from './events/session-completed.listener';
 import { PaymentModule } from '../payment/payment.module';
 import { NotificationModule } from '../notification/notification.module';
@@ -39,6 +44,7 @@ import { FileModule } from '../file/file.module';
       { name: FamilyPayment.name, schema: FamilyPaymentSchema },
       { name: Allocation.name, schema: AllocationSchema },
     ]),
+    BullModule.registerQueue({ name: BILLING_QUEUE }),
     forwardRef(() => PaymentModule),
     NotificationModule,
     FileModule,
@@ -55,6 +61,9 @@ import { FileModule } from '../file/file.module';
     FamilyPaymentMethodRegistry,
     MonthlyChargesService,
     SessionChargesService,
+    RemindersService,
+    BillingProcessor,
+    BillingScheduler,
     SessionCompletedBillingListener,
     {
       provide: FAMILY_PAYMENT_METHODS,
@@ -76,6 +85,7 @@ import { FileModule } from '../file/file.module';
     FamilyPaymentStatusService,
     MonthlyChargesService,
     SessionChargesService,
+    RemindersService,
   ],
 })
 export class BillingModule {}
