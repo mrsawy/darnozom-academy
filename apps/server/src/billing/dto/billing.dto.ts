@@ -41,6 +41,10 @@ export class GroupIdPayload {
   @IsMongoId() groupId: string;
 }
 
+export class SubscriptionIdPayload {
+  @IsMongoId() id: string;
+}
+
 export class InitiatePaymentPayload {
   @IsString() @MinLength(1) method: string;
   @IsInt() @Min(1) amountMinor: number;

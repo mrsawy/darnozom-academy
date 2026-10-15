@@ -27,6 +27,9 @@ export const PARENT_PERMISSIONS: RolePermissionRule[] = [
   { action: Actions.READ, subject: Subjects.ORGANIZATION_MEMBER_REPORT },
   { action: Actions.READ, subject: Subjects.GROUP },
   { action: Actions.READ, subject: Subjects.SESSION },
+  { action: Actions.READ, subject: Subjects.BILLING },
+  { action: Actions.CREATE, subject: Subjects.FAMILY_PAYMENT },
+  { action: Actions.READ, subject: Subjects.FAMILY_PAYMENT },
 ];
 
 export const PARENT_SEED: RoleSeedEntry = {

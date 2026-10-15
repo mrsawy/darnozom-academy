@@ -26,6 +26,8 @@ import { RemindersService } from './jobs/reminders.service';
 import { BillingProcessor } from './jobs/billing.processor';
 import { BillingScheduler } from './jobs/billing.scheduler';
 import { BILLING_QUEUE } from './jobs/billing.queue';
+import { BillingReadService } from './billing-read.service';
+import { BillingControllerMessage } from './billing.controller.message';
 import { SessionCompletedBillingListener } from './events/session-completed.listener';
 import { PaymentModule } from '../payment/payment.module';
 import { NotificationModule } from '../notification/notification.module';
@@ -64,6 +66,7 @@ import { FileModule } from '../file/file.module';
     RemindersService,
     BillingProcessor,
     BillingScheduler,
+    BillingReadService,
     SessionCompletedBillingListener,
     {
       provide: FAMILY_PAYMENT_METHODS,
@@ -71,7 +74,7 @@ import { FileModule } from '../file/file.module';
       inject: [ReceiptUploadMethod, OnlineGatewayMethod],
     },
   ],
-  controllers: [],
+  controllers: [BillingControllerMessage],
   exports: [
     MongooseModule,
     FamilyService,
@@ -86,6 +89,7 @@ import { FileModule } from '../file/file.module';
     MonthlyChargesService,
     SessionChargesService,
     RemindersService,
+    BillingReadService,
   ],
 })
 export class BillingModule {}

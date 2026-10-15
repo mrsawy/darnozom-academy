@@ -148,4 +148,37 @@ describe('ROLE_SEED_DEFINITIONS', () => {
       expect(seed.permissions.some((rule) => String(rule.subject) === 'GROUP_PAYMENT_STATUS')).toBe(false);
     }
   });
+
+  it('lets the accountant and the owner manage billing and family payments', () => {
+    const permissions = ROLE_SEED_DEFINITIONS.find((seed) => seed.name === Roles.ACCOUNTANT)?.permissions ?? [];
+    expect(permissions).toContainEqual({ action: Actions.MANAGE, subject: Subjects.BILLING });
+    expect(permissions).toContainEqual({ action: Actions.MANAGE, subject: Subjects.FAMILY_PAYMENT });
+  });
+
+  it('lets the manager read billing without being able to change money', () => {
+    const permissions = ROLE_SEED_DEFINITIONS.find((seed) => seed.name === Roles.MANAGER)?.permissions ?? [];
+    expect(permissions).toContainEqual({ action: Actions.READ, subject: Subjects.BILLING });
+    expect(permissions).not.toContainEqual({ action: Actions.MANAGE, subject: Subjects.BILLING });
+  });
+
+  it('lets a parent read billing and create a payment, but not manage billing', () => {
+    const permissions = ROLE_SEED_DEFINITIONS.find((seed) => seed.name === Roles.PARENT)?.permissions ?? [];
+    expect(permissions).toContainEqual({ action: Actions.READ, subject: Subjects.BILLING });
+    expect(permissions).toContainEqual({ action: Actions.CREATE, subject: Subjects.FAMILY_PAYMENT });
+    expect(permissions).not.toContainEqual({ action: Actions.MANAGE, subject: Subjects.BILLING });
+  });
+
+  it('keeps every financial subject away from content staff and teachers', () => {
+    for (const role of [Roles.CONTENT_OFFICER, Roles.SHARIA_REVIEWER, Roles.INSTRUCTOR, Roles.SUPERVISOR]) {
+      const permissions = ROLE_SEED_DEFINITIONS.find((seed) => seed.name === role)?.permissions ?? [];
+      for (const subject of [Subjects.BILLING, Subjects.FAMILY_PAYMENT]) {
+        expect(permissions.some((rule) => rule.subject === subject)).toBe(false);
+      }
+    }
+  });
+
+  it('keeps billing away from the student role: the parent owns the ledger', () => {
+    const permissions = ROLE_SEED_DEFINITIONS.find((seed) => seed.name === Roles.STUDENT)?.permissions ?? [];
+    expect(permissions.some((rule) => rule.subject === Subjects.BILLING)).toBe(false);
+  });
 });
