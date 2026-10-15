@@ -42,14 +42,20 @@ export default function ParentPaymentsPage() {
       });
 
       if (res && 'kind' in res) {
-        if (res.kind === 'REDIRECT' && res.url) {
-          globalThis.location.href = res.url;
+        const result = res as {
+          paymentId: string;
+          clientSecret?: string;
+          kind?: string;
+          url?: string;
+        };
+        if (result.kind === 'REDIRECT' && result.url) {
+          globalThis.location.href = result.url;
           return;
         }
 
-        if (res.kind === 'AWAIT_RECEIPT' && data.receiptFile) {
+        if (result.kind === 'AWAIT_RECEIPT' && data.receiptFile) {
           const fileKey = await uploadFileToS3({ file: data.receiptFile });
-          await attach.mutateAsync({ paymentId: res.paymentId, fileKey });
+          await attach.mutateAsync({ paymentId: result.paymentId, fileKey });
         }
       }
       setShowPayDialog(false);

@@ -81,6 +81,8 @@ export const usePaymentMethods = (enabled = true) =>
     enabled,
   });
 
+export const useMethods = usePaymentMethods;
+
 export const useCreateSubscription = () =>
   useBillingMutation(async (data: CreateSubscriptionFormValues) =>
     unwrap(await billingApi.createSubscription(data))

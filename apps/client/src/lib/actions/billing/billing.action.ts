@@ -47,10 +47,12 @@ export async function getPaymentMethods() {
 }
 
 export async function initiatePayment(data: InitiatePaymentFormValues) {
-  return createAuthorizedNatsRequest<{ paymentId: string; clientSecret?: string }>(
-    'billing.payments.initiate',
-    data
-  );
+  return createAuthorizedNatsRequest<{
+    paymentId: string;
+    clientSecret?: string;
+    kind?: string;
+    url?: string;
+  }>('billing.payments.initiate', data);
 }
 
 export async function attachReceipt(paymentId: string, fileKey: string) {

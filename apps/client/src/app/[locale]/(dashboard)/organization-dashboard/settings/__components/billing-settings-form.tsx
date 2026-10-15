@@ -77,7 +77,7 @@ export function BillingSettingsForm({
       <div className="space-y-3">
         <label className="text-sm font-medium">{t('enabledMethods')}</label>
         <div className="space-y-2">
-          {methodsList.map((m) => {
+          {methodsList.map((m: { key: string }) => {
             const checked = enabledMethods.includes(m.key);
             return (
               <label
