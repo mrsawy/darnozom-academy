@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { AtRiskReason, GroupPaymentStatus, GroupStatus, GroupStudentStatus } from '@darnozom/shared-types';
+import { AtRiskReason, FinalResult, GroupPaymentStatus, GroupStatus, GroupStudentStatus } from '@darnozom/shared-types';
 import { applySoftDeleteMiddleware } from 'src/utils/soft-delete';
 
 @Schema({ _id: false })
@@ -38,6 +38,15 @@ export class GroupStudent {
 
   @Prop({ type: Date, required: false })
   withdrawnAt?: Date;
+
+  @Prop({ type: String, enum: Object.values(FinalResult), required: false, default: null })
+  finalResult?: FinalResult | null;
+
+  @Prop({ type: Types.ObjectId, ref: 'User', required: false, default: null })
+  finalResultBy?: Types.ObjectId | null;
+
+  @Prop({ type: Date, required: false, default: null })
+  finalResultAt?: Date | null;
 }
 export const GroupStudentSchema = SchemaFactory.createForClass(GroupStudent);
 

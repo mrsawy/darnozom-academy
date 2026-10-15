@@ -171,6 +171,10 @@ export class Organization extends Document<Types.ObjectId> {
   /** IANA timezone for this organization (e.g. 'Africa/Cairo', 'Asia/Riyadh'). Defaults to 'UTC'. */
   @Prop({ type: String, default: 'UTC' })
   timezone: string;
+
+  /** Short code for certificates and invoice serials (3-6 uppercase chars, e.g. 'NOZOM'). */
+  @Prop({ type: String, required: false, trim: true, uppercase: true })
+  shortCode?: string;
 }
 
 export const OrganizationSchema = SchemaFactory.createForClass(Organization);
