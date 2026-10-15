@@ -128,6 +128,7 @@ export const ROUTE_ORG_AI_BILLING = '/organization-dashboard/settings/ai-plan';
 export const ROUTE_ORG_CHAT = '/organization-dashboard/chat';
 export const ROUTE_STUDENT_AI_SUBSCRIPTION = '/student-dashboard/ai-subscription';
 export const ROUTE_PARENT_AI_SUBSCRIPTION = '/parent-dashboard/ai-subscription';
+export const ROUTE_PARENT_PAYMENTS = '/parent-dashboard/payments';
 
 export const ROUTE_CHAT = '/chat';
 export const ROUTE_CHAT_CONVERSATION = (conversationId: string) => `/chat/${conversationId}`;

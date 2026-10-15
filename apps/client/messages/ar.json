@@ -7258,6 +7258,13 @@
     "method": {
       "RECEIPT_UPLOAD": "تحويل بنكي / إيصال",
       "ONLINE_GATEWAY": "بوابة دفع إلكتروني"
-    }
+    },
+    "billingSettings": "إعدادات الدفع",
+    "billingSettingsSubtitle": "تهيئة طرق الدفع المقبولة وبوابة الدفع لرسوم الطلاب",
+    "enabledMethods": "طرق الدفع المفعلة",
+    "noProviderSelected": "لا يوجد / اختر مزود الخدمة",
+    "gatewayProviderRequiredNote": "تتطلب بوابة الدفع الإلكتروني اختيار مزود خدمة لتفعيلها.",
+    "saveSettings": "حفظ الإعدادات",
+    "settingsSaved": "تم حفظ إعدادات الدفع بنجاح"
   }
 }

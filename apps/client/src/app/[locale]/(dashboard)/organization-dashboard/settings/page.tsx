@@ -1,12 +1,16 @@
 import { getTranslations } from 'next-intl/server';
+import { BillingSettingsForm } from './__components/billing-settings-form';
 
 export default async function SettingsPage() {
   const t = await getTranslations('dashboard.settings');
 
   return (
-    <div>
-      <h1 className="text-xl font-bold">{t('title')}</h1>
-      <p className="mt-2 text-sm text-muted-foreground">{t('comingSoon')}</p>
+    <div className="space-y-8">
+      <div>
+        <h1 className="text-xl font-bold">{t('title')}</h1>
+      </div>
+
+      <BillingSettingsForm />
     </div>
   );
 }
