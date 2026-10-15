@@ -55,7 +55,7 @@ function setup() {
     syncReadiness: jest.fn(async (id) => ({ _id: id, synced: true })),
   };
   const parentService = { validateParentChildLink: jest.fn() };
-  const groupTeacher = { assertScheduleChangeFits: jest.fn().mockResolvedValue() };
+  const groupTeacher = { assertScheduleChangeFits: jest.fn().mockResolvedValue(undefined) };
   const taskClosing = { closeDoneItems: jest.fn(async () => 0), closeAll: jest.fn(async () => 0) };
   const service = new GroupService(
     groupModel as never,
