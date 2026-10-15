@@ -36,10 +36,9 @@ describe('message-template.action', () => {
   });
 
   it('deleteMessageTemplate calls messageTemplates.remove with id', async () => {
-    vi.mocked(createAuthorizedNatsRequest).mockResolvedValue({ _id: 't1' });
-    const result = await templateAction.deleteMessageTemplate('t1');
+    vi.mocked(createAuthorizedNatsRequest).mockResolvedValue(undefined);
+    await templateAction.deleteMessageTemplate('t1');
     expect(createAuthorizedNatsRequest).toHaveBeenCalledWith('messageTemplates.remove', { id: 't1' });
-    expect(result).toEqual({ _id: 't1' });
   });
 
   it('renderMessageTemplate calls messageTemplates.render with id and dto', async () => {

@@ -22,7 +22,7 @@ export async function updateMessageTemplate(id: string, data: UpdateMessageTempl
 }
 
 export async function deleteMessageTemplate(id: string) {
-  return createAuthorizedNatsRequest<IMessageTemplate>('messageTemplates.remove', { id });
+  return createAuthorizedNatsRequest<void>('messageTemplates.remove', { id });
 }
 
 export async function renderMessageTemplate(id: string, data: RenderMessageTemplateDto) {
