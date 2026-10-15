@@ -242,9 +242,13 @@ export class CertificateService {
       query.studentId = oid(actor._id);
     } else if (actor.roleName === Roles.PARENT) {
       const childIds = await this.getParentChildIds(actor._id);
-      query.studentId = filter.studentId
-        ? oid(filter.studentId)
-        : { $in: childIds };
+      if (filter.studentId) {
+        const isOwnChild = childIds.some((id) => String(id) === filter.studentId);
+        if (!isOwnChild) throw new ForbiddenException();
+        query.studentId = oid(filter.studentId);
+      } else {
+        query.studentId = { $in: childIds };
+      }
     } else if (filter.studentId) {
       query.studentId = oid(filter.studentId);
     }
