@@ -1,6 +1,6 @@
-import { BadRequestException, ConflictException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { Types } from 'mongoose';
-import { AcademicsErrors, GroupPaymentStatus, GroupStatus, GroupStudentStatus, Roles } from '@darnozom/shared-types';
+import { AcademicsErrors, CertificateErrors, FinalResult, GroupPaymentStatus, GroupStatus, GroupStudentStatus, Roles } from '@darnozom/shared-types';
 import { mockQuery } from '__test__/academics/mock-query';
 import { AcademicsActor } from '../common/actor';
 import { GroupStudentsService } from './group-students.service';
@@ -22,7 +22,12 @@ const group = (over: Record<string, unknown> = {}) => ({
 function setup() {
   const groupModel = { findOne: jest.fn(), updateOne: jest.fn() };
   const userModel = { find: jest.fn(), findOne: jest.fn() };
-  const state = { loadInOrg: jest.fn(), loadForWrite: jest.fn(), syncReadiness: jest.fn(async (id) => ({ _id: id })) };
+  const state = {
+    loadInOrg: jest.fn(),
+    loadForWrite: jest.fn(),
+    syncReadiness: jest.fn(async (id) => ({ _id: id })),
+    toView: jest.fn(async (g) => ({ ...g, readiness: {} })),
+  };
   const service = new GroupStudentsService(groupModel as never, userModel as never, state as never);
   return { service, groupModel, userModel, state };
 }
@@ -166,5 +171,112 @@ describe('GroupStudentsService with withdrawn students', () => {
     const [filter, update] = groupModel.updateOne.mock.calls[0];
     expect(filter).toEqual({ _id: groupId, 'students.studentId': existingStudent });
     expect(update.$set['students.$.status']).toBe(GroupStudentStatus.WITHDRAWN);
+  });
+
+  describe('setFinalResult', () => {
+    const teacherId = '64b0000000000000000000ee';
+    const teacherActor: AcademicsActor = {
+      _id: teacherId,
+      organizationId: ORG,
+      roleName: Roles.INSTRUCTOR,
+      additionalRoles: [],
+    };
+    const managerActor: AcademicsActor = {
+      _id: '64b0000000000000000000ff',
+      organizationId: ORG,
+      roleName: Roles.MANAGER,
+      additionalRoles: [Roles.MANAGER],
+    };
+    const runningGroup = (over: Record<string, unknown> = {}) => ({
+      _id: groupId,
+      status: GroupStatus.RUNNING,
+      teacherId: new Types.ObjectId(teacherId),
+      students: [
+        {
+          studentId: existingStudent,
+          status: GroupStudentStatus.ACTIVE,
+          paymentStatus: GroupPaymentStatus.PAID,
+        },
+      ],
+      ...over,
+    });
+
+    it('rejects if group is not RUNNING or COMPLETED', async () => {
+      const { service, state } = setup();
+      state.loadInOrg.mockResolvedValue(group({ status: GroupStatus.FORMING }));
+      await expect(
+        service.setFinalResult(teacherActor, String(groupId), String(existingStudent), FinalResult.PASS)
+      ).rejects.toThrow(new BadRequestException(CertificateErrors.GROUP_NOT_COMPLETED));
+    });
+
+    it('rejects if actor is not the teacher and not privileged', async () => {
+      const { service, state } = setup();
+      state.loadInOrg.mockResolvedValue(runningGroup());
+      const otherInstructor: AcademicsActor = {
+        _id: '64b000000000000000000099',
+        organizationId: ORG,
+        roleName: Roles.INSTRUCTOR,
+        additionalRoles: [],
+      };
+      await expect(
+        service.setFinalResult(otherInstructor, String(groupId), String(existingStudent), FinalResult.PASS)
+      ).rejects.toThrow(new ForbiddenException(CertificateErrors.NOT_GROUP_TEACHER));
+    });
+
+    it('allows assigned teacher to set PASS for active student', async () => {
+      const { service, state, groupModel } = setup();
+      state.loadInOrg.mockResolvedValue(runningGroup());
+      state.toView = jest.fn().mockImplementation((g) => ({ ...g, readiness: {} }));
+      groupModel.updateOne.mockReturnValue(mockQuery({ matchedCount: 1, modifiedCount: 1 }));
+
+      const res = await service.setFinalResult(
+        teacherActor,
+        String(groupId),
+        String(existingStudent),
+        FinalResult.PASS
+      );
+
+      expect(res).toBeDefined();
+      const [filter, update] = groupModel.updateOne.mock.calls[0];
+      expect(filter).toEqual({ _id: groupId, 'students.studentId': existingStudent });
+      expect(update.$set['students.$.finalResult']).toBe(FinalResult.PASS);
+      expect(update.$set['students.$.finalResultBy']).toEqual(new Types.ObjectId(teacherId));
+      expect(update.$set['students.$.finalResultAt']).toBeInstanceOf(Date);
+    });
+
+    it('allows manager to set FAIL for completed group', async () => {
+      const { service, state, groupModel } = setup();
+      state.loadInOrg.mockResolvedValue(runningGroup({ status: GroupStatus.COMPLETED }));
+      state.toView = jest.fn().mockImplementation((g) => ({ ...g, readiness: {} }));
+      groupModel.updateOne.mockReturnValue(mockQuery({ matchedCount: 1, modifiedCount: 1 }));
+
+      const res = await service.setFinalResult(
+        managerActor,
+        String(groupId),
+        String(existingStudent),
+        FinalResult.FAIL
+      );
+
+      expect(res).toBeDefined();
+      expect(groupModel.updateOne.mock.calls[0][1].$set['students.$.finalResult']).toBe(FinalResult.FAIL);
+    });
+
+    it('rejects if student is not found or WITHDRAWN', async () => {
+      const { service, state } = setup();
+      state.loadInOrg.mockResolvedValue(
+        runningGroup({
+          students: [
+            {
+              studentId: existingStudent,
+              status: GroupStudentStatus.WITHDRAWN,
+            },
+          ],
+        })
+      );
+
+      await expect(
+        service.setFinalResult(teacherActor, String(groupId), String(existingStudent), FinalResult.PASS)
+      ).rejects.toThrow(new NotFoundException(AcademicsErrors.STUDENT_NOT_IN_GROUP));
+    });
   });
 });

@@ -14,6 +14,7 @@ import {
   CreateGroupDto,
   FindGroupsPayload,
   GroupStudentPayload,
+  SetFinalResultPayload,
   StudentCandidatesPayload,
   UpdateGroupPayload,
   WhatsappPayload,
@@ -119,5 +120,11 @@ export class GroupControllerMessage {
   @MessagePattern('academics.groups.teacherCandidates')
   teacherCandidates(@Payload(new RpcValidationPipe()) payload: IdPayload, @Ctx() context: IUserContext) {
     return this.groupTeacher.candidates(actorFromContext(context), payload.id);
+  }
+
+  @RequirePermissionsGuard({ action: Actions.READ, subject: Subjects.GROUP })
+  @MessagePattern('academics.groups.setFinalResult')
+  setFinalResult(@Payload(new RpcValidationPipe()) payload: SetFinalResultPayload, @Ctx() context: IUserContext) {
+    return this.groupStudents.setFinalResult(actorFromContext(context), payload.id, payload.studentId, payload.finalResult);
   }
 }

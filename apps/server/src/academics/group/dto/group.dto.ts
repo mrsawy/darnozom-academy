@@ -18,7 +18,7 @@ import {
   ValidateIf,
   ValidateNested,
 } from 'class-validator';
-import { GroupStatus } from '@darnozom/shared-types';
+import { FinalResult, GroupStatus } from '@darnozom/shared-types';
 import { IsIanaTimeZone } from 'src/utils/validators/is-iana-timezone.validator';
 import { OptionalNonNull } from '../../common/optional-non-null';
 
@@ -224,3 +224,9 @@ export class AssignTeacherPayload {
   @IsMongoId()
   teacherId!: string;
 }
+
+export class SetFinalResultPayload extends GroupStudentPayload {
+  @IsEnum(FinalResult)
+  finalResult!: FinalResult;
+}
+

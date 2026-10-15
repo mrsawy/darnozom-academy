@@ -1,7 +1,7 @@
-import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model, Types } from 'mongoose';
-import { AcademicsErrors, GroupPaymentStatus, GroupStatus, GroupStudentStatus, Roles } from '@darnozom/shared-types';
+import { AcademicsErrors, CertificateErrors, FinalResult, GroupPaymentStatus, GroupStatus, GroupStudentStatus, Roles } from '@darnozom/shared-types';
 import { User } from 'src/user/entities/user.entity';
 import { AcademicsActor } from '../common/actor';
 import { escapeRegex } from '../common/escape-regex';
@@ -115,5 +115,45 @@ export class GroupStudentsService {
       .exec();
     if (result.matchedCount === 0) throw new NotFoundException(AcademicsErrors.STUDENT_NOT_IN_GROUP);
     return this.state.syncReadiness(group._id);
+  }
+
+  async setFinalResult(
+    actor: AcademicsActor,
+    id: string,
+    studentId: string,
+    finalResult: FinalResult
+  ): Promise<GroupView> {
+    const group = await this.state.loadInOrg(actor, id);
+    if (group.status !== GroupStatus.RUNNING && group.status !== GroupStatus.COMPLETED) {
+      throw new BadRequestException(CertificateErrors.GROUP_NOT_COMPLETED);
+    }
+    const isTeacher = group.teacherId && String(group.teacherId) === String(actor._id);
+    const allRoles = [actor.roleName, ...(actor.additionalRoles || [])];
+    const isPrivileged = allRoles.some((r) => [Roles.OWNER, Roles.MANAGER, Roles.SUPER_ADMIN].includes(r));
+    if (!isTeacher && !isPrivileged) {
+      throw new ForbiddenException(CertificateErrors.NOT_GROUP_TEACHER);
+    }
+    if (!Object.values(FinalResult).includes(finalResult)) {
+      throw new BadRequestException(CertificateErrors.INVALID_FINAL_RESULT);
+    }
+    const student = group.students.find((s) => String(s.studentId) === studentId && s.status === GroupStudentStatus.ACTIVE);
+    if (!student) {
+      throw new NotFoundException(AcademicsErrors.STUDENT_NOT_IN_GROUP);
+    }
+    const result = await this.groupModel
+      .updateOne(
+        { _id: group._id, 'students.studentId': oid(studentId) },
+        {
+          $set: {
+            'students.$.finalResult': finalResult,
+            'students.$.finalResultBy': oid(actor._id),
+            'students.$.finalResultAt': new Date(),
+          },
+        }
+      )
+      .exec();
+    if (result.matchedCount === 0) throw new NotFoundException(AcademicsErrors.STUDENT_NOT_IN_GROUP);
+    const updated = await this.state.loadInOrg(actor, id);
+    return this.state.toView(updated);
   }
 }

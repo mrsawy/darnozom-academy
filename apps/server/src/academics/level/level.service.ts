@@ -56,6 +56,7 @@ export class LevelService {
       courseId: oid(dto.courseId),
       name: dto.name.trim(),
       order: dto.order,
+      certificateRules: dto.certificateRules,
     });
     return created.toObject();
   }
