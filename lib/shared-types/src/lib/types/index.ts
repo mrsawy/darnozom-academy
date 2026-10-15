@@ -19,3 +19,4 @@ export * from './reports/index';
 export * from './academics/index';
 export * from './sharia/index';
 export * from './billing/index';
+export * from './payroll/index';
