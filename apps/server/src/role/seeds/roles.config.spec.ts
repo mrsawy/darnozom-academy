@@ -202,4 +202,26 @@ describe('ROLE_SEED_DEFINITIONS', () => {
       expect(permissions.some((rule) => rule.subject === Subjects.PAYROLL)).toBe(false);
     }
   });
+
+  it('lets manager, coordinator and accountant manage certificates', () => {
+    for (const role of [Roles.MANAGER, Roles.COORDINATOR, Roles.ACCOUNTANT]) {
+      const permissions = ROLE_SEED_DEFINITIONS.find((seed) => seed.name === role)?.permissions ?? [];
+      expect(permissions).toContainEqual({ action: Actions.MANAGE, subject: Subjects.CERTIFICATE });
+    }
+  });
+
+  it('lets instructor read certificates', () => {
+    const permissions = ROLE_SEED_DEFINITIONS.find((seed) => seed.name === Roles.INSTRUCTOR)?.permissions ?? [];
+    expect(permissions).toContainEqual({ action: Actions.READ, subject: Subjects.CERTIFICATE });
+    expect(permissions).not.toContainEqual({ action: Actions.MANAGE, subject: Subjects.CERTIFICATE });
+  });
+
+  it('lets student and parent read and update certificates', () => {
+    for (const role of [Roles.STUDENT, Roles.PARENT]) {
+      const permissions = ROLE_SEED_DEFINITIONS.find((seed) => seed.name === role)?.permissions ?? [];
+      expect(permissions).toContainEqual({ action: Actions.READ, subject: Subjects.CERTIFICATE });
+      expect(permissions).toContainEqual({ action: Actions.UPDATE, subject: Subjects.CERTIFICATE });
+      expect(permissions).not.toContainEqual({ action: Actions.MANAGE, subject: Subjects.CERTIFICATE });
+    }
+  });
 });

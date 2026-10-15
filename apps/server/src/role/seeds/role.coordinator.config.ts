@@ -10,6 +10,7 @@ export const COORDINATOR_PERMISSIONS: RolePermissionRule[] = [
   { action: Actions.MANAGE, subject: Subjects.SESSION },
   { action: Actions.READ, subject: Subjects.TASK },
   { action: Actions.UPDATE, subject: Subjects.TASK },
+  { action: Actions.MANAGE, subject: Subjects.CERTIFICATE },
 ];
 
 export const COORDINATOR_SEED: RoleSeedEntry = { name: Roles.COORDINATOR, permissions: COORDINATOR_PERMISSIONS };

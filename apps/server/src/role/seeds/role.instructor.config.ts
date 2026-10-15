@@ -28,6 +28,7 @@ export const INSTRUCTOR_PERMISSIONS: RolePermissionRule[] = [
   { action: Actions.UPDATE, subject: Subjects.SESSION },
   { action: Actions.READ, subject: Subjects.SESSION_EVALUATION },
   { action: Actions.READ, subject: Subjects.PAYROLL },
+  { action: Actions.READ, subject: Subjects.CERTIFICATE },
 ];
 
 export const INSTRUCTOR_SEED: RoleSeedEntry = {

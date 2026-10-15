@@ -38,6 +38,8 @@ export const ADMIN_MANAGE_SUBJECTS: Subjects[] = [
   Subjects.PARENT_REPORT,
   Subjects.BILLING,
   Subjects.FAMILY_PAYMENT,
+  Subjects.PAYROLL,
+  Subjects.CERTIFICATE,
 ];
 
 export const ADMIN_PERMISSIONS: RolePermissionRule[] = [
