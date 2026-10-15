@@ -64,6 +64,8 @@ import {
   ROUTE_ORG_MY_TASKS,
   ROUTE_ORG_MY_EVALUATIONS,
   ROUTE_ORG_BILLING_RECEIPTS,
+  ROUTE_ORG_PAYROLL,
+  ROUTE_ORG_MY_PAY_STATEMENTS,
 } from '@/lib/data/constants/routes.constants';
 import { CourseContentType, ORG_WIDE_GROUP_READER_ROLES, Roles } from '@darnozom/shared-types';
 
@@ -111,6 +113,12 @@ export const data = {
           key: 'billing-receipts',
           icon: IconCreditCard,
         },
+        {
+          titleKey: 'navMain.payroll',
+          url: ROUTE_ORG_PAYROLL,
+          key: 'payroll',
+          icon: IconWallet,
+        },
       ],
     },
     {
@@ -132,6 +140,13 @@ export const data = {
       url: ROUTE_ORG_MY_AVAILABILITY,
       icon: IconClockHour4,
       key: 'my-availability',
+      requiredRoles: [Roles.INSTRUCTOR],
+    },
+    {
+      titleKey: 'navMain.myPayStatements',
+      url: ROUTE_ORG_MY_PAY_STATEMENTS,
+      icon: IconWallet,
+      key: 'my-pay-statements',
       requiredRoles: [Roles.INSTRUCTOR],
     },
     {

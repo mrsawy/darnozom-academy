@@ -2353,7 +2353,9 @@
       "myEvaluations": "تقييماتي",
       "shariaReview": "المراجعة الشرعية",
       "billing": "المالية",
-      "billingReceipts": "إيصالات السداد"
+      "billingReceipts": "إيصالات السداد",
+      "payroll": "مستحقات المعلمين",
+      "myPayStatements": "مستحقاتي الشهرية"
     },
     "navSecondary": {
       "getHelp": "الحصول على المساعدة",

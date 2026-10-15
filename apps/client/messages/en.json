@@ -2353,7 +2353,9 @@
       "myEvaluations": "My evaluations",
       "shariaReview": "Sharia review",
       "billing": "Billing",
-      "billingReceipts": "Receipts"
+      "billingReceipts": "Receipts",
+      "payroll": "Teacher Payroll",
+      "myPayStatements": "My Pay Statements"
     },
     "navSecondary": {
       "getHelp": "Get Help",

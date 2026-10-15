@@ -168,3 +168,6 @@ export const ROUTE_ORG_BILLING_RECEIPTS = '/organization-dashboard/billing/recei
 export const ROUTE_ORG_BILLING_FAMILIES = '/organization-dashboard/billing/families';
 export const ROUTE_ORG_BILLING_FAMILY = (familyId: string) =>
   `${ROUTE_ORG_BILLING_FAMILIES}/${familyId}`;
+export const ROUTE_ORG_PAYROLL = '/organization-dashboard/payroll';
+export const ROUTE_ORG_MY_PAY_STATEMENTS = '/organization-dashboard/my-pay-statements';
+
