@@ -21,3 +21,4 @@ export * from './sharia/index';
 export * from './billing/index';
 export * from './payroll/index';
 export * from './certificate/index';
+export * from './message-template/index';

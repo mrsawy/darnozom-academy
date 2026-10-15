@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { GroupStatus } from '@darnozom/shared-types';
 import { Button } from '@/components/atoms/button';
@@ -29,9 +30,11 @@ import { StudentsCard } from './students-card';
 import { SubscriptionsCard } from './subscriptions-card';
 import { TeacherCard } from './teacher-card';
 import { GroupCertificatesCard } from '@/components/organs/certificate/group-certificates-card';
+import { SendTemplateDialog } from '@/components/organs/message-template/send-template-dialog';
 
 export function GroupFormationScreen({ groupId }: { groupId: string }) {
   const t = useTranslations('Academics');
+  const [sendTemplateOpen, setSendTemplateOpen] = useState(false);
   const { data: group, isLoading } = useGroup(groupId);
   const { data: user } = useAuthUser();
   const updateGroup = useUpdateGroup();
@@ -78,6 +81,11 @@ export function GroupFormationScreen({ groupId }: { groupId: string }) {
               pending={cancelGroup.isPending}
               onConfirm={(reason) => cancelGroup.mutate({ id: group._id, reason })}
             />
+          ) : null}
+          {started && canManage ? (
+            <Button variant="outline" onClick={() => setSendTemplateOpen(true)}>
+              {t('sendTemplate')}
+            </Button>
           ) : null}
         </div>
       </div>
@@ -148,6 +156,18 @@ export function GroupFormationScreen({ groupId }: { groupId: string }) {
           </Card>
         </div>
       </div>
+
+      {sendTemplateOpen && (
+        <SendTemplateDialog
+          open={sendTemplateOpen}
+          onOpenChange={setSendTemplateOpen}
+          groupId={group._id}
+          students={group.students.map((s) => ({
+            _id: s.studentId,
+            name: group.people[s.studentId] ?? s.studentId,
+          }))}
+        />
+      )}
     </div>
   );
 }

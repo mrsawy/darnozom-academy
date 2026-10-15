@@ -224,4 +224,18 @@ describe('ROLE_SEED_DEFINITIONS', () => {
       expect(permissions).not.toContainEqual({ action: Actions.MANAGE, subject: Subjects.CERTIFICATE });
     }
   });
+
+  it('lets manager, coordinator and admin manage message templates', () => {
+    for (const role of [Roles.MANAGER, Roles.COORDINATOR, Roles.ADMIN]) {
+      const permissions = ROLE_SEED_DEFINITIONS.find((seed) => seed.name === role)?.permissions ?? [];
+      expect(permissions).toContainEqual({ action: Actions.MANAGE, subject: Subjects.MESSAGE_TEMPLATE });
+    }
+  });
+
+  it('does not give instructor or student message template access', () => {
+    for (const role of [Roles.INSTRUCTOR, Roles.STUDENT, Roles.PARENT]) {
+      const permissions = ROLE_SEED_DEFINITIONS.find((seed) => seed.name === role)?.permissions ?? [];
+      expect(permissions).not.toContainEqual({ action: Actions.MANAGE, subject: Subjects.MESSAGE_TEMPLATE });
+    }
+  });
 });
