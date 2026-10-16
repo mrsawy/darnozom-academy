@@ -35,6 +35,7 @@ export * from './billing-errors.enum';
 export * from './payroll-errors.enum';
 export * from './certificate-errors.enum';
 export * from './message-template-errors.enum';
+export * from './dashboard-errors.enum';
 
 import { CommonErrors } from './common-errors.enum';
 import { CategoryErrors } from './category-errors.enum';
@@ -68,6 +69,7 @@ import { BillingErrors } from './billing-errors.enum';
 import { PayrollErrors } from './payroll-errors.enum';
 import { CertificateErrors } from './certificate-errors.enum';
 import { MessageTemplateErrors } from './message-template-errors.enum';
+import { DashboardErrors } from './dashboard-errors.enum';
 
 export const ALL_ERROR_KEYS: readonly string[] = [
   ...Object.values(CommonErrors),
@@ -115,6 +117,7 @@ export const ALL_ERROR_KEYS: readonly string[] = [
   ...Object.values(PayrollErrors),
   ...Object.values(CertificateErrors),
   ...Object.values(MessageTemplateErrors),
+  ...Object.values(DashboardErrors),
 ] as const;
 
 export const ALL_ERROR_KEYS_SET = new Set(ALL_ERROR_KEYS);

@@ -20,6 +20,7 @@ import {
   resolveReportsParams,
   type ReportsFilters,
 } from '@/lib/types/reports/reports-params.types';
+import { AdminDashboardSection } from '../admin-dashboard-section';
 
 const defaultFilters: ReportsFilters = { preset: '30d', accessType: 'all' };
 
@@ -59,23 +60,26 @@ export function ReportsSection() {
 
   if (showOrgReports) {
     return (
-      <section className="flex flex-col gap-4" aria-labelledby="organization-reports-heading">
-        <div className="px-0 lg:px-0">
-          <h2 id="organization-reports-heading" className="text-lg font-semibold tracking-tight">
-            {orgT('sectionTitle')}
-          </h2>
-        </div>
-        <OrganizationDashboardReports
-          data={orgQuery.data}
-          isLoading={orgQuery.isLoading}
-          isError={orgQuery.isError}
-          error={orgQuery.error instanceof Error ? orgQuery.error : null}
-          onRetry={() => void orgQuery.refetch()}
-          reportsTranslationNamespace={ORG_DASHBOARD_REPORTS_NAMESPACE}
-          filters={filters}
-          onFiltersChange={setFilters}
-        />
-      </section>
+      <div className="flex flex-col gap-6">
+        <AdminDashboardSection />
+        <section className="flex flex-col gap-4" aria-labelledby="organization-reports-heading">
+          <div className="px-0 lg:px-0">
+            <h2 id="organization-reports-heading" className="text-lg font-semibold tracking-tight">
+              {orgT('sectionTitle')}
+            </h2>
+          </div>
+          <OrganizationDashboardReports
+            data={orgQuery.data}
+            isLoading={orgQuery.isLoading}
+            isError={orgQuery.isError}
+            error={orgQuery.error instanceof Error ? orgQuery.error : null}
+            onRetry={() => void orgQuery.refetch()}
+            reportsTranslationNamespace={ORG_DASHBOARD_REPORTS_NAMESPACE}
+            filters={filters}
+            onFiltersChange={setFilters}
+          />
+        </section>
+      </div>
     );
   }
 

@@ -22,3 +22,4 @@ export * from './billing/index';
 export * from './payroll/index';
 export * from './certificate/index';
 export * from './message-template/index';
+export * from './dashboard/index';

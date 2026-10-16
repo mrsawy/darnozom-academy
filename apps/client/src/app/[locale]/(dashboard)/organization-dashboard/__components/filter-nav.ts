@@ -8,6 +8,16 @@ export interface RoleGatedNavItem {
 }
 
 export function isNavItemVisible(item: RoleGatedNavItem, user?: RoleHolder | null): boolean {
+  const allRoles = [
+    ...(user?.roleName ? [user.roleName] : []),
+    ...((user?.additionalRoles as Roles[] | undefined) ?? []),
+  ];
+  const isInstructorOnly =
+    allRoles.length > 0 && allRoles.every((r) => r === Roles.INSTRUCTOR);
+
+  if (isInstructorOnly && !item.instructorOnly) {
+    return false;
+  }
   if (item.instructorOnly && !hasRole(user, Roles.INSTRUCTOR)) return false;
   if (item.requiredRoles && !hasAnyRole(user, item.requiredRoles)) return false;
   return true;

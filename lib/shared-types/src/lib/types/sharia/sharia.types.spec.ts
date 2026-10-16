@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { SHARIA_MIGRATED_COMMENT, SHARIA_SUPERSEDED_COMMENT, ShariaStatus } from './sharia.types';
 
 describe('Sharia shared types', () => {

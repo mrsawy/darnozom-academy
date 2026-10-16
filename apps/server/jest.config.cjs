@@ -13,6 +13,7 @@ module.exports = {
     '^src/(.*)$': `${rootDir}/src/$1`,
     '^@darnozom/shared-types/dto$': path.join(rootDir, '../../lib/shared-types/src/lib/dto/index.ts'),
     '^@darnozom/shared-types$': path.join(rootDir, '../../lib/shared-types/src/index.ts'),
+    '^@nestjs/mapped-types$': path.join(rootDir, 'test/mocks/mapped-types.mock.ts'),
   },
   collectCoverageFrom: ['src/**/*.(t|j)s'],
   coverageDirectory: './coverage',

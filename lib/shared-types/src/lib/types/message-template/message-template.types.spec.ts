@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { ALLOWED_VARIABLES, TemplateContext } from './message-template.types';
 import { MessageTemplateErrors } from '../../messages/message-template-errors.enum';
 import { Subjects } from '../role/subject/subjects.enum';

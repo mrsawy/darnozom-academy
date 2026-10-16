@@ -8,9 +8,72 @@ import { SessionStatusBadge } from '@/components/organs/academics/session-status
 import { Link } from '@/i18n/navigation';
 import { ROUTE_ORG_SESSION } from '@/lib/data/constants/routes.constants';
 import { useSessions } from '@/lib/hooks/academics/use-academics.hook';
+import { useTeacherDashboard } from '@/lib/hooks/dashboard/use-dashboard.hook';
 import { useAuthUser } from '@/lib/hooks/user/use-user.hook';
 import { dayKey, formatClock } from '@/lib/utils/academics/session-time';
 import { addWeeks, weekRange } from '@/lib/utils/academics/week-range';
+
+function TeacherUpcomingSection() {
+  const t = useTranslations('TeacherDashboard');
+  const locale = useLocale();
+  const { data: dashboard, isLoading } = useTeacherDashboard();
+  const sessions = dashboard?.sessions ?? [];
+
+  return (
+    <Card className="mb-6">
+      <CardHeader>
+        <CardTitle className="text-lg font-semibold">{t('title')}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        {isLoading ? (
+          <p className="text-muted-foreground text-sm">{t('loading')}</p>
+        ) : sessions.length === 0 ? (
+          <p className="text-muted-foreground text-sm">{t('empty')}</p>
+        ) : (
+          <div className="divide-y rounded-md border">
+            {sessions.map((session) => (
+              <div
+                key={session._id}
+                className="flex flex-wrap items-center justify-between gap-3 p-3">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium text-sm">
+                      {session.groupName} · #{session.sessionNumber}
+                    </span>
+                    <SessionStatusBadge status={session.status} />
+                  </div>
+                  <p className="text-muted-foreground text-xs mt-1">
+                    {new Intl.DateTimeFormat(locale, {
+                      weekday: 'short',
+                      month: 'short',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    }).format(new Date(session.startsAt))}
+                  </p>
+                </div>
+                {session.actionLabel && (
+                  <Button
+                    asChild
+                    size="sm"
+                    variant={session.actionLabel === 'TAKE_ATTENDANCE' ? 'default' : 'outline'}>
+                    <Link href={ROUTE_ORG_SESSION(session._id)}>
+                      {session.actionLabel === 'TAKE_ATTENDANCE'
+                        ? t('takeAttendance')
+                        : session.actionLabel === 'SUBMIT_REPORT'
+                        ? t('submitReport')
+                        : t('enterFinalResults')}
+                    </Link>
+                  </Button>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
 
 export function WeekSessions() {
   const t = useTranslations('Academics');
@@ -35,6 +98,8 @@ export function WeekSessions() {
 
   return (
     <div className="space-y-4 p-4">
+      <TeacherUpcomingSection />
+
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h1 className="text-2xl font-semibold">{t('sessions.mySessions.title')}</h1>
         <div className="flex gap-2">
