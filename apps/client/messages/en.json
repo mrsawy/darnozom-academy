@@ -1939,11 +1939,26 @@
       "aiSubscription": "AI Subscription",
       "chat": "Messages",
       "booksStore": "Books Store",
-      "payments": "Payments"
+      "payments": "Payments",
+      "sessionsAndReports": "Sessions & Reports",
+      "certificates": "Certificates"
     }
   },
   "ParentDashboard": {
-    "title": "Children progress",
+    "title": "My Children",
+    "loading": "Loading…",
+    "empty": "No children linked to your account.",
+    "nextSession": "Next Session",
+    "noUpcomingSession": "No upcoming sessions",
+    "latestEvaluation": "Latest Evaluation",
+    "noEvaluation": "No evaluation yet",
+    "actionItems": "Action Needed",
+    "paymentDue": "Payment due",
+    "certNameReview": "Certificate name to review",
+    "receiptRejected": "Receipt rejected — resubmit",
+    "sessionsAndReports": "Sessions & Reports",
+    "certificates": "Certificates",
+    "payments": "Payments",
     "subtitle": "View courses and progress for each child.",
     "selectChild": "Select a child",
     "noChildren": "No linked children found.",
@@ -2356,7 +2371,8 @@
       "billingReceipts": "Receipts",
       "payroll": "Teacher Payroll",
       "myPayStatements": "My Pay Statements",
-      "myCertificates": "My Certificates"
+      "myCertificates": "My Certificates",
+      "messageTemplates": "Message Templates"
     },
     "navSecondary": {
       "getHelp": "Get Help",
@@ -5034,6 +5050,21 @@
   "AdminDashboard": {
     "overviewTitle": "Platform Overview",
     "overviewDescription": "Monitor and manage all platform activity.",
+    "groupsByStatus": "Groups by Status",
+    "atRiskGroups": "At-Risk Groups",
+    "todaySessions": "Today's Sessions",
+    "openTasks": "Open Tasks",
+    "overdueTasks": "Overdue Tasks",
+    "contentAwaitingShariaReview": "Awaiting Sharia Review",
+    "receiptsAwaitingReview": "Receipts to Review",
+    "outstandingBalance": "Outstanding Balance",
+    "payStatementsAwaitingApproval": "Pay Statements Pending",
+    "certificatesAwaitingReview": "Certificates to Review",
+    "viewAll": "View All",
+    "loading": "Loading dashboard…",
+    "scheduled": "Scheduled",
+    "reportPending": "Report Pending",
+    "completed": "Completed",
     "failedToLoadStats": "Failed to load dashboard stats.",
     "retry": "Retry",
     "stats": {
@@ -6937,6 +6968,7 @@
     "order": "Order",
     "startDate": "Start date",
     "confirmDelete": "Delete this item?",
+    "sendTemplate": "Send Message",
     "days": {
       "0": "Sunday",
       "1": "Monday",
@@ -7471,5 +7503,59 @@
       "issueDate": "Date of Issue",
       "officialRecordNotice": "This is a live cryptographic verification confirming that this certificate was issued by the institution."
     }
+  },
+  "MessageTemplates": {
+    "pageTitle": "Message Templates",
+    "pageSubtitle": "Create and manage reusable WhatsApp message templates",
+    "createButton": "New Template",
+    "listTitle": "Templates",
+    "loading": "Loading...",
+    "empty": "No message templates found.",
+    "close": "Close",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saving": "Saving...",
+    "editTitle": "Edit Template",
+    "createTitle": "Create Template",
+    "table": {
+      "name": "Name",
+      "context": "Context",
+      "body": "Message Body",
+      "actions": "Actions",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "context": {
+      "STUDENT": "Student",
+      "GROUP": "Group"
+    },
+    "form": {
+      "name": "Template Name",
+      "namePlaceholder": "e.g., Attendance reminder",
+      "context": "Context",
+      "body": "Template Body",
+      "bodyPlaceholder": "Write your template with variables like {{studentName}}...",
+      "variableHint": "Click a variable below to insert it into the message.",
+      "availableVariables": "Available variables"
+    },
+    "sendDialog": {
+      "title": "Send WhatsApp Message",
+      "template": "Template",
+      "selectTemplate": "Select a template...",
+      "student": "Student",
+      "selectStudent": "Select a student...",
+      "preview": "Preview",
+      "missingVariables": "Missing values",
+      "openWhatsApp": "Open in WhatsApp",
+      "rendering": "Rendering..."
+    }
+  },
+  "TeacherDashboard": {
+    "title": "My Upcoming Sessions",
+    "empty": "No sessions in the next 7 days.",
+    "loading": "Loading sessions…",
+    "takeAttendance": "Take Attendance",
+    "submitReport": "Submit Report",
+    "enterFinalResults": "Enter Final Results"
   }
 }

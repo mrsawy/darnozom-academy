@@ -1939,11 +1939,26 @@
       "aiSubscription": "اشتراك الذكاء الاصطناعي",
       "chat": "الرسائل",
       "booksStore": "متجر الكتب",
-      "payments": "المدفوعات"
+      "payments": "المدفوعات",
+      "sessionsAndReports": "الجلسات والتقارير",
+      "certificates": "الشهادات"
     }
   },
   "ParentDashboard": {
-    "title": "متابعة الأبناء",
+    "title": "أبنائي",
+    "loading": "جارٍ التحميل…",
+    "empty": "لا يوجد أبناء مرتبطين بحسابك.",
+    "nextSession": "الجلسة القادمة",
+    "noUpcomingSession": "لا توجد جلسات قادمة",
+    "latestEvaluation": "آخر تقييم",
+    "noEvaluation": "لا يوجد تقييم بعد",
+    "actionItems": "إجراء مطلوب",
+    "paymentDue": "دفعة مستحقة",
+    "certNameReview": "مراجعة اسم الشهادة",
+    "receiptRejected": "تم رفض الإيصال — يرجى إعادة الإرسال",
+    "sessionsAndReports": "الجلسات والتقارير",
+    "certificates": "الشهادات",
+    "payments": "المدفوعات",
     "subtitle": "عرض الدورات والتقدم لكل ابن.",
     "selectChild": "اختر ابنًا",
     "noChildren": "لم يتم العثور على أبناء مرتبطين.",
@@ -2356,7 +2371,8 @@
       "billingReceipts": "إيصالات السداد",
       "payroll": "مستحقات المعلمين",
       "myPayStatements": "مستحقاتي الشهرية",
-      "myCertificates": "شهاداتي"
+      "myCertificates": "شهاداتي",
+      "messageTemplates": "قوالب الرسائل"
     },
     "navSecondary": {
       "getHelp": "الحصول على المساعدة",
@@ -5034,6 +5050,21 @@
   "AdminDashboard": {
     "overviewTitle": "نظرة عامة على المنصة",
     "overviewDescription": "مراقبة وإدارة جميع أنشطة المنصة.",
+    "groupsByStatus": "المجموعات حسب الحالة",
+    "atRiskGroups": "المجموعات المعرضة للخطر",
+    "todaySessions": "جلسات اليوم",
+    "openTasks": "المهام المفتوحة",
+    "overdueTasks": "المهام المتأخرة",
+    "contentAwaitingShariaReview": "في انتظار المراجعة الشرعية",
+    "receiptsAwaitingReview": "إيصالات بانتظار المراجعة",
+    "outstandingBalance": "الرصيد المستحق",
+    "payStatementsAwaitingApproval": "مستحقات بانتظار الاعتماد",
+    "certificatesAwaitingReview": "شهادات بانتظار المراجعة",
+    "viewAll": "عرض الكل",
+    "loading": "جاري تحميل لوحة التحكم…",
+    "scheduled": "مجدولة",
+    "reportPending": "بانتظار التقرير",
+    "completed": "مكتملة",
     "failedToLoadStats": "فشل في تحميل إحصائيات لوحة التحكم.",
     "retry": "إعادة المحاولة",
     "stats": {
@@ -6937,6 +6968,7 @@
     "order": "الترتيب",
     "startDate": "تاريخ البدء",
     "confirmDelete": "هل تريد حذف هذا العنصر؟",
+    "sendTemplate": "إرسال رسالة",
     "days": {
       "0": "الأحد",
       "1": "الاثنين",
@@ -7471,5 +7503,59 @@
       "issueDate": "تاريخ الإصدار",
       "officialRecordNotice": "هذا فحص مباشر وموثق يؤكد صحة بيانات هذه الشهادة وصدورها من الجهة التعليمية المعتمدة."
     }
+  },
+  "MessageTemplates": {
+    "pageTitle": "قوالب الرسائل",
+    "pageSubtitle": "إنشاء وإدارة قوالب رسائل واتساب قابلة لإعادة الاستخدام",
+    "createButton": "قالب جديد",
+    "listTitle": "القوالب",
+    "loading": "جاري التحميل...",
+    "empty": "لم يتم العثور على أي قوالب رسائل.",
+    "close": "إغلاق",
+    "cancel": "إلغاء",
+    "save": "حفظ",
+    "saving": "جاري الحفظ...",
+    "editTitle": "تعديل القالب",
+    "createTitle": "إنشاء قالب",
+    "table": {
+      "name": "الاسم",
+      "context": "السياق",
+      "body": "نص الرسالة",
+      "actions": "الإجراءات",
+      "edit": "تعديل",
+      "delete": "حذف"
+    },
+    "context": {
+      "STUDENT": "طالب",
+      "GROUP": "مجموعة"
+    },
+    "form": {
+      "name": "اسم القالب",
+      "namePlaceholder": "مثال: تذكير بالحضور",
+      "context": "السياق",
+      "body": "نص القالب",
+      "bodyPlaceholder": "اكتب نص القالب مع المتغيرات مثل {{studentName}}...",
+      "variableHint": "انقر فوق أحد المتغيرات أدناه لإدراجه في نص الرسالة.",
+      "availableVariables": "المتغيرات المتاحة"
+    },
+    "sendDialog": {
+      "title": "إرسال رسالة واتساب",
+      "template": "القالب",
+      "selectTemplate": "اختر قالباً...",
+      "student": "الطالب",
+      "selectStudent": "اختر طالباً...",
+      "preview": "معاينة",
+      "missingVariables": "قيم مفقودة",
+      "openWhatsApp": "فتح في واتساب",
+      "rendering": "جاري التجهيز..."
+    }
+  },
+  "TeacherDashboard": {
+    "title": "جلساتي القادمة",
+    "empty": "لا توجد جلسات خلال الأيام السبعة القادمة.",
+    "loading": "جاري تحميل الجلسات…",
+    "takeAttendance": "تسجيل الحضور",
+    "submitReport": "إرسال التقرير",
+    "enterFinalResults": "إدخال النتائج النهائية"
   }
 }

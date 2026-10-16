@@ -11,6 +11,8 @@ import {
   IconWallet,
   IconBooks,
   IconCreditCard,
+  IconCalendarEvent,
+  IconCertificate,
 } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
 import { useEffect } from 'react';
@@ -18,6 +20,7 @@ import {
   ROUTE_PARENT_AI_SUBSCRIPTION,
   ROUTE_PARENT_PAYMENTS,
   ROUTE_BOOKS,
+  ROUTE_PARENT_MY_CERTIFICATES,
 } from '@/lib/data/constants/routes.constants';
 
 export function ParentSidebar({ user }: { user?: IUser }) {
@@ -54,6 +57,18 @@ export function ParentSidebar({ user }: { user?: IUser }) {
       url: ROUTE_PARENT_PAYMENTS,
       icon: IconCreditCard,
       key: 'payments',
+    },
+    {
+      title: t('navMain.sessionsAndReports'),
+      url: '/parent-dashboard/sessions',
+      icon: IconCalendarEvent,
+      key: 'sessions-reports',
+    },
+    {
+      title: t('navMain.certificates'),
+      url: ROUTE_PARENT_MY_CERTIFICATES,
+      icon: IconCertificate,
+      key: 'certificates',
     },
     {
       title: t('navMain.booksStore'),
