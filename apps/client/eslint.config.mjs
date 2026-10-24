@@ -228,6 +228,12 @@ export default [
               'captionLayout',
               'buttonVariant',
               'navLayout',
+              // Styling pass-throughs (Tailwind class strings, not copy)
+              'innerClassName',
+              'widthClassName',
+              'buttonClassName',
+              'contentClassName',
+              'wrapperClassName',
               // Chart & table field bindings (data keys, not copy)
               'labelKey',
               'valueKey',

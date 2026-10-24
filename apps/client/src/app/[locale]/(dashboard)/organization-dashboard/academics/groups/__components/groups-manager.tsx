@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { GroupStatus } from '@darnozom/shared-types';
-import { Link } from '@/i18n/navigation';
+import { Link, useRouter } from '@/i18n/navigation';
 import { Checkbox } from '@/components/atoms/checkbox';
 import {
   Select,
@@ -29,6 +29,7 @@ const ALL = 'ALL';
 
 export function GroupsManager() {
   const t = useTranslations('Academics');
+  const router = useRouter();
   const cohortId = useSearchParams().get('cohortId') ?? undefined;
   const [status, setStatus] = useState<string>(ALL);
   const [atRisk, setAtRisk] = useState(false);
@@ -75,22 +76,37 @@ export function GroupsManager() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {groups.map((group) => (
-              <TableRow key={group._id}>
-                <TableCell>
-                  <Link
-                    href={ROUTE_ORG_ACADEMICS_GROUP(group._id)}
-                    className="font-medium hover:underline">
-                    {group.name}
-                  </Link>
-                </TableCell>
-                <TableCell>
-                  <StatusBadge status={group.status} />
-                </TableCell>
-                <TableCell>{`${group.readiness.items.filter((item) => item.done).length}/${group.readiness.items.length}`}</TableCell>
-                <TableCell>{`${group.students.length}/${group.maxStudents}`}</TableCell>
-              </TableRow>
-            ))}
+            {groups.map((group) => {
+              const groupUrl = ROUTE_ORG_ACADEMICS_GROUP(group._id);
+              return (
+                <TableRow
+                  key={group._id}
+                  className="cursor-pointer transition-colors hover:bg-muted/50"
+                  tabIndex={0}
+                  role="button"
+                  onClick={() => router.push(groupUrl)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      router.push(groupUrl);
+                    }
+                  }}>
+                  <TableCell>
+                    <Link
+                      href={groupUrl}
+                      onClick={(e) => e.stopPropagation()}
+                      className="font-medium hover:underline">
+                      {group.name}
+                    </Link>
+                  </TableCell>
+                  <TableCell>
+                    <StatusBadge status={group.status} />
+                  </TableCell>
+                  <TableCell>{`${group.readiness.items.filter((item) => item.done).length}/${group.readiness.items.length}`}</TableCell>
+                  <TableCell>{`${group.students.length}/${group.maxStudents}`}</TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       ) : null}

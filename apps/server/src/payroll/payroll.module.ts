@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TeacherPayProfile, TeacherPayProfileSchema } from './entities/teacher-pay-profile.entity';
 import { PayStatement, PayStatementSchema } from './entities/pay-statement.entity';
@@ -11,6 +11,8 @@ import { TeacherPayProfileService } from './services/teacher-pay-profile.service
 import { PayrollService } from './services/payroll.service';
 import { SessionDisputeService } from './services/session-dispute.service';
 import { PayrollControllerMessage } from './payroll.controller.message';
+import { AuthModule } from 'src/auth/auth.module';
+import { RoleModule } from 'src/role/role.module';
 
 @Module({
   imports: [
@@ -23,6 +25,8 @@ import { PayrollControllerMessage } from './payroll.controller.message';
       { name: Allocation.name, schema: AllocationSchema },
       { name: Organization.name, schema: OrganizationSchema },
     ]),
+    forwardRef(() => AuthModule),
+    RoleModule,
   ],
   providers: [TeacherPayProfileService, PayrollService, SessionDisputeService],
   controllers: [PayrollControllerMessage],

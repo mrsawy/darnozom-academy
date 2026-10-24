@@ -11,7 +11,7 @@ interface Props {
 
 function InstructorDetailsSection({ instructor }: Props) {
   return (
-    <div className="bg-background min-h-screen">
+    <div className="bg-dz-paper text-dz-ink min-h-screen">
       <InstructorProfileHeader instructor={instructor} />
 
       <div className="container mx-auto px-4 py-8 md:py-12">

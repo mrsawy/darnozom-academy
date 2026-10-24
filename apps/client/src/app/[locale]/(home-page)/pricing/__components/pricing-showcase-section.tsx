@@ -1,8 +1,10 @@
 'use client';
 
-import { Rocket } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { cn } from '@/lib/utils';
+import SectionShell from '@/components/molecules/public-site/section-shell';
+import Eyebrow from '@/components/molecules/public-site/eyebrow';
+import DisplayHeading from '@/components/molecules/public-site/display-heading';
+import { ANCHOR_HOME_PRICING } from '@/lib/data/constants/routes.constants';
 import PricingPlansBlock from './pricing-plans-block';
 
 export type PricingShowcaseHeading = 'h1' | 'h2';
@@ -18,43 +20,21 @@ export default function PricingShowcaseSection({
 }: PricingShowcaseSectionProps) {
   const t = useTranslations('HomeLegal.homePricingSection');
 
-  const title = (
-    <>
-      <span className="text-foreground">{t('titleLead')}</span>
-      <br />
-      <span className="bg-linear-to-r from-violet-600 via-fuchsia-500 to-purple-600 bg-clip-text text-transparent">
-        {t('titleAccent')}
-      </span>
-    </>
-  );
-
-  const titleClassName =
-    'font-heading mb-6 text-4xl font-bold tracking-tight md:mb-8 md:text-5xl lg:text-6xl';
-
   return (
-    <section className={cn('relative overflow-hidden px-6 py-24 md:py-32', className)}>
-      <div className="relative z-10 mx-auto max-w-7xl">
-        <div className="mb-12 text-center md:mb-20">
-          <div className="mb-6 flex items-center justify-center gap-2">
-            <Rocket className="text-primary h-6 w-6 shrink-0" aria-hidden />
-            <span className="text-primary text-sm font-medium tracking-wider uppercase">
-              {t('badge')}
-            </span>
-          </div>
-
-          {headingLevel === 'h1' ? (
-            <h1 className={titleClassName}>{title}</h1>
-          ) : (
-            <h2 className={titleClassName}>{title}</h2>
-          )}
-
-          <p className="text-muted-foreground mx-auto max-w-3xl text-lg text-pretty md:text-xl">
-            {t('description')}
-          </p>
-        </div>
-
-        <PricingPlansBlock cached />
+    <SectionShell
+      id={ANCHOR_HOME_PRICING.slice(1)}
+      tone="paper"
+      className={className}
+      innerClassName="flex flex-col items-center gap-9">
+      <div className="flex max-w-[640px] flex-col gap-2.5 text-center">
+        <Eyebrow>{t('badge')}</Eyebrow>
+        <DisplayHeading as={headingLevel}>
+          {t('titleLead')} <span className="text-dz-terracotta">{t('titleAccent')}</span>
+        </DisplayHeading>
+        <p className="text-dz-ink-soft m-0 text-pretty">{t('description')}</p>
       </div>
-    </section>
+
+      <PricingPlansBlock cached className="w-full" />
+    </SectionShell>
   );
 }

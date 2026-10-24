@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { redirect } from 'next/navigation';
 import { routing } from '@/i18n/routing';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Geist, Geist_Mono, IBM_Plex_Sans_Arabic, Noto_Naskh_Arabic } from 'next/font/google';
 import '@/app/globals.css';
 import { getMessages, getTranslations } from 'next-intl/server';
 import Provider from './provider';
@@ -21,6 +21,22 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
   subsets: ['latin'],
+});
+
+/** Body face for the whole product, Arabic and Latin alike. */
+const plexArabic = IBM_Plex_Sans_Arabic({
+  variable: '--font-plex-arabic',
+  subsets: ['arabic', 'latin'],
+  weight: ['400', '500', '600', '700'],
+  display: 'swap',
+});
+
+/** Editorial display face — marketing headings only, via the `font-display` class. */
+const naskhArabic = Noto_Naskh_Arabic({
+  variable: '--font-naskh-arabic',
+  subsets: ['arabic'],
+  weight: ['500', '600', '700'],
+  display: 'swap',
 });
 
 export const viewport: Viewport = {
@@ -88,7 +104,7 @@ export default async function LocaleLayout({
       suppressHydrationWarning
       className="custom-scrollbar">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${plexArabic.variable} ${naskhArabic.variable} antialiased`}
         suppressHydrationWarning>
         <Provider locale={locale} messages={messages}>
           {children}

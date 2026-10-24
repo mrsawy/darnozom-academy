@@ -53,7 +53,7 @@ function GradeSchoolTypeFilter({ grades, schoolTypes }: GradeSchoolTypeFilterPro
   if (grades.length === 0 && schoolTypes.length === 0) return null;
 
   return (
-    <div className="mt-4 flex flex-wrap justify-center gap-3">
+    <div className="flex flex-wrap gap-3">
       {grades.length > 0 && (
         <Combobox
           data={gradeData}

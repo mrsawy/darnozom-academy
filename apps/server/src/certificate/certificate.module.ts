@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Certificate, CertificateSchema } from './entities/certificate.entity';
 import { Counter, CounterSchema } from './entities/counter.entity';
@@ -11,6 +11,8 @@ import { Organization, OrganizationSchema } from 'src/organization/entities/orga
 import { CertificateCounterService } from './services/certificate-counter.service';
 import { CertificateService } from './services/certificate.service';
 import { CertificateControllerMessage } from './certificate.controller.message';
+import { AuthModule } from 'src/auth/auth.module';
+import { RoleModule } from 'src/role/role.module';
 
 @Module({
   imports: [
@@ -24,6 +26,8 @@ import { CertificateControllerMessage } from './certificate.controller.message';
       { name: Session.name, schema: SessionSchema },
       { name: Organization.name, schema: OrganizationSchema },
     ]),
+    forwardRef(() => AuthModule),
+    RoleModule,
   ],
   controllers: [CertificateControllerMessage],
   providers: [CertificateCounterService, CertificateService],

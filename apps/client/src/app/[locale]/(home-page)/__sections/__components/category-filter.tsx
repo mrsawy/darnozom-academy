@@ -1,8 +1,8 @@
 'use client';
 
-import { Button } from '@/components/atoms/button';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import PillTab from '@/components/molecules/public-site/pill-tab';
 
 interface CategoryFilterProps {
   categories: string[];
@@ -25,26 +25,21 @@ function CategoryFilter({ categories }: CategoryFilterProps) {
       params.set('category', category);
     }
 
-    // Update URL without page reload
+    // Update the URL without a page reload so the grid filters in place.
     const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
     router.push(newUrl, { scroll: false });
   };
 
   return (
-    <div className="flex flex-wrap justify-center gap-3">
-      {categories.map((category) => {
-        const isSelected = selectedCategory === category;
-        return (
-          <Button
-            key={category}
-            variant={isSelected ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => handleCategoryClick(category)}
-            className="border-border hover:border-brand-purple/30">
-            {category}
-          </Button>
-        );
-      })}
+    <div className="flex flex-wrap gap-2">
+      {categories.map((category) => (
+        <PillTab
+          key={category}
+          isActive={selectedCategory === category}
+          onClick={() => handleCategoryClick(category)}>
+          {category}
+        </PillTab>
+      ))}
     </div>
   );
 }

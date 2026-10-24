@@ -12,7 +12,7 @@ export default async function AiPricingPage({ params }: Props) {
   setRequestLocale(locale);
 
   return (
-    <div className="bg-background relative min-h-screen w-full">
+    <div className="bg-dz-paper text-dz-ink relative min-h-screen w-full">
       <AiPricingContentSection />
     </div>
   );

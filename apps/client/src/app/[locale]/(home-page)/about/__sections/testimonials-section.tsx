@@ -1,61 +1,38 @@
-'use client';
-
-import { Card, CardContent } from '@/components/atoms/card';
 import { useTranslations } from 'next-intl';
+import SectionShell from '@/components/molecules/public-site/section-shell';
+import DisplayHeading from '@/components/molecules/public-site/display-heading';
+
+const TESTIMONIAL_INDEXES = [0, 1, 2] as const;
 
 function AboutTestimonialsSection() {
   const t = useTranslations('about.testimonials');
 
-  const testimonials = [
-    {
-      quote: t('items.0.quote'),
-      author: t('items.0.author'),
-      role: t('items.0.role'),
-    },
-    {
-      quote: t('items.1.quote'),
-      author: t('items.1.author'),
-      role: t('items.1.role'),
-    },
-    {
-      quote: t('items.2.quote'),
-      author: t('items.2.author'),
-      role: t('items.2.role'),
-    },
-  ];
-
   return (
-    <section className="bg-background py-16 md:py-24">
-      <div className="container mx-auto px-6 lg:px-8">
-        <div className="mb-12 text-center">
-          <h2 className="text-foreground mb-4 text-3xl font-bold md:text-4xl">{t('title')}</h2>
-          <p className="text-muted-foreground mx-auto max-w-2xl text-lg">{t('description')}</p>
-        </div>
-
-        <div className="grid gap-8 md:grid-cols-3">
-          {testimonials.map((testimonial, index) => (
-            <Card
-              key={index}
-              className="bg-muted/50 border-border hover:border-primary/30 transition-all duration-300 hover:shadow-lg">
-              <CardContent className="p-8">
-                <div className="mb-6">
-                  <div className="text-primary flex h-12 w-12 items-center justify-center font-serif text-4xl opacity-30">
-                    &quot;
-                  </div>
-                </div>
-                <p className="text-muted-foreground mb-6 text-lg leading-relaxed">
-                  &quot;{testimonial.quote}&quot;
-                </p>
-                <div className="border-border border-t pt-6">
-                  <div className="text-foreground font-semibold">{testimonial.author}</div>
-                  <div className="text-muted-foreground mt-1 text-sm">{testimonial.role}</div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+    <SectionShell tone="paper" innerClassName="flex flex-col gap-10">
+      <div className="flex max-w-[760px] flex-col gap-2.5">
+        <DisplayHeading>{t('title')}</DisplayHeading>
+        <p className="text-dz-ink-soft m-0 text-[17px] text-pretty">{t('description')}</p>
       </div>
-    </section>
+
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,300px),1fr))] gap-5">
+        {TESTIMONIAL_INDEXES.map((index) => (
+          <figure
+            key={index}
+            className="bg-dz-paper-raised border-dz-line m-0 flex flex-col gap-5 rounded-3xl border p-7">
+            <span className="font-display text-dz-tan text-5xl leading-none" aria-hidden>
+              &ldquo;
+            </span>
+            <blockquote className="text-dz-ink m-0 text-[17px] leading-relaxed">
+              {t(`items.${index}.quote`)}
+            </blockquote>
+            <figcaption className="border-dz-line mt-auto border-t pt-4">
+              <div className="font-semibold">{t(`items.${index}.author`)}</div>
+              <div className="text-dz-ink-soft text-sm">{t(`items.${index}.role`)}</div>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+    </SectionShell>
   );
 }
 

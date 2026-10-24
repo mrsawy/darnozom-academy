@@ -14,6 +14,13 @@ import { CourseContentPublishedListener } from './events/course-content-publishe
 import { ContentNotificationProcessor } from './processors/content-notification.processor';
 import { CONTENT_NOTIFICATION_QUEUE } from './queues/content-notification.queue';
 
+import { EmailNotificationStrategy } from './strategies/email/email-notification.strategy';
+import { SmsNotificationStrategy } from './strategies/sms/sms-notification.strategy';
+import { WhatsappNotificationStrategy } from './strategies/whatsapp/whatsapp-notification.strategy';
+import { InAppNotificationStrategy } from './strategies/in-app/in-app-notification.strategy';
+import { NotificationDispatcherService } from './services/notification-dispatcher.service';
+import { OrgReviewNotificationService } from './services/org-review-notification.service';
+
 @Module({
   imports: [
     MongooseModule.forFeature([
@@ -28,7 +35,28 @@ import { CONTENT_NOTIFICATION_QUEUE } from './queues/content-notification.queue'
     RoleModule,
   ],
   controllers: [NotificationControllerMessage],
-  providers: [NotificationService, CourseContentPublishedListener, ContentNotificationProcessor],
-  exports: [NotificationService],
+  providers: [
+    NotificationService,
+    CourseContentPublishedListener,
+    ContentNotificationProcessor,
+    // Notification Strategies
+    EmailNotificationStrategy,
+    SmsNotificationStrategy,
+    WhatsappNotificationStrategy,
+    InAppNotificationStrategy,
+    // Dispatcher & High-level notification services
+    NotificationDispatcherService,
+    OrgReviewNotificationService,
+  ],
+  exports: [
+    NotificationService,
+    NotificationDispatcherService,
+    OrgReviewNotificationService,
+    EmailNotificationStrategy,
+    SmsNotificationStrategy,
+    WhatsappNotificationStrategy,
+    InAppNotificationStrategy,
+  ],
 })
 export class NotificationModule {}
+

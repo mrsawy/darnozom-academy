@@ -1,9 +1,6 @@
 'use client';
 
-import { Building2, Check, Crown, Rocket, Sparkles, Zap } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/card';
-import { Badge } from '@/components/atoms/badge';
-import { Button } from '@/components/atoms/button';
+import { Check } from 'lucide-react';
 import { Link } from '@/i18n/navigation';
 import { ROUTE_SIGNUP } from '@/lib/data/constants/routes.constants';
 import { useTranslations } from 'next-intl';
@@ -12,15 +9,12 @@ import { BillingCycle } from '@/lib/types/course/enum/BillingCycle.enum';
 import { cn } from '@/lib/utils';
 import PricingSubscribeButton from './pricing-subscribe-button';
 
-export type PlanVisualVariant = 'starter' | 'pro' | 'enterprise';
-
 interface PricingPlanCardProps {
   plan: PlanResponse;
   /** Position in the sorted plan list; maps to translated default taglines (tiers 0–3). */
   tierIndex: number;
   isAnnual: boolean;
   isPopular: boolean;
-  visualVariant: PlanVisualVariant;
 }
 
 function formatPrice(amount: number, currency: string) {
@@ -30,22 +24,6 @@ function formatPrice(amount: number, currency: string) {
 
 function hasPrice(cycle: { originalPrice?: number; priceUSD?: number } | undefined) {
   return cycle && ((cycle.originalPrice ?? 0) > 0 || (cycle.priceUSD ?? 0) > 0);
-}
-
-function variantMeta(variant: PlanVisualVariant, tierIndex: number) {
-  switch (variant) {
-    case 'starter': {
-      return { Icon: Zap, iconWrap: 'bg-primary/20 text-primary' };
-    }
-    case 'enterprise': {
-      return { Icon: Building2, iconWrap: 'bg-accent/20 text-accent' };
-    }
-    default: {
-      // Pro and additional middle tiers: alternate so Basic (Zap) vs Pro (Rocket/Crown) stay distinct; 4+ plans don’t repeat one icon.
-      const Icon = (tierIndex - 1) % 2 === 0 ? Rocket : Crown;
-      return { Icon, iconWrap: 'bg-secondary/20 text-secondary' };
-    }
-  }
 }
 
 function resolvePlanCardDescription(
@@ -68,7 +46,6 @@ export default function PricingPlanCard({
   tierIndex,
   isAnnual,
   isPopular,
-  visualVariant,
 }: PricingPlanCardProps) {
   const t = useTranslations('HomeLegal.pricing.plans');
   const monthly = plan.price?.MONTHLY;
@@ -77,8 +54,6 @@ export default function PricingPlanCard({
   const hasYearly = hasPrice(yearly);
   const isFree = !hasMonthly && !hasYearly;
   const features: PlanFeatures = plan.features;
-
-  const { Icon, iconWrap } = variantMeta(visualVariant, tierIndex);
 
   const descriptionText = resolvePlanCardDescription(t, tierIndex, plan.description);
 
@@ -89,14 +64,17 @@ export default function PricingPlanCard({
 
   let savingsLine: string | null = null;
   if (isAnnual && hasMonthly && hasYearly && monthly && yearly) {
-    const mAmt = monthly.originalPrice ?? monthly.priceUSD ?? 0;
-    const yAmt = yearly.originalPrice ?? yearly.priceUSD ?? 0;
-    if (mAmt > 0 && yAmt > 0) {
-      const monthlyTotal = mAmt * 12;
-      const saveAmt = monthlyTotal - yAmt;
-      const pct = Math.round((saveAmt / monthlyTotal) * 100);
-      if (saveAmt > 0 && pct > 0) {
-        savingsLine = t('savingsYearly', { amount: formatPrice(saveAmt, currency), percent: pct });
+    const monthlyAmount = monthly.originalPrice ?? monthly.priceUSD ?? 0;
+    const yearlyAmount = yearly.originalPrice ?? yearly.priceUSD ?? 0;
+    if (monthlyAmount > 0 && yearlyAmount > 0) {
+      const monthlyTotal = monthlyAmount * 12;
+      const saveAmount = monthlyTotal - yearlyAmount;
+      const percent = Math.round((saveAmount / monthlyTotal) * 100);
+      if (saveAmount > 0 && percent > 0) {
+        savingsLine = t('savingsYearly', {
+          amount: formatPrice(saveAmount, currency),
+          percent,
+        });
       }
     }
   }
@@ -109,6 +87,7 @@ export default function PricingPlanCard({
       : null;
 
   const featureRows: { key: string; label: string }[] = [];
+  if (usersLabel) featureRows.push({ key: 'users', label: usersLabel });
   if (typeof features.coursesPerSubscription === 'number')
     featureRows.push({
       key: 'courses',
@@ -123,90 +102,94 @@ export default function PricingPlanCard({
   if (features.prioritySupport) featureRows.push({ key: 'support', label: t('prioritySupport') });
 
   return (
-    <Card
+    <div
       className={cn(
-        'bg-card/85 relative flex h-full flex-col overflow-hidden rounded-2xl border-2 shadow-md backdrop-blur-sm transition-shadow hover:shadow-lg',
-        isPopular && 'border-primary/50 ring-primary/20 scale-[1.02] ring-2 md:scale-105'
+        'flex h-full flex-col gap-3.5 rounded-[22px] border p-6.5',
+        isPopular
+          ? 'bg-dz-cocoa border-dz-cocoa-line text-dz-cocoa-ink'
+          : 'bg-dz-paper-raised border-dz-line text-dz-ink'
       )}>
-      {isPopular ? (
-        <div className="absolute -top-px left-1/2 z-10 -translate-x-1/2">
-          <Badge className="bg-primary text-primary-foreground gap-1 rounded-b-md px-3 py-1 shadow-sm">
-            <Sparkles className="h-3 w-3" aria-hidden />
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-lg font-bold">{plan.name}</span>
+        {isPopular ? (
+          <span className="bg-dz-tan text-dz-ink rounded-full px-2.5 py-0.5 text-xs font-bold whitespace-nowrap">
             {t('mostPopular')}
-          </Badge>
-        </div>
+          </span>
+        ) : null}
+      </div>
+
+      {descriptionText ? <p className="m-0 text-sm opacity-85">{descriptionText}</p> : null}
+
+      <div className="flex flex-wrap items-baseline gap-1.5">
+        {isFree || !hasActivePrice ? (
+          <span className="font-display text-[2.5rem] leading-[1.2] font-bold">{t('free')}</span>
+        ) : (
+          <>
+            <span className="font-display text-[2.5rem] leading-[1.2] font-bold">
+              {formatPrice(unitAmount, currency)}
+            </span>
+            <span className="text-[13px] opacity-80">
+              {isAnnual ? t('perYear') : t('perMonth')}
+            </span>
+          </>
+        )}
+      </div>
+
+      {savingsLine ? (
+        <p
+          className={cn(
+            'm-0 text-sm font-medium',
+            isPopular ? 'text-dz-tan' : 'text-dz-terracotta'
+          )}>
+          {savingsLine}
+        </p>
       ) : null}
 
-      <CardHeader className={cn('pt-10 pb-4 text-center', isPopular && 'pt-12')}>
-        <div
+      <ul
+        className={cn(
+          'm-0 flex flex-1 list-none flex-col gap-2 border-t p-0 pt-3.5 text-sm',
+          isPopular ? 'border-dz-cocoa-line' : 'border-dz-line'
+        )}>
+        {featureRows.map((row) => (
+          <li key={row.key} className="flex items-start gap-2">
+            <Check
+              className={cn(
+                'mt-0.5 size-4 shrink-0',
+                isPopular ? 'text-dz-tan' : 'text-dz-terracotta'
+              )}
+              aria-hidden
+            />
+            <span>{row.label}</span>
+          </li>
+        ))}
+      </ul>
+
+      {isFree ? (
+        <Link
+          href={ROUTE_SIGNUP}
           className={cn(
-            'mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl',
-            iconWrap
+            'rounded-full px-4 py-3 text-center text-[15px] font-semibold transition-opacity hover:opacity-90',
+            isPopular ? 'bg-dz-tan text-dz-ink' : 'bg-dz-ink text-dz-paper-raised'
           )}>
-          <Icon className="h-8 w-8" aria-hidden />
-        </div>
-        <CardTitle className="text-2xl">{plan.name}</CardTitle>
-        {descriptionText ? (
-          <CardDescription className="mt-2 text-base">{descriptionText}</CardDescription>
-        ) : null}
-
-        <div className="mt-6 space-y-2">
-          {isFree ? (
-            <p className="text-4xl font-bold">{t('free')}</p>
-          ) : hasActivePrice ? (
-            <>
-              <div className="flex flex-wrap items-baseline justify-center gap-1">
-                <span className="text-4xl font-bold">{formatPrice(unitAmount, currency)}</span>
-                <span className="text-muted-foreground">
-                  {isAnnual ? t('perYear') : t('perMonth')}
-                </span>
-              </div>
-              {savingsLine ? (
-                <p className="text-primary text-sm font-medium">{savingsLine}</p>
-              ) : null}
-            </>
-          ) : (
-            <p className="text-muted-foreground font-medium">{t('free')}</p>
+          {t('getStarted')}
+        </Link>
+      ) : (
+        <PricingSubscribeButton
+          planId={plan._id}
+          billingCycle={isAnnual ? BillingCycle.YEARLY : BillingCycle.MONTHLY}
+          lemonSqueezyVariantId={
+            isAnnual ? plan.lemonSqueezyVariantIds?.YEARLY : plan.lemonSqueezyVariantIds?.MONTHLY
+          }
+          className={cn(
+            'h-auto w-full rounded-full px-4 py-3 text-[15px] font-semibold transition-opacity hover:opacity-90',
+            isPopular
+              ? 'bg-dz-tan text-dz-ink hover:bg-dz-tan'
+              : 'bg-dz-ink text-dz-paper-raised hover:bg-dz-ink'
           )}
-          {usersLabel ? <p className="text-muted-foreground text-sm">{usersLabel}</p> : null}
-        </div>
-      </CardHeader>
-
-      <CardContent className="flex flex-1 flex-col gap-6 pt-0">
-        {isFree ? (
-          <Button
-            asChild
-            className="w-full"
-            size="lg"
-            variant={isPopular ? 'default' : 'secondary'}>
-            <Link href={ROUTE_SIGNUP}>{t('getStarted')}</Link>
-          </Button>
-        ) : (
-          <PricingSubscribeButton
-            planId={plan._id}
-            billingCycle={isAnnual ? BillingCycle.YEARLY : BillingCycle.MONTHLY}
-            lemonSqueezyVariantId={
-              isAnnual ? plan.lemonSqueezyVariantIds?.YEARLY : plan.lemonSqueezyVariantIds?.MONTHLY
-            }
-            className={cn(
-              'w-full',
-              isPopular && 'bg-primary shadow-primary/25 hover:bg-primary/90 shadow-lg'
-            )}
-            variant={isPopular ? 'default' : 'outline'}
-            size="lg">
-            {isAnnual ? t('subscribeYearly') : t('subscribeMonthly')}
-          </PricingSubscribeButton>
-        )}
-
-        <ul className="text-muted-foreground flex flex-1 flex-col gap-3 text-sm">
-          {featureRows.map((row) => (
-            <li key={row.key} className="flex items-start gap-3 text-start">
-              <Check className="text-primary mt-0.5 h-5 w-5 shrink-0" aria-hidden />
-              <span>{row.label}</span>
-            </li>
-          ))}
-        </ul>
-      </CardContent>
-    </Card>
+          size="lg">
+          {isAnnual ? t('subscribeYearly') : t('subscribeMonthly')}
+        </PricingSubscribeButton>
+      )}
+    </div>
   );
 }

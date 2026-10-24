@@ -17,4 +17,8 @@ export enum NotificationTextKey {
   TASK_ASSIGNED_BODY = 'taskAssignedBody',
   TASK_ESCALATED_TITLE = 'taskEscalatedTitle',
   TASK_ESCALATED_BODY = 'taskEscalatedBody',
+  ORG_APPROVED_TITLE = 'orgApprovedTitle',
+  ORG_APPROVED_BODY = 'orgApprovedBody',
+  ORG_REJECTED_TITLE = 'orgRejectedTitle',
+  ORG_REJECTED_BODY = 'orgRejectedBody',
 }

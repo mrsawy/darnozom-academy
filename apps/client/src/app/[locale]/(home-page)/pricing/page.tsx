@@ -14,7 +14,7 @@ export default async function PricingPage({ params }: Props) {
   setRequestLocale(locale);
 
   return (
-    <div className="bg-background relative min-h-screen w-full">
+    <div className="bg-dz-paper text-dz-ink relative min-h-screen w-full">
       <PricingContentSection />
     </div>
   );

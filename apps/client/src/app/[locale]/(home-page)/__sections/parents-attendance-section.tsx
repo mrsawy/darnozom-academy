@@ -1,11 +1,13 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { CalendarCheck, CreditCard, HeartHandshake, LineChart, ShieldCheck } from 'lucide-react';
+import SectionShell from '@/components/molecules/public-site/section-shell';
+import Eyebrow from '@/components/molecules/public-site/eyebrow';
+import DisplayHeading from '@/components/molecules/public-site/display-heading';
 import { cn } from '@/lib/utils';
+import { ANCHOR_HOME_PARENTS } from '@/lib/data/constants/routes.constants';
 
-/** 4 weeks × 7 days of attendance: 2 = present, 1 = late, 0 = absent, -1 = no session. */
+/** 4 weeks x 7 days of attendance: 2 = present, 1 = late, 0 = absent, -1 = no session. */
 const ATTENDANCE_MATRIX = [
   [2, 2, -1, 2, 2, 1, -1],
   [2, 1, -1, 2, 2, 2, -1],
@@ -14,223 +16,109 @@ const ATTENDANCE_MATRIX = [
 ] as const;
 
 const CELL_STYLES: Record<string, string> = {
-  '2': 'bg-success',
-  '1': 'bg-warning',
-  '0': 'bg-destructive',
-  '-1': 'bg-muted',
+  '2': 'bg-dz-leaf',
+  '1': 'bg-dz-amber',
+  '0': 'bg-dz-clay',
+  '-1': 'bg-dz-line',
 };
 
-const RING_CIRCUMFERENCE = 2 * Math.PI * 52;
-const ATTENDANCE_RATE = 92;
+/** Index-aligned with `dashboard.legend`. */
+const LEGEND_STYLES = ['bg-dz-leaf', 'bg-dz-amber', 'bg-dz-clay'] as const;
 
-const TIME_ON_TASK = [
-  { percent: 86, tone: 'bg-primary' },
-  { percent: 64, tone: 'bg-accent' },
-  { percent: 41, tone: 'bg-warning' },
-] as const;
+/** Share of the child's tracked time, per course — index-aligned with `dashboard.courses`. */
+const TIME_ON_TASK = [100, 72, 36] as const;
 
-const BENEFIT_ICONS = [CalendarCheck, LineChart, CreditCard, HeartHandshake] as const;
+const BENEFIT_INDEXES = [0, 1, 2, 3] as const;
 
 function ParentsAttendanceSection() {
   const t = useTranslations('ParentsAttendanceSection');
-  const sectionRef = useRef<HTMLElement>(null);
-  const [isRevealed, setIsRevealed] = useState(false);
-
-  useEffect(() => {
-    const node = sectionRef.current;
-    if (!node) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setIsRevealed(true);
-      },
-      { threshold: 0.25 }
-    );
-
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, []);
-
-  const benefits = BENEFIT_ICONS.map((Icon, index) => ({
-    Icon,
-    title: t(`benefits.${index}.title`),
-    description: t(`benefits.${index}.description`),
-  }));
 
   return (
-    <section
-      ref={sectionRef}
-      id="parents"
-      className="bg-background relative overflow-hidden py-20 md:py-28">
-      <div className="relative container mx-auto px-6 lg:px-8">
-        <div className="mx-auto mb-14 max-w-3xl text-center">
-          <span className="border-success/25 bg-success/10 text-success mb-5 inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-semibold tracking-wider uppercase">
-            <ShieldCheck className="h-3.5 w-3.5" />
-            {t('badge')}
+    <SectionShell
+      id={ANCHOR_HOME_PARENTS.slice(1)}
+      tone="paper"
+      innerClassName="grid grid-cols-[repeat(auto-fit,minmax(min(100%,440px),1fr))] items-center gap-14">
+      <div className="bg-dz-paper-raised border-dz-line flex flex-col gap-5 rounded-3xl border p-7">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <div className="text-dz-ink-soft text-[13px] font-semibold">{t('dashboard.label')}</div>
+            <div className="font-display text-[26px] font-bold">{t('dashboard.childName')}</div>
+          </div>
+          <span className="bg-dz-leaf-soft text-dz-leaf-ink rounded-full px-3 py-1.5 text-[13px] font-semibold">
+            {t('dashboard.statusOnTrack')}
           </span>
-          <h2 className="text-foreground text-3xl font-bold text-balance md:text-5xl">
-            {t('title')}
-          </h2>
-          <p className="text-muted-foreground mt-5 text-base text-pretty md:text-lg">
-            {t('description')}
-          </p>
         </div>
 
-        <div className="grid items-start gap-12 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:gap-16">
-          {/* Mock parent dashboard */}
-          <div className="border-border bg-card relative rounded-3xl border p-6 shadow-2xl md:p-8">
-            <div className="mb-7 flex items-center justify-between gap-4">
-              <div>
-                <p className="text-muted-foreground text-[11px] font-bold tracking-widest uppercase">
-                  {t('dashboard.label')}
-                </p>
-                <p className="text-foreground mt-1 text-lg font-bold">{t('dashboard.childName')}</p>
-              </div>
-              <span className="bg-success/10 text-success rounded-full px-3 py-1.5 text-xs font-semibold">
-                {t('dashboard.statusOnTrack')}
+        <div className="grid grid-cols-2 gap-3">
+          <div className="bg-dz-paper rounded-2xl p-4">
+            <div className="font-display text-[2.375rem] leading-[1.2] font-bold">
+              {t('dashboard.attendanceValue')}
+            </div>
+            <div className="text-dz-ink-soft text-[13px]">{t('dashboard.attendanceLabel')}</div>
+          </div>
+          <div className="bg-dz-paper rounded-2xl p-4">
+            <div className="font-display text-[2.375rem] leading-[1.2] font-bold">
+              {t('dashboard.timeValue')}
+            </div>
+            <div className="text-dz-ink-soft text-[13px]">{t('dashboard.timeLabel')}</div>
+          </div>
+        </div>
+
+        <div>
+          <div className="text-dz-ink-soft mb-2 text-[13px] font-semibold">
+            {t('dashboard.heatmapLabel')}
+          </div>
+          <div className="grid grid-cols-7 gap-1.5">
+            {ATTENDANCE_MATRIX.flat().map((state, index) => (
+              <span
+                key={index}
+                className={cn('aspect-square rounded-md', CELL_STYLES[String(state)])}
+              />
+            ))}
+          </div>
+          <div className="text-dz-ink-soft mt-2.5 flex gap-3.5 text-[13px]">
+            {LEGEND_STYLES.map((tone, index) => (
+              <span key={index} className="flex items-center gap-1.5">
+                <span className={cn('size-2.5 rounded-sm', tone)} />
+                {t(`dashboard.legend.${index}`)}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          {TIME_ON_TASK.map((percent, index) => (
+            <div key={index} className="flex items-center gap-3 text-sm">
+              <span className="w-[90px] shrink-0">{t(`dashboard.courses.${index}.name`)}</span>
+              <span className="bg-dz-sand h-2 flex-1 overflow-hidden rounded-full">
+                <span
+                  className="bg-dz-terracotta block h-full rounded-full"
+                  style={{ width: `${percent}%` }}
+                />
+              </span>
+              <span className="text-dz-ink-soft w-16 shrink-0 text-end">
+                {t(`dashboard.courses.${index}.time`)}
               </span>
             </div>
-
-            <div className="grid gap-7 sm:grid-cols-[auto_minmax(0,1fr)] sm:items-center">
-              {/* Attendance ring */}
-              <div className="relative mx-auto h-36 w-36">
-                <svg viewBox="0 0 120 120" className="h-full w-full -rotate-90">
-                  <circle
-                    cx="60"
-                    cy="60"
-                    r="52"
-                    fill="none"
-                    strokeWidth="10"
-                    className="stroke-muted"
-                  />
-                  <circle
-                    cx="60"
-                    cy="60"
-                    r="52"
-                    fill="none"
-                    strokeWidth="10"
-                    strokeLinecap="round"
-                    className="stroke-success transition-[stroke-dashoffset] duration-[1600ms] ease-out"
-                    strokeDasharray={RING_CIRCUMFERENCE}
-                    strokeDashoffset={
-                      isRevealed
-                        ? RING_CIRCUMFERENCE * (1 - ATTENDANCE_RATE / 100)
-                        : RING_CIRCUMFERENCE
-                    }
-                  />
-                </svg>
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className="text-foreground text-3xl font-bold">
-                    {t('dashboard.attendanceValue')}
-                  </span>
-                  <span className="text-muted-foreground text-[11px] font-medium">
-                    {t('dashboard.attendanceLabel')}
-                  </span>
-                </div>
-              </div>
-
-              {/* Time on task */}
-              <div className="space-y-4">
-                <p className="text-muted-foreground text-[11px] font-bold tracking-widest uppercase">
-                  {t('dashboard.timeLabel')}
-                </p>
-                {TIME_ON_TASK.map((bar, index) => (
-                  <div key={index}>
-                    <div className="mb-1.5 flex items-center justify-between text-xs">
-                      <span className="text-foreground font-medium">
-                        {t(`dashboard.courses.${index}.name`)}
-                      </span>
-                      <span className="text-muted-foreground">
-                        {t(`dashboard.courses.${index}.time`)}
-                      </span>
-                    </div>
-                    <div className="bg-muted h-2 overflow-hidden rounded-full">
-                      <div
-                        className={cn(
-                          'h-full rounded-full transition-[width] duration-[1400ms] ease-out',
-                          bar.tone
-                        )}
-                        style={{
-                          width: isRevealed ? `${bar.percent}%` : '0%',
-                          transitionDelay: `${index * 150}ms`,
-                        }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Attendance heatmap */}
-            <div className="border-border/70 mt-8 border-t pt-6">
-              <div className="mb-3 flex items-center justify-between">
-                <p className="text-muted-foreground text-[11px] font-bold tracking-widest uppercase">
-                  {t('dashboard.heatmapLabel')}
-                </p>
-                <div className="flex items-center gap-3">
-                  {['2', '1', '0'].map((state, index) => (
-                    <span
-                      key={state}
-                      className="text-muted-foreground flex items-center gap-1.5 text-[10px]">
-                      <span className={cn('h-2.5 w-2.5 rounded-[3px]', CELL_STYLES[state])} />
-                      {t(`dashboard.legend.${index}`)}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-7 gap-1.5" dir="ltr">
-                {ATTENDANCE_MATRIX.flatMap((week, weekIndex) =>
-                  week.map((state, dayIndex) => (
-                    <span
-                      key={`${weekIndex}-${dayIndex}`}
-                      className={cn(
-                        'aspect-square rounded-[5px] transition-all duration-500',
-                        CELL_STYLES[String(state)],
-                        state === -1 && 'opacity-50',
-                        isRevealed ? 'scale-100 opacity-100' : 'scale-75 opacity-0'
-                      )}
-                      style={{ transitionDelay: `${(weekIndex * 7 + dayIndex) * 18}ms` }}
-                    />
-                  ))
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Benefits */}
-          <div>
-            <div className="space-y-6">
-              {benefits.map(({ Icon, title, description }, index) => (
-                <div key={title} className="group relative flex gap-4">
-                  <div className="flex flex-col items-center">
-                    <span className="bg-success/10 text-success flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-110">
-                      <Icon className="h-5 w-5" />
-                    </span>
-                    {index < benefits.length - 1 ? (
-                      <span aria-hidden className="bg-border mt-2 w-px flex-1" />
-                    ) : null}
-                  </div>
-                  <div className="pb-1">
-                    <p className="text-foreground text-base font-semibold">{title}</p>
-                    <p className="text-muted-foreground mt-1.5 text-sm leading-relaxed">
-                      {description}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="border-success/20 bg-success/5 mt-9 rounded-2xl border p-5">
-              <p className="text-muted-foreground text-sm leading-relaxed">
-                <span className="text-foreground font-semibold">{t('whyLabel')}</span>{' '}
-                {t('whyItMatters')}
-              </p>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
-    </section>
+
+      <div className="flex flex-col gap-5">
+        <Eyebrow>{t('badge')}</Eyebrow>
+        <DisplayHeading>{t('title')}</DisplayHeading>
+        <p className="text-dz-ink-soft m-0 text-[17px] text-pretty">{t('description')}</p>
+
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-x-7 gap-y-5">
+          {BENEFIT_INDEXES.map((index) => (
+            <div key={index} className="border-dz-ink border-t-2 pt-3">
+              <div className="mb-1 font-semibold">{t(`benefits.${index}.title`)}</div>
+              <div className="text-dz-ink-soft text-sm">{t(`benefits.${index}.description`)}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </SectionShell>
   );
 }
 

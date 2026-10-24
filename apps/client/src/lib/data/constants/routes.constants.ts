@@ -178,3 +178,23 @@ export const ROUTE_PUBLIC_VERIFY_CERTIFICATE = (token: string) => `/verify/${tok
 export const ROUTE_ORG_MESSAGE_TEMPLATES = '/organization-dashboard/message-templates';
 
 
+
+/** In-page anchors on the public landing page (used by the header nav and hero CTAs). */
+export const ANCHOR_HOME_TOP = '#top';
+export const ANCHOR_HOME_AUDIENCE = '#audience';
+export const ANCHOR_HOME_STRUCTURE = '#structure';
+export const ANCHOR_HOME_STUDENT_APP = '#student-app';
+export const ANCHOR_HOME_AI_ASSISTANT = '#ai-assistant';
+export const ANCHOR_HOME_PARENTS = '#parents';
+export const ANCHOR_HOME_CAPABILITIES = '#capabilities';
+export const ANCHOR_HOME_COURSES = '#courses';
+export const ANCHOR_HOME_INSTRUCTORS = '#instructors';
+export const ANCHOR_HOME_PRICING = '#pricing';
+export const ANCHOR_HOME_CONTACT = '#contact';
+
+/** Next.js route handler backing the public contact form. */
+export const API_PATH_CONTACT = '/api/contact';
+
+/** Student app store listings. Placeholders until the apps are published. */
+export const URL_APP_STORE = '#';
+export const URL_GOOGLE_PLAY = '#';

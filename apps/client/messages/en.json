@@ -202,6 +202,34 @@
         "description": "Run your learning center from one place — open your organization dashboard to manage courses, users, enrollments, and more.",
         "goToDashboard": "Go to Organization Dashboard"
       }
+    },
+    "startFreeTrial": "Start your free trial",
+    "dashboardPreview": {
+      "courseProgress": {
+        "title": "Course progress",
+        "0": { "label": "Algebra II" },
+        "1": { "label": "Physics" },
+        "2": { "label": "Chemistry" }
+      },
+      "quizScores": {
+        "title": "Quiz scores"
+      },
+      "activity": {
+        "title": "Activity by type",
+        "0": { "label": "Video" },
+        "1": { "label": "Article" },
+        "2": { "label": "Project" },
+        "3": { "label": "Assignment" },
+        "4": { "label": "Live session" }
+      },
+      "attendance": {
+        "title": "Attendance recorded",
+        "meta": "Algebra · Unit 2 · Group B"
+      },
+      "cohort": {
+        "title": "Autumn 2026 cohort ready",
+        "meta": "3 groups · 72 students"
+      }
     }
   },
   "ScrollCards": {
@@ -955,7 +983,9 @@
     "links": "Quick Links",
     "social": "Follow Us",
     "contact": "Contact Us",
-    "copyright": "Darnozom. All rights reserved."
+    "copyright": "Darnozom. All rights reserved.",
+    "platform": "Platform",
+    "company": "Company"
   },
   "FeaturesGrid": {
     "files": [
@@ -1567,7 +1597,10 @@
       "contact": "Contact",
       "pricing": "Pricing",
       "privacy": "Privacy",
-      "terms": "Terms"
+      "terms": "Terms",
+      "books": "Book store",
+      "aiPricing": "AI pricing",
+      "returnPolicy": "Return policy"
     },
     "userMenu": {
       "title": "Account menu",
@@ -1582,7 +1615,11 @@
     "languageEnglish": "English",
     "languageArabic": "Arabic",
     "featuredBrand": "shadcn.io",
-    "featuredBrandDescription": "Beautifully designed components built with Radix UI and Tailwind CSS."
+    "featuredBrandDescription": "Beautifully designed components built with Radix UI and Tailwind CSS.",
+    "localeShort": {
+      "ar": "ع",
+      "en": "EN"
+    }
   },
   "AccountPage": {
     "title": "My Account",
@@ -4518,7 +4555,11 @@
     "billingPaymentConfirmedTitle": "Payment Confirmed",
     "billingPaymentConfirmedBody": "Your online payment has been confirmed.",
     "billingReminderTitle": "Payment Reminder",
-    "billingReminderBody": "You have tuition fees due. Please review your payments."
+    "billingReminderBody": "You have tuition fees due. Please review your payments.",
+    "orgApprovedTitle": "Organization Approved",
+    "orgApprovedBody": "Your organization \"{organizationName}\" has been approved by the platform administration.",
+    "orgRejectedTitle": "Organization Verification Rejected",
+    "orgRejectedBody": "Your organization \"{organizationName}\" verification was not approved. Please review the feedback and resubmit."
   },
   "errors": {
     "invalidCredentials": "Invalid email or password",
@@ -6514,7 +6555,8 @@
       }
     ],
     "chat": {
-      "assistantName": "Course assistant"
+      "assistantName": "Course assistant",
+      "sourcesLabel": "Sources:"
     },
     "conversations": [
       {
@@ -6675,39 +6717,28 @@
     ],
     "screens": [
       {
-        "label": "Home",
-        "caption": "Enrolled courses, continue-watching progress, and search — the first thing a student sees.",
-        "alt": "Student app home screen listing enrolled courses with completion percentages"
+        "label": "Progress & scores",
+        "caption": "Course progress and quiz score trends, reachable from a phone — no desktop required.",
+        "alt": "Mobile dashboard screen showing top course progress bars and a quiz score trend line"
       },
       {
-        "label": "AI assistant",
-        "caption": "Ask about any lesson and get an answer grounded in the course content, not the open internet.",
-        "alt": "Student app AI assistant screen with suggested questions about recent lessons"
+        "label": "Activity & attendance",
+        "caption": "A live breakdown of content activity alongside an at-a-glance attendance overview.",
+        "alt": "Mobile dashboard screen showing an activity-by-type donut chart and attendance status overview"
       },
       {
-        "label": "Course content",
-        "caption": "Units, videos, quizzes, articles, and attachments — each with its own completion state.",
-        "alt": "Student app course content screen showing units with videos, quizzes and attachments"
-      },
-      {
-        "label": "Attendance",
-        "caption": "Scan to register attendance, then track time spent and what is still left in the course.",
-        "alt": "Student app course detail screen with an attendance check-in button and progress summary"
-      },
-      {
-        "label": "Learning reports",
-        "caption": "Study time, average progress, and enrollment breakdowns — the same numbers parents see.",
-        "alt": "Student app learning reports screen with a study-time chart and enrollment summary"
-      },
-      {
-        "label": "Light & dark",
-        "caption": "Every screen ships in both themes, fully laid out for Arabic and English.",
-        "alt": "Student app home screen rendered in the light theme"
+        "label": "User management",
+        "caption": "Students, guardians, admins, and instructors — manage every role for the organization from one screen.",
+        "alt": "Mobile user management screen listing counts of students, guardians, admins, and instructors"
       }
     ],
     "controls": {
       "previous": "Previous screen",
       "next": "Next screen"
+    },
+    "stores": {
+      "appStore": "App Store",
+      "googlePlay": "Google Play"
     }
   },
   "ParentsAttendanceSection": {
@@ -6760,7 +6791,8 @@
           "name": "Chemistry",
           "time": "3h 05m"
         }
-      ]
+      ],
+      "timeValue": "18h"
     }
   },
   "PlatformCapabilitiesSection": {
@@ -7001,7 +7033,36 @@
       "cohorts": "Cohorts",
       "newCohort": "New cohort",
       "newGroup": "New group",
-      "viewGroups": "View groups"
+      "viewGroups": "View groups",
+      "hierarchyDisclaimerTitle": "How does the academic structure work?",
+      "hierarchyStep1": "Link academy courses to this program.",
+      "hierarchyStep2": "Define the sequential levels inside each course.",
+      "hierarchyStep3": "Create cohorts and set each one a start date.",
+      "hierarchyStep4": "Form groups, then assign students and teachers.",
+      "listHint": "A program is the top container that courses, levels, and cohorts sit under.",
+      "newHint": "Pick a clear name for the program, such as \"Quran Tajweed\".",
+      "namePlaceholder": "e.g. Quran Tajweed",
+      "descriptionPlaceholder": "A short description of the program and its goals (optional)",
+      "emptyTitle": "No programs yet",
+      "emptyHint": "Create a program first, then link courses, levels, and cohorts to it.",
+      "confirmDeleteHint": "The program will be deleted and unlinked from its courses.",
+      "coursesHint": "The courses this program is made of.",
+      "courseBadge": "Course",
+      "noLinkableCourses": "No courses available to link.",
+      "emptyCoursesTitle": "No course linked yet",
+      "emptyCoursesHint": "Pick a course above and link it to start adding levels.",
+      "confirmUnlinkTitle": "Unlink this course?",
+      "confirmUnlinkHint": "The course stays, but it will no longer be part of this program.",
+      "levelsHint": "Sequential stages inside the course, each with its own certificate rules.",
+      "levelNamePlaceholder": "e.g. Level 1",
+      "orderHint": "Order decides where the level sits in the course sequence.",
+      "emptyLevelsHint": "Add the first level to this course so you can create cohorts.",
+      "confirmDeleteLevelHint": "The level and all its cohorts will be deleted.",
+      "cohortsHint": "Each cohort is an intake that starts on a specific date.",
+      "cohortNamePlaceholder": "e.g. January intake",
+      "emptyCohortsHint": "Add a cohort so you can create groups.",
+      "confirmDeleteCohortHint": "The cohort and its groups will be deleted.",
+      "emptyGroupsHint": "No groups in this cohort yet."
     },
     "groups": {
       "title": "Groups",
@@ -7557,5 +7618,79 @@
     "takeAttendance": "Take Attendance",
     "submitReport": "Submit Report",
     "enterFinalResults": "Enter Final Results"
+  },
+  "AcademicStructureSection": {
+    "badge": "Academic structure",
+    "title": "Programs, levels, cohorts and groups — organised the way centres actually run.",
+    "description": "Design your academy once, then run every intake smoothly: link the courses, order the levels, open cohorts with start dates, and build groups from students and teachers.",
+    "stepLabel": "Step {number}",
+    "steps": [
+      {
+        "title": "Program",
+        "description": "The outermost container — something like \"Secondary school mathematics\"."
+      },
+      {
+        "title": "Courses",
+        "description": "Link the academy courses the program is built from."
+      },
+      {
+        "title": "Levels",
+        "description": "Sequential levels inside each course, with prerequisites."
+      },
+      {
+        "title": "Cohorts",
+        "description": "Intakes with a start date, a capacity and an enrolment window."
+      },
+      {
+        "title": "Groups",
+        "description": "Assign students and teachers, set the schedule, and go."
+      }
+    ],
+    "readiness": {
+      "context": "Mathematics · Level 2 · Autumn 2026 cohort",
+      "groupTitle": "Group B — Saturdays and Tuesdays",
+      "statusBadge": "Ready to start",
+      "checks": [
+        {
+          "label": "Students assigned",
+          "value": "24 / 24"
+        },
+        {
+          "label": "Teacher assigned",
+          "value": "Mr. Ahmed"
+        },
+        {
+          "label": "Schedule set",
+          "value": "Sat · Tue 17:00"
+        },
+        {
+          "label": "Room / online link",
+          "value": "Room 3"
+        }
+      ]
+    },
+    "features": [
+      {
+        "title": "Group readiness check",
+        "description": "See at a glance what is stopping a group from starting — students, teacher, schedule."
+      },
+      {
+        "title": "Attendance for every session",
+        "description": "Present, late, absent — recorded in class or scanned from the student app."
+      },
+      {
+        "title": "Evaluations and results",
+        "description": "Grade each level, spot struggling students early, and decide who moves up."
+      },
+      {
+        "title": "Certificates",
+        "description": "Issue verifiable certificates automatically once the conditions are met."
+      }
+    ]
+  },
+  "HomeCta": {
+    "title": "Bring your centre, your courses and your parents onto one platform.",
+    "primary": "Start your free trial",
+    "secondary": "Request a demo"
   }
 }

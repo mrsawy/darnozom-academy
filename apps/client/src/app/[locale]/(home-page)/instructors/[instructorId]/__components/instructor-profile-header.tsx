@@ -31,7 +31,7 @@ function InstructorProfileHeader({ instructor }: Props) {
   const totalCourses = instructor.totalCourses ?? 0;
 
   return (
-    <div className="from-background via-background to-muted/20 border-b bg-gradient-to-br">
+    <div className="bg-dz-paper text-dz-ink border-dz-line border-b">
       <div className="container mx-auto px-4 py-8 md:py-12">
         <div className="flex flex-col items-center gap-6 md:flex-row md:items-start md:gap-8">
           {/* Avatar */}
@@ -67,7 +67,7 @@ function InstructorProfileHeader({ instructor }: Props) {
             <div className="mb-6 flex flex-nowrap items-center justify-center gap-1 sm:flex-wrap sm:gap-4 md:justify-start md:gap-6">
               {averageRating > 0 && (
                 <div className="bg-card flex items-center gap-2 rounded-lg border px-2 py-2 shadow-sm sm:px-4">
-                  <Star className="h-5 w-5 fill-yellow-500 text-yellow-500" />
+                  <Star className="fill-dz-amber text-dz-amber h-5 w-5" />
                   <Typography variant="span" weight="semibold">
                     {averageRating.toFixed(1)}
                   </Typography>
@@ -80,7 +80,7 @@ function InstructorProfileHeader({ instructor }: Props) {
               )}
               {totalStudents > 0 && (
                 <div className="bg-card flex items-center gap-2 rounded-lg border px-2 py-2 shadow-sm sm:px-4">
-                  <Users className="h-5 w-5 text-blue-500" />
+                  <Users className="text-dz-terracotta h-5 w-5" />
                   <Typography variant="span" weight="medium">
                     {formatNumber(totalStudents)}
                   </Typography>
@@ -91,7 +91,7 @@ function InstructorProfileHeader({ instructor }: Props) {
               )}
               {totalCourses > 0 && (
                 <div className="bg-card flex items-center gap-2 rounded-lg border px-2 py-2 shadow-sm sm:px-4">
-                  <BookOpen className="h-5 w-5 text-green-500" />
+                  <BookOpen className="text-dz-leaf h-5 w-5" />
                   <Typography variant="span" weight="medium">
                     {formatNumber(totalCourses)}
                   </Typography>

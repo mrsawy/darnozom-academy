@@ -15,7 +15,7 @@ function SingleCourse({ course, user }: { course: ICourseOverview; user?: IUser 
   const t = useTranslations('Courses.singleCourse');
 
   return (
-    <div className="bg-background min-h-screen">
+    <div className="bg-dz-paper text-dz-ink min-h-screen">
       {/* Navigation */}
       {/* <BreadCrumb /> */}
 

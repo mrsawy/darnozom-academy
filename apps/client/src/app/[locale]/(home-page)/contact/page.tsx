@@ -1,5 +1,5 @@
 import { setRequestLocale } from 'next-intl/server';
-import ContactFormSection from './__sections/contact-form-section';
+import ContactFormSection from './__sections/contact-form-section/contact-form-section';
 import ContactMapSection from './__sections/map-section';
 
 export const dynamic = 'force-dynamic';
@@ -15,9 +15,8 @@ export default async function ContactPage({ params }: Props) {
   setRequestLocale(locale);
 
   return (
-    <div className="bg-background relative min-h-screen w-full">
+    <div className="bg-dz-paper text-dz-ink relative min-h-screen w-full">
       <ContactFormSection />
-      {/* <ContactInfoSection /> */}
       <ContactMapSection />
     </div>
   );

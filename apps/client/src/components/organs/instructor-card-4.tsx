@@ -1,146 +1,81 @@
 'use client';
 
-import { Card, CardContent } from '@/components/atoms/card';
-import { Star, Users, BookOpen, ArrowRightIcon } from 'lucide-react';
+import { BookOpen, Star, Users } from 'lucide-react';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 import { getFileFullUrl } from '@/lib/utils/getFileFullUrl';
 import { IInstructor } from '@/lib/types/user/user.interface';
 import { Link } from '@/i18n/navigation';
-import { useTranslations } from 'next-intl';
 import { ROUTE_INSTRUCTOR_DETAIL } from '@/lib/data/constants/routes.constants';
-import { Button } from '@/components/atoms/button';
-import { Typography } from '@/components/atoms/typography';
-import { BorderBeam } from '../atoms/border-beam';
+import { cn } from '@/lib/utils';
 
-const formatNumber = (num?: number) => {
-  if (!num) return '0';
-  if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
-  return num.toString();
+const DEFAULT_AVATAR = '/images/default-avatar.png';
+
+const formatNumber = (value?: number) => {
+  if (!value) return '0';
+  if (value >= 1000) return `${(value / 1000).toFixed(1)}K`;
+  return value.toString();
 };
 
-export default function InstructorCard4({ instructor }: { instructor: IInstructor }) {
+interface InstructorCard4Props {
+  instructor: IInstructor;
+  /** Set on the cocoa band so the caption text stays legible. */
+  onDark?: boolean;
+}
+
+/** Portrait-first instructor card: photo, name, speciality, then the numbers. */
+export default function InstructorCard4({ instructor, onDark = false }: InstructorCard4Props) {
   const t = useTranslations('Instructors');
+  const fullName = [instructor.firstName, instructor.lastName].filter(Boolean).join(' ');
   const avatarUrl = instructor.profile?.avatar
     ? getFileFullUrl(instructor.profile.avatar)
-    : '/images/default-avatar.png';
+    : DEFAULT_AVATAR;
+  const speciality =
+    instructor.categories?.[0]?.name ??
+    instructor.profile?.shortBio ??
+    instructor.profile?.bio ??
+    t('expertInstructor');
+
+  const captionClass = onDark ? 'text-dz-cocoa-soft' : 'text-dz-ink-soft';
 
   return (
-    <Link href={ROUTE_INSTRUCTOR_DETAIL(instructor._id)}>
-      <Card className="group bg-section-card border-border/50 hover:border-brand-purple/50 relative flex h-full cursor-pointer flex-col overflow-hidden py-0 transition-all duration-300 hover:shadow-2xl">
-        {/* Image Overlay Header */}
-        <div className="relative h-40">
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="relative h-28 w-28 overflow-hidden rounded-full border-4 border-white shadow-2xl ring-4 ring-white/20 transition-transform duration-300 group-hover:scale-110">
-              <Image
-                src={avatarUrl}
-                alt={`${instructor.firstName} ${instructor.lastName}`}
-                fill
-                className="object-cover"
-              />
-            </div>
-          </div>
+    <Link
+      href={ROUTE_INSTRUCTOR_DETAIL(instructor._id)}
+      className="group flex flex-col gap-3"
+      aria-label={`${fullName} — ${t('viewProfile')}`}>
+      <div
+        className={cn(
+          'relative aspect-4/5 overflow-hidden rounded-[18px]',
+          onDark ? 'bg-dz-cocoa-line' : 'bg-dz-sand'
+        )}>
+        <Image
+          src={avatarUrl}
+          alt={fullName}
+          fill
+          sizes="(max-width: 768px) 50vw, 240px"
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
+        />
+      </div>
+
+      <div>
+        <div className="font-display text-[21px] leading-[1.3] font-bold">{fullName}</div>
+        <div className={cn('line-clamp-1 text-sm', captionClass)}>{speciality}</div>
+
+        <div className={cn('mt-1.5 flex flex-wrap items-center gap-3 text-[13px]', captionClass)}>
+          <span className="flex items-center gap-1">
+            <Star className="text-dz-tan size-3.5 shrink-0 fill-current" aria-hidden />
+            {(instructor.averageCoursesRating ?? 0).toFixed(1)}
+          </span>
+          <span className="flex items-center gap-1">
+            <Users className="size-3.5 shrink-0" aria-hidden />
+            {formatNumber(instructor.totalStudents ?? 0)}
+          </span>
+          <span className="flex items-center gap-1">
+            <BookOpen className="size-3.5 shrink-0" aria-hidden />
+            {instructor.totalCourses ?? 0}
+          </span>
         </div>
-
-        <CardContent className="flex flex-1 flex-col p-6">
-          {/* Name and Bio */}
-          <div className="relative z-10 -mt-12 mb-4 text-center">
-            <div className="bg-section-card border-border/50 rounded-lg border p-4 shadow-lg">
-              <Typography
-                as="h3"
-                variant="h5"
-                weight="bold"
-                align="center"
-                className="group-hover:text-brand-purple mb-1 flex justify-center transition-colors">
-                {instructor.firstName} {instructor.lastName}
-              </Typography>
-              <Typography
-                variant="small"
-                color="muted"
-                align="center"
-                className="line-clamp-2 flex justify-center sm:text-center">
-                {instructor.profile?.shortBio ?? instructor.profile?.bio ?? t('expertInstructor')}
-              </Typography>
-            </div>
-          </div>
-
-          {/* Stats Bar */}
-          <div className="border-border/50 mb-4 flex items-center justify-around gap-2 border-t pt-4">
-            <div className="flex flex-col items-center">
-              <div className="mb-1 flex items-center gap-1">
-                <Star className="h-4 w-4 fill-current text-yellow-500" />
-                <Typography variant="span" size="sm" weight="bold">
-                  {(instructor.averageCoursesRating ?? 0).toFixed(1)}
-                </Typography>
-              </div>
-              <Typography variant="span" size="xs" color="muted">
-                {t('rating')}
-              </Typography>
-            </div>
-
-            <div className="flex flex-col items-center">
-              <div className="mb-1 flex items-center gap-1">
-                <Users className="h-4 w-4 text-blue-500" />
-                <Typography variant="span" size="sm" weight="bold">
-                  {formatNumber(instructor.totalStudents ?? 0)}
-                </Typography>
-              </div>
-              <Typography variant="span" size="xs" color="muted">
-                {t('students')}
-              </Typography>
-            </div>
-            <div className="flex flex-col items-center">
-              <div className="mb-1 flex items-center gap-1">
-                <BookOpen className="h-4 w-4 text-purple-500" />
-                <Typography variant="span" size="sm" weight="bold">
-                  {instructor.totalCourses ?? 0}
-                </Typography>
-              </div>
-              <Typography variant="span" size="xs" color="muted">
-                {t('courses')}
-              </Typography>
-            </div>
-          </div>
-
-          {/* Categories */}
-          {instructor.categories && instructor.categories.length > 0 ? (
-            <div className="mb-4 flex flex-1 flex-wrap justify-center gap-2">
-              {instructor.categories.slice(0, 2).map((category) => (
-                <Typography
-                  key={category._id}
-                  variant="span"
-                  size="xs"
-                  weight="medium"
-                  className="bg-brand-purple/10 text-brand-purple border-brand-purple/20 inline-flex items-center rounded-md border px-2 py-1">
-                  {category.name}
-                </Typography>
-              ))}
-            </div>
-          ) : null}
-
-          {/* Footer CTA */}
-          <div className="border-border/50 text-brand-purple flex items-center justify-center gap-2 border-t pt-4 text-sm transition-all group-hover:gap-3">
-            <Button
-              variant="default" // your base style
-              effect="expandIcon"
-              icon={ArrowRightIcon}
-              iconPlacement="right">
-              {t('viewProfile')}
-            </Button>
-          </div>
-        </CardContent>
-        <BorderBeam
-          duration={6}
-          size={400}
-          className="via-accent from-transparent to-transparent"
-        />
-        <BorderBeam
-          duration={6}
-          delay={3}
-          size={400}
-          borderWidth={2}
-          className="via-primary from-transparent to-transparent"
-        />
-      </Card>
+      </div>
     </Link>
   );
 }

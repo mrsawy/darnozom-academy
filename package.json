@@ -8,6 +8,7 @@
   "main": "index.js",
   "scripts": {
     "postinstall": "node scripts/prune-nested-assistant-ui.cjs && node scripts/patch-radix-compose-refs.cjs",
+    "dev": "concurrently --kill-others-on-fail \"cross-env PORT=5065 pnpm --filter server dev\" \"pnpm --filter client dev\"",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "nx run-many -t lint --exclude=darnozom-academy",
     "lint:format": "nx run-many -t lint:format --exclude=darnozom-academy",
@@ -31,6 +32,8 @@
     "@swc/helpers": "~0.5.19",
     "@types/node": "20.19.9",
     "@vitest/eslint-plugin": "^1.6.6",
+    "concurrently": "^9.2.5",
+    "cross-env": "^10.1.0",
     "eslint-config-prettier": "^10.0.0",
     "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-import": "^2.32.0",

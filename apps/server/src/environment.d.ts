@@ -61,6 +61,16 @@ declare global {
       KASHIER_SECRET_KEY: string;
       KASHIER_TEST_URL: string;
       KASHIER_PAYMENT_API_KEY: string;
+
+      RESEND_API_KEY?: string;
+      EMAIL_FROM?: string;
+
+      TWILIO_ACCOUNT_SID?: string;
+      TWILIO_AUTH_TOKEN?: string;
+      TWILIO_PHONE_NUMBER?: string;
+
+      WHATSAPP_ACCESS_TOKEN?: string;
+      WHATSAPP_PHONE_NUMBER_ID?: string;
     }
   }
 }

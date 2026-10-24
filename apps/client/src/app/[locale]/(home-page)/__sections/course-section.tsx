@@ -2,17 +2,20 @@
 
 import { useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { useTranslations } from 'next-intl';
-import { Button } from '@/components/atoms/button';
-import { BookOpen } from 'lucide-react';
-import CourseCard from '../../../../components/organs/course-card';
+import { useLocale, useTranslations } from 'next-intl';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
+import SectionShell from '@/components/molecules/public-site/section-shell';
+import DisplayHeading from '@/components/molecules/public-site/display-heading';
+import CourseCard from '@/components/organs/course-card';
 import { Link } from '@/i18n/navigation';
-import { ROUTE_COURSES } from '@/lib/data/constants/routes.constants';
+import { ANCHOR_HOME_COURSES, ROUTE_COURSES } from '@/lib/data/constants/routes.constants';
 import CategoryFilter from './__components/category-filter';
 import GradeSchoolTypeFilter from './__components/grade-school-type-filter';
 import { useFeaturedCourses } from '@/lib/hooks/course/useFeaturedCourses';
 import type { ILocalizedLookup } from '@/lib/types/course/course.interface';
 import { normalizeCourseSchoolTypes } from '@/lib/utils/course/normalize-course-school-types';
+
+const SKELETON_CARDS = [0, 1, 2, 3, 4, 5];
 
 function uniqueLookups(items: (ILocalizedLookup | null | undefined)[]): ILocalizedLookup[] {
   const map = new Map<string, ILocalizedLookup>();
@@ -24,6 +27,8 @@ function uniqueLookups(items: (ILocalizedLookup | null | undefined)[]): ILocaliz
 
 function CoursesSection() {
   const t = useTranslations('CoursesSection');
+  const locale = useLocale();
+  const ArrowIcon = locale === 'ar' ? ArrowLeft : ArrowRight;
   const searchParams = useSearchParams();
   const allText = t('all');
   const selectedCategory = searchParams.get('category') ?? allText;
@@ -71,67 +76,50 @@ function CoursesSection() {
     [courses, selectedCategory, selectedGrade, selectedSchoolType, allText]
   );
 
-  if (isLoading) {
-    return (
-      <section className="bg-section-bg py-24">
-        <div className="container mx-auto px-6">
-          <div className="mb-16 text-center">
-            <div className="bg-muted mx-auto mb-6 h-12 w-80 animate-pulse rounded-lg" />
-            <div className="bg-muted mx-auto mb-8 h-6 w-96 animate-pulse rounded-lg" />
-          </div>
-          <div className="mx-auto grid max-w-7xl gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="bg-muted h-72 animate-pulse rounded-xl" />
-            ))}
-          </div>
-        </div>
-      </section>
-    );
-  }
-
   return (
-    <section className="bg-section-bg py-24">
-      <div className="container mx-auto px-6">
-        <div className="mb-16 text-center">
-          <h2 className="text-foreground mb-6 text-4xl font-bold md:text-5xl">
-            {t('title.featured')}{' '}
-            <span className="xbg-gradient-to-r from-brand-purple to-brand-blue xtext-transparent ml-3 bg-clip-text">
-              {t('title.courses')}
-            </span>
-          </h2>
-          <p className="text-muted-foreground mx-auto mb-8 max-w-3xl text-xl">{t('description')}</p>
-
-          <CategoryFilter categories={allCategories} />
-
-          <GradeSchoolTypeFilter grades={availableGrades} schoolTypes={availableSchoolTypes} />
+    <SectionShell
+      id={ANCHOR_HOME_COURSES.slice(1)}
+      tone="paper"
+      innerClassName="flex flex-col gap-8">
+      <div className="flex flex-wrap items-end justify-between gap-5">
+        <div>
+          <DisplayHeading>
+            {t('title.featured')} <span className="text-dz-terracotta">{t('title.courses')}</span>
+          </DisplayHeading>
+          <p className="text-dz-ink-soft mt-2.5 mb-0 max-w-[540px]">{t('description')}</p>
         </div>
-
-        <div className="mx-auto grid max-w-7xl gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {filteredCourses.length > 0 ? (
-            filteredCourses.map((course) => (
-              <CourseCard key={course._id?.toString()} course={course} />
-            ))
-          ) : (
-            <div className="col-span-full py-12 text-center">
-              <p className="text-muted-foreground text-lg">{t('noCoursesFound')}</p>
-            </div>
-          )}
-        </div>
-
-        <div className="mt-12 text-center">
-          <Link href={ROUTE_COURSES}>
-            <Button
-              size="lg"
-              variant="outline"
-              effect="expandIcon"
-              icon={<BookOpen />}
-              iconPlacement="left">
-              {t('viewAllButton')}
-            </Button>
-          </Link>
-        </div>
+        <Link
+          href={ROUTE_COURSES}
+          className="text-dz-terracotta hover:text-dz-terracotta-deep inline-flex items-center gap-1.5 border-b border-current pb-0.5 text-[15px] font-semibold transition-colors">
+          {t('viewAllButton')}
+          <ArrowIcon className="size-4" aria-hidden />
+        </Link>
       </div>
-    </section>
+
+      <div className="flex flex-col gap-3">
+        <CategoryFilter categories={allCategories} />
+        <GradeSchoolTypeFilter grades={availableGrades} schoolTypes={availableSchoolTypes} />
+      </div>
+
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(min(100%,270px),1fr))] gap-5">
+        {isLoading ? (
+          SKELETON_CARDS.map((index) => (
+            <div
+              key={index}
+              className="bg-dz-paper-raised border-dz-line h-80 animate-pulse rounded-[20px] border"
+            />
+          ))
+        ) : filteredCourses.length > 0 ? (
+          filteredCourses.map((course) => (
+            <CourseCard key={course._id?.toString()} course={course} />
+          ))
+        ) : (
+          <p className="text-dz-ink-soft col-span-full py-12 text-center text-lg">
+            {t('noCoursesFound')}
+          </p>
+        )}
+      </div>
+    </SectionShell>
   );
 }
 

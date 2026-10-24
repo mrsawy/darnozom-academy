@@ -2,8 +2,7 @@
 
 import { useMemo, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Badge } from '@/components/atoms/badge';
-import { Switch } from '@/components/atoms/switch';
+import PillTab from '@/components/molecules/public-site/pill-tab';
 import { cn } from '@/lib/utils';
 import { usePublicAiPlans } from '@/lib/hooks/ai-plans/useAiPlans';
 import { useElementIsVisible } from '@/lib/hooks/use-element-is-visible';
@@ -54,56 +53,37 @@ export default function AiPricingPlansBlock({ className }: AiPricingPlansBlockPr
   const savePercent = useMemo(() => maxSavingsPercent(sorted), [sorted]);
   const popular = popularIndex(sorted.length);
 
-  const gridClassName = cn(
-    'grid gap-8',
-    sorted.length === 1 && 'mx-auto max-w-md',
-    sorted.length === 2 && 'md:grid-cols-2',
-    sorted.length === 3 && 'lg:grid-cols-3',
-    sorted.length >= 4 && 'sm:grid-cols-2 xl:grid-cols-4'
-  );
+  const yearlyLabel =
+    savePercent > 0
+      ? `${t('yearly')} · ${t('toggleSaveHint', { percent: savePercent })}`
+      : t('yearly');
 
   return (
-    <div ref={blockRef} className={className}>
+    <div ref={blockRef} className={cn('flex w-full flex-col items-center gap-9', className)}>
       {isError ? (
-        <div className="border-destructive/50 bg-destructive/10 text-destructive rounded-lg border px-4 py-3 text-sm">
+        <div className="border-dz-clay/50 bg-dz-clay/10 text-dz-clay w-full rounded-lg border px-4 py-3 text-sm">
           {error instanceof Error ? error.message : t('loadError')}
         </div>
       ) : null}
 
       {sorted.length > 0 && !isLoading ? (
-        <div className="light:glassy dir-ltr dark:bg-muted! mx-auto mb-10 flex max-w-lg flex-wrap items-center justify-center gap-3 rounded-full border px-4 py-3">
-          <span
-            className={cn(
-              'text-sm font-medium',
-              isAnnual ? 'text-muted-foreground' : 'text-foreground'
-            )}>
+        <div
+          role="group"
+          aria-label={t('billingToggleAria')}
+          className="bg-dz-sand flex rounded-full p-1">
+          <PillTab variant="ghost" isActive={!isAnnual} onClick={() => setIsAnnual(false)}>
             {t('monthly')}
-          </span>
-          <Switch
-            checked={isAnnual}
-            onCheckedChange={setIsAnnual}
-            aria-label={t('billingToggleAria')}
-            className="data-[state=checked]:bg-primary dir-ltr"
-          />
-          <span
-            className={cn(
-              'text-sm font-medium',
-              isAnnual ? 'text-foreground' : 'text-muted-foreground'
-            )}>
-            {t('yearly')}
-          </span>
-          {savePercent > 0 ? (
-            <Badge variant="secondary" className="text-xs">
-              {t('toggleSaveHint', { percent: savePercent })}
-            </Badge>
-          ) : null}
+          </PillTab>
+          <PillTab variant="ghost" isActive={isAnnual} onClick={() => setIsAnnual(true)}>
+            {yearlyLabel}
+          </PillTab>
         </div>
       ) : null}
 
       {isLoading ? (
         <AiSubscriptionPlansSkeleton />
       ) : (
-        <div className={gridClassName}>
+        <div className="grid w-full grid-cols-[repeat(auto-fit,minmax(min(100%,250px),1fr))] gap-4">
           {sorted.map((plan, index) => (
             <AiPlanCard
               key={plan._id}
@@ -118,7 +98,7 @@ export default function AiPricingPlansBlock({ className }: AiPricingPlansBlockPr
       )}
 
       {!isLoading && !isError && isVisible && plans.length === 0 ? (
-        <p className="text-muted-foreground mt-4 text-center text-sm">{t('noPlans')}</p>
+        <p className="text-dz-ink-soft text-sm">{t('noPlans')}</p>
       ) : null}
     </div>
   );

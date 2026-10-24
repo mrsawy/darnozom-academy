@@ -1,8 +1,19 @@
-'use client';
-
 import { useTranslations } from 'next-intl';
-import { Typography } from '@/components/atoms/typography';
 import {
+  Briefcase,
+  Cpu,
+  GraduationCap,
+  HeartHandshake,
+  Landmark,
+  School,
+  Stethoscope,
+  Store,
+} from 'lucide-react';
+import SectionShell from '@/components/molecules/public-site/section-shell';
+import DisplayHeading from '@/components/molecules/public-site/display-heading';
+
+/** Index-aligned with the `about.companies.list` messages array. */
+const INDUSTRY_ICONS = [
   GraduationCap,
   Briefcase,
   Landmark,
@@ -11,60 +22,33 @@ import {
   Cpu,
   HeartHandshake,
   Store,
-} from 'lucide-react';
+] as const;
 
 function AboutCompaniesSection() {
   const t = useTranslations('about.companies');
 
-  const industries = [
-    { name: t('list.0'), icon: GraduationCap },
-    { name: t('list.1'), icon: Briefcase },
-    { name: t('list.2'), icon: Landmark },
-    { name: t('list.3'), icon: School },
-    { name: t('list.4'), icon: Stethoscope },
-    { name: t('list.5'), icon: Cpu },
-    { name: t('list.6'), icon: HeartHandshake },
-    { name: t('list.7'), icon: Store },
-  ];
-
   return (
-    <section className="bg-muted/30 py-16 md:py-24">
-      <div className="container mx-auto px-6 lg:px-8">
-        <div className="grid items-center gap-12 lg:grid-cols-2">
-          {/* Left Content */}
-          <div className="space-y-4">
-            <Typography variant="h2" size="3xl" weight="bold" className="md:text-4xl">
-              {t('title')} <span className="text-primary">{t('count')}</span>
-            </Typography>
-            <Typography variant="p" size="lg" color="muted" className="leading-relaxed">
-              {t('description')}
-            </Typography>
-          </div>
-
-          {/* Right Industries Grid */}
-          <div className="grid grid-cols-2 items-center gap-6 md:grid-cols-4">
-            {industries.map((item, index) => (
-              <div
-                key={index}
-                className="bg-background border-border hover:border-primary/50 hover:bg-primary/5 group flex flex-col items-center justify-center rounded-xl border p-4 transition-all duration-300 hover:shadow-lg"
-                style={{
-                  animationDelay: `${index * 0.1}s`,
-                }}>
-                <item.icon className="text-muted-foreground group-hover:text-primary mb-3 h-8 w-8 transition-colors" />
-                <Typography
-                  variant="span"
-                  size="sm"
-                  color="muted"
-                  weight="medium"
-                  className="group-hover:text-foreground text-center transition-colors">
-                  {item.name}
-                </Typography>
-              </div>
-            ))}
-          </div>
-        </div>
+    <SectionShell
+      tone="sand"
+      innerClassName="grid grid-cols-[repeat(auto-fit,minmax(min(100%,420px),1fr))] items-center gap-14">
+      <div className="flex flex-col gap-4">
+        <DisplayHeading>
+          {t('title')} <span className="text-dz-terracotta-deep">{t('count')}</span>
+        </DisplayHeading>
+        <p className="text-dz-ink-soft m-0 text-[17px] text-pretty">{t('description')}</p>
       </div>
-    </section>
+
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        {INDUSTRY_ICONS.map((Icon, index) => (
+          <div
+            key={index}
+            className="bg-dz-paper-raised border-dz-line hover:border-dz-line-strong flex flex-col items-center justify-center gap-2.5 rounded-2xl border p-4 text-center transition-colors">
+            <Icon className="text-dz-terracotta size-7" aria-hidden />
+            <span className="text-dz-ink-soft text-sm font-medium">{t(`list.${index}`)}</span>
+          </div>
+        ))}
+      </div>
+    </SectionShell>
   );
 }
 

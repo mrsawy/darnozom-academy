@@ -1,35 +1,23 @@
 import { getTranslations } from 'next-intl/server';
-import TermsBlock from '../__components/terms-block';
+import DisplayHeading from '@/components/molecules/public-site/display-heading';
+import LegalBlock from '@/components/molecules/public-site/legal-block';
+
+const BLOCK_KEYS = ['account', 'billing', 'content', 'acceptableUse', 'updates'] as const;
 
 export default async function TermsContentSection() {
   const t = await getTranslations('HomeLegal.terms');
 
   return (
-    <section className="mx-auto max-w-4xl px-6 py-20">
-      <h1 className="mb-4 text-4xl font-semibold tracking-tight">{t('title')}</h1>
-      <p className="text-muted-foreground mb-10 text-base">{t('intro')}</p>
+    <section className="bg-dz-paper text-dz-ink mx-auto w-full max-w-4xl px-6 py-20">
+      <DisplayHeading as="h1">{t('title')}</DisplayHeading>
+      <p className="text-dz-ink-soft mt-4 mb-10 text-base">{t('intro')}</p>
 
-      <div className="space-y-6">
-        <TermsBlock
-          title={t('blocks.account.title')}
-          description={t('blocks.account.description')}
-        />
-        <TermsBlock
-          title={t('blocks.billing.title')}
-          description={t('blocks.billing.description')}
-        />
-        <TermsBlock
-          title={t('blocks.content.title')}
-          description={t('blocks.content.description')}
-        />
-        <TermsBlock
-          title={t('blocks.acceptableUse.title')}
-          description={t('blocks.acceptableUse.description')}
-        />
-        <TermsBlock
-          title={t('blocks.updates.title')}
-          description={t('blocks.updates.description')}
-        />
+      <div className="flex flex-col gap-5">
+        {BLOCK_KEYS.map((key) => (
+          <LegalBlock key={key} title={t(`blocks.${key}.title`)}>
+            {t(`blocks.${key}.description`)}
+          </LegalBlock>
+        ))}
       </div>
     </section>
   );

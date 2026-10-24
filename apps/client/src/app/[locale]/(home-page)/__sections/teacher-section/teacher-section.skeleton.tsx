@@ -1,20 +1,28 @@
-import { Skeleton } from '@/components/atoms/skeleton';
+import SectionShell from '@/components/molecules/public-site/section-shell';
+import { ANCHOR_HOME_INSTRUCTORS } from '@/lib/data/constants/routes.constants';
+
+const SKELETON_CARDS = [0, 1, 2, 3];
 
 export function TeachersSectionSkeleton() {
   return (
-    <section className="bg-section-bg py-24">
-      <div className="container mx-auto px-6">
-        <div className="mb-16 text-center">
-          <Skeleton className="mx-auto mb-6 h-12 w-80" />
-          <Skeleton className="mx-auto h-6 w-96" />
-        </div>
-
-        <div className="mx-auto grid max-w-7xl gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} className="h-72 rounded-xl" />
-          ))}
-        </div>
+    <SectionShell
+      id={ANCHOR_HOME_INSTRUCTORS.slice(1)}
+      tone="cocoa"
+      innerClassName="flex flex-col gap-8">
+      <div className="flex flex-col gap-3">
+        <div className="bg-dz-cocoa-line h-11 w-80 max-w-full animate-pulse rounded-lg" />
+        <div className="bg-dz-cocoa-line h-5 w-96 max-w-full animate-pulse rounded-lg" />
       </div>
-    </section>
+
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(min(100%,220px),1fr))] gap-5">
+        {SKELETON_CARDS.map((index) => (
+          <div key={index} className="flex flex-col gap-3">
+            <div className="bg-dz-cocoa-line aspect-4/5 animate-pulse rounded-[18px]" />
+            <div className="bg-dz-cocoa-line h-5 w-32 animate-pulse rounded" />
+            <div className="bg-dz-cocoa-line h-4 w-20 animate-pulse rounded" />
+          </div>
+        ))}
+      </div>
+    </SectionShell>
   );
 }

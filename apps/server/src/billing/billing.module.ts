@@ -32,6 +32,8 @@ import { SessionCompletedBillingListener } from './events/session-completed.list
 import { PaymentModule } from '../payment/payment.module';
 import { NotificationModule } from '../notification/notification.module';
 import { FileModule } from '../file/file.module';
+import { AuthModule } from '../auth/auth.module';
+import { RoleModule } from '../role/role.module';
 
 @Module({
   imports: [
@@ -48,6 +50,8 @@ import { FileModule } from '../file/file.module';
     ]),
     BullModule.registerQueue({ name: BILLING_QUEUE }),
     forwardRef(() => PaymentModule),
+    forwardRef(() => AuthModule),
+    RoleModule,
     NotificationModule,
     FileModule,
   ],

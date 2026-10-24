@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, PaginateModel, Types } from 'mongoose';
 import { ApprovalStatus, OrganizationErrors, VerificationStatus } from '@darnozom/shared-types';
@@ -7,16 +7,20 @@ import { User } from 'src/user/entities/user.entity';
 import { FileService } from 'src/file/file.service';
 import type { AdminPaginateDto } from '../dto/admin-paginate.dto';
 import { AdminReviewSupport } from './admin-review.support';
+import { OrgReviewNotificationService } from 'src/notification/services/org-review-notification.service';
 
 @Injectable()
 export class AdminReviewVerificationService {
+  private readonly logger = new Logger(AdminReviewVerificationService.name);
+
   constructor(
     @InjectModel(Organization.name)
     private readonly organizationModel: PaginateModel<Organization>,
     @InjectModel(User.name)
     private readonly userModel: PaginateModel<User>,
     private readonly fileService: FileService,
-    private readonly support: AdminReviewSupport
+    private readonly support: AdminReviewSupport,
+    private readonly orgReviewNotificationService: OrgReviewNotificationService
   ) {}
 
   async getPendingIdentityVerifications(dto: AdminPaginateDto) {
@@ -80,6 +84,23 @@ export class AdminReviewVerificationService {
     org.approvalReviewedBy = new Types.ObjectId(adminId);
     org.approvalReviewedAt = new Date();
     await org.save();
+
+    // Trigger notification to the organization super admin
+    try {
+      const superAdmin = await this.userModel.findById(org.superAdminId).lean();
+      if (superAdmin?.email) {
+        await this.orgReviewNotificationService.notifyOrgApproved({
+          userId: superAdmin._id?.toString(),
+          email: superAdmin.email,
+          phone: superAdmin.phone,
+          superAdminName: superAdmin.firstName ? `${superAdmin.firstName} ${superAdmin.lastName || ''}`.trim() : undefined,
+          organizationName: org.name,
+        });
+      }
+    } catch (notifErr) {
+      this.logger.error(`Failed to dispatch approval notification for org ${orgId}: ${notifErr}`);
+    }
+
     return org;
   }
 
@@ -107,6 +128,26 @@ export class AdminReviewVerificationService {
     org.approvalReviewedBy = new Types.ObjectId(adminId);
     org.approvalReviewedAt = new Date();
     await org.save();
+
+    // Trigger notification to the organization super admin
+    try {
+      const superAdmin = await this.userModel.findById(org.superAdminId).lean();
+      if (superAdmin?.email) {
+        await this.orgReviewNotificationService.notifyOrgRejected(
+          {
+            userId: superAdmin._id?.toString(),
+            email: superAdmin.email,
+            phone: superAdmin.phone,
+            superAdminName: superAdmin.firstName ? `${superAdmin.firstName} ${superAdmin.lastName || ''}`.trim() : undefined,
+            organizationName: org.name,
+          },
+          comment
+        );
+      }
+    } catch (notifErr) {
+      this.logger.error(`Failed to dispatch rejection notification for org ${orgId}: ${notifErr}`);
+    }
+
     return org;
   }
 }

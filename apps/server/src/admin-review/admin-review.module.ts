@@ -25,6 +25,8 @@ import { AdminReviewSuspendService } from './services/admin-review-suspend.servi
 import { AdminReviewControllerMessage } from './controllers/message/admin-review.controller.message';
 import { RoleModule } from 'src/role/role.module';
 
+import { NotificationModule } from 'src/notification/notification.module';
+
 @Module({
   imports: [
     MongooseModule.forFeature([
@@ -40,6 +42,7 @@ import { RoleModule } from 'src/role/role.module';
     FileModule,
     SubscriptionModule,
     RoleModule,
+    NotificationModule,
     forwardRef(() => CourseModule),
     forwardRef(() => EnrollmentModule),
     forwardRef(() => UserModule),

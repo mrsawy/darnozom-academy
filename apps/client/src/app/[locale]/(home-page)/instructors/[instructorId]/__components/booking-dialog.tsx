@@ -72,7 +72,7 @@ function SlotCard({
         <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-black/10">
           <div
             className={`h-full rounded-full transition-all ${
-              pct >= 100 ? 'bg-destructive' : pct >= 75 ? 'bg-yellow-500' : 'bg-green-500'
+              pct >= 100 ? 'bg-dz-clay' : pct >= 75 ? 'bg-dz-amber' : 'bg-dz-leaf'
             }`}
             style={{ width: `${Math.min(pct, 100)}%` }}
           />

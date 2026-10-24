@@ -83,7 +83,7 @@ export default function Price({
         variant="span"
         size="sm"
         weight="medium"
-        className={`rounded-lg bg-green-600 p-0.5 px-1.5 text-start text-sm text-white sm:rounded-2xl sm:p-1 sm:px-2 sm:text-sm ${className}`}>
+        className={`bg-dz-leaf rounded-lg p-0.5 px-1.5 text-start text-sm text-white sm:rounded-2xl sm:p-1 sm:px-2 sm:text-sm ${className}`}>
         {t('free')}
       </Typography>
     );

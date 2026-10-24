@@ -1,36 +1,35 @@
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { ROUTE_DELETE_ACCOUNT } from '@/lib/data/constants/routes.constants';
-import PrivacyBlock from '../__components/privacy-block';
+import DisplayHeading from '@/components/molecules/public-site/display-heading';
+import LegalBlock from '@/components/molecules/public-site/legal-block';
+
+const BLOCK_KEYS = ['collect', 'use', 'retention'] as const;
 
 export default async function PrivacyContentSection() {
   const t = await getTranslations('HomeLegal.privacy');
 
   return (
-    <section className="mx-auto max-w-4xl px-6 py-20">
-      <h1 className="mb-4 text-4xl font-semibold tracking-tight">{t('title')}</h1>
-      <p className="text-muted-foreground mb-10 text-base">{t('intro')}</p>
+    <section className="bg-dz-paper text-dz-ink mx-auto w-full max-w-4xl px-6 py-20">
+      <DisplayHeading as="h1">{t('title')}</DisplayHeading>
+      <p className="text-dz-ink-soft mt-4 mb-10 text-base">{t('intro')}</p>
 
-      <div className="space-y-6">
-        <PrivacyBlock
-          title={t('blocks.collect.title')}
-          description={t('blocks.collect.description')}
-        />
-        <PrivacyBlock title={t('blocks.use.title')} description={t('blocks.use.description')} />
-        <PrivacyBlock
-          title={t('blocks.retention.title')}
-          description={t('blocks.retention.description')}
-        />
-        <article className="bg-card rounded-xl border p-6">
-          <h2 className="mb-2 text-xl font-medium">{t('blocks.choices.title')}</h2>
-          <p className="text-muted-foreground leading-7">
-            {t('blocks.choices.description')}{' '}
-            <Link href={ROUTE_DELETE_ACCOUNT} className="text-primary underline underline-offset-4">
-              {t('blocks.choices.deleteAccountLink')}
-            </Link>
-            .
-          </p>
-        </article>
+      <div className="flex flex-col gap-5">
+        {BLOCK_KEYS.map((key) => (
+          <LegalBlock key={key} title={t(`blocks.${key}.title`)}>
+            {t(`blocks.${key}.description`)}
+          </LegalBlock>
+        ))}
+
+        <LegalBlock title={t('blocks.choices.title')}>
+          {t('blocks.choices.description')}{' '}
+          <Link
+            href={ROUTE_DELETE_ACCOUNT}
+            className="text-dz-terracotta underline underline-offset-4">
+            {t('blocks.choices.deleteAccountLink')}
+          </Link>
+          .
+        </LegalBlock>
       </div>
     </section>
   );
