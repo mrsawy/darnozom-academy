@@ -42,7 +42,7 @@ const group = (paymentStatus: GroupPaymentStatus): IGroupDetail =>
     _id: 'g1',
     students: [{ studentId: 's1', paymentStatus, whatsappAdded: false, addedAt: '2026-01-01' }],
     people: { s1: 'Student One' },
-  }) as IGroupDetail;
+  }) as unknown as IGroupDetail;
 
 describe('SubscriptionsCard payment status', () => {
   it('shows UNDER_REVIEW for a student with a pending manual-transfer payment', () => {
