@@ -7,6 +7,15 @@ import { useAttachReceipt, useInitiatePayment } from '@/lib/hooks/billing/use-bi
 import { uploadFileToS3 } from '@/lib/actions/file/uploadFile';
 import type { IPaymentMethodConfig } from '@/lib/types/billing/payment-method-config';
 
+function safeHref(value: string): string | null {
+  try {
+    const url = new URL(value);
+    return url.protocol === 'https:' || url.protocol === 'http:' ? url.href : null;
+  } catch {
+    return null;
+  }
+}
+
 export interface ManualTransferPayPanelProps {
   config: IPaymentMethodConfig;
   amountMinor: number;
@@ -57,11 +66,11 @@ export function ManualTransferPayPanel({
         {config.fields.map((field) => (
           <div key={field.key} className="text-sm">
             <span className="text-muted-foreground">{field.label}: </span>
-            {field.type === 'IMAGE' && field.value ? (
+            {field.type === 'IMAGE' && field.value && safeHref(field.value) ? (
               // eslint-disable-next-line @next/next/no-img-element -- arbitrary admin-provided image, not optimized asset
-              <img src={field.value} alt={field.label} className="mt-1 max-w-[160px] rounded-md border" />
-            ) : field.type === 'LINK' && field.value ? (
-              <a href={field.value} target="_blank" rel="noopener noreferrer" className="text-primary underline">
+              <img src={safeHref(field.value)!} alt={field.label} className="mt-1 max-w-[160px] rounded-md border" />
+            ) : field.type === 'LINK' && field.value && safeHref(field.value) ? (
+              <a href={safeHref(field.value)!} target="_blank" rel="noopener noreferrer" className="text-primary underline">
                 {field.value}
               </a>
             ) : (

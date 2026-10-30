@@ -38,6 +38,24 @@ describe('ManualTransferPayPanel', () => {
     expect(screen.getByText('0100000000')).toBeInTheDocument();
   });
 
+  it('refuses to render a javascript: URL as a clickable link', () => {
+    const config = {
+      ...CONFIG,
+      fields: [{ key: 'link', label: 'Link', type: 'LINK' as const, value: 'javascript:alert(1)', order: 0 }],
+    };
+    render(<ManualTransferPayPanel config={config} amountMinor={10_000} currency={Currency.EGP} onSubmitted={vi.fn()} />);
+    expect(screen.queryByRole('link')).not.toBeInTheDocument();
+  });
+
+  it('renders a plain https URL as a clickable link', () => {
+    const config = {
+      ...CONFIG,
+      fields: [{ key: 'link', label: 'Link', type: 'LINK' as const, value: 'https://example.com/pay', order: 0 }],
+    };
+    render(<ManualTransferPayPanel config={config} amountMinor={10_000} currency={Currency.EGP} onSubmitted={vi.fn()} />);
+    expect(screen.getByRole('link')).toHaveAttribute('href', 'https://example.com/pay');
+  });
+
   it('initiates then attaches the uploaded image on submit', async () => {
     const onSubmitted = vi.fn();
     render(
