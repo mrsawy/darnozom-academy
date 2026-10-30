@@ -10,6 +10,11 @@ import type {
   InitiatePaymentFormValues,
   IPaymentMethodOption,
 } from '@/lib/types/billing/billing';
+import type {
+  IPaymentMethodConfig,
+  IPaymentMethodFieldInput,
+} from '@/lib/types/billing/payment-method-config';
+import type { PaymentProvider } from '@darnozom/shared-types';
 
 export async function createSubscription(data: CreateSubscriptionFormValues) {
   return createAuthorizedNatsRequest<IBillingSubscription>('billing.subscriptions.create', data);
@@ -46,6 +51,10 @@ export async function getPaymentMethods() {
   return createAuthorizedNatsRequest<IPaymentMethodOption[]>('billing.payments.methods', {});
 }
 
+export async function getAllPaymentMethods() {
+  return createAuthorizedNatsRequest<IPaymentMethodOption[]>('billing.payments.methods.all', {});
+}
+
 export async function initiatePayment(data: InitiatePaymentFormValues) {
   return createAuthorizedNatsRequest<{
     paymentId: string;
@@ -62,8 +71,8 @@ export async function attachReceipt(paymentId: string, fileKey: string) {
   });
 }
 
-export async function getReceiptQueue() {
-  return createAuthorizedNatsRequest<IFamilyPayment[]>('billing.payments.queue', {});
+export async function getReceiptQueue(filter?: { status?: string; groupId?: string }) {
+  return createAuthorizedNatsRequest<IFamilyPayment[]>('billing.payments.queue', filter ?? {});
 }
 
 export async function approvePayment(paymentId: string) {
@@ -72,4 +81,46 @@ export async function approvePayment(paymentId: string) {
 
 export async function rejectPayment(paymentId: string, reason: string) {
   return createAuthorizedNatsRequest<void>('billing.payments.reject', { paymentId, reason });
+}
+
+export async function getBillingSettings() {
+  return createAuthorizedNatsRequest<{
+    enabledFamilyPaymentMethods: string[];
+    academyFeeGatewayProvider: PaymentProvider | null;
+  }>('billing.settings.get', {});
+}
+
+export async function updateBillingSettings(data: {
+  enabledFamilyPaymentMethods: string[];
+  academyFeeGatewayProvider: PaymentProvider | null;
+}) {
+  return createAuthorizedNatsRequest<{
+    enabledFamilyPaymentMethods: string[];
+    academyFeeGatewayProvider: PaymentProvider | null;
+  }>('billing.settings.update', data);
+}
+
+export async function listPaymentMethodConfigs() {
+  return createAuthorizedNatsRequest<IPaymentMethodConfig[]>('billing.paymentMethodConfigs.list', {});
+}
+
+export async function upsertPaymentMethodConfigFields(configId: string, fields: IPaymentMethodFieldInput[]) {
+  return createAuthorizedNatsRequest<IPaymentMethodConfig>('billing.paymentMethodConfigs.upsertFields', {
+    configId,
+    fields,
+  });
+}
+
+export async function setPaymentMethodConfigEnabled(configId: string, enabled: boolean) {
+  return createAuthorizedNatsRequest<IPaymentMethodConfig>('billing.paymentMethodConfigs.setEnabled', {
+    configId,
+    enabled,
+  });
+}
+
+export async function createCustomPaymentMethodConfig(label: string, fields: IPaymentMethodFieldInput[]) {
+  return createAuthorizedNatsRequest<IPaymentMethodConfig>('billing.paymentMethodConfigs.createCustom', {
+    label,
+    fields,
+  });
 }

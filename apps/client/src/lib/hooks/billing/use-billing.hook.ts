@@ -15,6 +15,8 @@ import type {
   InitiatePaymentFormValues,
   IPaymentMethodOption,
 } from '@/lib/types/billing/billing';
+import type { IPaymentMethodConfig, IPaymentMethodFieldInput } from '@/lib/types/billing/payment-method-config';
+import type { PaymentProvider } from '@darnozom/shared-types';
 
 const ROOT = 'billing';
 
@@ -22,8 +24,11 @@ export const billingKeys = {
   groupSubscriptions: (groupId: string) => [ROOT, 'group-subscriptions', groupId] as const,
   familySubscriptions: (familyId: string) => [ROOT, 'family-subscriptions', familyId] as const,
   statement: (familyId: string) => [ROOT, 'statement', familyId] as const,
-  receiptQueue: [ROOT, 'receipt-queue'] as const,
+  receiptQueue: (filter?: { status?: string; groupId?: string }) => [ROOT, 'receipt-queue', filter ?? {}] as const,
   methods: [ROOT, 'methods'] as const,
+  allMethods: [ROOT, 'all-methods'] as const,
+  paymentMethodConfigs: [ROOT, 'payment-method-configs'] as const,
+  settings: [ROOT, 'settings'] as const,
 };
 
 export function useBillingMutation<TVars, TResult>(fn: (vars: TVars) => Promise<TResult>) {
@@ -66,10 +71,10 @@ export const useStatement = (familyId: string, enabled = true) =>
     enabled: enabled && Boolean(familyId),
   });
 
-export const useReceiptQueue = (enabled = true) =>
+export const useReceiptQueue = (filter?: { status?: string; groupId?: string }, enabled = true) =>
   useQuery({
-    queryKey: billingKeys.receiptQueue,
-    queryFn: async (): Promise<IFamilyPayment[]> => unwrap(await billingApi.getReceiptQueue()),
+    queryKey: billingKeys.receiptQueue(filter),
+    queryFn: async (): Promise<IFamilyPayment[]> => unwrap(await billingApi.getReceiptQueue(filter)),
     enabled,
   });
 
@@ -82,6 +87,14 @@ export const usePaymentMethods = (enabled = true) =>
   });
 
 export const useMethods = usePaymentMethods;
+
+export const useAllPaymentMethods = (enabled = true) =>
+  useQuery({
+    queryKey: billingKeys.allMethods,
+    queryFn: async (): Promise<IPaymentMethodOption[]> =>
+      unwrap(await billingApi.getAllPaymentMethods()),
+    enabled,
+  });
 
 export const useCreateSubscription = () =>
   useBillingMutation(async (data: CreateSubscriptionFormValues) =>
@@ -114,4 +127,40 @@ export const useApprovePayment = () =>
 export const useRejectPayment = () =>
   useBillingMutation(async (vars: { paymentId: string; reason: string }) =>
     unwrap(await billingApi.rejectPayment(vars.paymentId, vars.reason))
+  );
+
+export const useBillingSettings = (enabled = true) =>
+  useQuery({
+    queryKey: billingKeys.settings,
+    queryFn: async (): Promise<{ enabledFamilyPaymentMethods: string[]; academyFeeGatewayProvider: PaymentProvider | null }> =>
+      unwrap(await billingApi.getBillingSettings()),
+    enabled,
+  });
+
+export const useUpdateBillingSettings = () =>
+  useBillingMutation(
+    async (data: { enabledFamilyPaymentMethods: string[]; academyFeeGatewayProvider: PaymentProvider | null }) =>
+      unwrap(await billingApi.updateBillingSettings(data))
+  );
+
+export const usePaymentMethodConfigs = (enabled = true) =>
+  useQuery({
+    queryKey: billingKeys.paymentMethodConfigs,
+    queryFn: async (): Promise<IPaymentMethodConfig[]> => unwrap(await billingApi.listPaymentMethodConfigs()),
+    enabled,
+  });
+
+export const useUpsertPaymentMethodConfigFields = () =>
+  useBillingMutation(async (vars: { configId: string; fields: IPaymentMethodFieldInput[] }) =>
+    unwrap(await billingApi.upsertPaymentMethodConfigFields(vars.configId, vars.fields))
+  );
+
+export const useSetPaymentMethodConfigEnabled = () =>
+  useBillingMutation(async (vars: { configId: string; enabled: boolean }) =>
+    unwrap(await billingApi.setPaymentMethodConfigEnabled(vars.configId, vars.enabled))
+  );
+
+export const useCreateCustomPaymentMethodConfig = () =>
+  useBillingMutation(async (vars: { label: string; fields: IPaymentMethodFieldInput[] }) =>
+    unwrap(await billingApi.createCustomPaymentMethodConfig(vars.label, vars.fields))
   );

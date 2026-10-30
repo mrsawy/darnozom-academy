@@ -60,6 +60,18 @@ export interface IFamilyStatement {
   balances: ILedgerBalance[];
 }
 
+export interface IFamilyPaymentMethodSnapshotField {
+  key: string;
+  label: string;
+  type: string;
+  value: string;
+}
+
+export interface IFamilyPaymentMethodSnapshot {
+  label: string;
+  fields: IFamilyPaymentMethodSnapshotField[];
+}
+
 export interface IFamilyPayment {
   _id: string;
   organizationId: string;
@@ -74,6 +86,8 @@ export interface IFamilyPayment {
   reviewedBy?: string | null;
   reviewedAt?: string | null;
   externalReference?: string | null;
+  paymentMethodConfigId?: string | null;
+  methodSnapshot?: IFamilyPaymentMethodSnapshot | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -104,4 +118,5 @@ export interface InitiatePaymentFormValues {
   method: string;
   amountMinor: number;
   currency: Currency;
+  meta?: Record<string, unknown>;
 }
