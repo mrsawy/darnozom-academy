@@ -1,6 +1,30 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { Currency, FamilyPaymentState } from '@darnozom/shared-types';
+import { Currency, FamilyPaymentState, PaymentMethodFieldType } from '@darnozom/shared-types';
+
+@Schema({ _id: false })
+export class FamilyPaymentMethodSnapshotField {
+  @Prop({ type: String, required: true })
+  key: string;
+
+  @Prop({ type: String, required: true })
+  label: string;
+
+  @Prop({ type: String, enum: Object.values(PaymentMethodFieldType), required: true })
+  type: PaymentMethodFieldType;
+
+  @Prop({ type: String, default: '' })
+  value: string;
+}
+
+@Schema({ _id: false })
+export class FamilyPaymentMethodSnapshot {
+  @Prop({ type: String, required: true })
+  label: string;
+
+  @Prop({ type: [FamilyPaymentMethodSnapshotField], default: [] })
+  fields: FamilyPaymentMethodSnapshotField[];
+}
 
 /** A parent's attempt to pay, from intent to confirmed money. */
 @Schema({ timestamps: true })
@@ -42,6 +66,13 @@ export class FamilyPayment extends Document<Types.ObjectId> {
 
   @Prop({ type: String, required: false, default: null })
   rejectReason: string | null;
+
+  @Prop({ type: Types.ObjectId, ref: 'PaymentMethodConfig', required: false, default: null })
+  paymentMethodConfigId: Types.ObjectId | null;
+
+  /** The manual-transfer method's fields as they were when the family paid — never re-read from the live config. */
+  @Prop({ type: FamilyPaymentMethodSnapshot, required: false, default: null })
+  methodSnapshot: FamilyPaymentMethodSnapshot | null;
 }
 
 export const FamilyPaymentSchema = SchemaFactory.createForClass(FamilyPayment);

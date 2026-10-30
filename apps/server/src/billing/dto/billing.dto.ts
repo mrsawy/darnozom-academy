@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { ArrayMinSize, IsEnum, IsIn, IsInt, IsMongoId, IsOptional, IsString, Min, MinLength, ValidateNested } from 'class-validator';
+import { ArrayMinSize, IsEnum, IsIn, IsInt, IsMongoId, IsObject, IsOptional, IsString, Min, MinLength, ValidateNested } from 'class-validator';
 import { Currency, SubscriptionType } from '@darnozom/shared-types';
 
 export class SubscriptionItemDto {
@@ -49,6 +49,7 @@ export class InitiatePaymentPayload {
   @IsString() @MinLength(1) method: string;
   @IsInt() @Min(1) amountMinor: number;
   @IsEnum(Currency) currency: Currency;
+  @IsOptional() @IsObject() meta?: Record<string, unknown>;
 }
 
 export class AttachReceiptPayload {
