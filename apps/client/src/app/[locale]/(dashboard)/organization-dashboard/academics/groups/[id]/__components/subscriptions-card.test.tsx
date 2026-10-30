@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { BillingSubscriptionStatus, Currency, GroupPaymentStatus, SubscriptionType } from '@darnozom/shared-types';
 import { SubscriptionsCard } from './subscriptions-card';
 import type { IGroupDetail } from '@/lib/types/academics/academics';
@@ -26,6 +26,15 @@ vi.mock('@/lib/hooks/billing/use-billing.hook', () => ({
     ],
     isLoading: false,
   }),
+  useReceiptQueue: () => ({
+    data: [
+      { _id: 'p1', amountMinor: 10_000, currency: Currency.EGP, method: 'MANUAL_TRANSFER', createdAt: '2026-01-01T00:00:00.000Z' },
+      { _id: 'p2', amountMinor: 20_000, currency: Currency.EGP, method: 'MANUAL_TRANSFER', createdAt: '2026-01-02T00:00:00.000Z' },
+    ],
+    isLoading: false,
+  }),
+  useApprovePayment: () => ({ mutate: vi.fn(), isPending: false }),
+  useRejectPayment: () => ({ mutate: vi.fn(), isPending: false }),
 }));
 
 const group = (paymentStatus: GroupPaymentStatus): IGroupDetail =>
@@ -44,5 +53,19 @@ describe('SubscriptionsCard payment status', () => {
   it('still shows PAID as before', () => {
     render(<SubscriptionsCard group={group(GroupPaymentStatus.PAID)} disabled={false} />);
     expect(screen.getByText('status.PAID')).toBeInTheDocument();
+  });
+});
+
+describe('SubscriptionsCard review payments entry point', () => {
+  it('shows a pending-review button with the pending count', () => {
+    render(<SubscriptionsCard group={group(GroupPaymentStatus.PAID)} disabled={false} />);
+    const button = screen.getByRole('button', { name: /reviewPayments/ });
+    expect(button).toHaveTextContent('2');
+  });
+
+  it('opens the review modal when clicked', () => {
+    render(<SubscriptionsCard group={group(GroupPaymentStatus.PAID)} disabled={false} />);
+    fireEvent.click(screen.getByRole('button', { name: /reviewPayments/ }));
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
   });
 });

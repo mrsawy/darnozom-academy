@@ -18,10 +18,12 @@ import {
   useCreateSubscription,
   useEndSubscription,
   useGroupSubscriptions,
+  useReceiptQueue,
 } from '@/lib/hooks/billing/use-billing.hook';
 import { formatMoney } from '@/lib/utils/billing/format-money';
 import type { IGroupDetail } from '@/lib/types/academics/academics';
 import { SubscriptionForm } from '@/components/organs/billing/subscription-form';
+import { ReviewPaymentsModal } from './review-payments-modal';
 
 export function SubscriptionsCard({ group, disabled }: { group: IGroupDetail; disabled: boolean }) {
   const t = useTranslations('Billing');
@@ -30,6 +32,8 @@ export function SubscriptionsCard({ group, disabled }: { group: IGroupDetail; di
   const createSubscription = useCreateSubscription();
   const endSubscription = useEndSubscription();
   const [showForm, setShowForm] = useState(false);
+  const [showReview, setShowReview] = useState(false);
+  const { data: pendingPayments = [] } = useReceiptQueue({ groupId: group._id, status: 'PENDING_REVIEW' });
 
   const studentCandidates = group.students.map((s) => ({
     _id: s.studentId,
@@ -42,15 +46,22 @@ export function SubscriptionsCard({ group, disabled }: { group: IGroupDetail; di
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>{t('subscriptions')}</CardTitle>
-        {!disabled && (
-          <Button
-            size="sm"
-            variant={showForm ? 'outline' : 'default'}
-            onClick={() => setShowForm((prev) => !prev)}>
-            {showForm ? t('cancel') : t('newSubscription')}
+        <div className="flex items-center gap-2">
+          <Button size="sm" variant="outline" onClick={() => setShowReview(true)}>
+            {t('reviewPayments')}
+            {pendingPayments.length > 0 ? ` (${pendingPayments.length})` : ''}
           </Button>
-        )}
+          {!disabled && (
+            <Button
+              size="sm"
+              variant={showForm ? 'outline' : 'default'}
+              onClick={() => setShowForm((prev) => !prev)}>
+              {showForm ? t('cancel') : t('newSubscription')}
+            </Button>
+          )}
+        </div>
       </CardHeader>
+      <ReviewPaymentsModal groupId={group._id} open={showReview} onOpenChange={setShowReview} />
       <CardContent className="space-y-4">
         {showForm && !disabled ? (
           <div className="mb-4">
