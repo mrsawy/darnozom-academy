@@ -1,6 +1,6 @@
 import { ConflictException, NotFoundException } from '@nestjs/common';
 import { Types } from 'mongoose';
-import { AcademicsErrors, GroupStatus, READINESS_LOST_REASON, Roles } from '@darnozom/shared-types';
+import { AcademicsErrors, FamilyPaymentStatus, GroupPaymentStatus, GroupStatus, READINESS_LOST_REASON, Roles } from '@darnozom/shared-types';
 import { mockQuery } from '__test__/academics/mock-query';
 import { AcademicsActor } from '../common/actor';
 import { GroupStateService } from './group-state.service';
@@ -27,7 +27,7 @@ const group = (over: Record<string, unknown> = {}) => ({
 function setup() {
   const groupModel = { findOne: jest.fn(), updateOne: jest.fn() };
   const cohortModel = { findOne: jest.fn().mockReturnValue(mockQuery(null)) };
-  const paymentStatus = { forGroup: jest.fn().mockResolvedValue(new Map()) };
+  const paymentStatus = { forGroup: jest.fn().mockResolvedValue(new Map()), hasPendingReview: jest.fn().mockResolvedValue(new Set()) };
   const taskClosing = { closeDoneItems: jest.fn(async () => 0), closeAll: jest.fn(async () => 0) };
   return {
     service: new GroupStateService(groupModel as never, cohortModel as never, paymentStatus as never, taskClosing as never),
@@ -95,5 +95,39 @@ describe('GroupStateService on completed groups', () => {
     const { service, groupModel } = setup();
     groupModel.findOne.mockReturnValue(mockQuery(group({ status: GroupStatus.COMPLETED })));
     await expect(service.loadForWrite(actor, String(groupId))).rejects.toThrow(new ConflictException(AcademicsErrors.GROUP_COMPLETED));
+  });
+});
+
+describe('GroupStateService.withDerivedPaymentStatus', () => {
+  const studentId = new Types.ObjectId();
+
+  it('shows UNDER_REVIEW for an unpaid student with a pending manual-transfer payment', async () => {
+    const { service, paymentStatus } = setup();
+    paymentStatus.forGroup.mockResolvedValueOnce(new Map([[String(studentId), FamilyPaymentStatus.UNPAID]]));
+    paymentStatus.hasPendingReview.mockResolvedValueOnce(new Set([String(studentId)]));
+
+    const result = await service.withDerivedPaymentStatus(group({ students: [{ studentId, paymentStatus: GroupPaymentStatus.UNPAID }] }) as never);
+
+    expect(result.students[0].paymentStatus).toBe(GroupPaymentStatus.UNDER_REVIEW);
+  });
+
+  it('never overrides PAID with UNDER_REVIEW', async () => {
+    const { service, paymentStatus } = setup();
+    paymentStatus.forGroup.mockResolvedValueOnce(new Map([[String(studentId), FamilyPaymentStatus.PAID]]));
+    paymentStatus.hasPendingReview.mockResolvedValueOnce(new Set([String(studentId)]));
+
+    const result = await service.withDerivedPaymentStatus(group({ students: [{ studentId, paymentStatus: GroupPaymentStatus.UNPAID }] }) as never);
+
+    expect(result.students[0].paymentStatus).toBe(GroupPaymentStatus.PAID);
+  });
+
+  it('leaves UNPAID alone when there is no pending payment', async () => {
+    const { service, paymentStatus } = setup();
+    paymentStatus.forGroup.mockResolvedValueOnce(new Map([[String(studentId), FamilyPaymentStatus.UNPAID]]));
+    paymentStatus.hasPendingReview.mockResolvedValueOnce(new Set());
+
+    const result = await service.withDerivedPaymentStatus(group({ students: [{ studentId, paymentStatus: GroupPaymentStatus.UNPAID }] }) as never);
+
+    expect(result.students[0].paymentStatus).toBe(GroupPaymentStatus.UNPAID);
   });
 });

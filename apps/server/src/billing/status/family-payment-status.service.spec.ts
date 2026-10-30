@@ -1,4 +1,4 @@
-import { BillingSubscriptionStatus, Currency, FamilyPaymentStatus, LedgerEntryType, SubscriptionType } from '@darnozom/shared-types';
+import { BillingSubscriptionStatus, Currency, FamilyPaymentState, FamilyPaymentStatus, LedgerEntryType, SubscriptionType } from '@darnozom/shared-types';
 import { Types } from 'mongoose';
 import { FamilyPaymentStatusService } from './family-payment-status.service';
 
@@ -14,7 +14,8 @@ const NOW = new Date('2026-03-20T00:00:00.000Z');
 const makeService = (
   subscriptions: Record<string, unknown>[] = [],
   charges: Record<string, unknown>[] = [],
-  allocations: { _id: Types.ObjectId; total: number }[] = []
+  allocations: { _id: Types.ObjectId; total: number }[] = [],
+  pendingPayments: Record<string, unknown>[] = []
 ) => {
   const subscriptionModel = {
     find: jest.fn(() => ({
@@ -29,10 +30,15 @@ const makeService = (
   const allocationModel = {
     aggregate: jest.fn(async () => allocations),
   };
+  const paymentModel = {
+    find: jest.fn(() => ({
+      lean: () => ({ exec: async () => pendingPayments }),
+    })),
+  };
 
-  const service = new FamilyPaymentStatusService(subscriptionModel as never, entryModel as never, allocationModel as never);
+  const service = new FamilyPaymentStatusService(subscriptionModel as never, entryModel as never, allocationModel as never, paymentModel as never);
 
-  return { service, subscriptionModel, entryModel, allocationModel };
+  return { service, subscriptionModel, entryModel, allocationModel, paymentModel };
 };
 
 describe('FamilyPaymentStatusService.forGroup', () => {
@@ -170,5 +176,46 @@ describe('FamilyPaymentStatusService.forGroup', () => {
     expect(result.size).toBe(2);
     expect(result.get(String(STUDENT_1))).toBe(FamilyPaymentStatus.UNPAID);
     expect(result.get(String(STUDENT_2))).toBe(FamilyPaymentStatus.UNPAID);
+  });
+});
+
+describe('FamilyPaymentStatusService.hasPendingReview', () => {
+  it('flags a student whose family has a payment pending review', async () => {
+    const familyId = new Types.ObjectId();
+    const subs = [
+      {
+        _id: new Types.ObjectId(),
+        type: SubscriptionType.MONTHLY,
+        amountMinor: 10_000,
+        status: BillingSubscriptionStatus.ACTIVE,
+        familyId,
+        items: [{ studentId: STUDENT_1, groupId: GROUP }],
+      },
+    ];
+    const pendingPayments = [{ familyId, status: FamilyPaymentState.PENDING_REVIEW }];
+
+    const { service } = makeService(subs, [], [], pendingPayments);
+    const result = await service.hasPendingReview(GROUP, [String(STUDENT_1)]);
+
+    expect(result.has(String(STUDENT_1))).toBe(true);
+  });
+
+  it('does not flag a student with no pending payment', async () => {
+    const familyId = new Types.ObjectId();
+    const subs = [
+      {
+        _id: new Types.ObjectId(),
+        type: SubscriptionType.MONTHLY,
+        amountMinor: 10_000,
+        status: BillingSubscriptionStatus.ACTIVE,
+        familyId,
+        items: [{ studentId: STUDENT_1, groupId: GROUP }],
+      },
+    ];
+
+    const { service } = makeService(subs, [], [], []);
+    const result = await service.hasPendingReview(GROUP, [String(STUDENT_1)]);
+
+    expect(result.has(String(STUDENT_1))).toBe(false);
   });
 });

@@ -31,17 +31,19 @@ export class GroupStateService {
   async withDerivedPaymentStatus(group: GroupLean): Promise<GroupLean> {
     if (group.students.length === 0) return group;
     const cohort = await this.cohortModel.findOne({ _id: group.cohortId }).lean<{ startDate: Date } | null>().exec();
-    const statuses = await this.paymentStatus.forGroup(
-      group._id,
-      group.students.map((student) => String(student.studentId)),
-      cohort?.startDate ?? null
-    );
+    const studentIds = group.students.map((student) => String(student.studentId));
+    const [statuses, pendingReview] = await Promise.all([
+      this.paymentStatus.forGroup(group._id, studentIds, cohort?.startDate ?? null),
+      this.paymentStatus.hasPendingReview(group._id, studentIds),
+    ]);
     return {
       ...group,
-      students: group.students.map((student) => ({
-        ...student,
-        paymentStatus: (statuses.get(String(student.studentId)) ?? student.paymentStatus) as unknown as GroupPaymentStatus,
-      })),
+      students: group.students.map((student) => {
+        const derived = (statuses.get(String(student.studentId)) ?? student.paymentStatus) as unknown as GroupPaymentStatus;
+        const paymentStatus =
+          derived === GroupPaymentStatus.UNPAID && pendingReview.has(String(student.studentId)) ? GroupPaymentStatus.UNDER_REVIEW : derived;
+        return { ...student, paymentStatus };
+      }),
     };
   }
 
