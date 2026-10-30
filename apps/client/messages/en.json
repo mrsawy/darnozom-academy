@@ -1758,7 +1758,8 @@
       "childUsers": "Child Users",
       "selectChildUsers": "Select child users...",
       "parentUser": "Parent User",
-      "selectParentUser": "Select parent user..."
+      "selectParentUser": "Select parent user...",
+      "availability": "Weekly Availability"
     },
     "profile": {
       "title": "Profile Information",
@@ -2294,11 +2295,13 @@
     "type_assignment": "Assignment",
     "type_quiz": "Quiz",
     "type_live_session": "Live Session",
+    "type_private_session": "Private Session",
     "type_project": "Project",
     "type_attendance": "Attendance",
     "type_ASSIGNMENT": "Assignment",
     "type_QUIZ": "Quiz",
     "type_LIVE_SESSION": "Live Session",
+    "type_PRIVATE_SESSION": "Private Session",
     "type_PROJECT": "Project",
     "type_ATTENDANCE": "Attendance",
     "loadingCalendar": "Loading calendar"
@@ -2427,6 +2430,7 @@
       "settings": {
         "settings": "Settings",
         "plan": "Plan",
+        "payments": "Payment Settings",
         "usage": "Usage",
         "aiPlan": "AI Plan"
       }
@@ -7117,7 +7121,23 @@
       "paid": "Paid",
       "unpaid": "Unpaid",
       "noCandidates": "No matching students",
-      "withdrawn": "Withdrawn"
+      "withdrawn": "Withdrawn",
+      "details": {
+        "title": "Student Details",
+        "loading": "Loading student details...",
+        "notFound": "Student not found",
+        "name": "Name",
+        "email": "Email",
+        "phone": "Phone",
+        "status": "Status",
+        "notProvided": "Not provided",
+        "edit": "Edit",
+        "parent": {
+          "title": "Parent",
+          "call": "Call",
+          "whatsapp": "WhatsApp"
+        }
+      }
     },
     "teacher": {
       "title": "Teacher",
@@ -7362,7 +7382,8 @@
     },
     "status": {
       "PAID": "Paid",
-      "UNPAID": "Unpaid"
+      "UNPAID": "Unpaid",
+      "UNDER_REVIEW": "Under Review"
     },
     "charge": {
       "fullCourse": "Full course tuition fee",

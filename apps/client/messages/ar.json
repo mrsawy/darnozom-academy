@@ -1758,7 +1758,8 @@
       "childUsers": "المستخدمون التابعون",
       "selectChildUsers": "اختر المستخدمين التابعين...",
       "parentUser": "المستخدم الوالد",
-      "selectParentUser": "اختر المستخدم الوالد..."
+      "selectParentUser": "اختر المستخدم الوالد...",
+      "availability": "أوقات التوفر الأسبوعية"
     },
     "profile": {
       "title": "معلومات الملف الشخصي",
@@ -2294,11 +2295,13 @@
     "type_assignment": "تكليف",
     "type_quiz": "اختبار",
     "type_live_session": "جلسة مباشرة",
+    "type_private_session": "جلسة خاصة",
     "type_project": "مشروع",
     "type_attendance": "حضور",
     "type_ASSIGNMENT": "تكليف",
     "type_QUIZ": "اختبار",
     "type_LIVE_SESSION": "جلسة مباشرة",
+    "type_PRIVATE_SESSION": "جلسة خاصة",
     "type_PROJECT": "مشروع",
     "type_ATTENDANCE": "حضور",
     "loadingCalendar": "جارٍ تحميل التقويم"
@@ -2427,6 +2430,7 @@
       "settings": {
         "settings": "الإعدادات",
         "plan": "الخطة",
+        "payments": "إعدادات الدفع",
         "usage": "الاستخدام",
         "aiPlan": "خطة الذكاء الاصطناعي"
       }
@@ -7117,7 +7121,23 @@
       "paid": "مدفوع",
       "unpaid": "غير مدفوع",
       "noCandidates": "لا يوجد طلاب مطابقون",
-      "withdrawn": "منسحب"
+      "withdrawn": "منسحب",
+      "details": {
+        "title": "بيانات الطالب",
+        "loading": "جارٍ تحميل بيانات الطالب...",
+        "notFound": "لم يتم العثور على الطالب",
+        "name": "الاسم",
+        "email": "البريد الإلكتروني",
+        "phone": "الهاتف",
+        "status": "الحالة",
+        "notProvided": "غير متوفر",
+        "edit": "تعديل",
+        "parent": {
+          "title": "ولي الأمر",
+          "call": "اتصال",
+          "whatsapp": "واتساب"
+        }
+      }
     },
     "teacher": {
       "title": "المعلم",
@@ -7139,7 +7159,7 @@
     "availability": {
       "title": "أوقات توفري الأسبوعية",
       "addSlot": "إضافة موعد",
-      "endTime": "وقت الانتهاء (HH:mm، و24:00 لمنتصف الليل)"
+      "endTime": "وقت الانتهاء"
     },
     "myGroups": {
       "title": "مجموعاتي"
@@ -7362,7 +7382,8 @@
     },
     "status": {
       "PAID": "مسدد",
-      "UNPAID": "غير مسدد"
+      "UNPAID": "غير مسدد",
+      "UNDER_REVIEW": "قيد المراجعة"
     },
     "charge": {
       "fullCourse": "رسوم الدورة الكاملة",
