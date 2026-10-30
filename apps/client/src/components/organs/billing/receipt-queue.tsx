@@ -10,6 +10,7 @@ export interface ReceiptQueueProps {
   isLoading?: boolean;
   onApprove: (paymentId: string) => void;
   onReject: (paymentId: string, reason: string) => void;
+  onFilterChange?: (status: string) => void;
 }
 
 function ReceiptRow({
@@ -44,7 +45,7 @@ function ReceiptRow({
             {formatMoney(payment.amountMinor, payment.currency, locale)}
           </span>
           <span className="bg-muted text-muted-foreground rounded px-2 py-0.5 text-xs">
-            {payment.method}
+            {payment.methodSnapshot?.label ?? payment.method}
           </span>
         </div>
         <p className="text-muted-foreground text-xs">
@@ -98,27 +99,53 @@ export function ReceiptQueue({
   isLoading = false,
   onApprove,
   onReject,
+  onFilterChange,
 }: ReceiptQueueProps) {
   const t = useTranslations('Billing');
 
+  const filter = onFilterChange ? (
+    <div className="flex items-center gap-2">
+      <label htmlFor="receipt-queue-status-filter" className="text-sm font-medium">
+        {t('filterByStatus')}
+      </label>
+      <select
+        id="receipt-queue-status-filter"
+        aria-label="filterByStatus"
+        onChange={(e) => onFilterChange(e.target.value)}
+        className="bg-background rounded-md border px-3 py-1.5 text-sm">
+        <option value="">{t('statusAll')}</option>
+        <option value="PENDING_REVIEW">{t('status.UNDER_REVIEW')}</option>
+        <option value="CONFIRMED">{t('status.PAID')}</option>
+        <option value="REJECTED">{t('reject')}</option>
+      </select>
+    </div>
+  ) : null;
+
   if (isLoading) {
     return (
-      <div className="bg-card text-muted-foreground flex h-32 items-center justify-center rounded-lg border p-6">
-        {t('loading')}
+      <div className="space-y-3">
+        {filter}
+        <div className="bg-card text-muted-foreground flex h-32 items-center justify-center rounded-lg border p-6">
+          {t('loading')}
+        </div>
       </div>
     );
   }
 
   if (payments.length === 0) {
     return (
-      <div className="bg-card text-muted-foreground flex h-32 items-center justify-center rounded-lg border p-6">
-        {t('empty')}
+      <div className="space-y-3">
+        {filter}
+        <div className="bg-card text-muted-foreground flex h-32 items-center justify-center rounded-lg border p-6">
+          {t('empty')}
+        </div>
       </div>
     );
   }
 
   return (
     <div className="space-y-3">
+      {filter}
       {payments.map((payment) => (
         <ReceiptRow key={payment._id} payment={payment} onApprove={onApprove} onReject={onReject} />
       ))}

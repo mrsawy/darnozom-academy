@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import {
   useApprovePayment,
@@ -10,7 +11,8 @@ import { ReceiptQueue } from '@/components/organs/billing/receipt-queue';
 
 export default function AccountantReceiptsPage() {
   const t = useTranslations('Billing');
-  const { data: queue, isLoading } = useReceiptQueue();
+  const [status, setStatus] = useState('');
+  const { data: queue, isLoading } = useReceiptQueue(status ? { status } : undefined);
   const approve = useApprovePayment();
   const reject = useRejectPayment();
 
@@ -26,6 +28,7 @@ export default function AccountantReceiptsPage() {
         isLoading={isLoading}
         onApprove={(id) => approve.mutate(id)}
         onReject={(id, reason) => reject.mutate({ paymentId: id, reason })}
+        onFilterChange={setStatus}
       />
     </div>
   );

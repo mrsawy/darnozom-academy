@@ -88,4 +88,29 @@ describe('ReceiptQueue', () => {
     fireEvent.click(screen.getByRole('button', { name: 'reject' }));
     expect(onReject).toHaveBeenCalledWith('p1', 'Illegible image');
   });
+
+  it('shows the manual transfer method label from the snapshot when present', () => {
+    const payment: IFamilyPayment = {
+      ...PAYMENT,
+      method: 'MANUAL_TRANSFER',
+      methodSnapshot: { label: 'InstaPay', fields: [] },
+    };
+    render(<ReceiptQueue payments={[payment]} isLoading={false} onApprove={vi.fn()} onReject={vi.fn()} />);
+    expect(screen.getByText('InstaPay')).toBeInTheDocument();
+  });
+
+  it('calls onFilterChange when a status is selected', () => {
+    const onFilterChange = vi.fn();
+    render(
+      <ReceiptQueue
+        payments={[]}
+        isLoading={false}
+        onApprove={vi.fn()}
+        onReject={vi.fn()}
+        onFilterChange={onFilterChange}
+      />
+    );
+    fireEvent.change(screen.getByLabelText('filterByStatus'), { target: { value: 'REJECTED' } });
+    expect(onFilterChange).toHaveBeenCalledWith('REJECTED');
+  });
 });

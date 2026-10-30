@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { BillingSubscriptionStatus, GroupPaymentStatus } from '@darnozom/shared-types';
 import { Button } from '@/components/atoms/button';
+import { PaymentStatusBadge } from '@/components/organs/billing/payment-status-badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/card';
 import {
   Table,
@@ -102,19 +103,8 @@ export function SubscriptionsCard({ group, disabled }: { group: IGroupDetail; di
                     </TableCell>
                     <TableCell>
                       {sub.items.map((item) => {
-                        const status = paymentStatusMap.get(item.studentId);
-                        const isPaid = status === GroupPaymentStatus.PAID;
-                        return (
-                          <span
-                            key={item.studentId}
-                            className={`inline-flex rounded-full px-2 py-0.5 text-xs font-semibold ${
-                              isPaid
-                                ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200'
-                                : 'bg-destructive/10 text-destructive'
-                            }`}>
-                            {isPaid ? t('status.PAID') : t('status.UNPAID')}
-                          </span>
-                        );
+                        const status = paymentStatusMap.get(item.studentId) ?? GroupPaymentStatus.UNPAID;
+                        return <PaymentStatusBadge key={item.studentId} status={status} />;
                       })}
                     </TableCell>
                     <TableCell>

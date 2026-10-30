@@ -7333,6 +7333,8 @@
     "ledger": "Family Ledger",
     "receipts": "Receipts Review",
     "receiptQueueSubtitle": "Review pending parent payments and bank transfer receipts",
+    "filterByStatus": "Filter by status",
+    "statusAll": "All",
     "balance": "Balance",
     "settled": "Settled",
     "amount": "Amount",

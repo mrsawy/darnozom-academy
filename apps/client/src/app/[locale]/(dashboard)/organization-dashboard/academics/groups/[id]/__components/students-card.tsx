@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { FinalResult, GroupPaymentStatus, GroupStatus, GroupStudentStatus } from '@darnozom/shared-types';
+import { FinalResult, GroupStatus, GroupStudentStatus } from '@darnozom/shared-types';
 import { Button } from '@/components/atoms/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/card';
 import { Input } from '@/components/atoms/input';
@@ -24,6 +24,8 @@ import {
   useStudentCandidates,
 } from '@/lib/hooks/academics/use-academics.hook';
 import { useSetFinalResultMutation } from '@/lib/hooks/certificate/use-certificate.hook';
+import { PaymentStatusBadge } from '@/components/organs/billing/payment-status-badge';
+import { StudentDetailDialog } from './student-detail-dialog';
 
 const isWithdrawn = (student: IGroupStudent) => student.status === GroupStudentStatus.WITHDRAWN;
 
@@ -31,6 +33,7 @@ export function StudentsCard({ group, disabled }: { group: IGroupDetail; disable
   const t = useTranslations('Academics');
   const tCert = useTranslations('Certificates');
   const [search, setSearch] = useState('');
+  const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
   const debounced = useDebounce(search, 300);
   const { data: candidates = [] } = useStudentCandidates(disabled ? '' : group._id, debounced);
   const addStudent = useAddStudent();
@@ -58,9 +61,14 @@ export function StudentsCard({ group, disabled }: { group: IGroupDetail; disable
           </TableHeader>
           <TableBody>
             {group.students.map((student) => (
-              <TableRow key={student.studentId}>
+              <TableRow
+                key={student.studentId}
+                className="cursor-pointer"
+                onClick={() => setSelectedStudentId(student.studentId)}>
                 <TableCell>
-                  {group.people[student.studentId] ?? student.studentId}
+                  <span className="hover:underline">
+                    {group.people[student.studentId] ?? student.studentId}
+                  </span>
                   {isWithdrawn(student) ? (
                     <span className="text-muted-foreground ms-2 text-sm">
                       {t('students.withdrawn')}
@@ -68,13 +76,9 @@ export function StudentsCard({ group, disabled }: { group: IGroupDetail; disable
                   ) : null}
                 </TableCell>
                 <TableCell>
-                  <span>
-                    {student.paymentStatus === GroupPaymentStatus.PAID
-                      ? t('students.paid')
-                      : t('students.unpaid')}
-                  </span>
+                  <PaymentStatusBadge status={student.paymentStatus} />
                 </TableCell>
-                <TableCell>
+                <TableCell onClick={(e) => e.stopPropagation()}>
                   <Switch
                     checked={student.whatsappAdded}
                     disabled={disabled || isWithdrawn(student)}
@@ -89,14 +93,14 @@ export function StudentsCard({ group, disabled }: { group: IGroupDetail; disable
                   />
                 </TableCell>
                 {started ? (
-                  <TableCell>
+                  <TableCell onClick={(e) => e.stopPropagation()}>
                     <div className="flex items-center gap-1">
                       <Button
                         size="sm"
                         variant={student.finalResult === FinalResult.PASS ? 'default' : 'outline'}
                         className={
                           student.finalResult === FinalResult.PASS
-                            ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                            ? 'bg-emerald-600 text-white hover:bg-emerald-700'
                             : ''
                         }
                         disabled={disabled || isWithdrawn(student) || setFinalResult.isPending}
@@ -111,7 +115,9 @@ export function StudentsCard({ group, disabled }: { group: IGroupDetail; disable
                       </Button>
                       <Button
                         size="sm"
-                        variant={student.finalResult === FinalResult.FAIL ? 'destructive' : 'outline'}
+                        variant={
+                          student.finalResult === FinalResult.FAIL ? 'destructive' : 'outline'
+                        }
                         disabled={disabled || isWithdrawn(student) || setFinalResult.isPending}
                         onClick={() =>
                           setFinalResult.mutate({
@@ -125,7 +131,7 @@ export function StudentsCard({ group, disabled }: { group: IGroupDetail; disable
                     </div>
                   </TableCell>
                 ) : null}
-                <TableCell>
+                <TableCell onClick={(e) => e.stopPropagation()}>
                   <Button
                     variant="ghost"
                     size="sm"
@@ -167,6 +173,12 @@ export function StudentsCard({ group, disabled }: { group: IGroupDetail; disable
           </div>
         )}
       </CardContent>
+      <StudentDetailDialog
+        studentId={selectedStudentId}
+        onOpenChange={(open) => {
+          if (!open) setSelectedStudentId(null);
+        }}
+      />
     </Card>
   );
 }
