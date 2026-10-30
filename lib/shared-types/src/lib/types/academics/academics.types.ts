@@ -9,6 +9,7 @@ export enum GroupStatus {
 export enum GroupPaymentStatus {
   PAID = 'PAID',
   UNPAID = 'UNPAID',
+  UNDER_REVIEW = 'UNDER_REVIEW',
 }
 
 export enum GroupStudentStatus {

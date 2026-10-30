@@ -3,8 +3,10 @@ import {
   BillingSubscriptionStatus,
   FamilyPaymentStatus,
   LedgerEntryType,
+  PAYMENT_METHOD_MANUAL_TRANSFER,
   PAYMENT_METHOD_ONLINE_GATEWAY,
   PAYMENT_METHOD_RECEIPT_UPLOAD,
+  PaymentMethodFieldType,
   SubscriptionType,
 } from './billing.types';
 
@@ -38,5 +40,13 @@ describe('billing shared types', () => {
 
   it('reminds every three days', () => {
     expect(BILLING_REMINDER_INTERVAL_DAYS).toBe(3);
+  });
+
+  it('exposes a stable key for the manual transfer method', () => {
+    expect(PAYMENT_METHOD_MANUAL_TRANSFER).toBe('MANUAL_TRANSFER');
+  });
+
+  it('defines the three payment method field types', () => {
+    expect(Object.values(PaymentMethodFieldType)).toEqual(['TEXT', 'IMAGE', 'LINK']);
   });
 });

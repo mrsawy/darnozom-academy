@@ -16,4 +16,6 @@ export enum BillingErrors {
   NOT_YOUR_FAMILY = 'billingNotYourFamily',
   CURRENCY_MISMATCH = 'billingCurrencyMismatch',
   GATEWAY_NOT_CONFIGURED = 'billingGatewayNotConfigured',
+  PAYMENT_METHOD_CONFIG_NOT_FOUND = 'billingPaymentMethodConfigNotFound',
+  PAYMENT_METHOD_CONFIG_DISABLED = 'billingPaymentMethodConfigDisabled',
 }

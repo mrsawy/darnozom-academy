@@ -45,6 +45,14 @@ export enum FamilyPaymentState {
  */
 export const PAYMENT_METHOD_RECEIPT_UPLOAD = 'RECEIPT_UPLOAD';
 export const PAYMENT_METHOD_ONLINE_GATEWAY = 'ONLINE_GATEWAY';
+export const PAYMENT_METHOD_MANUAL_TRANSFER = 'MANUAL_TRANSFER';
+
+/** The kind of value an admin-configured manual-transfer method field holds. */
+export enum PaymentMethodFieldType {
+  TEXT = 'TEXT',
+  IMAGE = 'IMAGE',
+  LINK = 'LINK',
+}
 
 /** A reminder goes out on the due date, then once every this many days until the charge is covered. */
 export const BILLING_REMINDER_INTERVAL_DAYS = 3;
