@@ -37,6 +37,11 @@ export class FamilyPaymentService {
     return this.registry.listEnabled(org ?? {}).map(({ key }) => ({ key }));
   }
 
+  /** Every method registered in code, for the settings admin to choose which to enable. */
+  listAllMethods(): { key: string }[] {
+    return this.registry.listAll().map(({ key }) => ({ key }));
+  }
+
   async initiate(actor: BillingActor, dto: InitiatePaymentPayload): Promise<InitiateResult> {
     if (!isValidAmountMinor(dto.amountMinor) || dto.amountMinor <= 0) {
       throw new BadRequestException(BillingErrors.AMOUNT_INVALID);
@@ -56,6 +61,7 @@ export class FamilyPaymentService {
       amountMinor: dto.amountMinor,
       currency: dto.currency,
       payerId: actor._id,
+      meta: dto.meta,
     });
   }
 
@@ -78,17 +84,30 @@ export class FamilyPaymentService {
       throw new ForbiddenException(BillingErrors.NOT_YOUR_FAMILY);
     }
 
-    if (payment.status !== FamilyPaymentState.AWAITING_RECEIPT && payment.status !== FamilyPaymentState.PENDING_REVIEW) {
+    const reviewable = [FamilyPaymentState.AWAITING_RECEIPT, FamilyPaymentState.PENDING_REVIEW, FamilyPaymentState.REJECTED];
+    if (!reviewable.includes(payment.status)) {
       throw new ConflictException(BillingErrors.PAYMENT_NOT_REVIEWABLE);
     }
 
-    await this.paymentModel.updateOne({ _id: payment._id }, { $set: { receiptFileKey: trimmed, status: FamilyPaymentState.PENDING_REVIEW } }).exec();
+    const wasRejected = payment.status === FamilyPaymentState.REJECTED;
+    await this.paymentModel
+      .updateOne(
+        { _id: payment._id },
+        {
+          $set: {
+            receiptFileKey: trimmed,
+            status: FamilyPaymentState.PENDING_REVIEW,
+            ...(wasRejected ? { rejectReason: null } : {}),
+          },
+        }
+      )
+      .exec();
   }
 
-  async reviewQueue(actor: BillingActor): Promise<FamilyPayment[]> {
+  async reviewQueue(actor: BillingActor, filter?: { status?: FamilyPaymentState }): Promise<FamilyPayment[]> {
     return (
       this.paymentModel
-        .find({ organizationId: oid(actor.organizationId), status: FamilyPaymentState.PENDING_REVIEW })
+        .find({ organizationId: oid(actor.organizationId), status: filter?.status ?? FamilyPaymentState.PENDING_REVIEW })
         // eslint-disable-next-line unicorn/no-array-sort -- Mongoose Query.prototype.sort, not Array#sort
         .sort({ createdAt: 1 })
         .lean()

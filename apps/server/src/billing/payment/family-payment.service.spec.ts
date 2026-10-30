@@ -121,6 +121,45 @@ describe('FamilyPaymentService.initiate', () => {
     });
     expect(initiate).toHaveBeenCalledWith(expect.objectContaining({ familyId: String(FAMILY), payerId: String(FAMILY) }));
   });
+
+  it('forwards meta to the method strategy', async () => {
+    const { service, registry } = makeService();
+    const initiate = jest.fn(async () => ({ kind: 'AWAIT_RECEIPT' as const, paymentId: String(PAYMENT) }));
+    registry.get.mockReturnValueOnce({ key: 'MANUAL_TRANSFER', isEnabled: () => true, initiate } as never);
+    registry.listEnabled.mockReturnValueOnce([{ key: 'MANUAL_TRANSFER' }]);
+    await service.initiate(actor(FAMILY, Roles.PARENT), {
+      method: 'MANUAL_TRANSFER',
+      amountMinor: 10_000,
+      currency: Currency.EGP,
+      meta: { paymentMethodConfigId: 'abc' },
+    });
+    expect(initiate).toHaveBeenCalledWith(expect.objectContaining({ meta: { paymentMethodConfigId: 'abc' } }));
+  });
+});
+
+describe('FamilyPaymentService.attachReceipt retry', () => {
+  it('accepts a new receipt on a rejected payment and clears the reason', async () => {
+    const { service, paymentModel } = makeService(payment({ status: FamilyPaymentState.REJECTED, rejectReason: 'blurry image' }));
+    await service.attachReceipt(actor(FAMILY, Roles.PARENT), String(PAYMENT), 'new-key.png');
+    expect(paymentModel.updateOne).toHaveBeenCalledWith(
+      { _id: PAYMENT },
+      { $set: { receiptFileKey: 'new-key.png', status: FamilyPaymentState.PENDING_REVIEW, rejectReason: null } }
+    );
+  });
+});
+
+describe('FamilyPaymentService.reviewQueue filters', () => {
+  it('defaults to PENDING_REVIEW only, as before', async () => {
+    const { service, paymentModel } = makeService();
+    await service.reviewQueue(actor(ACCOUNTANT, Roles.ACCOUNTANT));
+    expect(paymentModel.find).toHaveBeenCalledWith(expect.objectContaining({ status: FamilyPaymentState.PENDING_REVIEW }));
+  });
+
+  it('applies an explicit status filter', async () => {
+    const { service, paymentModel } = makeService();
+    await service.reviewQueue(actor(ACCOUNTANT, Roles.ACCOUNTANT), { status: FamilyPaymentState.REJECTED });
+    expect(paymentModel.find).toHaveBeenCalledWith(expect.objectContaining({ status: FamilyPaymentState.REJECTED }));
+  });
 });
 
 describe('FamilyPaymentService.attachReceipt', () => {
