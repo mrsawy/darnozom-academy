@@ -75,6 +75,10 @@ export async function getReceiptQueue(filter?: { status?: string; groupId?: stri
   return createAuthorizedNatsRequest<IFamilyPayment[]>('billing.payments.queue', filter ?? {});
 }
 
+export async function getMyFamilyPayments() {
+  return createAuthorizedNatsRequest<IFamilyPayment[]>('billing.payments.myFamily', {});
+}
+
 export async function approvePayment(paymentId: string) {
   return createAuthorizedNatsRequest<void>('billing.payments.approve', { paymentId });
 }

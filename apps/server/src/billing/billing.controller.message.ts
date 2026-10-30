@@ -15,6 +15,7 @@ import {
   FamilyIdPayload,
   GroupIdPayload,
   InitiatePaymentPayload,
+  ListFamilyPaymentsPayload,
   RejectPaymentPayload,
   ReviewPaymentPayload,
   ReviewQueueFilterPayload,
@@ -158,5 +159,11 @@ export class BillingControllerMessage {
   @MessagePattern('billing.paymentMethodConfigs.createCustom')
   createCustomPaymentMethodConfig(@Payload(new RpcValidationPipe()) payload: CreateCustomPaymentMethodConfigPayload, @Ctx() context: IUserContext) {
     return this.paymentMethodConfigs.createCustom(actorFromContext(context), payload.label, payload.fields);
+  }
+
+  @RequirePermissionsGuard({ action: Actions.READ, subject: Subjects.FAMILY_PAYMENT })
+  @MessagePattern('billing.payments.myFamily')
+  listFamilyPayments(@Payload(new RpcValidationPipe()) payload: ListFamilyPaymentsPayload, @Ctx() context: IUserContext) {
+    return this.familyPayments.listForFamily(actorFromContext(context), payload.familyId);
   }
 }

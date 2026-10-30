@@ -7347,6 +7347,8 @@
     "description": "Description",
     "receipt": "View Receipt",
     "reasonRequired": "Rejection reason is required",
+    "rejected": "Rejected",
+    "retry": "Retry",
     "rejectReasonPlaceholder": "Reason for rejection",
     "approve": "Approve",
     "reject": "Reject",

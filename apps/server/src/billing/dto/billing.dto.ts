@@ -99,3 +99,7 @@ export class ReviewQueueFilterPayload {
   @IsOptional() @IsEnum(FamilyPaymentState) status?: FamilyPaymentState;
   @IsOptional() @IsMongoId() groupId?: string;
 }
+
+export class ListFamilyPaymentsPayload {
+  @IsOptional() @IsMongoId() familyId?: string;
+}

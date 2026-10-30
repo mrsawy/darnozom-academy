@@ -7347,6 +7347,8 @@
     "description": "الوصف",
     "receipt": "عرض الإيصال",
     "reasonRequired": "سبب الرفض مطلوب",
+    "rejected": "مرفوض",
+    "retry": "إعادة المحاولة",
     "rejectReasonPlaceholder": "سبب الرفض",
     "approve": "اعتماد",
     "reject": "رفض",

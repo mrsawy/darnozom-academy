@@ -162,6 +162,29 @@ describe('FamilyPaymentService.reviewQueue filters', () => {
   });
 });
 
+describe('FamilyPaymentService.listForFamily', () => {
+  it('returns the caller’s own payments, sorted newest first', async () => {
+    const { service, paymentModel } = makeService();
+    await service.listForFamily(actor(FAMILY, Roles.PARENT));
+    expect(paymentModel.find).toHaveBeenCalledWith({ organizationId: ORG, familyId: FAMILY });
+  });
+
+  it('refuses a parent asking for another family’s payments', async () => {
+    const { service, families } = makeService();
+    families.canActorReadFamily.mockResolvedValueOnce(false);
+    await expect(service.listForFamily(actor(FAMILY, Roles.PARENT), String(new Types.ObjectId()))).rejects.toThrow(
+      new ForbiddenException(BillingErrors.NOT_YOUR_FAMILY)
+    );
+  });
+
+  it('lets finance staff read any family’s payments', async () => {
+    const { service, paymentModel } = makeService();
+    const otherFamily = new Types.ObjectId();
+    await service.listForFamily(actor(ACCOUNTANT, Roles.ACCOUNTANT), String(otherFamily));
+    expect(paymentModel.find).toHaveBeenCalledWith({ organizationId: ORG, familyId: otherFamily });
+  });
+});
+
 describe('FamilyPaymentService.attachReceipt', () => {
   it('moves the payment to pending review', async () => {
     const { service, paymentModel } = makeService(payment({ status: FamilyPaymentState.AWAITING_RECEIPT }));

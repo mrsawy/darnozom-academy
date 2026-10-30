@@ -17,4 +17,8 @@ describe('billingKeys', () => {
     expect(billingKeys.paymentMethodConfigs[0]).toBe('billing');
     expect(billingKeys.settings[0]).toBe('billing');
   });
+
+  it('namespaces the my-family-payments key under billing too', () => {
+    expect(billingKeys.myFamilyPayments[0]).toBe('billing');
+  });
 });

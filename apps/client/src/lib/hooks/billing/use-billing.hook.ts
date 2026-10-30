@@ -29,6 +29,7 @@ export const billingKeys = {
   allMethods: [ROOT, 'all-methods'] as const,
   paymentMethodConfigs: [ROOT, 'payment-method-configs'] as const,
   settings: [ROOT, 'settings'] as const,
+  myFamilyPayments: [ROOT, 'my-family-payments'] as const,
 };
 
 export function useBillingMutation<TVars, TResult>(fn: (vars: TVars) => Promise<TResult>) {
@@ -164,3 +165,10 @@ export const useCreateCustomPaymentMethodConfig = () =>
   useBillingMutation(async (vars: { label: string; fields: IPaymentMethodFieldInput[] }) =>
     unwrap(await billingApi.createCustomPaymentMethodConfig(vars.label, vars.fields))
   );
+
+export const useMyFamilyPayments = (enabled = true) =>
+  useQuery({
+    queryKey: billingKeys.myFamilyPayments,
+    queryFn: async (): Promise<IFamilyPayment[]> => unwrap(await billingApi.getMyFamilyPayments()),
+    enabled,
+  });

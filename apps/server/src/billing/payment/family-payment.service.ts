@@ -115,6 +115,23 @@ export class FamilyPaymentService {
     );
   }
 
+  /** A family's own payment history, newest first — a parent reads their own, finance staff read any. */
+  async listForFamily(actor: BillingActor, familyId?: string): Promise<FamilyPayment[]> {
+    const targetFamilyId = familyId ?? actor._id;
+    const canRead = await this.families.canActorReadFamily(actor, targetFamilyId);
+    if (!canRead) {
+      throw new ForbiddenException(BillingErrors.NOT_YOUR_FAMILY);
+    }
+    return (
+      this.paymentModel
+        .find({ organizationId: oid(actor.organizationId), familyId: oid(targetFamilyId) })
+        // eslint-disable-next-line unicorn/no-array-sort -- Mongoose Query.prototype.sort, not Array#sort
+        .sort({ createdAt: -1 })
+        .lean()
+        .exec() as unknown as Promise<FamilyPayment[]>
+    );
+  }
+
   /**
    * The claim-then-post order is the whole safety property: the status guard decides which caller
    * owns this payment, and only that caller writes money. Posting first and claiming after would

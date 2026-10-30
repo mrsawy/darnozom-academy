@@ -7,12 +7,15 @@ import {
   useAttachReceipt,
   useInitiatePayment,
   useMethods,
+  useMyFamilyPayments,
+  usePaymentMethodConfigs,
   useStatement,
 } from '@/lib/hooks/billing/use-billing.hook';
 import { LedgerTable } from '@/components/organs/billing/ledger-table';
+import { ManualTransferPayPanel } from '@/components/organs/billing/manual-transfer-pay-panel';
 import { PayDialog } from './__components/pay-dialog';
 import { uploadFileToS3 } from '@/lib/actions/file/uploadFile';
-import type { Currency } from '@darnozom/shared-types';
+import { Currency, FamilyPaymentState } from '@darnozom/shared-types';
 
 export default function ParentPaymentsPage() {
   const t = useTranslations('Billing');
@@ -21,11 +24,18 @@ export default function ParentPaymentsPage() {
 
   const { data: statement, isLoading } = useStatement(myFamilyId);
   const { data: methods = [] } = useMethods();
+  const { data: paymentMethodConfigs = [] } = usePaymentMethodConfigs();
+  const { data: myPayments = [] } = useMyFamilyPayments();
   const initiate = useInitiatePayment();
   const attach = useAttachReceipt();
 
   const [showPayDialog, setShowPayDialog] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [retryPaymentId, setRetryPaymentId] = useState<string | null>(null);
+
+  const rejectedPayments = myPayments.filter((p) => p.status === FamilyPaymentState.REJECTED);
+  const retryTarget = rejectedPayments.find((p) => p._id === retryPaymentId);
+  const retryConfig = retryTarget ? paymentMethodConfigs.find((c) => c._id === retryTarget.paymentMethodConfigId) : null;
 
   const handlePay = async (data: {
     method: string;
@@ -82,9 +92,41 @@ export default function ParentPaymentsPage() {
       {showPayDialog ? (
         <PayDialog
           methods={methods}
+          paymentMethodConfigs={paymentMethodConfigs}
           onPay={handlePay}
           isSubmitting={isSubmitting || initiate.isPending || attach.isPending}
           onClose={() => setShowPayDialog(false)}
+          onManualTransferSubmitted={() => setShowPayDialog(false)}
+        />
+      ) : null}
+
+      {rejectedPayments.length > 0 ? (
+        <div className="space-y-3">
+          {rejectedPayments.map((payment) => (
+            <div key={payment._id} className="bg-card space-y-2 rounded-lg border p-4">
+              <p className="text-destructive text-sm font-medium">
+                {t('rejected')}: {payment.rejectReason}
+              </p>
+              {retryPaymentId === payment._id ? null : (
+                <button
+                  type="button"
+                  onClick={() => setRetryPaymentId(payment._id)}
+                  className="hover:bg-muted rounded-md border px-3 py-1.5 text-sm font-medium">
+                  {t('retry')}
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+      ) : null}
+
+      {retryTarget && retryConfig ? (
+        <ManualTransferPayPanel
+          config={retryConfig}
+          amountMinor={retryTarget.amountMinor}
+          currency={retryTarget.currency}
+          retryPaymentId={retryTarget._id}
+          onSubmitted={() => setRetryPaymentId(null)}
         />
       ) : null}
 

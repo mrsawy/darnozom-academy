@@ -30,6 +30,7 @@ const expected: [string, string, Actions, Subjects][] = [
   ['upsertPaymentMethodConfigFields', 'billing.paymentMethodConfigs.upsertFields', Actions.MANAGE, Subjects.BILLING],
   ['setPaymentMethodConfigEnabled', 'billing.paymentMethodConfigs.setEnabled', Actions.MANAGE, Subjects.BILLING],
   ['createCustomPaymentMethodConfig', 'billing.paymentMethodConfigs.createCustom', Actions.MANAGE, Subjects.BILLING],
+  ['listFamilyPayments', 'billing.payments.myFamily', Actions.READ, Subjects.FAMILY_PAYMENT],
 ];
 
 describe('BillingControllerMessage', () => {

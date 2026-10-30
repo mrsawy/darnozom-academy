@@ -2,11 +2,19 @@ import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 import {
   Currency,
+  PAYMENT_METHOD_MANUAL_TRANSFER,
   PAYMENT_METHOD_ONLINE_GATEWAY,
   PAYMENT_METHOD_RECEIPT_UPLOAD,
 } from '@darnozom/shared-types';
 import { PayDialog } from './pay-dialog';
 import type { IPaymentMethodOption } from '@/lib/types/billing/billing';
+import type { IPaymentMethodConfig } from '@/lib/types/billing/payment-method-config';
+
+vi.mock('@/components/organs/billing/manual-transfer-pay-panel', () => ({
+  ManualTransferPayPanel: ({ config }: { config: IPaymentMethodConfig }) => (
+    <div data-testid="manual-transfer-panel">{config.label}</div>
+  ),
+}));
 
 vi.mock('next-intl', () => ({
   // eslint-disable-next-line unicorn/consistent-function-scoping -- vitest hoists vi.mock
@@ -76,5 +84,38 @@ describe('PayDialog', () => {
     render(<PayDialog methods={METHODS_ALL} onPay={vi.fn()} isSubmitting />);
     const submitBtn = screen.getByRole('button', { name: 'pay' });
     expect(submitBtn).toBeDisabled();
+  });
+
+  it('lists each enabled manual transfer config as its own selectable option', () => {
+    const configs: IPaymentMethodConfig[] = [
+      { _id: 'c1', key: 'INSTAPAY', kind: 'BUILT_IN', label: 'InstaPay', enabled: true, fields: [] },
+      { _id: 'c2', key: 'WALLET_TRANSFER', kind: 'BUILT_IN', label: 'Wallet Transfer', enabled: true, fields: [] },
+    ];
+    render(
+      <PayDialog
+        methods={[{ key: PAYMENT_METHOD_MANUAL_TRANSFER }]}
+        paymentMethodConfigs={configs}
+        onPay={vi.fn()}
+        isSubmitting={false}
+      />
+    );
+    expect(screen.getByLabelText('InstaPay')).toBeInTheDocument();
+    expect(screen.getByLabelText('Wallet Transfer')).toBeInTheDocument();
+  });
+
+  it('shows the manual transfer panel when a config is selected', () => {
+    const configs: IPaymentMethodConfig[] = [
+      { _id: 'c1', key: 'INSTAPAY', kind: 'BUILT_IN', label: 'InstaPay', enabled: true, fields: [] },
+    ];
+    render(
+      <PayDialog
+        methods={[{ key: PAYMENT_METHOD_MANUAL_TRANSFER }]}
+        paymentMethodConfigs={configs}
+        onPay={vi.fn()}
+        isSubmitting={false}
+      />
+    );
+    fireEvent.change(screen.getByLabelText('amount'), { target: { value: '100' } });
+    expect(screen.getByTestId('manual-transfer-panel')).toHaveTextContent('InstaPay');
   });
 });
