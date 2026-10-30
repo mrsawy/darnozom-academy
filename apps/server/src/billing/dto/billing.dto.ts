@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
-import { ArrayMinSize, IsArray, IsEnum, IsIn, IsInt, IsMongoId, IsObject, IsOptional, IsString, Min, MinLength, ValidateNested } from 'class-validator';
-import { Currency, PaymentProvider, SubscriptionType } from '@darnozom/shared-types';
+import { ArrayMinSize, IsArray, IsBoolean, IsEnum, IsIn, IsInt, IsMongoId, IsObject, IsOptional, IsString, Min, MinLength, ValidateNested } from 'class-validator';
+import { Currency, FamilyPaymentState, PaymentMethodFieldType, PaymentProvider, SubscriptionType } from '@darnozom/shared-types';
 
 export class SubscriptionItemDto {
   @IsMongoId() studentId: string;
@@ -68,4 +68,34 @@ export class RejectPaymentPayload extends ReviewPaymentPayload {
 export class UpdateBillingSettingsPayload {
   @IsArray() @IsString({ each: true }) enabledFamilyPaymentMethods: string[];
   @IsOptional() @IsEnum(PaymentProvider) academyFeeGatewayProvider?: PaymentProvider | null;
+}
+
+export class PaymentMethodFieldPayload {
+  @IsString() @MinLength(1) label: string;
+  @IsEnum(PaymentMethodFieldType) type: PaymentMethodFieldType;
+  @IsString() value: string;
+}
+
+export class UpsertPaymentMethodConfigFieldsPayload {
+  @IsMongoId() configId: string;
+  @ValidateNested({ each: true })
+  @Type(() => PaymentMethodFieldPayload)
+  fields: PaymentMethodFieldPayload[];
+}
+
+export class SetPaymentMethodConfigEnabledPayload {
+  @IsMongoId() configId: string;
+  @IsBoolean() enabled: boolean;
+}
+
+export class CreateCustomPaymentMethodConfigPayload {
+  @IsString() @MinLength(1) label: string;
+  @ValidateNested({ each: true })
+  @Type(() => PaymentMethodFieldPayload)
+  fields: PaymentMethodFieldPayload[];
+}
+
+export class ReviewQueueFilterPayload {
+  @IsOptional() @IsEnum(FamilyPaymentState) status?: FamilyPaymentState;
+  @IsOptional() @IsMongoId() groupId?: string;
 }

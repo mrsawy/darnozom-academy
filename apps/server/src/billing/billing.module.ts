@@ -10,12 +10,16 @@ import { BillingSubscription, BillingSubscriptionSchema } from './entities/subsc
 import { LedgerEntry, LedgerEntrySchema } from './entities/ledger-entry.entity';
 import { FamilyPayment, FamilyPaymentSchema } from './entities/payment.entity';
 import { Allocation, AllocationSchema } from './entities/allocation.entity';
+import { PaymentMethodConfig, PaymentMethodConfigSchema } from './entities/payment-method-config.entity';
 import { FamilyService } from './family/family.service';
 import { LedgerService } from './ledger/ledger.service';
 import { SubscriptionService } from './subscription/subscription.service';
 import { ReceiptUploadMethod } from './payment/methods/receipt-upload.method';
 import { OnlineGatewayMethod } from './payment/methods/online-gateway.method';
+import { ManualTransferMethod } from './payment/methods/manual-transfer.method';
 import { AcademyFeeWebhookService } from './payment/academy-fee-webhook.service';
+import { PaymentMethodConfigService } from './payment-method-config/payment-method-config.service';
+import { BillingSettingsService } from './settings/billing-settings.service';
 import { FamilyPaymentService } from './payment/family-payment.service';
 import { FamilyPaymentStatusService } from './status/family-payment-status.service';
 import { FamilyPaymentMethodRegistry } from './payment/payment-method.registry';
@@ -47,6 +51,7 @@ import { RoleModule } from '../role/role.module';
       { name: LedgerEntry.name, schema: LedgerEntrySchema },
       { name: FamilyPayment.name, schema: FamilyPaymentSchema },
       { name: Allocation.name, schema: AllocationSchema },
+      { name: PaymentMethodConfig.name, schema: PaymentMethodConfigSchema },
     ]),
     BullModule.registerQueue({ name: BILLING_QUEUE }),
     forwardRef(() => PaymentModule),
@@ -61,10 +66,13 @@ import { RoleModule } from '../role/role.module';
     SubscriptionService,
     ReceiptUploadMethod,
     OnlineGatewayMethod,
+    ManualTransferMethod,
     AcademyFeeWebhookService,
     FamilyPaymentService,
     FamilyPaymentStatusService,
     FamilyPaymentMethodRegistry,
+    PaymentMethodConfigService,
+    BillingSettingsService,
     MonthlyChargesService,
     SessionChargesService,
     RemindersService,
@@ -74,8 +82,8 @@ import { RoleModule } from '../role/role.module';
     SessionCompletedBillingListener,
     {
       provide: FAMILY_PAYMENT_METHODS,
-      useFactory: (receipt: ReceiptUploadMethod, gateway: OnlineGatewayMethod) => [receipt, gateway],
-      inject: [ReceiptUploadMethod, OnlineGatewayMethod],
+      useFactory: (receipt: ReceiptUploadMethod, gateway: OnlineGatewayMethod, manualTransfer: ManualTransferMethod) => [receipt, gateway, manualTransfer],
+      inject: [ReceiptUploadMethod, OnlineGatewayMethod, ManualTransferMethod],
     },
   ],
   controllers: [BillingControllerMessage],
@@ -87,9 +95,12 @@ import { RoleModule } from '../role/role.module';
     FamilyPaymentMethodRegistry,
     ReceiptUploadMethod,
     OnlineGatewayMethod,
+    ManualTransferMethod,
     AcademyFeeWebhookService,
     FamilyPaymentService,
     FamilyPaymentStatusService,
+    PaymentMethodConfigService,
+    BillingSettingsService,
     MonthlyChargesService,
     SessionChargesService,
     RemindersService,

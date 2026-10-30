@@ -10,17 +10,24 @@ import { BillingReadService } from './billing-read.service';
 import {
   AttachReceiptPayload,
   CreateAdjustmentPayload,
+  CreateCustomPaymentMethodConfigPayload,
   CreateSubscriptionPayload,
   FamilyIdPayload,
   GroupIdPayload,
   InitiatePaymentPayload,
   RejectPaymentPayload,
   ReviewPaymentPayload,
+  ReviewQueueFilterPayload,
+  SetPaymentMethodConfigEnabledPayload,
   SubscriptionIdPayload,
+  UpdateBillingSettingsPayload,
+  UpsertPaymentMethodConfigFieldsPayload,
 } from './dto/billing.dto';
 import { LedgerService } from './ledger/ledger.service';
 import { FamilyPaymentService } from './payment/family-payment.service';
 import { SubscriptionService } from './subscription/subscription.service';
+import { BillingSettingsService } from './settings/billing-settings.service';
+import { PaymentMethodConfigService } from './payment-method-config/payment-method-config.service';
 
 @Controller()
 @ApplyRpcErrorHandling
@@ -29,7 +36,9 @@ export class BillingControllerMessage {
     private readonly subscriptions: SubscriptionService,
     private readonly ledger: LedgerService,
     private readonly familyPayments: FamilyPaymentService,
-    private readonly billingRead: BillingReadService
+    private readonly billingRead: BillingReadService,
+    private readonly billingSettings: BillingSettingsService,
+    private readonly paymentMethodConfigs: PaymentMethodConfigService
   ) {}
 
   @RequirePermissionsGuard({ action: Actions.MANAGE, subject: Subjects.BILLING })
@@ -79,6 +88,12 @@ export class BillingControllerMessage {
     return this.familyPayments.listMethods(actorFromContext(context));
   }
 
+  @RequirePermissionsGuard({ action: Actions.MANAGE, subject: Subjects.BILLING })
+  @MessagePattern('billing.payments.methods.all')
+  listAllPaymentMethods() {
+    return this.familyPayments.listAllMethods();
+  }
+
   @RequirePermissionsGuard({ action: Actions.CREATE, subject: Subjects.FAMILY_PAYMENT })
   @MessagePattern('billing.payments.initiate')
   initiatePayment(@Payload(new RpcValidationPipe()) payload: InitiatePaymentPayload, @Ctx() context: IUserContext) {
@@ -93,8 +108,8 @@ export class BillingControllerMessage {
 
   @RequirePermissionsGuard({ action: Actions.MANAGE, subject: Subjects.FAMILY_PAYMENT })
   @MessagePattern('billing.payments.queue')
-  reviewQueue(@Ctx() context: IUserContext) {
-    return this.familyPayments.reviewQueue(actorFromContext(context));
+  reviewQueue(@Payload(new RpcValidationPipe()) payload: ReviewQueueFilterPayload, @Ctx() context: IUserContext) {
+    return this.familyPayments.reviewQueue(actorFromContext(context), payload);
   }
 
   @RequirePermissionsGuard({ action: Actions.MANAGE, subject: Subjects.FAMILY_PAYMENT })
@@ -107,5 +122,41 @@ export class BillingControllerMessage {
   @MessagePattern('billing.payments.reject')
   rejectPayment(@Payload(new RpcValidationPipe()) payload: RejectPaymentPayload, @Ctx() context: IUserContext) {
     return this.familyPayments.reject(actorFromContext(context), payload.paymentId, payload.reason);
+  }
+
+  @RequirePermissionsGuard({ action: Actions.READ, subject: Subjects.BILLING })
+  @MessagePattern('billing.settings.get')
+  getSettings(@Ctx() context: IUserContext) {
+    return this.billingSettings.get(actorFromContext(context));
+  }
+
+  @RequirePermissionsGuard({ action: Actions.MANAGE, subject: Subjects.BILLING })
+  @MessagePattern('billing.settings.update')
+  updateSettings(@Payload(new RpcValidationPipe()) payload: UpdateBillingSettingsPayload, @Ctx() context: IUserContext) {
+    return this.billingSettings.update(actorFromContext(context), payload);
+  }
+
+  @RequirePermissionsGuard({ action: Actions.READ, subject: Subjects.BILLING })
+  @MessagePattern('billing.paymentMethodConfigs.list')
+  listPaymentMethodConfigs(@Ctx() context: IUserContext) {
+    return this.paymentMethodConfigs.listForOrg(actorFromContext(context));
+  }
+
+  @RequirePermissionsGuard({ action: Actions.MANAGE, subject: Subjects.BILLING })
+  @MessagePattern('billing.paymentMethodConfigs.upsertFields')
+  upsertPaymentMethodConfigFields(@Payload(new RpcValidationPipe()) payload: UpsertPaymentMethodConfigFieldsPayload, @Ctx() context: IUserContext) {
+    return this.paymentMethodConfigs.upsertFields(actorFromContext(context), payload.configId, payload.fields);
+  }
+
+  @RequirePermissionsGuard({ action: Actions.MANAGE, subject: Subjects.BILLING })
+  @MessagePattern('billing.paymentMethodConfigs.setEnabled')
+  setPaymentMethodConfigEnabled(@Payload(new RpcValidationPipe()) payload: SetPaymentMethodConfigEnabledPayload, @Ctx() context: IUserContext) {
+    return this.paymentMethodConfigs.setEnabled(actorFromContext(context), payload.configId, payload.enabled);
+  }
+
+  @RequirePermissionsGuard({ action: Actions.MANAGE, subject: Subjects.BILLING })
+  @MessagePattern('billing.paymentMethodConfigs.createCustom')
+  createCustomPaymentMethodConfig(@Payload(new RpcValidationPipe()) payload: CreateCustomPaymentMethodConfigPayload, @Ctx() context: IUserContext) {
+    return this.paymentMethodConfigs.createCustom(actorFromContext(context), payload.label, payload.fields);
   }
 }
