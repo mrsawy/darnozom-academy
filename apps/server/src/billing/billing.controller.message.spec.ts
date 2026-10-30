@@ -14,6 +14,7 @@ const expected: [string, string, Actions, Subjects][] = [
   ['statement', 'billing.ledger.statement', Actions.READ, Subjects.BILLING],
   ['adjust', 'billing.ledger.adjust', Actions.MANAGE, Subjects.BILLING],
   ['listPaymentMethods', 'billing.payments.methods', Actions.CREATE, Subjects.FAMILY_PAYMENT],
+  ['listAllPaymentMethods', 'billing.payments.methods.all', Actions.MANAGE, Subjects.BILLING],
   ['initiatePayment', 'billing.payments.initiate', Actions.CREATE, Subjects.FAMILY_PAYMENT],
   ['attachReceipt', 'billing.payments.attachReceipt', Actions.CREATE, Subjects.FAMILY_PAYMENT],
   ['reviewQueue', 'billing.payments.queue', Actions.MANAGE, Subjects.FAMILY_PAYMENT],

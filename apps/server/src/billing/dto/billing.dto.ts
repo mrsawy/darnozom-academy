@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
-import { ArrayMinSize, IsEnum, IsIn, IsInt, IsMongoId, IsObject, IsOptional, IsString, Min, MinLength, ValidateNested } from 'class-validator';
-import { Currency, SubscriptionType } from '@darnozom/shared-types';
+import { ArrayMinSize, IsArray, IsEnum, IsIn, IsInt, IsMongoId, IsObject, IsOptional, IsString, Min, MinLength, ValidateNested } from 'class-validator';
+import { Currency, PaymentProvider, SubscriptionType } from '@darnozom/shared-types';
 
 export class SubscriptionItemDto {
   @IsMongoId() studentId: string;
@@ -63,4 +63,9 @@ export class ReviewPaymentPayload {
 
 export class RejectPaymentPayload extends ReviewPaymentPayload {
   @IsString() @MinLength(1) reason: string;
+}
+
+export class UpdateBillingSettingsPayload {
+  @IsArray() @IsString({ each: true }) enabledFamilyPaymentMethods: string[];
+  @IsOptional() @IsEnum(PaymentProvider) academyFeeGatewayProvider?: PaymentProvider | null;
 }
