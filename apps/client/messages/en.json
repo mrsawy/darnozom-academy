@@ -7399,7 +7399,8 @@
     },
     "method": {
       "RECEIPT_UPLOAD": "Bank Transfer / Receipt",
-      "ONLINE_GATEWAY": "Online Payment Gateway"
+      "ONLINE_GATEWAY": "Online Payment Gateway",
+      "MANUAL_TRANSFER": "Manual Transfer"
     },
     "billingSettings": "Payment Settings",
     "billingSettingsSubtitle": "Configure accepted payment methods and payment gateway for student tuition",

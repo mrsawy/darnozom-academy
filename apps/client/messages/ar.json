@@ -7399,7 +7399,8 @@
     },
     "method": {
       "RECEIPT_UPLOAD": "تحويل بنكي / إيصال",
-      "ONLINE_GATEWAY": "بوابة دفع إلكتروني"
+      "ONLINE_GATEWAY": "بوابة دفع إلكتروني",
+      "MANUAL_TRANSFER": "تحويل يدوي"
     },
     "billingSettings": "إعدادات الدفع",
     "billingSettingsSubtitle": "تهيئة طرق الدفع المقبولة وبوابة الدفع لرسوم الطلاب",
