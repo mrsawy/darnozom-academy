@@ -7404,7 +7404,13 @@
     "noProviderSelected": "لا يوجد / اختر مزود الخدمة",
     "gatewayProviderRequiredNote": "تتطلب بوابة الدفع الإلكتروني اختيار مزود خدمة لتفعيلها.",
     "saveSettings": "حفظ الإعدادات",
-    "settingsSaved": "تم حفظ إعدادات الدفع بنجاح"
+    "settingsSaved": "تم حفظ إعدادات الدفع بنجاح",
+    "paymentMethods": "طرق الدفع",
+    "editFields": "تعديل الحقول",
+    "addField": "إضافة حقل",
+    "addMethod": "إضافة طريقة",
+    "createMethod": "إنشاء طريقة",
+    "remove": "إزالة"
   },
   "Payroll": {
     "title": "مستحقات المعلمين",

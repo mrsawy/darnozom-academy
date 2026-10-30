@@ -7404,7 +7404,13 @@
     "noProviderSelected": "None / Select provider",
     "gatewayProviderRequiredNote": "Online payment gateway requires selecting a gateway provider to become active.",
     "saveSettings": "Save Settings",
-    "settingsSaved": "Payment settings saved successfully"
+    "settingsSaved": "Payment settings saved successfully",
+    "paymentMethods": "Payment Methods",
+    "editFields": "Edit Fields",
+    "addField": "Add Field",
+    "addMethod": "Add Method",
+    "createMethod": "Create Method",
+    "remove": "Remove"
   },
   "Payroll": {
     "title": "Teacher Payroll",
