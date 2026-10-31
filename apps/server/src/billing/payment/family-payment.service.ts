@@ -1,7 +1,7 @@
 import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { BillingErrors, FamilyPaymentState } from '@darnozom/shared-types';
+import { BillingErrors, BillingSubscriptionStatus, FamilyPaymentState } from '@darnozom/shared-types';
 import { Organization } from 'src/organization/entities/organization.entity';
 import { FileService } from 'src/file/file.service';
 import { NotificationService } from 'src/notification/notification.service';
@@ -9,6 +9,7 @@ import { isValidAmountMinor } from '../domain/money';
 import { BillingActor } from '../billing.types';
 import { InitiatePaymentPayload } from '../dto/billing.dto';
 import { FamilyPayment } from '../entities/payment.entity';
+import { BillingSubscription } from '../entities/subscription.entity';
 import { FamilyService } from '../family/family.service';
 import { LedgerService } from '../ledger/ledger.service';
 import { FamilyPaymentMethodRegistry } from './payment-method.registry';
@@ -22,6 +23,7 @@ export class FamilyPaymentService {
   constructor(
     @InjectModel(FamilyPayment.name) private readonly paymentModel: Model<FamilyPayment>,
     @InjectModel(Organization.name) private readonly orgModel: Model<Organization>,
+    @InjectModel(BillingSubscription.name) private readonly subscriptionModel: Model<BillingSubscription>,
     private readonly registry: FamilyPaymentMethodRegistry,
     private readonly ledger: LedgerService,
     private readonly families: FamilyService,
@@ -104,15 +106,39 @@ export class FamilyPaymentService {
       .exec();
   }
 
-  async reviewQueue(actor: BillingActor, filter?: { status?: FamilyPaymentState }): Promise<FamilyPayment[]> {
+  async reviewQueue(actor: BillingActor, filter?: { status?: FamilyPaymentState; groupId?: string }): Promise<FamilyPayment[]> {
+    const query: Record<string, unknown> = {
+      organizationId: oid(actor.organizationId),
+      status: filter?.status ?? FamilyPaymentState.PENDING_REVIEW,
+    };
+
+    if (filter?.groupId) {
+      const familyIds = await this.familyIdsForGroup(actor.organizationId, filter.groupId);
+      if (familyIds.length === 0) return [];
+      query.familyId = { $in: familyIds };
+    }
+
     return (
       this.paymentModel
-        .find({ organizationId: oid(actor.organizationId), status: filter?.status ?? FamilyPaymentState.PENDING_REVIEW })
+        .find(query)
         // eslint-disable-next-line unicorn/no-array-sort -- Mongoose Query.prototype.sort, not Array#sort
         .sort({ createdAt: 1 })
         .lean()
         .exec() as unknown as Promise<FamilyPayment[]>
     );
+  }
+
+  /** Families with an active subscription covering this group — the scope a group-level review queue should see. */
+  private async familyIdsForGroup(organizationId: string, groupId: string): Promise<Types.ObjectId[]> {
+    const subscriptions = await this.subscriptionModel
+      .find({
+        organizationId: oid(organizationId),
+        status: BillingSubscriptionStatus.ACTIVE,
+        'items.groupId': oid(groupId),
+      })
+      .lean<{ familyId: Types.ObjectId }[]>()
+      .exec();
+    return [...new Set(subscriptions.map((s) => String(s.familyId)))].map(oid);
   }
 
   /** A family's own payment history, newest first — a parent reads their own, finance staff read any. */

@@ -29,11 +29,18 @@ const payment = (overrides: Record<string, unknown> = {}) => ({
   ...overrides,
 });
 
-const makeService = (found: Record<string, unknown> | null = payment(), claimWins = true) => {
+const makeService = (
+  found: Record<string, unknown> | null = payment(),
+  claimWins = true,
+  subscriptions: Record<string, unknown>[] = []
+) => {
   const paymentModel = {
     findOne: jest.fn(() => ({ lean: () => ({ exec: async () => found }) })),
     find: jest.fn(() => ({ sort: () => ({ lean: () => ({ exec: async () => (found ? [found] : []) }) }) })),
     updateOne: jest.fn(() => ({ exec: async () => ({ modifiedCount: claimWins ? 1 : 0 }) })),
+  };
+  const subscriptionModel = {
+    find: jest.fn(() => ({ lean: () => ({ exec: async () => subscriptions }) })),
   };
   const ledger = {
     postPaymentAndAllocate: jest.fn(async () => ({
@@ -67,13 +74,14 @@ const makeService = (found: Record<string, unknown> | null = payment(), claimWin
   const service = new FamilyPaymentService(
     paymentModel as never,
     orgModel as never,
+    subscriptionModel as never,
     registry as never,
     ledger as never,
     families as never,
     files as never,
     notifications as never
   );
-  return { service, paymentModel, ledger, registry, families, notifications };
+  return { service, paymentModel, subscriptionModel, ledger, registry, families, notifications };
 };
 
 describe('FamilyPaymentService.listMethods', () => {
@@ -159,6 +167,29 @@ describe('FamilyPaymentService.reviewQueue filters', () => {
     const { service, paymentModel } = makeService();
     await service.reviewQueue(actor(ACCOUNTANT, Roles.ACCOUNTANT), { status: FamilyPaymentState.REJECTED });
     expect(paymentModel.find).toHaveBeenCalledWith(expect.objectContaining({ status: FamilyPaymentState.REJECTED }));
+  });
+
+  it('scopes the queue to families with an active subscription in the given group', async () => {
+    const GROUP = new Types.ObjectId();
+    const OTHER_FAMILY = new Types.ObjectId();
+    const { service, paymentModel } = makeService(payment(), true, [
+      { familyId: FAMILY, items: [{ groupId: GROUP }] },
+    ]);
+    await service.reviewQueue(actor(ACCOUNTANT, Roles.ACCOUNTANT), { groupId: String(GROUP) });
+    expect(paymentModel.find).toHaveBeenCalledWith(
+      expect.objectContaining({ familyId: { $in: [FAMILY] } })
+    );
+    expect(paymentModel.find).not.toHaveBeenCalledWith(
+      expect.objectContaining({ familyId: { $in: [OTHER_FAMILY] } })
+    );
+  });
+
+  it('returns nothing for a group with no subscribed families', async () => {
+    const GROUP = new Types.ObjectId();
+    const { service, paymentModel } = makeService(payment(), true, []);
+    const result = await service.reviewQueue(actor(ACCOUNTANT, Roles.ACCOUNTANT), { groupId: String(GROUP) });
+    expect(result).toEqual([]);
+    expect(paymentModel.find).not.toHaveBeenCalled();
   });
 });
 
