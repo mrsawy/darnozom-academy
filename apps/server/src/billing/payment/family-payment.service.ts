@@ -102,6 +102,17 @@ export class FamilyPaymentService {
       throw new ForbiddenException(BillingErrors.NOT_YOUR_FAMILY);
     }
 
+    /**
+     * Defense in depth: this message pattern is parent-only in practice, but canActorReadFamily also
+     * returns true for any finance-staff role regardless of organization. Never trust that alone to
+     * keep a payment within its own tenant -- a staff caller must match the payment's organization.
+     */
+    if (actor._id !== String(payment.familyId)) {
+      if (!actor.organizationId || String(payment.organizationId) !== actor.organizationId) {
+        throw new ForbiddenException(BillingErrors.NOT_YOUR_FAMILY);
+      }
+    }
+
     const reviewable = [FamilyPaymentState.AWAITING_RECEIPT, FamilyPaymentState.PENDING_REVIEW, FamilyPaymentState.REJECTED];
     if (!reviewable.includes(payment.status)) {
       throw new ConflictException(BillingErrors.PAYMENT_NOT_REVIEWABLE);
@@ -157,16 +168,27 @@ export class FamilyPaymentService {
     return [...new Set(subscriptions.map((s) => String(s.familyId)))].map(oid);
   }
 
-  /** A family's own payment history, newest first — a parent reads their own, finance staff read any. */
+  /**
+   * A family's own payment history, newest first — a parent reads their own (no org filter needed:
+   * `familyId` alone already scopes it to them), finance staff read any family but only within their
+   * own organization, never across tenants.
+   */
   async listForFamily(actor: BillingActor, familyId?: string): Promise<FamilyPayment[]> {
     const targetFamilyId = familyId ?? actor._id;
     const canRead = await this.families.canActorReadFamily(actor, targetFamilyId);
     if (!canRead) {
       throw new ForbiddenException(BillingErrors.NOT_YOUR_FAMILY);
     }
+
+    const query: Record<string, unknown> = { familyId: oid(targetFamilyId) };
+    if (actor._id !== targetFamilyId) {
+      if (!actor.organizationId) throw new ForbiddenException(BillingErrors.NOT_YOUR_FAMILY);
+      query.organizationId = oid(actor.organizationId);
+    }
+
     return (
       this.paymentModel
-        .find({ familyId: oid(targetFamilyId) })
+        .find(query)
         // eslint-disable-next-line unicorn/no-array-sort -- Mongoose Query.prototype.sort, not Array#sort
         .sort({ createdAt: -1 })
         .lean()

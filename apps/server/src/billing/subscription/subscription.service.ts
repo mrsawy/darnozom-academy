@@ -134,13 +134,20 @@ export class SubscriptionService {
     );
   }
 
-  /** A family isn't tied to one organization -- their subscriptions already carry their own. */
+  /**
+   * A family isn't tied to one organization -- their subscriptions already carry their own, so the
+   * family holder reading their own subscriptions needs no org filter at all. A staff caller reading
+   * another family's subscriptions must still stay inside their own organization, never cross-tenant.
+   */
   async findForFamily(actor: BillingActor, familyId: string): Promise<BillingSubscriptionLean[]> {
+    const query: Record<string, unknown> = { familyId: oid(familyId) };
+    if (actor._id !== familyId) {
+      if (!actor.organizationId) return [];
+      query.organizationId = oid(actor.organizationId);
+    }
     return (
       this.subscriptionModel
-        .find({
-          familyId: oid(familyId),
-        })
+        .find(query)
         // eslint-disable-next-line unicorn/no-array-sort -- Mongoose Query.prototype.sort, not Array#sort
         .sort({ createdAt: -1 })
         .lean<BillingSubscriptionLean[]>()

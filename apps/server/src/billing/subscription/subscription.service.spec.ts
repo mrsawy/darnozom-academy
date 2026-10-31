@@ -200,13 +200,28 @@ describe('SubscriptionService.end', () => {
 });
 
 describe('SubscriptionService.findForFamily', () => {
-  it('finds by family id alone, not scoped by the actor’s organization', async () => {
+  it('finds by family id alone when the caller is the family holder, not scoped by the actor’s organization', async () => {
     const { service, model } = makeService();
     const familyId = String(PARENT);
-    const orgLessActor = { _id: String(ACTOR), organizationId: '', roleName: Roles.PARENT, additionalRoles: [] as Roles[] };
+    const orgLessActor = { _id: familyId, organizationId: '', roleName: Roles.PARENT, additionalRoles: [] as Roles[] };
     await service.findForFamily(orgLessActor, familyId);
-    expect(model.find).toHaveBeenCalledWith({ familyId: expect.anything() });
     const call = model.find.mock.calls.at(-1) as unknown as [Record<string, unknown>];
+    expect(call[0]).toEqual({ familyId: expect.anything() });
     expect(call[0]).not.toHaveProperty('organizationId');
+  });
+
+  it('scopes a staff caller’s read to their own organization', async () => {
+    const { service, model } = makeService();
+    const otherFamily = String(new Types.ObjectId());
+    const staffActor = { _id: String(ACTOR), organizationId: String(ORG), roleName: Roles.ACCOUNTANT, additionalRoles: [] as Roles[] };
+    await service.findForFamily(staffActor, otherFamily);
+    const call = model.find.mock.calls.at(-1) as unknown as [Record<string, unknown>];
+    expect(call[0]).toMatchObject({ organizationId: expect.anything() });
+  });
+
+  it('refuses a staff caller with no organization', async () => {
+    const { service } = makeService();
+    const orgLessStaff = { _id: String(ACTOR), organizationId: '', roleName: Roles.ACCOUNTANT, additionalRoles: [] as Roles[] };
+    await expect(service.findForFamily(orgLessStaff, String(new Types.ObjectId()))).resolves.toEqual([]);
   });
 });

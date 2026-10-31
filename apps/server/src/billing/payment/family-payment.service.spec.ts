@@ -254,11 +254,19 @@ describe('FamilyPaymentService.listForFamily', () => {
     );
   });
 
-  it('lets finance staff read any family’s payments', async () => {
+  it('lets finance staff read any family’s payments, scoped to the staff member’s own organization', async () => {
     const { service, paymentModel } = makeService();
     const otherFamily = new Types.ObjectId();
     await service.listForFamily(actor(ACCOUNTANT, Roles.ACCOUNTANT), String(otherFamily));
-    expect(paymentModel.find).toHaveBeenCalledWith({ familyId: otherFamily });
+    expect(paymentModel.find).toHaveBeenCalledWith({ familyId: otherFamily, organizationId: ORG });
+  });
+
+  it('refuses finance staff with no organization, rather than falling through to a cross-tenant read', async () => {
+    const { service } = makeService();
+    const orgLessStaff = { ...actor(ACCOUNTANT, Roles.ACCOUNTANT), organizationId: '' };
+    await expect(service.listForFamily(orgLessStaff, String(new Types.ObjectId()))).rejects.toThrow(
+      new ForbiddenException(BillingErrors.NOT_YOUR_FAMILY)
+    );
   });
 });
 
@@ -292,11 +300,28 @@ describe('FamilyPaymentService.attachReceipt', () => {
     );
   });
 
-  it('finds the payment by id alone, not by the actor’s organization', async () => {
+  it('finds the payment by id alone when the actor carries no organization, since canActorReadFamily still gates it to the owner', async () => {
     const { service, paymentModel } = makeService(payment({ status: FamilyPaymentState.AWAITING_RECEIPT }));
     const orgLessActor = { ...actor(FAMILY, Roles.PARENT), organizationId: '' };
     await service.attachReceipt(orgLessActor, String(PAYMENT), 'receipts/b.jpg');
     expect(paymentModel.findOne).toHaveBeenCalledWith({ _id: PAYMENT });
+  });
+
+  it('refuses finance staff with no organization, defense-in-depth against a misconfigured permission guard', async () => {
+    const { service, families } = makeService(payment({ status: FamilyPaymentState.AWAITING_RECEIPT }));
+    families.canActorReadFamily.mockResolvedValueOnce(true);
+    const orgLessStaff = { ...actor(ACCOUNTANT, Roles.ACCOUNTANT), organizationId: '' };
+    await expect(service.attachReceipt(orgLessStaff, String(PAYMENT), 'receipts/b.jpg')).rejects.toThrow(
+      new ForbiddenException(BillingErrors.NOT_YOUR_FAMILY)
+    );
+  });
+
+  it('refuses finance staff reading a payment outside their own organization', async () => {
+    const { service, families } = makeService(payment({ status: FamilyPaymentState.AWAITING_RECEIPT, organizationId: new Types.ObjectId() }));
+    families.canActorReadFamily.mockResolvedValueOnce(true);
+    await expect(service.attachReceipt(actor(ACCOUNTANT, Roles.ACCOUNTANT), String(PAYMENT), 'receipts/b.jpg')).rejects.toThrow(
+      new ForbiddenException(BillingErrors.NOT_YOUR_FAMILY)
+    );
   });
 });
 
