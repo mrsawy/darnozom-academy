@@ -50,6 +50,7 @@ import {
   ROUTE_ORG_MY_PAGES,
   ROUTE_ORG_SETTINGS,
   ROUTE_ORG_SETTINGS_USAGE,
+  ROUTE_ORG_SETTINGS_PAYMENTS,
   ROUTE_ORG_USERS,
   ROUTE_ORG_VERIFICATION,
   ROUTE_ORG_VERIFICATION_EMAIL,
@@ -335,6 +336,13 @@ export const data = {
           key: 'plan',
           icon: IconCreditCard,
           iconClassName: 'text-emerald-500!',
+        },
+        {
+          titleKey: 'navSecondary.settings.payments',
+          url: ROUTE_ORG_SETTINGS_PAYMENTS,
+          key: 'payments',
+          icon: IconWallet,
+          iconClassName: 'text-amber-500!',
         },
         {
           titleKey: 'navSecondary.settings.usage',
