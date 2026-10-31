@@ -20,4 +20,9 @@ export class FamilyPaymentMethodRegistry {
   listEnabled(org: OrganizationForBilling): FamilyPaymentMethod[] {
     return [...this.byKey.values()].filter((method) => method.isEnabled(org));
   }
+
+  /** Every method registered in code. */
+  listAll(): FamilyPaymentMethod[] {
+    return [...this.byKey.values()];
+  }
 }
