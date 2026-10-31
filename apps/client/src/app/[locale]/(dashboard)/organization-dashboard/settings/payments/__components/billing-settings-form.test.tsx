@@ -9,26 +9,49 @@ vi.mock('next-intl', () => ({
 }));
 
 const updateSettingsMutate = vi.fn();
+const useBillingSettings = vi.fn();
 
 vi.mock('@/lib/hooks/billing/use-billing.hook', () => ({
   useAllPaymentMethods: () => ({
     data: [{ key: PAYMENT_METHOD_RECEIPT_UPLOAD }, { key: PAYMENT_METHOD_MANUAL_TRANSFER }],
   }),
-  useUpdateBillingSettings: () => ({ mutate: updateSettingsMutate, isPending: false }),
+  useUpdateBillingSettings: () => ({ mutate: updateSettingsMutate, isPending: false, isSuccess: false }),
+  useBillingSettings: (...args: unknown[]) => useBillingSettings(...args),
 }));
 
 vi.mock('@/components/organs/billing/payment-method-config-manager', () => ({
-  PaymentMethodConfigManager: () => null,
+  PaymentMethodConfigManager: () => <div data-testid="config-manager" />,
 }));
 
 describe('BillingSettingsForm', () => {
+  it('renders the persisted settings, not a hard-coded default', () => {
+    useBillingSettings.mockReturnValue({
+      data: { enabledFamilyPaymentMethods: [PAYMENT_METHOD_MANUAL_TRANSFER], academyFeeGatewayProvider: null },
+    });
+    render(<BillingSettingsForm />);
+    expect(screen.getByRole('checkbox', { name: 'method.MANUAL_TRANSFER' })).toBeChecked();
+    expect(screen.getByRole('checkbox', { name: 'method.RECEIPT_UPLOAD' })).not.toBeChecked();
+  });
+
   it('calls the update mutation on save with the selected methods', () => {
-    render(<BillingSettingsForm initialEnabledMethods={[PAYMENT_METHOD_RECEIPT_UPLOAD]} />);
+    useBillingSettings.mockReturnValue({
+      data: { enabledFamilyPaymentMethods: [PAYMENT_METHOD_RECEIPT_UPLOAD], academyFeeGatewayProvider: null },
+    });
+    render(<BillingSettingsForm />);
     fireEvent.click(screen.getByRole('checkbox', { name: 'method.MANUAL_TRANSFER' }));
     fireEvent.click(screen.getByRole('button', { name: 'saveSettings' }));
     expect(updateSettingsMutate).toHaveBeenCalledWith({
       enabledFamilyPaymentMethods: [PAYMENT_METHOD_RECEIPT_UPLOAD, PAYMENT_METHOD_MANUAL_TRANSFER],
       academyFeeGatewayProvider: null,
     });
+  });
+
+  it('renders the payment method manager outside the settings form', () => {
+    useBillingSettings.mockReturnValue({
+      data: { enabledFamilyPaymentMethods: [PAYMENT_METHOD_RECEIPT_UPLOAD], academyFeeGatewayProvider: null },
+    });
+    render(<BillingSettingsForm />);
+    const manager = screen.getByTestId('config-manager');
+    expect(manager.closest('form')).toBeNull();
   });
 });
