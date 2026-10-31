@@ -63,6 +63,7 @@ const makeService = (
         act?.roleName === Roles.ACCOUNTANT || act?.roleName === Roles.MANAGER || String(act?._id) === String(famId)
     ),
     resolve: jest.fn(async () => new Map()),
+    resolveOrganizationId: jest.fn(async (): Promise<string | null> => String(ORG)),
   };
   const orgModel = {
     findOne: jest.fn(() => ({
@@ -81,7 +82,7 @@ const makeService = (
     files as never,
     notifications as never
   );
-  return { service, paymentModel, subscriptionModel, ledger, registry, families, notifications };
+  return { service, paymentModel, subscriptionModel, orgModel, ledger, registry, families, notifications };
 };
 
 describe('FamilyPaymentService.listMethods', () => {
@@ -89,6 +90,21 @@ describe('FamilyPaymentService.listMethods', () => {
     const { service, registry } = makeService();
     await expect(service.listMethods(actor(FAMILY, Roles.PARENT))).resolves.toEqual([{ key: 'RECEIPT_UPLOAD' }]);
     expect(registry.listEnabled).toHaveBeenCalled();
+  });
+
+  it('derives the organization from the family when the actor carries none', async () => {
+    const { service, families, orgModel } = makeService();
+    const orgLessActor = { ...actor(FAMILY, Roles.PARENT), organizationId: '' };
+    await service.listMethods(orgLessActor);
+    expect(families.resolveOrganizationId).toHaveBeenCalledWith(String(FAMILY));
+    expect(orgModel.findOne).toHaveBeenCalledWith({ _id: ORG });
+  });
+
+  it('returns no methods when the family has no organization at all', async () => {
+    const { service, families } = makeService();
+    families.resolveOrganizationId.mockResolvedValueOnce(null);
+    const orgLessActor = { ...actor(FAMILY, Roles.PARENT), organizationId: '' };
+    await expect(service.listMethods(orgLessActor)).resolves.toEqual([]);
   });
 });
 
@@ -116,6 +132,29 @@ describe('FamilyPaymentService.initiate', () => {
         })
       ).rejects.toThrow(new BadRequestException(BillingErrors.AMOUNT_INVALID));
     }
+  });
+
+  it('derives the organization from the family when the actor carries none', async () => {
+    const { service, families, registry } = makeService();
+    const initiate = jest.fn(async () => ({ kind: 'AWAIT_RECEIPT' as const, paymentId: String(PAYMENT) }));
+    registry.get.mockReturnValueOnce({ key: 'RECEIPT_UPLOAD', isEnabled: () => true, initiate } as never);
+    const orgLessActor = { ...actor(FAMILY, Roles.PARENT), organizationId: '' };
+    await service.initiate(orgLessActor, {
+      method: 'RECEIPT_UPLOAD',
+      amountMinor: 10_000,
+      currency: Currency.EGP,
+    });
+    expect(families.resolveOrganizationId).toHaveBeenCalledWith(String(FAMILY));
+    expect(initiate).toHaveBeenCalledWith(expect.objectContaining({ organizationId: String(ORG) }));
+  });
+
+  it('refuses to initiate when the family has no organization at all', async () => {
+    const { service, families } = makeService();
+    families.resolveOrganizationId.mockResolvedValueOnce(null);
+    const orgLessActor = { ...actor(FAMILY, Roles.PARENT), organizationId: '' };
+    await expect(
+      service.initiate(orgLessActor, { method: 'RECEIPT_UPLOAD', amountMinor: 10_000, currency: Currency.EGP })
+    ).rejects.toThrow(new BadRequestException(BillingErrors.PAYMENT_METHOD_DISABLED));
   });
 
   it('pays into the caller’s own family, not one they name', async () => {
@@ -197,7 +236,14 @@ describe('FamilyPaymentService.listForFamily', () => {
   it('returns the caller’s own payments, sorted newest first', async () => {
     const { service, paymentModel } = makeService();
     await service.listForFamily(actor(FAMILY, Roles.PARENT));
-    expect(paymentModel.find).toHaveBeenCalledWith({ organizationId: ORG, familyId: FAMILY });
+    expect(paymentModel.find).toHaveBeenCalledWith({ familyId: FAMILY });
+  });
+
+  it('works for a parent whose own user record carries no organization', async () => {
+    const { service, paymentModel } = makeService();
+    const orgLessActor = { ...actor(FAMILY, Roles.PARENT), organizationId: '' };
+    await service.listForFamily(orgLessActor);
+    expect(paymentModel.find).toHaveBeenCalledWith({ familyId: FAMILY });
   });
 
   it('refuses a parent asking for another family’s payments', async () => {
@@ -212,7 +258,7 @@ describe('FamilyPaymentService.listForFamily', () => {
     const { service, paymentModel } = makeService();
     const otherFamily = new Types.ObjectId();
     await service.listForFamily(actor(ACCOUNTANT, Roles.ACCOUNTANT), String(otherFamily));
-    expect(paymentModel.find).toHaveBeenCalledWith({ organizationId: ORG, familyId: otherFamily });
+    expect(paymentModel.find).toHaveBeenCalledWith({ familyId: otherFamily });
   });
 });
 
@@ -244,6 +290,13 @@ describe('FamilyPaymentService.attachReceipt', () => {
     await expect(service.attachReceipt(actor(FAMILY, Roles.PARENT), String(PAYMENT), 'receipts/b.jpg')).rejects.toThrow(
       new ConflictException(BillingErrors.PAYMENT_NOT_REVIEWABLE)
     );
+  });
+
+  it('finds the payment by id alone, not by the actor’s organization', async () => {
+    const { service, paymentModel } = makeService(payment({ status: FamilyPaymentState.AWAITING_RECEIPT }));
+    const orgLessActor = { ...actor(FAMILY, Roles.PARENT), organizationId: '' };
+    await service.attachReceipt(orgLessActor, String(PAYMENT), 'receipts/b.jpg');
+    expect(paymentModel.findOne).toHaveBeenCalledWith({ _id: PAYMENT });
   });
 });
 

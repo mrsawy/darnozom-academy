@@ -31,9 +31,21 @@ export class FamilyPaymentService {
     private readonly notifications: NotificationService
   ) {}
 
+  /**
+   * A parent's own user record may carry no organizationId at all -- they aren't tied to one
+   * organization, they pay based on whichever organization their family's subscriptions belong to.
+   * For these two parent-only actions actor._id is the family id, so it's resolved from there.
+   */
+  private async organizationIdFor(actor: BillingActor): Promise<string | null> {
+    if (actor.organizationId) return actor.organizationId;
+    return this.families.resolveOrganizationId(actor._id);
+  }
+
   async listMethods(actor: BillingActor): Promise<{ key: string }[]> {
+    const organizationId = await this.organizationIdFor(actor);
+    if (!organizationId) return [];
     const org = await this.orgModel
-      .findOne({ _id: oid(actor.organizationId) })
+      .findOne({ _id: oid(organizationId) })
       .lean<Organization | null>()
       .exec();
     return this.registry.listEnabled(org ?? {}).map(({ key }) => ({ key }));
@@ -48,8 +60,12 @@ export class FamilyPaymentService {
     if (!isValidAmountMinor(dto.amountMinor) || dto.amountMinor <= 0) {
       throw new BadRequestException(BillingErrors.AMOUNT_INVALID);
     }
+    const organizationId = await this.organizationIdFor(actor);
+    if (!organizationId) {
+      throw new BadRequestException(BillingErrors.PAYMENT_METHOD_DISABLED);
+    }
     const org = await this.orgModel
-      .findOne({ _id: oid(actor.organizationId) })
+      .findOne({ _id: oid(organizationId) })
       .lean<Organization | null>()
       .exec();
     const enabled = this.registry.listEnabled(org ?? {});
@@ -58,7 +74,7 @@ export class FamilyPaymentService {
     }
 
     return this.registry.get(dto.method).initiate({
-      organizationId: actor.organizationId,
+      organizationId,
       familyId: actor._id,
       amountMinor: dto.amountMinor,
       currency: dto.currency,
@@ -74,7 +90,7 @@ export class FamilyPaymentService {
     }
 
     const payment = await this.paymentModel
-      .findOne({ _id: oid(paymentId), organizationId: oid(actor.organizationId) })
+      .findOne({ _id: oid(paymentId) })
       .lean<FamilyPayment | null>()
       .exec();
     if (!payment) {
@@ -150,7 +166,7 @@ export class FamilyPaymentService {
     }
     return (
       this.paymentModel
-        .find({ organizationId: oid(actor.organizationId), familyId: oid(targetFamilyId) })
+        .find({ familyId: oid(targetFamilyId) })
         // eslint-disable-next-line unicorn/no-array-sort -- Mongoose Query.prototype.sort, not Array#sort
         .sort({ createdAt: -1 })
         .lean()

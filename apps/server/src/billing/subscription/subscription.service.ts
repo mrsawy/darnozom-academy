@@ -134,11 +134,11 @@ export class SubscriptionService {
     );
   }
 
+  /** A family isn't tied to one organization -- their subscriptions already carry their own. */
   async findForFamily(actor: BillingActor, familyId: string): Promise<BillingSubscriptionLean[]> {
     return (
       this.subscriptionModel
         .find({
-          organizationId: oid(actor.organizationId),
           familyId: oid(familyId),
         })
         // eslint-disable-next-line unicorn/no-array-sort -- Mongoose Query.prototype.sort, not Array#sort

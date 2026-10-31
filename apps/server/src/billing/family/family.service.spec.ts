@@ -7,11 +7,16 @@ const CHILD_A = new Types.ObjectId();
 const CHILD_B = new Types.ObjectId();
 const LONE = new Types.ObjectId();
 
-const makeService = (users: Record<string, unknown>[]) => {
+const makeService = (users: Record<string, unknown>[], subscriptions: Record<string, unknown>[] = []) => {
   const userModel = {
     find: jest.fn(() => ({ select: () => ({ lean: () => ({ exec: async () => users }) }) })),
   };
-  return { service: new FamilyService(userModel as never), userModel };
+  const subscriptionModel = {
+    findOne: jest.fn(() => ({
+      sort: () => ({ lean: () => ({ exec: async () => subscriptions[0] ?? null }) }),
+    })),
+  };
+  return { service: new FamilyService(userModel as never, subscriptionModel as never), userModel, subscriptionModel };
 };
 
 const actor = (id: string, roleName: Roles) => ({ _id: id, organizationId: 'o1', roleName, additionalRoles: [] as Roles[] });
@@ -69,5 +74,21 @@ describe('FamilyService.canActorReadFamily', () => {
     for (const role of [Roles.INSTRUCTOR, Roles.CONTENT_OFFICER, Roles.SHARIA_REVIEWER]) {
       await expect(service.canActorReadFamily(actor(String(new Types.ObjectId()), role), String(PARENT))).resolves.toBe(false);
     }
+  });
+});
+
+describe('FamilyService.resolveOrganizationId', () => {
+  const ORG = new Types.ObjectId();
+
+  it('derives the organization from the family’s most recent subscription', async () => {
+    const { service, subscriptionModel } = makeService([], [{ organizationId: ORG }]);
+    await expect(service.resolveOrganizationId(String(PARENT))).resolves.toBe(String(ORG));
+    const calls = subscriptionModel.findOne.mock.calls as unknown as { familyId: Types.ObjectId }[][];
+    expect(String(calls[0][0].familyId)).toBe(String(PARENT));
+  });
+
+  it('returns null when the family has no subscription yet', async () => {
+    const { service } = makeService([], []);
+    await expect(service.resolveOrganizationId(String(PARENT))).resolves.toBeNull();
   });
 });

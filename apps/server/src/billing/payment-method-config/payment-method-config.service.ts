@@ -4,6 +4,7 @@ import { Model, Types } from 'mongoose';
 import { BillingErrors, PaymentMethodFieldType } from '@darnozom/shared-types';
 import { BillingActor } from '../billing.types';
 import { PaymentMethodConfig } from '../entities/payment-method-config.entity';
+import { FamilyService } from '../family/family.service';
 
 const oid = (id: string | Types.ObjectId) => (Types.ObjectId.isValid(String(id)) ? new Types.ObjectId(String(id)) : (id as unknown as Types.ObjectId));
 const DUPLICATE_KEY = 11_000;
@@ -55,11 +56,17 @@ const slugify = (label: string) =>
 
 @Injectable()
 export class PaymentMethodConfigService {
-  constructor(@InjectModel(PaymentMethodConfig.name) private readonly model: Model<PaymentMethodConfig>) {}
+  constructor(
+    @InjectModel(PaymentMethodConfig.name) private readonly model: Model<PaymentMethodConfig>,
+    private readonly families: FamilyService
+  ) {}
 
   async listForOrg(actor: BillingActor): Promise<PaymentMethodConfigLean[]> {
+    const organizationId = actor.organizationId || (await this.families.resolveOrganizationId(actor._id));
+    if (!organizationId) return [];
+
     const existing = await this.model
-      .find({ organizationId: oid(actor.organizationId) })
+      .find({ organizationId: oid(organizationId) })
       .lean<PaymentMethodConfigLean[]>()
       .exec();
     const existingKeys = new Set(existing.map((row) => row.key));
@@ -69,7 +76,7 @@ export class PaymentMethodConfigService {
     const seeded = await Promise.all(
       missing.map((b) =>
         this.model.create({
-          organizationId: oid(actor.organizationId),
+          organizationId: oid(organizationId),
           key: b.key,
           kind: 'BUILT_IN',
           label: b.label,

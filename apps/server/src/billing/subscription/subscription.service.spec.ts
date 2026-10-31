@@ -198,3 +198,15 @@ describe('SubscriptionService.end', () => {
     expect(update?.$set).not.toHaveProperty('amountMinor');
   });
 });
+
+describe('SubscriptionService.findForFamily', () => {
+  it('finds by family id alone, not scoped by the actor’s organization', async () => {
+    const { service, model } = makeService();
+    const familyId = String(PARENT);
+    const orgLessActor = { _id: String(ACTOR), organizationId: '', roleName: Roles.PARENT, additionalRoles: [] as Roles[] };
+    await service.findForFamily(orgLessActor, familyId);
+    expect(model.find).toHaveBeenCalledWith({ familyId: expect.anything() });
+    const call = model.find.mock.calls.at(-1) as unknown as [Record<string, unknown>];
+    expect(call[0]).not.toHaveProperty('organizationId');
+  });
+});
