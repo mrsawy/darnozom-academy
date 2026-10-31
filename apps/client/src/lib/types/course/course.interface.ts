@@ -91,6 +91,8 @@ export interface ICourse {
   modulesIds?: string[];
 
   isPaid: boolean;
+  /** Standalone buyable course (public catalog + direct enroll). Missing on legacy docs = true. */
+  isStandalone?: boolean;
 
   description?: string;
   shortDescription?: string;

@@ -81,6 +81,8 @@ export class LedgerService {
     amountMinor: number;
     currency: Currency;
     createdBy: string;
+    /** When set, only this subscription's own open charges are eligible -- never another subscription's. */
+    subscriptionId?: string | null;
   }): Promise<{ entry: LedgerEntryLean; allocated: number; unallocatedMinor: number }> {
     if (!isValidAmountMinor(input.amountMinor)) throw new BadRequestException(BillingErrors.AMOUNT_INVALID);
 
@@ -103,7 +105,8 @@ export class LedgerService {
       idempotencyKey: `payment:${input.paymentId}`,
     })) as unknown as LedgerEntryLean;
 
-    const open = await this.openCharges(input.familyId);
+    const allOpen = await this.openCharges(input.familyId);
+    const open = input.subscriptionId ? allOpen.filter((charge) => charge.subscriptionId === input.subscriptionId) : allOpen;
     const plan = allocateFifo(input.amountMinor, input.currency, open);
 
     if (plan.allocations.length > 0) {
@@ -172,7 +175,17 @@ export class LedgerService {
       .find({ familyId: oid(familyId), type: LedgerEntryType.CHARGE })
       // eslint-disable-next-line unicorn/no-array-sort -- Mongoose Query.prototype.sort, not Array#sort
       .sort({ dueAt: 1, createdAt: 1 })
-      .lean<{ _id: Types.ObjectId; currency: Currency; dueAt: Date | null; createdAt: Date; amountMinor: number }[]>()
+      .lean<
+        {
+          _id: Types.ObjectId;
+          currency: Currency;
+          dueAt: Date | null;
+          createdAt: Date;
+          amountMinor: number;
+          subscriptionId: Types.ObjectId | null;
+          studentId: Types.ObjectId | null;
+        }[]
+      >()
       .exec();
     if (charges.length === 0) return [];
 
@@ -189,6 +202,8 @@ export class LedgerService {
       createdAt: charge.createdAt,
       amountMinor: charge.amountMinor,
       alreadyAllocatedMinor: byCharge.get(String(charge._id)) ?? 0,
+      subscriptionId: charge.subscriptionId ? String(charge.subscriptionId) : null,
+      studentId: charge.studentId ? String(charge.studentId) : null,
     }));
   }
 

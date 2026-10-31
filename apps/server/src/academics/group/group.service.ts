@@ -148,6 +148,7 @@ export class GroupService {
       minStudents: dto.minStudents,
       maxStudents: dto.maxStudents,
       totalSessions: dto.totalSessions,
+      estimatedEndDate: dto.estimatedEndDate ? new Date(dto.estimatedEndDate) : null,
       meetingLink: dto.meetingLink ?? null,
       whatsappGroupLink: dto.whatsappGroupLink ?? null,
     });
@@ -182,7 +183,13 @@ export class GroupService {
     if (dto.supervisorId !== undefined && dto.supervisorId !== null) {
       assertStaffAssignable(await this.findOrgUser(actor, dto.supervisorId), Roles.SUPERVISOR, AcademicsErrors.SUPERVISOR_NOT_FOUND_IN_ORGANIZATION);
     }
-    const changes: UpdateGroupDto = { ...dto, ...(dto.name === undefined ? {} : { name: dto.name.trim() }) };
+    const changes: Record<string, unknown> = {
+      ...dto,
+      ...(dto.name === undefined ? {} : { name: dto.name.trim() }),
+      ...(dto.estimatedEndDate !== undefined
+        ? { estimatedEndDate: dto.estimatedEndDate ? new Date(dto.estimatedEndDate) : null }
+        : {}),
+    };
     await this.groupModel.updateOne({ _id: group._id }, { $set: changes }).exec();
     return this.state.syncReadiness(group._id);
   }

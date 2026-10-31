@@ -28,7 +28,9 @@ import {
   Users,
 } from 'lucide-react';
 import { Link } from '@/i18n/navigation';
-import { ROUTE_ORG_USERS_CREATE } from '@/lib/data/constants/routes.constants';
+import { ROUTE_ORG_USERS_CREATE, ROUTE_ORG_USER_EDIT } from '@/lib/data/constants/routes.constants';
+import { canUser } from '@/lib/utils/permissions/can';
+import useUserStore from '@/lib/store/userStore';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -46,7 +48,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/atoms/select';
-import { UserStatus } from '@darnozom/shared-types';
+import { Actions, Subjects, UserStatus } from '@darnozom/shared-types';
 import {
   useDeleteUser,
   useUpdateUserStatus,
@@ -89,6 +91,8 @@ function getStatusColor(status: string) {
 
 export default function UserDataTable() {
   const t = useTranslations('UserDataTable');
+  const currentUser = useUserStore((s) => s.user);
+  const canEditUsers = canUser(currentUser, Actions.UPDATE, Subjects.USER);
   const [openRowId, setOpenRowId] = useState<string | null>(null);
   const [tempStatus, setTempStatus] = useState<UserStatus | null>(null);
   const [globalFilter, setGlobalFilter] = useState<string>('');
@@ -331,14 +335,16 @@ export default function UserDataTable() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-full cursor-pointer">
-              <Link
-                href={`/organization-dashboard/users/${row.original._id}/edit`}
-                className="flex w-full cursor-pointer items-center">
-                <DropdownMenuItem className="w-full cursor-pointer">
-                  <Edit className="mr-2 size-4" />
-                  {t('edit')}
-                </DropdownMenuItem>
-              </Link>
+              {canEditUsers ? (
+                <Link
+                  href={ROUTE_ORG_USER_EDIT(row.original._id)}
+                  className="flex w-full cursor-pointer items-center">
+                  <DropdownMenuItem className="w-full cursor-pointer">
+                    <Edit className="mr-2 size-4" />
+                    {t('edit')}
+                  </DropdownMenuItem>
+                </Link>
+              ) : null}
               <DropdownMenuSeparator />
               <DropdownMenuSeparator />
               <DropdownMenuItem
@@ -352,7 +358,7 @@ export default function UserDataTable() {
         ),
       },
     ],
-    [handleOpenStatusDialog, handleDeleteUser, getUserInitials, formatLastLogin, t]
+    [handleOpenStatusDialog, handleDeleteUser, getUserInitials, formatLastLogin, t, canEditUsers]
   );
 
   // Show error state

@@ -20,13 +20,16 @@ const charge = (overrides: Record<string, unknown> = {}) => ({
   ...overrides,
 });
 
-const openCharge = (id: Types.ObjectId, amountMinor: number, currency = Currency.EGP) => ({
+const openCharge = (id: Types.ObjectId, amountMinor: number, currency = Currency.EGP, overrides: Record<string, unknown> = {}) => ({
   _id: id,
   currency,
   dueAt: new Date('2026-03-01T00:00:00.000Z'),
   createdAt: new Date('2026-02-01T00:00:00.000Z'),
   amountMinor,
   type: LedgerEntryType.CHARGE,
+  subscriptionId: null,
+  studentId: null,
+  ...overrides,
 });
 
 const makeService = (existingCharges: Record<string, unknown>[] = [], duplicateKeys: string[] = []) => {
@@ -193,6 +196,78 @@ describe('LedgerService.postPaymentAndAllocate', () => {
       createdBy: String(ACTOR),
     });
     expect(written[0].idempotencyKey).toBe(`payment:${String(PAYMENT)}`);
+  });
+
+  it('when scoped to a subscription, settles only that subscription\'s own charge, never an older one from a different subscription', async () => {
+    const oldSubChargeId = new Types.ObjectId();
+    const targetSubChargeId = new Types.ObjectId();
+    const targetSub = new Types.ObjectId();
+    const { service, allocationModel } = makeService([
+      // The old subscription's charge is due first, so unscoped FIFO would hit it first.
+      openCharge(oldSubChargeId, 10_000, Currency.EGP, { subscriptionId: new Types.ObjectId(), dueAt: new Date('2026-01-01') }),
+      openCharge(targetSubChargeId, 10_000, Currency.EGP, { subscriptionId: targetSub, dueAt: new Date('2026-06-01') }),
+    ]);
+    await service.postPaymentAndAllocate({
+      organizationId: String(ORG),
+      familyId: String(FAMILY),
+      paymentId: String(PAYMENT),
+      amountMinor: 10_000,
+      currency: Currency.EGP,
+      createdBy: String(ACTOR),
+      subscriptionId: String(targetSub),
+    });
+    expect(allocationModel.insertMany).toHaveBeenCalledWith([expect.objectContaining({ chargeLedgerEntryId: targetSubChargeId })]);
+  });
+
+  it('leaves the payment unallocated as a credit when the target subscription has no open charge', async () => {
+    const { service, allocationModel } = makeService([
+      openCharge(new Types.ObjectId(), 10_000, Currency.EGP, { subscriptionId: new Types.ObjectId() }),
+    ]);
+    const result = await service.postPaymentAndAllocate({
+      organizationId: String(ORG),
+      familyId: String(FAMILY),
+      paymentId: String(PAYMENT),
+      amountMinor: 10_000,
+      currency: Currency.EGP,
+      createdBy: String(ACTOR),
+      subscriptionId: String(new Types.ObjectId()),
+    });
+    expect(allocationModel.insertMany).not.toHaveBeenCalled();
+    expect(result.unallocatedMinor).toBe(10_000);
+  });
+
+  it('falls back to family-wide FIFO when no subscription is specified, unchanged from before', async () => {
+    const chargeId = new Types.ObjectId();
+    const { service, allocationModel } = makeService([openCharge(chargeId, 10_000, Currency.EGP, { subscriptionId: new Types.ObjectId() })]);
+    await service.postPaymentAndAllocate({
+      organizationId: String(ORG),
+      familyId: String(FAMILY),
+      paymentId: String(PAYMENT),
+      amountMinor: 10_000,
+      currency: Currency.EGP,
+      createdBy: String(ACTOR),
+    });
+    expect(allocationModel.insertMany).toHaveBeenCalledWith([expect.objectContaining({ chargeLedgerEntryId: chargeId })]);
+  });
+});
+
+describe('LedgerService.openCharges', () => {
+  it('carries the subscription and student each charge belongs to', async () => {
+    const chargeId = new Types.ObjectId();
+    const subscriptionId = new Types.ObjectId();
+    const studentId = new Types.ObjectId();
+    const { service } = makeService([openCharge(chargeId, 10_000, Currency.EGP, { subscriptionId, studentId })]);
+    const [open] = await service.openCharges(String(FAMILY));
+    expect(open.subscriptionId).toBe(String(subscriptionId));
+    expect(open.studentId).toBe(String(studentId));
+  });
+
+  it('returns null subscription and student when the charge has none', async () => {
+    const chargeId = new Types.ObjectId();
+    const { service } = makeService([openCharge(chargeId, 10_000)]);
+    const [open] = await service.openCharges(String(FAMILY));
+    expect(open.subscriptionId).toBeNull();
+    expect(open.studentId).toBeNull();
   });
 });
 

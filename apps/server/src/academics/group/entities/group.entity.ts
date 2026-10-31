@@ -135,6 +135,10 @@ export class Group extends Document<Types.ObjectId> {
   @Prop({ type: Number, required: false, min: 1, max: 500, default: null })
   totalSessions?: number | null;
 
+  /** Informational estimated end date (UI only, not used in session calculations). */
+  @Prop({ type: Date, required: false, default: null })
+  estimatedEndDate?: Date | null;
+
   @Prop({ type: String, required: false, trim: true })
   meetingLink?: string;
 

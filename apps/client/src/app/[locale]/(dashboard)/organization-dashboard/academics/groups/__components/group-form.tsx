@@ -105,6 +105,15 @@ export function GroupForm({
         />
       </div>
       <div className="space-y-1">
+        <Label htmlFor="group-estimated-end">{t('form.estimatedEndDate')}</Label>
+        <Input
+          id="group-estimated-end"
+          type="date"
+          value={values.estimatedEndDate ?? ''}
+          onChange={(e) => set('estimatedEndDate', e.target.value || null)}
+        />
+      </div>
+      <div className="space-y-1">
         <Label htmlFor="group-meeting">{t('form.meetingLink')}</Label>
         <Input
           id="group-meeting"

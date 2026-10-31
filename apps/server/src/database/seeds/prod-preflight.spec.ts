@@ -1,7 +1,7 @@
 import { Currency } from '@darnozom/shared-types';
 import { assertExchangeRatesLoaded, extractDatabaseName, readPlatformAdminCredentials, redactUri } from './prod-preflight';
 
-const ATLAS_URI = 'mongodb+srv://seeder:s3cret@cluster0.abc.mongodb.net/lms?retryWrites=true&w=majority';
+const ATLAS_URI = 'mongodb+srv://user:dummy_password@dummy.example.com/lms?retryWrites=true&w=majority';
 const STANDARD_URI = 'mongodb://seeder:s3cret@localhost:27017/lms_client?authSource=admin';
 
 describe('extractDatabaseName', () => {
@@ -14,7 +14,7 @@ describe('extractDatabaseName', () => {
   });
 
   it('rejects a URI with no database path so the seed cannot write to the cluster default', () => {
-    expect(() => extractDatabaseName('mongodb+srv://seeder:s3cret@cluster0.abc.mongodb.net/?retryWrites=true')).toThrow(/database name/i);
+    expect(() => extractDatabaseName('mongodb+srv://user:dummy_password@dummy.example.com/?retryWrites=true')).toThrow(/database name/i);
   });
 });
 
@@ -22,8 +22,8 @@ describe('redactUri', () => {
   it('removes the password so the target can be logged safely', () => {
     const redacted = redactUri(ATLAS_URI);
 
-    expect(redacted).not.toContain('s3cret');
-    expect(redacted).toContain('cluster0.abc.mongodb.net');
+    expect(redacted).not.toContain('dummy_password');
+    expect(redacted).toContain('dummy.example.com');
     expect(redacted).toContain('lms');
   });
 });

@@ -243,6 +243,10 @@ export class CreateCourseDto {
   @Transform(({ value }: { value: unknown }) => (value === undefined ? false : value))
   isPaid?: boolean;
 
+  @IsBoolean()
+  @IsOptional()
+  isStandalone?: boolean;
+
   @IsMongoId({ each: true })
   @IsOptional()
   coInstructors?: string[];

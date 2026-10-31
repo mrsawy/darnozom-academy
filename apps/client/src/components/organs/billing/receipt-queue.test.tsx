@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { Currency, FamilyPaymentState } from '@darnozom/shared-types';
 import { ReceiptQueue } from './receipt-queue';
 import type { IFamilyPayment } from '@/lib/types/billing/billing';
@@ -8,6 +8,10 @@ vi.mock('next-intl', () => ({
   // eslint-disable-next-line unicorn/consistent-function-scoping -- vitest hoists vi.mock
   useTranslations: () => (key: string) => key,
   useLocale: () => 'en',
+}));
+
+vi.mock('@/lib/actions/file/getPreSignedUrl', () => ({
+  getFileUrl: vi.fn(async ({ fileKey }: { fileKey: string }) => `https://bucket.s3.amazonaws.com/${fileKey}?signed=1`),
 }));
 
 const PAYMENT: IFamilyPayment = {
@@ -35,12 +39,19 @@ describe('ReceiptQueue', () => {
     expect(screen.getByText('loading')).toBeInTheDocument();
   });
 
-  it('renders receipt link or image for review', () => {
+  it('renders a receipt link resolved to a real S3 URL, not a local server path', async () => {
     render(
       <ReceiptQueue payments={[PAYMENT]} isLoading={false} onApprove={vi.fn()} onReject={vi.fn()} />
     );
-    const receiptLink = screen.getByRole('link', { name: 'receipt' });
-    expect(receiptLink).toHaveAttribute('href', expect.stringContaining('receipts/p1.jpg'));
+    const receiptLink = await screen.findByRole('link', { name: 'receipt' });
+    expect(receiptLink).toHaveAttribute('href', 'https://bucket.s3.amazonaws.com/receipts/p1.jpg?signed=1');
+  });
+
+  it('shows no receipt link until the S3 url resolves', async () => {
+    render(
+      <ReceiptQueue payments={[PAYMENT]} isLoading={false} onApprove={vi.fn()} onReject={vi.fn()} />
+    );
+    await waitFor(() => expect(screen.getByRole('link', { name: 'receipt' })).toBeInTheDocument());
   });
 
   it('passes payment id on approve', () => {

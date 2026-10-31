@@ -55,9 +55,18 @@ export interface ILedgerBalance {
   balanceMinor: number;
 }
 
+export interface IOpenSubscriptionBalance {
+  subscriptionId: string;
+  currency: Currency;
+  outstandingMinor: number;
+  chargeCount: number;
+  studentIds: string[];
+}
+
 export interface IFamilyStatement {
   entries: ILedgerEntry[];
   balances: ILedgerBalance[];
+  openSubscriptions: IOpenSubscriptionBalance[];
 }
 
 export interface IFamilyPaymentMethodSnapshotField {

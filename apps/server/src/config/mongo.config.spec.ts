@@ -56,8 +56,8 @@ describe('mongo.config', () => {
 
   describe('getMongoUri', () => {
     const mockEnv = {
-      MONGODB_URI_PROD: 'mongodb+srv://user:pass@cluster.mongodb.net/lms_prod',
-      MONGODB_URI_DEV: 'mongodb+srv://user:pass@cluster.mongodb.net/lms_dev',
+      MONGODB_URI_PROD: 'mongodb+srv://user:pass@cluster.example.com/lms_prod',
+      MONGODB_URI_DEV: 'mongodb+srv://user:pass@cluster.example.com/lms_dev',
       NODE_ENV: 'development',
     };
 

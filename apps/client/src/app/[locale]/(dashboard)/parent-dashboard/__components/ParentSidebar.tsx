@@ -21,6 +21,7 @@ import {
   ROUTE_PARENT_PAYMENTS,
   ROUTE_BOOKS,
   ROUTE_PARENT_MY_CERTIFICATES,
+  ROUTE_PARENT_SESSIONS,
 } from '@/lib/data/constants/routes.constants';
 
 export function ParentSidebar({ user }: { user?: IUser }) {
@@ -60,7 +61,7 @@ export function ParentSidebar({ user }: { user?: IUser }) {
     },
     {
       title: t('navMain.sessionsAndReports'),
-      url: '/parent-dashboard/sessions',
+      url: ROUTE_PARENT_SESSIONS,
       icon: IconCalendarEvent,
       key: 'sessions-reports',
     },

@@ -6,7 +6,7 @@ import { RpcValidationPipe } from 'src/utils/RpcValidationPipe';
 import { ApplyRpcErrorHandling } from 'src/utils/docerators/error-handeling/class/ApplyRpcErrorHandling.decorator';
 import { IUserContext } from 'src/utils/types/IUserContext.interface';
 import { actorFromContext } from '../common/actor';
-import { PutAvailabilityDto, TeacherIdPayload } from './dto/teacher-availability.dto';
+import { PutAvailabilityDto, PutAvailabilityForTeacherDto, TeacherIdPayload } from './dto/teacher-availability.dto';
 import { TeacherAvailabilityService } from './teacher-availability.service';
 
 @Controller()
@@ -30,5 +30,11 @@ export class TeacherAvailabilityControllerMessage {
   @MessagePattern('academics.teacherAvailability.getForTeacher')
   getForTeacher(@Payload(new RpcValidationPipe()) payload: TeacherIdPayload, @Ctx() context: IUserContext) {
     return this.availabilityService.getForTeacher(actorFromContext(context), payload.teacherId);
+  }
+
+  @RequirePermissionsGuard({ action: Actions.UPDATE, subject: Subjects.TEACHER_AVAILABILITY })
+  @MessagePattern('academics.teacherAvailability.putForTeacher')
+  putForTeacher(@Payload(new RpcValidationPipe()) payload: PutAvailabilityForTeacherDto, @Ctx() context: IUserContext) {
+    return this.availabilityService.putForTeacher(actorFromContext(context), payload);
   }
 }

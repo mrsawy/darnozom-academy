@@ -70,6 +70,10 @@ export class FamilyPayment extends Document<Types.ObjectId> {
   @Prop({ type: Types.ObjectId, ref: 'PaymentMethodConfig', required: false, default: null })
   paymentMethodConfigId: Types.ObjectId | null;
 
+  /** The subscription this payment was raised against, so approval settles that subscription's own charges. */
+  @Prop({ type: Types.ObjectId, ref: 'BillingSubscription', required: false, default: null })
+  subscriptionId: Types.ObjectId | null;
+
   /** The manual-transfer method's fields as they were when the family paid — never re-read from the live config. */
   @Prop({ type: FamilyPaymentMethodSnapshot, required: false, default: null })
   methodSnapshot: FamilyPaymentMethodSnapshot | null;

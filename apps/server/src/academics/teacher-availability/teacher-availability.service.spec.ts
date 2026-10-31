@@ -11,8 +11,9 @@ function setup() {
   const availabilityModel = { findOne: jest.fn(), findOneAndUpdate: jest.fn() };
   const groupModel = { find: jest.fn() };
   const cohortModel = { find: jest.fn() };
-  const service = new TeacherAvailabilityService(availabilityModel as never, groupModel as never, cohortModel as never);
-  return { service, availabilityModel, groupModel, cohortModel };
+  const userModel = { findOne: jest.fn() };
+  const service = new TeacherAvailabilityService(availabilityModel as never, groupModel as never, cohortModel as never, userModel as never);
+  return { service, availabilityModel, groupModel, cohortModel, userModel };
 }
 
 const monday9to12 = { timezone: 'UTC', slots: [{ dayOfWeek: 1, startTime: '09:00', endTime: '12:00' }] };
@@ -58,5 +59,27 @@ describe('TeacherAvailabilityService', () => {
   it('hides other teachers availability from non-staff', async () => {
     const { service } = setup();
     await expect(service.getForTeacher(teacher, '64b0000000000000000000a2')).rejects.toThrow(new NotFoundException(AcademicsErrors.TEACHER_NOT_FOUND_IN_ORGANIZATION));
+  });
+
+  it('lets an admin save availability for an instructor in their organization', async () => {
+    const { service, userModel, groupModel, availabilityModel } = setup();
+    const manager: AcademicsActor = { ...teacher, _id: '64b0000000000000000000a3', roleName: Roles.MANAGER };
+    userModel.findOne.mockReturnValue(mockQuery({ _id: teacher._id, roleName: Roles.INSTRUCTOR }));
+    groupModel.find.mockReturnValue(mockQuery([]));
+    availabilityModel.findOneAndUpdate.mockReturnValue(mockQuery({ teacherId: teacher._id, ...monday9to12 }));
+    await expect(service.putForTeacher(manager, { teacherId: teacher._id, ...monday9to12 })).resolves.toEqual({ teacherId: teacher._id, ...monday9to12 });
+  });
+
+  it('rejects an admin saving availability for a user who is not an instructor in their organization', async () => {
+    const { service, userModel } = setup();
+    const manager: AcademicsActor = { ...teacher, _id: '64b0000000000000000000a3', roleName: Roles.MANAGER };
+    userModel.findOne.mockReturnValue(mockQuery(null));
+    await expect(service.putForTeacher(manager, { teacherId: '64b0000000000000000000a2', ...monday9to12 })).rejects.toThrow(new NotFoundException(AcademicsErrors.TEACHER_NOT_FOUND_IN_ORGANIZATION));
+  });
+
+  it('rejects an instructor saving availability for another teacher (not just their own via putMine)', async () => {
+    const { service, userModel } = setup();
+    await expect(service.putForTeacher(teacher, { teacherId: '64b0000000000000000000a2', ...monday9to12 })).rejects.toThrow(ForbiddenException);
+    expect(userModel.findOne).not.toHaveBeenCalled();
   });
 });

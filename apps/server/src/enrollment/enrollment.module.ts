@@ -19,12 +19,18 @@ import { NotificationModule } from 'src/notification/notification.module';
 import { FileModule } from 'src/file/file.module';
 import { OrganizationModule } from 'src/organization/organization.module';
 import { ReviewModule } from 'src/review/review.module';
+import { CoursePayment, CoursePaymentSchema } from './entities/course-payment.entity';
+import { PaymentMethodConfig, PaymentMethodConfigSchema } from 'src/billing/entities/payment-method-config.entity';
+import { CoursePaymentService } from './services/course-payment.service';
+import { CoursePaymentMessageController } from './controllers/course-payment.message.controller';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: Enrollment.name, schema: EnrollmentSchema },
       { name: User.name, schema: UserSchema },
+      { name: CoursePayment.name, schema: CoursePaymentSchema },
+      { name: PaymentMethodConfig.name, schema: PaymentMethodConfigSchema },
     ]),
     forwardRef(() => WalletModule),
     forwardRef(() => CourseModule),
@@ -38,8 +44,8 @@ import { ReviewModule } from 'src/review/review.module';
     NotificationModule,
     FileModule,
   ],
-  controllers: [EnrollmentHttpController, EnrollmentMessageController, EnrollmentProgressController],
-  providers: [EnrollmentService, EnrollmentProgressService, ActiveEnrollmentGuard],
+  controllers: [EnrollmentHttpController, EnrollmentMessageController, EnrollmentProgressController, CoursePaymentMessageController],
+  providers: [EnrollmentService, EnrollmentProgressService, ActiveEnrollmentGuard, CoursePaymentService],
   exports: [EnrollmentService, EnrollmentProgressService, ActiveEnrollmentGuard],
 })
 export class EnrollmentModule {}

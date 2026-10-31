@@ -25,7 +25,10 @@ import {
 } from '@/lib/hooks/academics/use-academics.hook';
 import { useAuthUser } from '@/lib/hooks/user/use-user.hook';
 import { formatSessionTime } from '@/lib/utils/academics/session-time';
-import { CancelSessionDialog } from '../../../academics/groups/[id]/__components/cancel-session-dialog';
+import { RescheduleSessionDialog } from '../../../academics/groups/[id]/__components/reschedule-session-dialog';
+import { useRouter } from '@/i18n/navigation';
+import { useDeleteSession, useRescheduleSession } from '@/lib/hooks/academics/use-academics.hook';
+import { ROUTE_ORG_ACADEMICS_GROUP } from '@/lib/data/constants/routes.constants';
 import { AttendanceTable } from './attendance-table';
 import { ReportForm } from './report-form';
 import { ReportView } from './report-view';
@@ -44,6 +47,9 @@ export function SessionDetailScreen({ sessionId }: { sessionId: string }) {
   const submitReport = useSubmitReport();
   const editReport = useEditReport();
   const cancelSession = useCancelSession();
+  const rescheduleSession = useRescheduleSession();
+  const deleteSession = useDeleteSession();
+  const router = useRouter();
 
   if (isLoading || !session) return <p className="p-4">{t('loading')}</p>;
 
@@ -104,10 +110,32 @@ export function SessionDetailScreen({ sessionId }: { sessionId: string }) {
             </Button>
           ) : null}
           {canManage && session.status === SessionStatus.SCHEDULED ? (
-            <CancelSessionDialog
-              pending={cancelSession.isPending}
-              onConfirm={(reason) => cancelSession.mutate({ id: session._id, reason })}
-            />
+            <>
+              <RescheduleSessionDialog
+                session={session}
+                pending={rescheduleSession.isPending}
+                onConfirm={(startsAt, endsAt) =>
+                  rescheduleSession.mutate({ id: session._id, startsAt, endsAt })
+                }
+              />
+              <CancelSessionDialog
+                pending={cancelSession.isPending}
+                onConfirm={(reason) => cancelSession.mutate({ id: session._id, reason })}
+              />
+              <Button
+                variant="destructive"
+                size="sm"
+                disabled={deleteSession.isPending}
+                onClick={() => {
+                  if (window.confirm(t('sessions.deleteConfirm'))) {
+                    deleteSession.mutate(session._id, {
+                      onSuccess: () => router.push(ROUTE_ORG_ACADEMICS_GROUP(session.groupId)),
+                    });
+                  }
+                }}>
+                {t('sessions.delete')}
+              </Button>
+            </>
           ) : null}
         </div>
       </div>

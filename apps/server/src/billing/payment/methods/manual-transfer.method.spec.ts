@@ -71,4 +71,17 @@ describe('ManualTransferMethod', () => {
     });
     expect(result).toEqual({ kind: 'AWAIT_RECEIPT', paymentId: String(created[0]._id) });
   });
+
+  it('stores the subscription the payment was raised for, when given one', async () => {
+    const subscriptionId = new Types.ObjectId();
+    const { method, created } = makeMethod({ config: { _id: CONFIG, enabled: true, label: 'InstaPay', fields: [] } });
+    await method.initiate({ ...input, meta: { ...input.meta, subscriptionId: String(subscriptionId) } });
+    expect(String(created[0].subscriptionId)).toBe(String(subscriptionId));
+  });
+
+  it('stores no subscription when none is given, such as a general wallet top-up', async () => {
+    const { method, created } = makeMethod({ config: { _id: CONFIG, enabled: true, label: 'InstaPay', fields: [] } });
+    await method.initiate(input);
+    expect(created[0].subscriptionId).toBeNull();
+  });
 });

@@ -29,23 +29,62 @@ const REJECTED_PAYMENT: IFamilyPayment = {
   updatedAt: '2026-03-01T00:00:00.000Z',
 };
 
+const UNDER_REVIEW_PAYMENT: IFamilyPayment = {
+  _id: 'p2',
+  organizationId: 'o1',
+  familyId: 'f1',
+  payerId: 'f1',
+  method: 'MANUAL_TRANSFER',
+  amountMinor: 20_000,
+  currency: Currency.EGP,
+  status: FamilyPaymentState.PENDING_REVIEW,
+  methodSnapshot: { label: 'InstaPay', fields: [] },
+  createdAt: '2026-03-02T00:00:00.000Z',
+  updatedAt: '2026-03-02T00:00:00.000Z',
+};
+
+let myPayments: IFamilyPayment[] = [REJECTED_PAYMENT];
+
 vi.mock('@/lib/hooks/billing/use-billing.hook', () => ({
-  useStatement: () => ({ data: { entries: [], balances: [] }, isLoading: false }),
+  useStatement: () => ({ data: { entries: [], balances: [], openSubscriptions: [] }, isLoading: false }),
+  useFamilySubscriptions: () => ({ data: [] }),
   useMethods: () => ({ data: [] }),
   usePaymentMethodConfigs: () => ({ data: [] }),
   useInitiatePayment: () => ({ mutateAsync: vi.fn(), isPending: false }),
   useAttachReceipt: () => ({ mutateAsync: vi.fn(), isPending: false }),
-  useMyFamilyPayments: () => ({ data: [REJECTED_PAYMENT] }),
+  // eslint-disable-next-line unicorn/consistent-function-scoping -- vi.mock factories are hoisted
+  useMyFamilyPayments: () => ({ data: myPayments }),
+}));
+
+vi.mock('@/lib/hooks/parent/useParent.hook', () => ({
+  useChildren: () => ({ data: [] }),
 }));
 
 describe('ParentPaymentsPage rejected payments', () => {
   it('shows the reject reason for a rejected payment', () => {
+    myPayments = [REJECTED_PAYMENT];
     render(<ParentPaymentsPage />);
     expect(screen.getByText((_, element) => element?.textContent === 'rejected: Blurry screenshot')).toBeInTheDocument();
   });
 
   it('offers a retry action for a rejected payment', () => {
+    myPayments = [REJECTED_PAYMENT];
     render(<ParentPaymentsPage />);
     expect(screen.getByRole('button', { name: 'retry' })).toBeInTheDocument();
+  });
+});
+
+describe('ParentPaymentsPage payments under review', () => {
+  it('shows an under-review badge for a pending-review payment', () => {
+    myPayments = [UNDER_REVIEW_PAYMENT];
+    render(<ParentPaymentsPage />);
+    expect(screen.getByText('paymentsUnderReview')).toBeInTheDocument();
+    expect(screen.getByText('status.UNDER_REVIEW')).toBeInTheDocument();
+  });
+
+  it('shows nothing under review when there is none', () => {
+    myPayments = [];
+    render(<ParentPaymentsPage />);
+    expect(screen.queryByText('paymentsUnderReview')).not.toBeInTheDocument();
   });
 });

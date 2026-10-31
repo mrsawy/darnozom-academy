@@ -24,6 +24,7 @@ export class ManualTransferMethod implements FamilyPaymentMethod {
   async initiate(input: InitiateInput): Promise<InitiateResult> {
     const configId = (input.meta?.paymentMethodConfigId as string | undefined)?.trim();
     if (!configId) throw new BadRequestException(BillingErrors.PAYMENT_METHOD_CONFIG_NOT_FOUND);
+    const subscriptionId = (input.meta?.subscriptionId as string | undefined)?.trim() || null;
 
     let config;
     try {
@@ -48,6 +49,7 @@ export class ManualTransferMethod implements FamilyPaymentMethod {
       payerId: oid(input.payerId),
       paymentMethodConfigId: oid(config._id),
       methodSnapshot: { label: config.label, fields: config.fields },
+      subscriptionId: subscriptionId ? oid(subscriptionId) : null,
     });
 
     return { kind: 'AWAIT_RECEIPT', paymentId: String(payment._id) };

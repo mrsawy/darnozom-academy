@@ -150,6 +150,9 @@ export function getCreateCourseSchema(translate: CourseSchemaTranslateFn) {
 
     isPaid: Yup.boolean().required(translate('validation.isPaidRequired')),
 
+    /** Standalone buyable course: listed in the public catalog and enrollable directly. */
+    isStandalone: Yup.boolean().optional(),
+
     coInstructors: Yup.array().of(Yup.string().required()).optional(),
 
     thumbnail: Yup.mixed<File>()

@@ -235,6 +235,20 @@ export function CoursePricingSection({
     <CourseFormSection title={t('pricing')} description={t('pricingHelp')} icon={DollarSign}>
       <div className="bg-muted/20 hover:bg-muted/40 flex items-center justify-between gap-3 rounded-lg border px-4 py-3 transition-colors">
         <div>
+          <Label htmlFor="isStandalone" className="cursor-pointer text-sm font-medium">
+            {t('standaloneCourse')}
+          </Label>
+          <p className="text-muted-foreground text-xs">{t('standaloneCourseHelp')}</p>
+        </div>
+        <Switch
+          id="isStandalone"
+          checked={watch('isStandalone') ?? true}
+          onCheckedChange={(checked) => setValue('isStandalone', checked, { shouldDirty: true })}
+        />
+      </div>
+
+      <div className="bg-muted/20 hover:bg-muted/40 flex items-center justify-between gap-3 rounded-lg border px-4 py-3 transition-colors">
+        <div>
           <Label htmlFor="isPaid" className="cursor-pointer text-sm font-medium">
             {t('paidCourse')}
           </Label>

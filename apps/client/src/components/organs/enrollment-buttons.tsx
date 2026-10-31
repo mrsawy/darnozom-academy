@@ -16,6 +16,12 @@ interface EnrollmentButtonsProps {
   isEnrolled?: boolean;
   isEnrollmentExpired?: boolean;
   isProcessing?: boolean;
+  /** Manual-transfer payment submitted and awaiting organization review. */
+  isPendingPayment?: boolean;
+  isPaymentRejected?: boolean;
+  /** The organization enabled InstaPay / Vodafone Cash / custom transfer methods. */
+  canPayByTransfer?: boolean;
+  onPayByTransfer?: () => void;
 }
 
 const getButtonText = (
@@ -23,8 +29,11 @@ const getButtonText = (
   selectedPricing: BillingCycle,
   isEnrolled: boolean,
   isEnrollmentExpired: boolean,
-  t: EnrollmentT
+  t: EnrollmentT,
+  isPendingPayment = false,
+  isPaymentRejected = false
 ): string => {
+  if (isPendingPayment) return isPaymentRejected ? t('resubmitReceipt') : t('paymentUnderReview');
   if (isEnrolled && isEnrollmentExpired) return t('renewSubscription');
   if (isEnrolled) return t('goToCourse');
   if (!isPaid) return t('enrollForFree');
@@ -54,8 +63,13 @@ const EnrollmentButtons = React.memo<EnrollmentButtonsProps>(
     isEnrolled = false,
     isEnrollmentExpired = false,
     isProcessing = false,
+    isPendingPayment = false,
+    isPaymentRejected = false,
+    canPayByTransfer = false,
+    onPayByTransfer,
   }: EnrollmentButtonsProps) => {
     const t = useTranslations('Courses.singleCourse.enrollment');
+    const underReview = isPendingPayment && !isPaymentRejected;
 
     return (
       <div className="space-y-3">
@@ -63,12 +77,30 @@ const EnrollmentButtons = React.memo<EnrollmentButtonsProps>(
           size="lg"
           className="w-full"
           onClick={onEnroll}
-          disabled={isProcessing}
+          disabled={isProcessing || underReview}
           aria-busy={isProcessing}
-          variant={isEnrollmentExpired ? 'destructive' : 'default'}>
+          variant={isEnrollmentExpired || isPaymentRejected ? 'destructive' : 'default'}>
           {isProcessing ? <Loader2 className="size-4 animate-spin" aria-hidden="true" /> : null}
-          {getButtonText(isPaid, selectedPricing, isEnrolled, isEnrollmentExpired, t)}
+          {getButtonText(
+            isPaid,
+            selectedPricing,
+            isEnrolled,
+            isEnrollmentExpired,
+            t,
+            isPendingPayment,
+            isPaymentRejected
+          )}
         </Button>
+        {isPaid && canPayByTransfer && !isEnrolled && !isPendingPayment && onPayByTransfer ? (
+          <Button
+            size="lg"
+            variant="outline"
+            className="w-full"
+            onClick={onPayByTransfer}
+            disabled={isProcessing}>
+            {t('payByTransfer')}
+          </Button>
+        ) : null}
         <WishlistHeartButton
           courseId={courseId}
           size="lg"

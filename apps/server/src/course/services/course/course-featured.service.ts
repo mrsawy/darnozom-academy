@@ -205,6 +205,7 @@ export class CourseFeaturedService {
         $match: {
           publishStatus: PublishStatus.PUBLISHED,
           approvalStatus: { $in: APPROVED_STATUSES },
+          isStandalone: { $ne: false },
           $and: [{ 'stats.totalEnrollments': { $gte: minTotalEnrollments } }, { 'stats.totalReviews': { $gte: minTotalReviews } }],
         },
       },
@@ -641,6 +642,7 @@ export class CourseFeaturedService {
           $match: {
             publishStatus: PublishStatus.PUBLISHED,
             approvalStatus: { $in: APPROVED_STATUSES },
+            isStandalone: { $ne: false },
             _id: { $nin: existingCourseIds },
             $or: [{ 'stats.totalEnrollments': { $lt: minTotalEnrollments } }, { 'stats.totalReviews': { $lt: minTotalReviews } }],
           },

@@ -22,6 +22,7 @@ import { CreateUserFormData } from '@/lib/schema/user.schema';
 import { useGrades } from '@/lib/hooks/grade/use-grades.hook';
 import { useSchoolTypes } from '@/lib/hooks/school-type/use-school-types.hook';
 import type { UserFormMode } from '../user-form';
+import { TeacherAvailabilityFields } from './teacher-availability-fields';
 
 interface BasicTabProps {
   errors: FieldErrors<CreateUserFormData>;
@@ -346,7 +347,7 @@ export default function BasicTab({ errors, register, setValue, watch, mode }: Ba
               <span className="text-sm font-medium">{t('basic.status')}</span>
               <Select
                 onValueChange={(v) => setValue('status', v as UserStatus)}
-                defaultValue={UserStatus.ACTIVE}>
+                value={watch('status') ?? UserStatus.ACTIVE}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder={t('basic.selectStatus')} />
                 </SelectTrigger>
@@ -428,6 +429,14 @@ export default function BasicTab({ errors, register, setValue, watch, mode }: Ba
                 <p className="text-sm text-red-600">{errors.schoolTypesIds.message}</p>
               ) : null}
             </div>
+
+            {/* Weekly availability — admin editing an existing instructor only */}
+            {!isSelf && mode === 'edit' && watch('_id') ? (
+              <div className="space-y-2">
+                <span className="text-sm font-medium">{t('basic.availability')}</span>
+                <TeacherAvailabilityFields teacherId={watch('_id') as string} />
+              </div>
+            ) : null}
           </div>
         ) : null}
       </CardContent>

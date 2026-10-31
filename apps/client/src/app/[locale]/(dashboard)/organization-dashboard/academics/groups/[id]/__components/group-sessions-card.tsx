@@ -15,11 +15,19 @@ import {
 import { SessionStatusBadge } from '@/components/organs/academics/session-status-badge';
 import { Link } from '@/i18n/navigation';
 import { ROUTE_ORG_SESSION } from '@/lib/data/constants/routes.constants';
-import { useCancelSession, useSessions } from '@/lib/hooks/academics/use-academics.hook';
+import {
+  useCancelSession,
+  useCreateSession,
+  useDeleteSession,
+  useRescheduleSession,
+  useSessions,
+} from '@/lib/hooks/academics/use-academics.hook';
 import type { IGroupDetail } from '@/lib/types/academics/academics';
 import { formatSessionTime } from '@/lib/utils/academics/session-time';
+import { AddSessionDialog } from './add-session-dialog';
 import { CancelSessionDialog } from './cancel-session-dialog';
 import { EvaluateSessionDialog } from './evaluate-session-dialog';
+import { RescheduleSessionDialog } from './reschedule-session-dialog';
 
 export function GroupSessionsCard({
   group,
@@ -32,11 +40,22 @@ export function GroupSessionsCard({
   const locale = useLocale();
   const { data: sessions = [], isLoading } = useSessions({ groupId: group._id });
   const cancelSession = useCancelSession();
+  const createSession = useCreateSession();
+  const rescheduleSession = useRescheduleSession();
+  const deleteSession = useDeleteSession();
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>{t('sessions.title')}</CardTitle>
+        {canManage ? (
+          <AddSessionDialog
+            pending={createSession.isPending}
+            onConfirm={(startsAt, endsAt) =>
+              createSession.mutate({ groupId: group._id, startsAt, endsAt })
+            }
+          />
+        ) : null}
       </CardHeader>
       <CardContent>
         {isLoading ? (
@@ -69,10 +88,30 @@ export function GroupSessionsCard({
                         <Link href={ROUTE_ORG_SESSION(session._id)}>{t('sessions.open')}</Link>
                       </Button>
                       {canManage && session.status === SessionStatus.SCHEDULED ? (
-                        <CancelSessionDialog
-                          pending={cancelSession.isPending}
-                          onConfirm={(reason) => cancelSession.mutate({ id: session._id, reason })}
-                        />
+                        <>
+                          <RescheduleSessionDialog
+                            session={session}
+                            pending={rescheduleSession.isPending}
+                            onConfirm={(startsAt, endsAt) =>
+                              rescheduleSession.mutate({ id: session._id, startsAt, endsAt })
+                            }
+                          />
+                          <CancelSessionDialog
+                            pending={cancelSession.isPending}
+                            onConfirm={(reason) => cancelSession.mutate({ id: session._id, reason })}
+                          />
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            disabled={deleteSession.isPending}
+                            onClick={() => {
+                              if (window.confirm(t('sessions.deleteConfirm'))) {
+                                deleteSession.mutate(session._id);
+                              }
+                            }}>
+                            {t('sessions.delete')}
+                          </Button>
+                        </>
                       ) : null}
                       {session.status === SessionStatus.REPORT_PENDING ||
                       session.status === SessionStatus.COMPLETED ? (

@@ -90,6 +90,7 @@ export class EnrollmentMessageController {
     payload: { enrollmentId: string; contentId: string }
   ) {
     const enrollment = await this.enrollmentService.getSingleEnrollment(payload.enrollmentId, context.userPayload._id.toString());
+    await this.enrollmentService.assertEnrollmentIsActive(payload.enrollmentId, context.userPayload._id.toString());
     const isExpired = await this.enrollmentService.checkAndExpireEnrollment(enrollment);
     if (isExpired) throw new ForbiddenException(EnrollmentErrors.ENROLLMENT_EXPIRED);
     const studentId = context.userPayload._id.toString();
@@ -222,6 +223,7 @@ export class EnrollmentMessageController {
     if (![Roles.STUDENT, Roles.GUEST].includes(context.userPayload.roleName)) {
       throw new BadRequestException(UserErrors.USER_NOT_A_STUDENT);
     }
+    await this.courseService.assertStandalone(body.courseId);
     const session = await this.connection.startSession();
     session.startTransaction();
     try {
@@ -254,6 +256,7 @@ export class EnrollmentMessageController {
     if (![Roles.STUDENT, Roles.GUEST].includes(context.userPayload.roleName)) {
       throw new BadRequestException(UserErrors.USER_NOT_A_STUDENT);
     }
+    await this.courseService.assertStandalone(body.courseId);
     if (body.paymentMethod === PaymentMethod.WALLET) {
       return await this.enrollmentService.enrollWithWallet(context.userPayload._id.toString(), body.courseId, body.billingCycle);
     }
@@ -488,6 +491,7 @@ export class EnrollmentMessageController {
       new mongoose.Types.ObjectId(context.userPayload._id),
       new mongoose.Types.ObjectId(payload.childId)
     );
+    await this.courseService.assertStandalone(payload.courseId);
     const session = await this.connection.startSession();
     session.startTransaction();
     try {
@@ -509,6 +513,7 @@ export class EnrollmentMessageController {
       new mongoose.Types.ObjectId(context.userPayload._id),
       new mongoose.Types.ObjectId(payload.childId)
     );
+    await this.courseService.assertStandalone(payload.courseId);
     if (payload.paymentMethod === PaymentMethod.WALLET) {
       return await this.enrollmentService.enrollChildWithParentWallet(
         context.userPayload._id.toString(),

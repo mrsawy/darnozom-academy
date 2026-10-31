@@ -102,6 +102,7 @@ export function GroupFormationScreen({ groupId }: { groupId: string }) {
                   minStudents: group.minStudents,
                   maxStudents: group.maxStudents,
                   totalSessions: group.totalSessions ?? 12,
+                  estimatedEndDate: group.estimatedEndDate ? new Date(group.estimatedEndDate).toISOString().slice(0, 10) : null,
                   meetingLink: group.meetingLink ?? null,
                   whatsappGroupLink: group.whatsappGroupLink ?? null,
                 }}

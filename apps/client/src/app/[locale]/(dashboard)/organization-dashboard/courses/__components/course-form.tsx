@@ -116,6 +116,7 @@ function CourseForm({ mode, setOpen, course, courseId }: CourseFormProps) {
             description: course.description ?? '',
             shortDescription: course.shortDescription ?? '',
             isPaid: course.isPaid ?? false,
+            isStandalone: course.isStandalone ?? true,
             instructorId: course.instructorId ?? null,
             coInstructorsIds: course.coInstructorsIds ?? [],
             settings: {
@@ -144,6 +145,7 @@ function CourseForm({ mode, setOpen, course, courseId }: CourseFormProps) {
           }
         : {
             isPaid: false,
+            isStandalone: true,
             instructorId: null,
             coInstructorsIds: [],
             settings: {

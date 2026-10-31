@@ -2,15 +2,19 @@ import { BadRequestException, ConflictException, ForbiddenException, Injectable,
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { AcademicsErrors, AvailabilitySlot, GroupStatus, hasAnyRole, hasRole, ORG_WIDE_GROUP_READER_ROLES, Roles } from '@darnozom/shared-types';
+import { User } from 'src/user/entities/user.entity';
 import { AcademicsActor } from '../common/actor';
 import { Cohort } from '../cohort/entities/cohort.entity';
 import { checkTeacherFit } from '../domain/teacher-fit';
 import { isValidAvailability } from '../domain/time';
 import { Group } from '../group/entities/group.entity';
-import { PutAvailabilityDto } from './dto/teacher-availability.dto';
+import { PutAvailabilityDto, PutAvailabilityForTeacherDto } from './dto/teacher-availability.dto';
 import { TeacherAvailability } from './entities/teacher-availability.entity';
 
 const oid = (id: string | Types.ObjectId) => new Types.ObjectId(String(id));
+
+/** Staff roles allowed to write another teacher's availability (never INSTRUCTOR — they use putMine on their own record only). */
+const AVAILABILITY_ADMIN_ROLES: Roles[] = [Roles.SUPER_ADMIN, Roles.ADMIN, Roles.OWNER, Roles.MANAGER, Roles.COORDINATOR];
 
 export interface AvailabilityView {
   teacherId: string;
@@ -23,7 +27,8 @@ export class TeacherAvailabilityService {
   constructor(
     @InjectModel(TeacherAvailability.name) private readonly availabilityModel: Model<TeacherAvailability>,
     @InjectModel(Group.name) private readonly groupModel: Model<Group>,
-    @InjectModel(Cohort.name) private readonly cohortModel: Model<Cohort>
+    @InjectModel(Cohort.name) private readonly cohortModel: Model<Cohort>,
+    @InjectModel(User.name) private readonly userModel: Model<User>
   ) {}
 
   private toView(teacherId: string, doc: { timezone: string; slots: AvailabilitySlot[] } | null): AvailabilityView {
@@ -46,10 +51,32 @@ export class TeacherAvailabilityService {
 
   async putMine(actor: AcademicsActor, dto: PutAvailabilityDto): Promise<AvailabilityView> {
     if (!hasRole(actor, Roles.INSTRUCTOR)) throw new ForbiddenException(AcademicsErrors.NOT_AN_INSTRUCTOR);
-    if (!isValidAvailability(dto.slots)) throw new BadRequestException(AcademicsErrors.INVALID_AVAILABILITY);
+    return this.saveAvailability(actor._id, actor.organizationId, dto.timezone, dto.slots);
+  }
+
+  async putForTeacher(actor: AcademicsActor, dto: PutAvailabilityForTeacherDto): Promise<AvailabilityView> {
+    if (!hasAnyRole(actor, AVAILABILITY_ADMIN_ROLES)) throw new ForbiddenException();
+    const teacher = await this.userModel
+      .findOne({ _id: oid(dto.teacherId), organizationId: oid(actor.organizationId) })
+      .select('_id roleName')
+      .lean()
+      .exec();
+    if (!teacher || teacher.roleName !== Roles.INSTRUCTOR) {
+      throw new NotFoundException(AcademicsErrors.TEACHER_NOT_FOUND_IN_ORGANIZATION);
+    }
+    return this.saveAvailability(dto.teacherId, actor.organizationId, dto.timezone, dto.slots);
+  }
+
+  private async saveAvailability(
+    teacherId: string,
+    organizationId: string,
+    timezone: string,
+    slots: AvailabilitySlot[]
+  ): Promise<AvailabilityView> {
+    if (!isValidAvailability(slots)) throw new BadRequestException(AcademicsErrors.INVALID_AVAILABILITY);
 
     const groups = await this.groupModel
-      .find({ teacherId: oid(actor._id), status: { $ne: GroupStatus.CANCELLED }, deletedAt: null })
+      .find({ teacherId: oid(teacherId), status: { $ne: GroupStatus.CANCELLED }, deletedAt: null })
       .select('_id name schedule timezone cohortId status')
       .lean()
       .exec();
@@ -67,7 +94,7 @@ export class TeacherAvailabilityService {
             groupSchedule: group.schedule,
             groupTimezone: group.timezone,
             referenceDate: startDates.get(String(group.cohortId)) ?? new Date(),
-            availability: { timezone: dto.timezone, slots: dto.slots },
+            availability: { timezone, slots },
             otherGroups: [],
           }).ok
       );
@@ -78,12 +105,12 @@ export class TeacherAvailabilityService {
 
     const saved = await this.availabilityModel
       .findOneAndUpdate(
-        { teacherId: oid(actor._id) },
-        { $set: { organizationId: oid(actor.organizationId), timezone: dto.timezone, slots: dto.slots } },
+        { teacherId: oid(teacherId) },
+        { $set: { organizationId: oid(organizationId), timezone, slots } },
         { upsert: true, new: true, runValidators: true }
       )
       .lean()
       .exec();
-    return this.toView(actor._id, saved);
+    return this.toView(teacherId, saved);
   }
 }

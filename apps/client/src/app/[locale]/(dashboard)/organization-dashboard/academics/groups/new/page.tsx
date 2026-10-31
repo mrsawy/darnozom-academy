@@ -26,6 +26,7 @@ export default function NewGroupPage() {
           minStudents: 1,
           maxStudents: 10,
           totalSessions: 12,
+          estimatedEndDate: null,
           meetingLink: null,
           whatsappGroupLink: null,
         }}

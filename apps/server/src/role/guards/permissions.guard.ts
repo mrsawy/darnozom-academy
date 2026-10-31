@@ -1,6 +1,7 @@
 import { Injectable, CanActivate, ExecutionContext, ForbiddenException, InternalServerErrorException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { RpcException } from '@nestjs/microservices';
+import { Actions } from '@darnozom/shared-types';
 import { CaslAbilityFactory, AppAbility } from '../permissions.factory';
 import { PERMISSIONS_KEY } from '../decorators/permissions.decorator';
 import { UserDocument } from 'src/user/entities/user.entity';
@@ -10,6 +11,16 @@ interface RequiredPermission {
   action: string;
   subject: string;
   conditions?: unknown;
+}
+
+/** Concrete actions the CASL factory expands a MANAGE grant into (it never grants literal 'MANAGE'). */
+const MANAGE_EXPANDS_TO = [Actions.CREATE, Actions.READ, Actions.UPDATE, Actions.DELETE];
+
+function hasPermission(ability: AppAbility, action: string, subject: string): boolean {
+  if (action === Actions.MANAGE) {
+    return MANAGE_EXPANDS_TO.every((act) => ability.can(act, subject));
+  }
+  return ability.can(action, subject);
 }
 
 interface RpcContextWithUser {
@@ -63,7 +74,7 @@ export class PermissionsGuard implements CanActivate {
     const ability = this.caslAbilityFactory.createForUser(user);
 
     for (const permission of requiredPermissions) {
-      if (!ability.can(permission.action, permission.subject)) {
+      if (!hasPermission(ability, permission.action, permission.subject)) {
         throw new ForbiddenException(`Insufficient permissions. Required: ${permission.action} ${permission.subject}`);
       }
     }
@@ -83,7 +94,7 @@ export class PermissionsGuard implements CanActivate {
     const ability = this.caslAbilityFactory.createForUser(user);
 
     for (const permission of requiredPermissions) {
-      if (!ability.can(permission.action, permission.subject)) {
+      if (!hasPermission(ability, permission.action, permission.subject)) {
         throw new RpcException(`Insufficient permissions. Required: ${permission.action} ${permission.subject}`);
       }
     }

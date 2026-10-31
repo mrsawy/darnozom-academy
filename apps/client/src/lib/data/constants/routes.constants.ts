@@ -161,13 +161,15 @@ export const ROUTE_ORG_ACADEMICS_GROUP_NEW = (cohortId: string) =>
 export const ROUTE_ORG_MY_AVAILABILITY = '/organization-dashboard/my-availability';
 export const ROUTE_ORG_MY_GROUPS = '/organization-dashboard/my-groups';
 export const ROUTE_STUDENT_MY_GROUPS = '/student-dashboard/my-groups';
+export const ROUTE_STUDENT_MY_GROUP = (id: string) => `/student-dashboard/my-groups/${id}`;
 export const ROUTE_ORG_MY_SESSIONS = '/organization-dashboard/my-sessions';
 export const ROUTE_ORG_MY_TASKS = '/organization-dashboard/my-tasks';
 export const ROUTE_ORG_MY_EVALUATIONS = '/organization-dashboard/my-evaluations';
 export const ROUTE_ORG_SESSION = (id: string) => `/organization-dashboard/sessions/${id}`;
 export const ROUTE_STUDENT_MY_SESSIONS = '/student-dashboard/my-sessions';
 export const ROUTE_ORG_BILLING_RECEIPTS = '/organization-dashboard/billing/receipts';
-export const ROUTE_ORG_BILLING_FAMILIES = '/organization-dashboard/billing/families';
+export const ROUTE_ORG_BILLING_COURSE_PAYMENTS = '/organization-dashboard/billing/course-payments';
+export const ROUTE_ORG_BILLING_FAMILIES ='/organization-dashboard/billing/families';
 export const ROUTE_ORG_BILLING_FAMILY = (familyId: string) =>
   `${ROUTE_ORG_BILLING_FAMILIES}/${familyId}`;
 export const ROUTE_ORG_PAYROLL = '/organization-dashboard/payroll';
@@ -175,6 +177,7 @@ export const ROUTE_ORG_MY_PAY_STATEMENTS = '/organization-dashboard/my-pay-state
 export const ROUTE_ORG_MY_CERTIFICATES = '/organization-dashboard/my-certificates';
 export const ROUTE_STUDENT_MY_CERTIFICATES = '/student-dashboard/my-certificates';
 export const ROUTE_PARENT_MY_CERTIFICATES = '/parent-dashboard/my-certificates';
+export const ROUTE_PARENT_SESSIONS = '/parent-dashboard/sessions';
 export const ROUTE_PUBLIC_CERTIFICATE = (id: string) => `/certificates/${id}`;
 export const ROUTE_PUBLIC_VERIFY_CERTIFICATE = (token: string) => `/verify/${token}`;
 export const ROUTE_ORG_MESSAGE_TEMPLATES = '/organization-dashboard/message-templates';

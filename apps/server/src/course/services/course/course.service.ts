@@ -177,6 +177,8 @@ export class CourseService {
       Object.assign(query, buildApprovedFilter());
       query.publishStatus = PublishStatus.PUBLISHED;
       query.activeStatus = ActiveStatus.ACTIVE;
+      // Public catalog only lists standalone buyable courses (legacy docs without the flag count as standalone).
+      query.isStandalone = { $ne: false };
     }
 
     // Handle search functionality
@@ -970,6 +972,16 @@ export class CourseService {
     course.markModified('settings');
 
     await course.save();
+    return course;
+  }
+
+  /** Throws unless the course is a standalone buyable course (students may only self-enroll in those). */
+  async assertStandalone(courseId: string): Promise<Course> {
+    const course = await this.findOneById(courseId);
+    if (!course) throw new NotFoundException(CourseErrors.COURSE_NOT_FOUND);
+    if (course.isStandalone === false) {
+      throw new BadRequestException(CourseErrors.COURSE_NOT_STANDALONE);
+    }
     return course;
   }
 

@@ -41,3 +41,17 @@ export async function submitReport(id: string, data: ReportValues) {
 export async function editReport(id: string, data: ReportValues) {
   return createAuthorizedNatsRequest<ISession>('academics.sessions.editReport', { id, data });
 }
+export async function createSession(data: {
+  groupId: string;
+  startsAt: string;
+  endsAt: string;
+  teacherId?: string;
+}) {
+  return createAuthorizedNatsRequest<ISession>('academics.sessions.create', data);
+}
+export async function rescheduleSession(data: { id: string; startsAt: string; endsAt: string }) {
+  return createAuthorizedNatsRequest<ISession>('academics.sessions.reschedule', data);
+}
+export async function deleteSession(id: string) {
+  return createAuthorizedNatsRequest<{ message: string }>('academics.sessions.delete', { id });
+}

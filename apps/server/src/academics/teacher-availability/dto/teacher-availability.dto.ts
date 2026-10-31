@@ -30,3 +30,17 @@ export class TeacherIdPayload {
   @IsMongoId()
   teacherId!: string;
 }
+
+export class PutAvailabilityForTeacherDto {
+  @IsMongoId()
+  teacherId!: string;
+
+  @IsIanaTimeZone()
+  timezone!: string;
+
+  @IsArray()
+  @ArrayMaxSize(50)
+  @ValidateNested({ each: true })
+  @Type(() => AvailabilitySlotDto)
+  slots!: AvailabilitySlotDto[];
+}

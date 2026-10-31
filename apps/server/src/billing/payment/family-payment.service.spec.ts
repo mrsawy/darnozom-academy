@@ -363,6 +363,19 @@ describe('FamilyPaymentService.approve', () => {
       new NotFoundException(BillingErrors.PAYMENT_NOT_FOUND)
     );
   });
+
+  it('passes the payment\'s own subscriptionId through, so allocation never settles a different subscription\'s charge', async () => {
+    const subscriptionId = new Types.ObjectId();
+    const { service, ledger } = makeService(payment({ subscriptionId }));
+    await service.approve(actor(ACCOUNTANT, Roles.ACCOUNTANT), String(PAYMENT));
+    expect(ledger.postPaymentAndAllocate).toHaveBeenCalledWith(expect.objectContaining({ subscriptionId: String(subscriptionId) }));
+  });
+
+  it('passes null when the payment has no subscription, so family-wide FIFO is unchanged', async () => {
+    const { service, ledger } = makeService();
+    await service.approve(actor(ACCOUNTANT, Roles.ACCOUNTANT), String(PAYMENT));
+    expect(ledger.postPaymentAndAllocate).toHaveBeenCalledWith(expect.objectContaining({ subscriptionId: null }));
+  });
 });
 
 describe('FamilyPaymentService.reject', () => {

@@ -31,6 +31,7 @@ describe('update DTOs', () => {
   it.each<[string, DtoClass, string]>([
     ['group', UpdateGroupDto, 'meetingLink'],
     ['group', UpdateGroupDto, 'whatsappGroupLink'],
+    ['group', UpdateGroupDto, 'estimatedEndDate'],
     ['program', UpdateProgramDto, 'description'],
   ])('%s.%s accepts null to clear it', (_label, dto, field) => {
     expect(fieldErrors(dto, field, null)).toHaveLength(0);

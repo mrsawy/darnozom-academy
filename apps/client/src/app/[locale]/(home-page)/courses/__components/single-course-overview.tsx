@@ -7,6 +7,7 @@ import { PaymentMethodSelectionDialog } from '@/components/organs/payment-method
 import { ConfirmFreeEnrollmentDialog } from '@/components/organs/confirm-free-enrollment-dialog';
 import { ChildSelectionDialog } from '@/components/organs/child-selection-dialog/child-selection-dialog';
 import { RenewalDialog } from '@/components/organs/renewal-dialog';
+import { CourseTransferPaymentDialog } from '@/components/organs/course-transfer-payment-dialog/course-transfer-payment-dialog';
 import { PaymentMethod } from '@/lib/types/payment/payment.interface';
 import { useCourseEnrollment } from '@/lib/hooks/enrollment/use-course-enrollment.hook';
 
@@ -25,6 +26,11 @@ function SingleCourseOverView({ course, user = null }: SingleCourseOverViewProps
     currentPriceCurrency,
     isEnrolled,
     isEnrollmentExpired,
+    isPendingPayment,
+    isPaymentRejected,
+    paymentRejectReason,
+    canPayByTransfer,
+    handlePayByTransfer,
     freeEnrollMutation,
     paidEnrollMutation,
     renewalMutation,
@@ -49,6 +55,19 @@ function SingleCourseOverView({ course, user = null }: SingleCourseOverViewProps
         isEnrolled={isEnrolled}
         isEnrollmentExpired={!!isEnrollmentExpired}
         isProcessing={isEnrollmentProcessing}
+        isPendingPayment={isPendingPayment}
+        isPaymentRejected={isPaymentRejected}
+        canPayByTransfer={canPayByTransfer}
+        onPayByTransfer={handlePayByTransfer}
+      />
+
+      <CourseTransferPaymentDialog
+        open={dialogType === 'transfer-payment'}
+        onClose={handleCloseDialog}
+        courseId={course._id}
+        courseName={course.name}
+        billingCycle={selectedPricing}
+        rejectReason={isPaymentRejected ? paymentRejectReason : null}
       />
 
       <ChildSelectionDialog

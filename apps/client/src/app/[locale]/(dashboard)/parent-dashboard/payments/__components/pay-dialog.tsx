@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { Currency, PAYMENT_METHOD_MANUAL_TRANSFER, PAYMENT_METHOD_RECEIPT_UPLOAD } from '@darnozom/shared-types';
-import { parseMoney } from '@/lib/utils/billing/format-money';
+import { formatMoney, parseMoney } from '@/lib/utils/billing/format-money';
 import type { IPaymentMethodOption } from '@/lib/types/billing/billing';
 import type { IPaymentMethodConfig } from '@/lib/types/billing/payment-method-config';
 import { ManualTransferPayPanel } from '@/components/organs/billing/manual-transfer-pay-panel';
@@ -20,6 +20,8 @@ export interface PayDialogProps {
   isSubmitting: boolean;
   onClose?: () => void;
   onManualTransferSubmitted?: () => void;
+  /** When set, the amount is fixed to a specific outstanding charge and cannot be edited. */
+  fixedAmount?: { amountMinor: number; currency: Currency; subscriptionId?: string };
 }
 
 type SelectableOption = { kind: 'METHOD'; key: string } | { kind: 'CONFIG'; config: IPaymentMethodConfig };
@@ -31,8 +33,10 @@ export function PayDialog({
   isSubmitting,
   onClose,
   onManualTransferSubmitted,
+  fixedAmount,
 }: PayDialogProps) {
   const t = useTranslations('Billing');
+  const locale = useLocale();
   const enabledConfigs = paymentMethodConfigs.filter((c) => c.enabled);
   const hasManualTransfer = methods.some((m) => m.key === PAYMENT_METHOD_MANUAL_TRANSFER);
   const options: SelectableOption[] = [
@@ -43,7 +47,7 @@ export function PayDialog({
 
   const [selectedKey, setSelectedKey] = useState<string>(options[0] ? optionKey(options[0]) : '');
   const [amount, setAmount] = useState<string>('');
-  const [currency, setCurrency] = useState<Currency>(Currency.EGP);
+  const [currency, setCurrency] = useState<Currency>(fixedAmount?.currency ?? Currency.EGP);
   const [receiptFile, setReceiptFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -68,7 +72,7 @@ export function PayDialog({
   const isReceiptUpload = activeOption.kind === 'METHOD' && activeOption.key === PAYMENT_METHOD_RECEIPT_UPLOAD;
   const activeConfig = activeOption.kind === 'CONFIG' ? activeOption.config : null;
 
-  const parsedAmountMinor = parseMoney(amount);
+  const parsedAmountMinor = fixedAmount ? fixedAmount.amountMinor : parseMoney(amount);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -129,43 +133,51 @@ export function PayDialog({
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-1">
-          <label htmlFor="payment-amount" className="text-sm font-medium">
-            {t('amount')}
-          </label>
-          <input
-            id="payment-amount"
-            aria-label="amount"
-            type="text"
-            className="bg-background w-full rounded-md border px-3 py-2 text-sm"
-            value={amount}
-            onChange={(e) => {
-              setAmount(e.target.value);
-              if (error) setError(null);
-            }}
-          />
-          {error ? <p className="text-destructive text-xs">{error}</p> : null}
+      {fixedAmount ? (
+        <div className="bg-muted/30 rounded-md border p-3 text-sm">
+          <span className="text-muted-foreground">{t('amount')}: </span>
+          <span className="font-mono font-semibold">{formatMoney(fixedAmount.amountMinor, fixedAmount.currency, locale)}</span>
+          <p className="text-muted-foreground mt-1 text-xs">{t('amountFixed')}</p>
         </div>
+      ) : (
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-1">
+            <label htmlFor="payment-amount" className="text-sm font-medium">
+              {t('amount')}
+            </label>
+            <input
+              id="payment-amount"
+              aria-label="amount"
+              type="text"
+              className="bg-background w-full rounded-md border px-3 py-2 text-sm"
+              value={amount}
+              onChange={(e) => {
+                setAmount(e.target.value);
+                if (error) setError(null);
+              }}
+            />
+            {error ? <p className="text-destructive text-xs">{error}</p> : null}
+          </div>
 
-        <div className="space-y-1">
-          <label htmlFor="payment-currency" className="text-sm font-medium">
-            {t('currency')}
-          </label>
-          <select
-            id="payment-currency"
-            aria-label="currency"
-            className="bg-background w-full rounded-md border px-3 py-2 text-sm"
-            value={currency}
-            onChange={(e) => setCurrency(e.target.value as Currency)}>
-            {[...new Set(Object.values(Currency))].map((cur) => (
-              <option key={cur} value={cur}>
-                {cur}
-              </option>
-            ))}
-          </select>
+          <div className="space-y-1">
+            <label htmlFor="payment-currency" className="text-sm font-medium">
+              {t('currency')}
+            </label>
+            <select
+              id="payment-currency"
+              aria-label="currency"
+              className="bg-background w-full rounded-md border px-3 py-2 text-sm"
+              value={currency}
+              onChange={(e) => setCurrency(e.target.value as Currency)}>
+              {[...new Set(Object.values(Currency))].map((cur) => (
+                <option key={cur} value={cur}>
+                  {cur}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
-      </div>
+      )}
 
       {activeConfig ? (
         parsedAmountMinor !== null ? (
@@ -173,6 +185,7 @@ export function PayDialog({
             config={activeConfig}
             amountMinor={parsedAmountMinor}
             currency={currency}
+            subscriptionId={fixedAmount?.subscriptionId}
             onSubmitted={() => onManualTransferSubmitted?.()}
           />
         ) : (

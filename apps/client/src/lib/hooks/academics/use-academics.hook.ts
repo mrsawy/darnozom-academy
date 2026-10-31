@@ -47,6 +47,7 @@ export const academicsKeys = {
   studentCandidates: (id: string, q: string) => [ROOT, 'student-candidates', id, q] as const,
   teacherCandidates: (id: string) => [ROOT, 'teacher-candidates', id] as const,
   myAvailability: [ROOT, 'my-availability'] as const,
+  teacherAvailability: (teacherId: string) => [ROOT, 'teacher-availability', teacherId] as const,
   sessions: (query: SessionQuery) => [ROOT, 'sessions', query] as const,
   session: (id: string) => [ROOT, 'session', id] as const,
   followUps: (groupId: string) => [ROOT, 'follow-ups', groupId] as const,
@@ -118,6 +119,19 @@ export const useMyAvailability = () =>
     queryKey: academicsKeys.myAvailability,
     queryFn: async () => unwrap(await availabilityApi.getMyAvailability()),
   });
+
+export const useTeacherAvailability = (teacherId?: string) =>
+  useQuery({
+    queryKey: academicsKeys.teacherAvailability(teacherId ?? ''),
+    queryFn: async () => unwrap(await availabilityApi.getTeacherAvailability(teacherId as string)),
+    enabled: !!teacherId,
+  });
+
+export const useSaveTeacherAvailability = () =>
+  useAcademicsMutation(
+    async (v: { teacherId: string; timezone: string; slots: AvailabilitySlot[] }) =>
+      unwrap(await availabilityApi.saveTeacherAvailability(v))
+  );
 
 /** Shared mutation behaviour: success toast, refresh every academics query, translated error toast. */
 export function useAcademicsMutation<TVars, TResult>(fn: (vars: TVars) => Promise<TResult>) {
@@ -244,6 +258,16 @@ export const useFollowUps = (groupId: string, enabled = true) =>
   });
 export const useStartGroup = () =>
   useAcademicsMutation(async (id: string) => unwrap(await sessionsApi.startGroup(id)));
+export const useCreateSession = () =>
+  useAcademicsMutation(async (v: { groupId: string; startsAt: string; endsAt: string; teacherId?: string }) =>
+    unwrap(await sessionsApi.createSession(v))
+  );
+export const useRescheduleSession = () =>
+  useAcademicsMutation(async (v: { id: string; startsAt: string; endsAt: string }) =>
+    unwrap(await sessionsApi.rescheduleSession(v))
+  );
+export const useDeleteSession = () =>
+  useAcademicsMutation(async (id: string) => unwrap(await sessionsApi.deleteSession(id)));
 export const useCancelSession = () =>
   useAcademicsMutation(async (v: { id: string; reason: string }) =>
     unwrap(await sessionsApi.cancelSession(v.id, v.reason))

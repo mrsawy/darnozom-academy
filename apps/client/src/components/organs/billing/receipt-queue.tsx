@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { formatMoney } from '@/lib/utils/billing/format-money';
+import { getFileUrl } from '@/lib/actions/file/getPreSignedUrl';
 import type { IFamilyPayment } from '@/lib/types/billing/billing';
 
 export interface ReceiptQueueProps {
@@ -26,6 +27,22 @@ function ReceiptRow({
   const locale = useLocale();
   const [rejectReason, setRejectReason] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [receiptUrl, setReceiptUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!payment.receiptFileKey) {
+      setReceiptUrl(null);
+      return;
+    }
+    let cancelled = false;
+    void (async () => {
+      const url = (await getFileUrl({ fileKey: payment.receiptFileKey! })) as string | undefined;
+      if (!cancelled && typeof url === 'string') setReceiptUrl(url);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [payment.receiptFileKey]);
 
   const handleReject = () => {
     const trimmed = rejectReason.trim();
@@ -51,9 +68,9 @@ function ReceiptRow({
         <p className="text-muted-foreground text-xs">
           {new Date(payment.createdAt).toLocaleString(locale)}
         </p>
-        {payment.receiptFileKey ? (
+        {payment.receiptFileKey && receiptUrl ? (
           <a
-            href={`/api/files/${payment.receiptFileKey}`}
+            href={receiptUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="text-primary inline-flex items-center text-xs font-medium underline underline-offset-2 hover:opacity-80">

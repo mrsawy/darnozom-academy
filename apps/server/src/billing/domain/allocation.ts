@@ -8,6 +8,8 @@ export interface OpenCharge {
   createdAt: Date;
   amountMinor: number;
   alreadyAllocatedMinor: number;
+  subscriptionId?: string | null;
+  studentId?: string | null;
 }
 
 export interface PlannedAllocation {

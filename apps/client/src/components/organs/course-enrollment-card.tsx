@@ -25,6 +25,10 @@ interface CourseEnrollmentCardProps {
   isEnrolled?: boolean;
   isEnrollmentExpired?: boolean;
   isProcessing?: boolean;
+  isPendingPayment?: boolean;
+  isPaymentRejected?: boolean;
+  canPayByTransfer?: boolean;
+  onPayByTransfer?: () => void;
 }
 
 export const CourseEnrollmentCard = React.memo<CourseEnrollmentCardProps>(
@@ -39,6 +43,10 @@ export const CourseEnrollmentCard = React.memo<CourseEnrollmentCardProps>(
     isEnrolled = false,
     isEnrollmentExpired = false,
     isProcessing = false,
+    isPendingPayment = false,
+    isPaymentRejected = false,
+    canPayByTransfer = false,
+    onPayByTransfer,
   }: CourseEnrollmentCardProps) => {
     const t = useTranslations('Courses.singleCourse.enrollment');
 
@@ -100,6 +108,10 @@ export const CourseEnrollmentCard = React.memo<CourseEnrollmentCardProps>(
                 isEnrolled={isEnrolled}
                 isEnrollmentExpired={isEnrollmentExpired}
                 isProcessing={isProcessing}
+                isPendingPayment={isPendingPayment}
+                isPaymentRejected={isPaymentRejected}
+                canPayByTransfer={canPayByTransfer}
+                onPayByTransfer={onPayByTransfer}
               />
               {/* {course.isPaid && !isEnrolled && (
                 <p className="text-muted-foreground mt-2 text-center text-xs font-semibold tracking-widest uppercase">

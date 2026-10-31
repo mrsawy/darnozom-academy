@@ -140,3 +140,29 @@ export class ReportPayload {
   @Type(() => ReportDto)
   data!: ReportDto;
 }
+
+export class CreateSessionPayload {
+  @IsMongoId()
+  groupId!: string;
+
+  @IsDateString()
+  startsAt!: string;
+
+  @IsDateString()
+  endsAt!: string;
+
+  @IsOptional()
+  @IsMongoId()
+  teacherId?: string;
+}
+
+export class RescheduleSessionPayload {
+  @IsMongoId()
+  id!: string;
+
+  @IsDateString()
+  startsAt!: string;
+
+  @IsDateString()
+  endsAt!: string;
+}

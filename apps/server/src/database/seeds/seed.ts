@@ -370,12 +370,19 @@ async function bootstrap() {
       await aiSubscriptionSeeder.seedForUsers(suspendedIds);
     }
 
-    // Parent accounts
+    // Parent accounts, linked to a subset of students
     if ((organizationConfig.parentAccountsCount ?? 0) > 0) {
-      await userSeeder.seedMultiple(organizationConfig.parentAccountsCount ?? 0, {
+      const parents = await userSeeder.seedMultiple(organizationConfig.parentAccountsCount ?? 0, {
         organizationId: org._id,
         roleName: Roles.PARENT,
       });
+      const linkableStudents = faker.helpers.arrayElements(students, Math.min(parents.length, students.length));
+      for (const [index, parent] of parents.entries()) {
+        const student = linkableStudents[index];
+        if (!student) break;
+        await userModel.updateOne({ _id: student._id }, { $set: { parentUserId: parent._id } });
+        await userModel.updateOne({ _id: parent._id }, { $set: { childUsersIds: [student._id] } });
+      }
     }
 
     // ── 2d. Categories ───────────────────────────────────────────

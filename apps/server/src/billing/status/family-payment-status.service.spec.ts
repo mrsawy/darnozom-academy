@@ -177,6 +177,60 @@ describe('FamilyPaymentStatusService.forGroup', () => {
     expect(result.get(String(STUDENT_1))).toBe(FamilyPaymentStatus.UNPAID);
     expect(result.get(String(STUDENT_2))).toBe(FamilyPaymentStatus.UNPAID);
   });
+
+  it('queries charges scoped to the active subscription only, so an ended subscription\'s unpaid charge never reaches the ledger query', async () => {
+    const activeSubId = new Types.ObjectId();
+    const subs = [
+      {
+        _id: activeSubId,
+        type: SubscriptionType.MONTHLY,
+        amountMinor: 10_000,
+        status: BillingSubscriptionStatus.ACTIVE,
+        items: [{ studentId: STUDENT_1, groupId: GROUP }],
+      },
+    ];
+    const { service, entryModel } = makeService(subs, []);
+    await service.forGroup(GROUP, [String(STUDENT_1)], COHORT_START, NOW);
+
+    expect(entryModel.find).toHaveBeenCalledWith(
+      expect.objectContaining({ subscriptionId: { $in: [activeSubId] } })
+    );
+  });
+
+  it('is PAID even though an ended subscription left behind an unpaid charge, since that charge is no longer this group\'s problem', async () => {
+    // The mock's entryModel.find ignores its filter and always returns what's given here, so this
+    // asserts the production behaviour: an ended subscription's charge must be filtered out by the
+    // real query (proven above), and the status computed from only what a real query would return
+    // -- the active subscription's own, fully-covered charge.
+    const activeSubId = new Types.ObjectId();
+    const chargeId = new Types.ObjectId();
+    const subs = [
+      {
+        _id: activeSubId,
+        type: SubscriptionType.MONTHLY,
+        amountMinor: 10_000,
+        status: BillingSubscriptionStatus.ACTIVE,
+        items: [{ studentId: STUDENT_1, groupId: GROUP }],
+      },
+    ];
+    // Only the active subscription's charge, as the scoped query would actually return.
+    const charges = [
+      {
+        _id: chargeId,
+        studentId: STUDENT_1,
+        subscriptionId: activeSubId,
+        groupId: GROUP,
+        type: LedgerEntryType.CHARGE,
+        amountMinor: 10_000,
+        dueAt: DUE_PAST,
+        currency: Currency.EGP,
+      },
+    ];
+    const { service } = makeService(subs, charges, [{ _id: chargeId, total: 10_000 }]);
+    const result = await service.forGroup(GROUP, [String(STUDENT_1)], COHORT_START, NOW);
+
+    expect(result.get(String(STUDENT_1))).toBe(FamilyPaymentStatus.PAID);
+  });
 });
 
 describe('FamilyPaymentStatusService.hasPendingReview', () => {

@@ -222,6 +222,7 @@ export class FamilyPaymentService {
       amountMinor: payment.amountMinor,
       currency: payment.currency,
       createdBy: actor._id,
+      subscriptionId: payment.subscriptionId ? String(payment.subscriptionId) : null,
     });
 
     await this.notifications.create({

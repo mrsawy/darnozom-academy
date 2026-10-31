@@ -5,6 +5,14 @@ export enum EnrollmentErrors {
   ENROLLMENT_NOT_FOUND = 'enrollmentNotFound',
   ENROLLMENT_EXPIRED = 'enrollmentExpired',
   MUST_BE_STUDENT_TO_ENROLL = 'mustBeStudentToEnroll',
+  ENROLLMENT_PENDING_PAYMENT = 'enrollmentPendingPayment',
+  ALREADY_ENROLLED = 'alreadyEnrolled',
+  COURSE_PAYMENT_NOT_FOUND = 'coursePaymentNotFound',
+  COURSE_PAYMENT_NOT_REVIEWABLE = 'coursePaymentNotReviewable',
+  COURSE_PAYMENT_METHOD_UNAVAILABLE = 'coursePaymentMethodUnavailable',
+  COURSE_PAYMENT_RECEIPT_REQUIRED = 'coursePaymentReceiptRequired',
+  COURSE_PAYMENT_REJECT_REASON_REQUIRED = 'coursePaymentRejectReasonRequired',
+  COURSE_IS_FREE = 'courseIsFree',
 }
 
 /**

@@ -56,6 +56,26 @@ describe('ManualTransferPayPanel', () => {
     expect(screen.getByRole('link')).toHaveAttribute('href', 'https://example.com/pay');
   });
 
+  it('hides a field with no value, such as an unset QR code', () => {
+    const config = {
+      ...CONFIG,
+      fields: [
+        { key: 'transferNumber', label: 'Number', type: 'TEXT' as const, value: '0100000000', order: 0 },
+        { key: 'qrCodeImage', label: 'QR Code', type: 'IMAGE' as const, value: '', order: 1 },
+      ],
+    };
+    render(<ManualTransferPayPanel config={config} amountMinor={10_000} currency={Currency.EGP} onSubmitted={vi.fn()} />);
+    expect(screen.queryByText('field.qrCodeImage:')).not.toBeInTheDocument();
+    expect(screen.getByText('0100000000')).toBeInTheDocument();
+  });
+
+  it('translates a built-in field label instead of showing the admin-seeded English default', () => {
+    render(
+      <ManualTransferPayPanel config={CONFIG} amountMinor={10_000} currency={Currency.EGP} onSubmitted={vi.fn()} />
+    );
+    expect(screen.getByText('field.transferNumber:')).toBeInTheDocument();
+  });
+
   it('initiates then attaches the uploaded image on submit', async () => {
     const onSubmitted = vi.fn();
     render(

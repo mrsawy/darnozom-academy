@@ -70,6 +70,7 @@ export interface IGroup {
   minStudents: number;
   maxStudents: number;
   totalSessions?: number | null;
+  estimatedEndDate?: string | null;
   meetingLink?: string | null;
   whatsappGroupLink?: string | null;
   contentSent: { done: boolean };
@@ -124,6 +125,7 @@ export interface GroupFormValues {
   minStudents: number;
   maxStudents: number;
   totalSessions: number;
+  estimatedEndDate?: string | null;
   meetingLink: string | null;
   whatsappGroupLink: string | null;
 }

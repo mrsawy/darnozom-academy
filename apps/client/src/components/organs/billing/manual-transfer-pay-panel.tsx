@@ -16,6 +16,8 @@ function safeHref(value: string): string | null {
   }
 }
 
+const BUILT_IN_FIELD_KEYS = new Set(['transferNumber', 'accountName', 'qrCodeImage', 'instructions']);
+
 export interface ManualTransferPayPanelProps {
   config: IPaymentMethodConfig;
   amountMinor: number;
@@ -23,6 +25,8 @@ export interface ManualTransferPayPanelProps {
   onSubmitted: () => void;
   /** When retrying a rejected payment, reuse its id instead of initiating a new one. */
   retryPaymentId?: string;
+  /** The subscription this payment settles, so approval allocates to its own charges only. */
+  subscriptionId?: string;
 }
 
 export function ManualTransferPayPanel({
@@ -31,6 +35,7 @@ export function ManualTransferPayPanel({
   currency,
   onSubmitted,
   retryPaymentId,
+  subscriptionId,
 }: ManualTransferPayPanelProps) {
   const t = useTranslations('Billing');
   const initiate = useInitiatePayment();
@@ -48,7 +53,7 @@ export function ManualTransferPayPanel({
           method: PAYMENT_METHOD_MANUAL_TRANSFER,
           amountMinor,
           currency,
-          meta: { paymentMethodConfigId: config._id },
+          meta: { paymentMethodConfigId: config._id, ...(subscriptionId ? { subscriptionId } : {}) },
         });
         paymentId = (result as { paymentId: string }).paymentId;
       }
@@ -63,21 +68,26 @@ export function ManualTransferPayPanel({
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        {config.fields.map((field) => (
-          <div key={field.key} className="text-sm">
-            <span className="text-muted-foreground">{field.label}: </span>
-            {field.type === 'IMAGE' && field.value && safeHref(field.value) ? (
-              // eslint-disable-next-line @next/next/no-img-element -- arbitrary admin-provided image, not optimized asset
-              <img src={safeHref(field.value)!} alt={field.label} className="mt-1 max-w-[160px] rounded-md border" />
-            ) : field.type === 'LINK' && field.value && safeHref(field.value) ? (
-              <a href={safeHref(field.value)!} target="_blank" rel="noopener noreferrer" className="text-primary underline">
-                {field.value}
-              </a>
-            ) : (
-              <span className="font-medium">{field.value}</span>
-            )}
-          </div>
-        ))}
+        {config.fields
+          .filter((field) => field.value?.trim())
+          .map((field) => {
+            const label = BUILT_IN_FIELD_KEYS.has(field.key) ? t(`field.${field.key}`) : field.label;
+            return (
+              <div key={field.key} className="text-sm">
+                <span className="text-muted-foreground">{label}: </span>
+                {field.type === 'IMAGE' && safeHref(field.value) ? (
+                  // eslint-disable-next-line @next/next/no-img-element -- arbitrary admin-provided image, not optimized asset
+                  <img src={safeHref(field.value)!} alt={label} className="mt-1 max-w-[160px] rounded-md border" />
+                ) : field.type === 'LINK' && safeHref(field.value) ? (
+                  <a href={safeHref(field.value)!} target="_blank" rel="noopener noreferrer" className="text-primary underline">
+                    {field.value}
+                  </a>
+                ) : (
+                  <span className="font-medium">{field.value}</span>
+                )}
+              </div>
+            );
+          })}
       </div>
 
       <div className="space-y-1">

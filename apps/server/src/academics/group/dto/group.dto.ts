@@ -4,6 +4,7 @@ import {
   ArrayMinSize,
   IsArray,
   IsBoolean,
+  IsDateString,
   IsEnum,
   IsInt,
   IsMongoId,
@@ -74,6 +75,10 @@ export class CreateGroupDto {
   @Max(500)
   totalSessions!: number;
 
+  @IsOptional()
+  @IsDateString()
+  estimatedEndDate?: string | null;
+
   /** null clears the link */
   @IsOptional()
   @IsUrl(WEB_LINK)
@@ -122,6 +127,10 @@ export class UpdateGroupDto {
   @Min(1)
   @Max(500)
   totalSessions?: number;
+
+  @IsOptional()
+  @IsDateString()
+  estimatedEndDate?: string | null;
 
   /** null clears the link */
   @IsOptional()

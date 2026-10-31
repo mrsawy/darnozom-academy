@@ -9,6 +9,7 @@ import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/services/user.service';
 import { InstructorService } from 'src/user/services/instructor.service';
 import { AccessType } from '../enum/accessType.enum';
+import { EnrollmentStatus } from '../enum/enrollmentStatus.enum';
 import { WalletService } from 'src/wallet/wallet.service';
 import { BillingCycle } from 'src/utils/enums/billingCycle.enum';
 import {
@@ -371,11 +372,13 @@ export class EnrollmentService {
       session ? { session } : {}
     );
 
-    await this.courseModel.updateOne(
-      { _id: new mongoose.Types.ObjectId(courseId) },
-      { $inc: { 'stats.totalEnrollments': 1 } },
-      session ? { session } : {}
-    );
+    await this.incrementEnrollmentStats(course, session);
+    return createdEnrollment;
+  }
+
+  /** Bumps course/org/instructor enrollment counters. Called when an enrollment becomes ACTIVE. */
+  async incrementEnrollmentStats(course: Course, session?: mongoose.ClientSession) {
+    await this.courseModel.updateOne({ _id: course._id }, { $inc: { 'stats.totalEnrollments': 1 } }, session ? { session } : {});
 
     await this.organizationModel.updateOne({ _id: course.organizationId }, { $inc: { 'stats.totalEnrollments': 1 } }, session ? { session } : {});
 
@@ -387,12 +390,12 @@ export class EnrollmentService {
         void this.instructorService.update({ _id: new mongoose.Types.ObjectId(coInstructorId) }, { $inc: { totalStudents: 1 } });
       }
     }
-    return createdEnrollment;
   }
 
   async getUserEnrollments(userId: string, options: PaginateOptionsWithSearch) {
     const result = await this.enrollmentModel.paginate(
-      { userId: new mongoose.Types.ObjectId(userId) },
+      // Pending manual-transfer enrollments have no access yet; the course page shows their "under review" state.
+      { userId: new mongoose.Types.ObjectId(userId), status: { $ne: EnrollmentStatus.PENDING_PAYMENT } },
       {
         ...options,
         populate: {
@@ -439,6 +442,8 @@ export class EnrollmentService {
 
     const query: Record<string, unknown> = {
       organizationId: new mongoose.Types.ObjectId(organizationId),
+      // Unpaid manual-transfer enrollments live in the course-payments queue until approved.
+      status: { $ne: EnrollmentStatus.PENDING_PAYMENT },
     };
 
     if (courseIds && courseIds.length > 0) {
@@ -478,6 +483,7 @@ export class EnrollmentService {
     const query: Record<string, unknown> = {
       courseId: new mongoose.Types.ObjectId(courseId),
       organizationId: new mongoose.Types.ObjectId(organizationId),
+      status: { $ne: EnrollmentStatus.PENDING_PAYMENT },
     };
 
     if (search) {
@@ -626,6 +632,9 @@ export class EnrollmentService {
       userId: new mongoose.Types.ObjectId(userId),
     });
     if (!enrollment) throw new NotFoundException('Enrollment not found');
+    if (enrollment.status === EnrollmentStatus.PENDING_PAYMENT) {
+      throw new ForbiddenException(EnrollmentErrors.ENROLLMENT_PENDING_PAYMENT);
+    }
     await this.checkAndExpireEnrollment(enrollment);
     if (this.isEnrollmentExpired(enrollment)) {
       throw new ForbiddenException(EnrollmentErrors.ENROLLMENT_EXPIRED);
@@ -1010,6 +1019,9 @@ export class EnrollmentService {
     });
 
     if (!enrollment) return; // missing enrollment — let the handler throw NotFoundException
+    if (enrollment.status === EnrollmentStatus.PENDING_PAYMENT) {
+      throw new ForbiddenException(EnrollmentErrors.ENROLLMENT_PENDING_PAYMENT);
+    }
     if (enrollment.accessType !== AccessType.SUBSCRIPTION) return; // FREE / PAID_ONCE never expires
 
     // Persist expiry status if needed (awaited — not fire-and-forget)

@@ -8,6 +8,9 @@ const proto = SessionControllerMessage.prototype as unknown as Record<string, (.
 
 const expected: [string, string, Actions, Subjects][] = [
   ['start', 'academics.groups.start', Actions.UPDATE, Subjects.GROUP],
+  ['create', 'academics.sessions.create', Actions.UPDATE, Subjects.GROUP],
+  ['reschedule', 'academics.sessions.reschedule', Actions.UPDATE, Subjects.GROUP],
+  ['delete', 'academics.sessions.delete', Actions.UPDATE, Subjects.GROUP],
   ['findAll', 'academics.sessions.findAll', Actions.READ, Subjects.SESSION],
   ['findOne', 'academics.sessions.findOne', Actions.READ, Subjects.SESSION],
   ['cancel', 'academics.sessions.cancel', Actions.UPDATE, Subjects.GROUP],

@@ -5,6 +5,7 @@ export enum CourseErrors {
   COURSE_NOT_FOUND = 'courseNotFound',
   ORGANIZATION_CONTEXT_REQUIRED = 'organizationContextRequired',
   COURSE_PRICE_NOT_AVAILABLE = 'coursePriceNotAvailable',
+  COURSE_NOT_STANDALONE = 'courseNotStandalone',
 }
 
 export enum CourseSuccessMessages {

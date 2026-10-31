@@ -161,6 +161,14 @@ export class Course extends Document<Types.ObjectId> {
   @Prop({ type: Boolean, default: false })
   isPaid!: boolean;
 
+  /**
+   * Standalone buyable course: listed in the public catalog and enrollable directly by students.
+   * `false` = only reachable through organization flows (program/group/staff enrollment).
+   * Defaults to true; legacy documents without the field are treated as standalone (`$ne: false`).
+   */
+  @Prop({ type: Boolean, default: true, index: true })
+  isStandalone!: boolean;
+
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', index: true })
   instructorId!: Types.ObjectId;
 

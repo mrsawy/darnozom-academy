@@ -67,6 +67,7 @@ import {
   ROUTE_ORG_MY_TASKS,
   ROUTE_ORG_MY_EVALUATIONS,
   ROUTE_ORG_BILLING_RECEIPTS,
+  ROUTE_ORG_BILLING_COURSE_PAYMENTS,
   ROUTE_ORG_PAYROLL,
   ROUTE_ORG_MY_PAY_STATEMENTS,
   ROUTE_ORG_MY_CERTIFICATES,
@@ -116,6 +117,12 @@ export const data = {
           titleKey: 'navMain.billingReceipts',
           url: ROUTE_ORG_BILLING_RECEIPTS,
           key: 'billing-receipts',
+          icon: IconCreditCard,
+        },
+        {
+          titleKey: 'navMain.billingCoursePayments',
+          url: ROUTE_ORG_BILLING_COURSE_PAYMENTS,
+          key: 'billing-course-payments',
           icon: IconCreditCard,
         },
         {

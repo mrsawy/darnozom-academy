@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document, Types } from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
 import { AccessType } from '../enum/accessType.enum';
+import { EnrollmentStatus } from '../enum/enrollmentStatus.enum';
 import { SubscriptionDto } from 'src/utils/dto/subscription.dto';
 import { SubscriptionTypeDef } from 'src/utils/types/Subscription.interface';
 import {
@@ -175,6 +176,10 @@ export class Enrollment extends Document {
 
   @Prop({ type: Date, required: true, default: Date.now })
   enrolledAt: Date;
+
+  /** PENDING_PAYMENT = manual-transfer payment awaiting organization review (no access). Legacy rows lack it (= ACTIVE). */
+  @Prop({ type: String, enum: Object.values(EnrollmentStatus), default: EnrollmentStatus.ACTIVE, index: true })
+  status: EnrollmentStatus;
 
   // @Prop()
   // expiresAt: Date;

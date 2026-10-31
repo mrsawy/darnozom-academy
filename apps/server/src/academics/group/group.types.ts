@@ -29,6 +29,7 @@ export interface GroupLean {
   minStudents: number;
   maxStudents: number;
   totalSessions?: number | null;
+  estimatedEndDate?: Date | null;
   meetingLink?: string | null;
   whatsappGroupLink?: string | null;
   contentSent: { done: boolean; by?: Types.ObjectId; at?: Date };

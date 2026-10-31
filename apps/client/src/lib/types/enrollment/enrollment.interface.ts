@@ -74,6 +74,9 @@ export interface IEnrollment {
 
   accessType: AccessType;
 
+  /** PENDING_PAYMENT = manual-transfer payment awaiting organization review. Missing = ACTIVE. */
+  status?: 'ACTIVE' | 'PENDING_PAYMENT';
+
   subscription?: SubscriptionTypeDef;
 
   progressPercentage: number;

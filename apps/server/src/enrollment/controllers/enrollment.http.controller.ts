@@ -32,6 +32,7 @@ export class EnrollmentHttpController {
   @UseGuards(AuthGuard)
   @Post('/')
   async createEnrollmentFree(@Request() req: IUserRequest, @Body() body: CreateEnrollmentHttpDto) {
+    await this.courseService.assertStandalone(body.courseId);
     if (body.paymentMethod === PaymentMethod.WALLET) {
       return await this.enrollmentService.enrollWithWallet(req.user._id.toString(), body.courseId, body.billingCycle);
     } else {

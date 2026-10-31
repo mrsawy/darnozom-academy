@@ -10,6 +10,7 @@ export const MANAGER_PERMISSIONS: RolePermissionRule[] = [
   { action: Actions.READ, subject: Subjects.FAMILY_PAYMENT },
   { action: Actions.MANAGE, subject: Subjects.SESSION },
   { action: Actions.READ, subject: Subjects.TEACHER_AVAILABILITY },
+  { action: Actions.UPDATE, subject: Subjects.TEACHER_AVAILABILITY },
   { action: Actions.READ, subject: Subjects.TASK },
   { action: Actions.UPDATE, subject: Subjects.TASK },
   { action: Actions.READ, subject: Subjects.SHARIA_REVIEW },

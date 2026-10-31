@@ -43,7 +43,7 @@ export class FamilyPaymentStatusService {
       >()
       .exec();
 
-    const subscriptionByStudent = new Map<string, { amountMinor: number; familyId: Types.ObjectId }>();
+    const subscriptionByStudent = new Map<string, { amountMinor: number; familyId: Types.ObjectId; subscriptionId: Types.ObjectId }>();
     const familySubToStudents = new Map<string, string[]>();
 
     for (const subscription of subscriptions) {
@@ -53,7 +53,7 @@ export class FamilyPaymentStatusService {
       for (const item of subscription.items) {
         if (String(item.groupId) !== String(groupId)) continue;
         const sId = String(item.studentId);
-        subscriptionByStudent.set(sId, { amountMinor: subscription.amountMinor, familyId: subscription.familyId });
+        subscriptionByStudent.set(sId, { amountMinor: subscription.amountMinor, familyId: subscription.familyId, subscriptionId: subscription._id });
         if (isFamily) familyStudentIds.push(sId);
       }
 
@@ -77,19 +77,18 @@ export class FamilyPaymentStatusService {
 
     const { subscriptionByStudent, familySubToStudents } = await this.subscriptionsForGroup(groupId, studentIds);
 
-    const studentObjectIds = studentIds.map(oid);
-    const familySubIds = [...familySubToStudents.keys()].map(oid);
-
-    const chargeFilter: Record<string, unknown> = {
-      type: LedgerEntryType.CHARGE,
-      $or: [
-        { groupId: oid(groupId), studentId: { $in: studentObjectIds } },
-        ...(familySubIds.length > 0 ? [{ subscriptionId: { $in: familySubIds } }] : []),
-      ],
-    };
+    // Only the charges raised by a student's currently *active* subscription count toward their
+    // status. A charge left behind by a subscription that was later ended or replaced is not the
+    // group's problem any more -- otherwise a cancelled subscription's unpaid initial charge would
+    // block the student forever, with no way to pay it off.
+    const activeSubscriptionIds = [...new Set([...subscriptionByStudent.values()].map((s) => String(s.subscriptionId)))].map(oid);
+    if (activeSubscriptionIds.length === 0) {
+      for (const studentId of studentIds) result.set(studentId, FamilyPaymentStatus.UNPAID);
+      return result;
+    }
 
     const charges = await this.entryModel
-      .find(chargeFilter)
+      .find({ type: LedgerEntryType.CHARGE, subscriptionId: { $in: activeSubscriptionIds } })
       .lean<
         {
           _id: Types.ObjectId;

@@ -32,7 +32,7 @@ export const billingKeys = {
   myFamilyPayments: [ROOT, 'my-family-payments'] as const,
 };
 
-export function useBillingMutation<TVars, TResult>(fn: (vars: TVars) => Promise<TResult>) {
+export function useBillingMutation<TVars, TResult>(fn: (vars: TVars) => Promise<TResult>, extraInvalidateRoots: string[] = []) {
   const queryClient = useQueryClient();
   const t = useTranslations('Billing');
   const tErrors = useTranslations('errors');
@@ -41,6 +41,9 @@ export function useBillingMutation<TVars, TResult>(fn: (vars: TVars) => Promise<
     onSuccess: () => {
       toast.success(t('saved'));
       void queryClient.invalidateQueries({ queryKey: [ROOT] });
+      for (const root of extraInvalidateRoots) {
+        void queryClient.invalidateQueries({ queryKey: [root] });
+      }
     },
     onError: (error: Error) => {
       toast.error(translateApiMessage(error.message, tErrors));
@@ -116,18 +119,21 @@ export const useInitiatePayment = () =>
   );
 
 export const useAttachReceipt = () =>
-  useBillingMutation(async (vars: { paymentId: string; fileKey: string }) =>
-    unwrap(await billingApi.attachReceipt(vars.paymentId, vars.fileKey))
+  useBillingMutation(
+    async (vars: { paymentId: string; fileKey: string }) => unwrap(await billingApi.attachReceipt(vars.paymentId, vars.fileKey)),
+    ['academics']
   );
 
 export const useApprovePayment = () =>
-  useBillingMutation(async (paymentId: string) =>
-    unwrap(await billingApi.approvePayment(paymentId))
+  useBillingMutation(
+    async (paymentId: string) => unwrap(await billingApi.approvePayment(paymentId)),
+    ['academics']
   );
 
 export const useRejectPayment = () =>
-  useBillingMutation(async (vars: { paymentId: string; reason: string }) =>
-    unwrap(await billingApi.rejectPayment(vars.paymentId, vars.reason))
+  useBillingMutation(
+    async (vars: { paymentId: string; reason: string }) => unwrap(await billingApi.rejectPayment(vars.paymentId, vars.reason)),
+    ['academics']
   );
 
 export const useBillingSettings = (enabled = true) =>

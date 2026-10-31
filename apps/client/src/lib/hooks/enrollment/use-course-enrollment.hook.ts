@@ -41,6 +41,10 @@ import type { IChild } from '@/lib/types/parent/parent-children.interface';
 import { UserMainRoles } from '@/lib/data/userRole.enum';
 import { userKeys } from '@/lib/hooks/user/use-user.hook';
 import { handleUnauthenticatedSession } from '@/lib/utils/auth/handle-unauthenticated-session';
+import {
+  useCoursePaymentOptions,
+  useMyCoursePayments,
+} from '@/lib/hooks/enrollment/use-course-payment.hook';
 
 /** GUEST or explicit incomplete onboarding — must finish /onboarding before purchase. */
 function needsOnboarding(candidate: IUser | null | undefined): boolean {
@@ -55,6 +59,7 @@ export type DialogType =
   | 'confirm-free-enrollment'
   | 'child-selection'
   | 'renewal'
+  | 'transfer-payment'
   | null;
 
 interface UseCourseEnrollmentOptions {
@@ -126,11 +131,24 @@ export function useCourseEnrollment({ course, user }: UseCourseEnrollmentOptions
     staleTime: 5 * 60 * 1000,
   });
 
-  const isEnrolled = !!existingEnrollment;
+  // A PENDING_PAYMENT enrollment is a manual-transfer payment awaiting organization review: no access yet.
+  const isPendingPayment = existingEnrollment?.status === 'PENDING_PAYMENT';
+  const isEnrolled = !!existingEnrollment && !isPendingPayment;
   const isEnrollmentExpired =
-    existingEnrollment?.subscription?.status === SubscriptionStatus.EXPIRED ||
-    (existingEnrollment?.subscription?.ends_at &&
-      new Date(existingEnrollment.subscription.ends_at) < new Date());
+    !isPendingPayment &&
+    (existingEnrollment?.subscription?.status === SubscriptionStatus.EXPIRED ||
+      (existingEnrollment?.subscription?.ends_at &&
+        new Date(existingEnrollment.subscription.ends_at) < new Date()));
+
+  // InstaPay / Vodafone Cash / custom transfer methods the course's organization has enabled.
+  const { data: transferOptions } = useCoursePaymentOptions(
+    course._id,
+    !!user && isStudent && course.isPaid && !isEnrolled
+  );
+  const canPayByTransfer = (transferOptions?.methods.length ?? 0) > 0;
+  const { data: myCoursePayments } = useMyCoursePayments(isPendingPayment);
+  const latestTransferPayment = myCoursePayments?.find((p) => p.courseId === course._id);
+  const isPaymentRejected = isPendingPayment && latestTransferPayment?.status === 'REJECTED';
 
   const [dialogType, setDialogType] = useState<DialogType>(null);
   const [selectedPricing, setSelectedPricing] = useState<BillingCycle>(() => {
@@ -447,6 +465,11 @@ export function useCourseEnrollment({ course, user }: UseCourseEnrollmentOptions
       toast.error(tErrors('mustBeStudentToEnroll'));
       return;
     }
+    // Transfer payment submitted: only a rejected one can be re-uploaded; otherwise it is under review.
+    if (isPendingPayment) {
+      if (isPaymentRejected) setDialogType('transfer-payment');
+      return;
+    }
     // If already enrolled and expired, open renewal dialog
     if (isEnrollmentExpired) {
       setDialogType('renewal');
@@ -473,6 +496,8 @@ export function useCourseEnrollment({ course, user }: UseCourseEnrollmentOptions
     isGuest,
     isEnrollmentExpired,
     isEnrolled,
+    isPendingPayment,
+    isPaymentRejected,
     existingEnrollment?._id,
     course.isPaid,
     proceedToPaidFlow,
@@ -518,6 +543,23 @@ export function useCourseEnrollment({ course, user }: UseCourseEnrollmentOptions
     []
   );
 
+  /** Opens the InstaPay / Vodafone Cash dialog (guests are sent to onboarding first, like other paid flows). */
+  const handlePayByTransfer = useCallback(() => {
+    if (!user) {
+      openAuthForEnrollment();
+      return;
+    }
+    if (needsOnboarding(user)) {
+      redirectToOnboarding();
+      return;
+    }
+    if (!isStudent) {
+      toast.error(tErrors('mustBeStudentToEnroll'));
+      return;
+    }
+    setDialogType('transfer-payment');
+  }, [user, isStudent, openAuthForEnrollment, redirectToOnboarding, tErrors]);
+
   return {
     // State
     dialogType,
@@ -531,6 +573,11 @@ export function useCourseEnrollment({ course, user }: UseCourseEnrollmentOptions
     isEnrolled,
     isEnrollmentExpired,
     existingEnrollment,
+    isPendingPayment,
+    isPaymentRejected,
+    paymentRejectReason: latestTransferPayment?.rejectReason ?? null,
+    canPayByTransfer,
+    handlePayByTransfer,
     // Mutations
     freeEnrollMutation,
     paidEnrollMutation,
