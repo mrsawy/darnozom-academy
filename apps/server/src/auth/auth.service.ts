@@ -11,6 +11,7 @@ import {
 import { RegisterDto } from './dto/register.dto';
 import { Role } from 'src/role/entities/role.entity';
 import { OrganizationService } from '../organization/organization.service';
+import { DEFAULT_PRIMARY_COLOR, DEFAULT_SECONDARY_COLOR, DEFAULT_THEME_ID } from '../organization/constants/branding.constants';
 import { UserService } from '../user/services/user.service';
 import { User, UserDocument } from '../user/entities/user.entity';
 import { LoginDto } from './dto/login.dto';
@@ -623,7 +624,12 @@ export class AuthService {
             _id: organizationId,
             planName: freePlan.name,
             settings: {
-              branding: { logo: '', primaryColor: '#000000', secondaryColor: '#ffffff' },
+              branding: {
+                logo: '',
+                primaryColor: DEFAULT_PRIMARY_COLOR,
+                secondaryColor: DEFAULT_SECONDARY_COLOR,
+                themeId: DEFAULT_THEME_ID,
+              },
             },
             // Google already verified the email, so the wizard only needs the
             // identity step. Account stays PENDING (default) until admin approval.

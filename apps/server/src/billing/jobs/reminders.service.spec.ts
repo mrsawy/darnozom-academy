@@ -18,7 +18,12 @@ const overdueCharge = (overrides: Record<string, unknown> = {}) => ({
   ...overrides,
 });
 
-const makeService = (charges: Record<string, unknown>[], lastReminderAt: Date | null = null, allocatedTotals: Record<string, number> = {}) => {
+const makeService = (
+  charges: Record<string, unknown>[],
+  lastReminderAt: Date | null = null,
+  allocatedTotals: Record<string, number> = {},
+  activeSubscriptionIds: Types.ObjectId[] = []
+) => {
   const entryModel = { find: jest.fn(() => ({ lean: () => ({ exec: async () => charges }) })) };
   const allocationModel = {
     aggregate: jest.fn(async () => Object.entries(allocatedTotals).map(([id, total]) => ({ _id: new Types.ObjectId(id), total }))),
@@ -27,7 +32,13 @@ const makeService = (charges: Record<string, unknown>[], lastReminderAt: Date | 
     create: jest.fn(async () => ({}) as never),
     findLast: jest.fn(async () => (lastReminderAt ? { createdAt: lastReminderAt } : null)),
   };
-  return { service: new RemindersService(entryModel as never, allocationModel as never, notifications as never), notifications };
+  const subscriptionModel = {
+    find: jest.fn(() => ({ select: () => ({ lean: () => ({ exec: async () => activeSubscriptionIds.map((_id) => ({ _id })) }) }) })),
+  };
+  return {
+    service: new RemindersService(entryModel as never, allocationModel as never, notifications as never, subscriptionModel as never),
+    notifications,
+  };
 };
 
 describe('RemindersService.run', () => {
@@ -81,5 +92,19 @@ describe('RemindersService.run', () => {
     const { service, notifications } = makeService([]);
     await expect(service.run(NOW)).resolves.toBe(0);
     expect(notifications.create).not.toHaveBeenCalled();
+  });
+
+  it('does not remind about an overdue charge whose subscription has ended', async () => {
+    const endedSub = new Types.ObjectId();
+    const { service, notifications } = makeService([overdueCharge({ subscriptionId: endedSub })], null, {}, []);
+    await expect(service.run(NOW)).resolves.toBe(0);
+    expect(notifications.create).not.toHaveBeenCalled();
+  });
+
+  it('still reminds about an overdue charge of an active subscription', async () => {
+    const activeSub = new Types.ObjectId();
+    const { service, notifications } = makeService([overdueCharge({ subscriptionId: activeSub })], null, {}, [activeSub]);
+    await expect(service.run(NOW)).resolves.toBe(1);
+    expect(notifications.create).toHaveBeenCalledTimes(1);
   });
 });

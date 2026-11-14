@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/components/atoms/loading-state';
 import { useLocale, useTranslations } from 'next-intl';
 import { Badge } from '@/components/atoms/badge';
 import { Button } from '@/components/atoms/button';
@@ -32,7 +33,7 @@ export function PayProfilesTable({
   if (isLoading) {
     return (
       <div className="flex h-48 items-center justify-center rounded-lg border border-dashed">
-        <p className="text-muted-foreground text-sm">{t('loading')}</p>
+        <LoadingState />
       </div>
     );
   }

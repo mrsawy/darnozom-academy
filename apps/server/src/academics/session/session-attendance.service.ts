@@ -1,7 +1,7 @@
 import { BadRequestException, ConflictException, ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { AcademicsErrors, AttendanceStatus, GROUP_EDITOR_ROLES, hasAnyRole, SessionStatus } from '@darnozom/shared-types';
+import { AcademicsErrors, AttendanceSource, AttendanceStatus, GROUP_EDITOR_ROLES, hasAnyRole, SessionStatus } from '@darnozom/shared-types';
 import { AcademicsActor } from '../common/actor';
 import { checkAttendanceWindow } from '../domain/session-rules';
 import { Session } from './entities/session.entity';
@@ -44,6 +44,7 @@ export class SessionAttendanceService {
       ...(entry.note?.trim() ? { note: entry.note.trim() } : {}),
       markedBy: oid(actor._id),
       markedAt: now,
+      source: AttendanceSource.MANUAL,
     }));
     const kept = session.attendance.filter((row) => !ids.includes(String(row.studentId)));
     const $set: Record<string, unknown> = { attendance: [...kept, ...incoming] };

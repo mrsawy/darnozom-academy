@@ -41,25 +41,23 @@ describe('buildInstructorMatch', () => {
     expect(buildInstructorMatch({ minRating: 0 })).toEqual({});
   });
 
-  it('applies $in for category/grade/school-type ids', () => {
+  it('applies $in for category/age-range ids', () => {
     const match = buildInstructorMatch({
       categoryIds: ['c1', 'c2'],
-      gradeIds: 'g1',
-      schoolTypeIds: 's1,s2',
+      ageRangeIds: 'g1,g2',
     });
     expect(match.categoriesIds).toEqual({ $in: ['c1', 'c2'] });
-    expect(match.gradesIds).toEqual({ $in: ['g1'] });
-    expect(match.schoolTypesIds).toEqual({ $in: ['s1', 's2'] });
+    expect(match.ageRangesIds).toEqual({ $in: ['g1', 'g2'] });
   });
 
   it('omits id filters when the list is empty', () => {
-    expect(buildInstructorMatch({ categoryIds: [], gradeIds: '' })).toEqual({});
+    expect(buildInstructorMatch({ categoryIds: [], ageRangeIds: '' })).toEqual({});
   });
 
   it('combines multiple filters into one match (intersection semantics)', () => {
-    const match = buildInstructorMatch({ search: 'ali', minRating: 3, gradeIds: ['g1'] });
+    const match = buildInstructorMatch({ search: 'ali', minRating: 3, ageRangeIds: ['g1'] });
     expect(match.$or).toBeDefined();
     expect(match.averageCoursesRating).toEqual({ $gte: 3 });
-    expect(match.gradesIds).toEqual({ $in: ['g1'] });
+    expect(match.ageRangesIds).toEqual({ $in: ['g1'] });
   });
 });

@@ -10,6 +10,7 @@ import {
   Max,
   MaxLength,
   Min,
+  ValidateIf,
   ValidateNested,
 } from 'class-validator';
 import { OptionalNonNull } from '../../common/optional-non-null';
@@ -50,6 +51,10 @@ export class CreateLevelDto {
   order!: number;
 
   @IsOptional()
+  @IsMongoId()
+  ageRangeId?: string;
+
+  @IsOptional()
   @ValidateNested()
   @Type(() => CertificateRulesDto)
   certificateRules?: CertificateRulesDto;
@@ -66,6 +71,12 @@ export class UpdateLevelDto {
   @IsInt()
   @Min(1)
   order?: number;
+
+  /** Send null to clear the age range. */
+  @IsOptional()
+  @ValidateIf((_o, value) => value !== null)
+  @IsMongoId()
+  ageRangeId?: string | null;
 
   @IsOptional()
   @ValidateNested()

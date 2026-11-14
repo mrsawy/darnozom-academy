@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/components/atoms/loading-state';
 import { useLocale, useTranslations } from 'next-intl';
 import { SUPERVISION_CRITERIA } from '@darnozom/shared-types';
 import type { ISupervisionEvaluation } from '@/lib/types/academics/academics';
@@ -13,7 +14,7 @@ export function EvaluationList({
 }) {
   const t = useTranslations('Academics');
   const locale = useLocale();
-  if (isLoading) return <p>{t('loading')}</p>;
+  if (isLoading) return <LoadingState />;
   if (evaluations.length === 0)
     return <p className="text-muted-foreground">{t('supervision.empty')}</p>;
 

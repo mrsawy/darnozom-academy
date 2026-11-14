@@ -28,15 +28,31 @@ const makeService = ({ existing = [] as Record<string, unknown>[], familyOrgId =
 };
 
 describe('PaymentMethodConfigService.listForOrg', () => {
-  it('seeds InstaPay and Wallet Transfer on first call when the org has none', async () => {
+  it('seeds InstaPay, Wallet Transfer, PayPal and IBAN bank transfer on first call when the org has none', async () => {
     const { service } = makeService({ existing: [] });
     const result = await service.listForOrg(actor());
-    expect(result.map((c) => c.key)).toEqual(expect.arrayContaining(['INSTAPAY', 'WALLET_TRANSFER']));
+    expect(result.map((c) => c.key)).toEqual(expect.arrayContaining(['INSTAPAY', 'WALLET_TRANSFER', 'PAYPAL', 'BANK_TRANSFER_IBAN']));
     expect(result.every((c) => c.kind === 'BUILT_IN')).toBe(true);
+    const iban = result.find((c) => c.key === 'BANK_TRANSFER_IBAN');
+    expect(iban?.fields.map((f) => f.key)).toContain('iban');
+    expect(Object.fromEntries(result.map((c) => [c.key, c.enabled]))).toEqual({
+      INSTAPAY: false,
+      WALLET_TRANSFER: false,
+      PAYPAL: true,
+      BANK_TRANSFER_IBAN: true,
+    });
   });
 
-  it('does not reseed when built-ins already exist', async () => {
+  it('seeds only the missing built-ins for an org that predates PayPal/IBAN', async () => {
     const { service, model } = makeService({ existing: [{ key: 'INSTAPAY', kind: 'BUILT_IN' }, { key: 'WALLET_TRANSFER', kind: 'BUILT_IN' }] });
+    await service.listForOrg(actor());
+    expect(model.create).toHaveBeenCalledTimes(2);
+  });
+
+  it('does not reseed when all built-ins already exist', async () => {
+    const { service, model } = makeService({
+      existing: ['INSTAPAY', 'WALLET_TRANSFER', 'PAYPAL', 'BANK_TRANSFER_IBAN'].map((key) => ({ key, kind: 'BUILT_IN' })),
+    });
     await service.listForOrg(actor());
     expect(model.create).not.toHaveBeenCalled();
   });

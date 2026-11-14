@@ -8,36 +8,22 @@ import { FeaturedCourse } from '../../types/featured-course.interface';
 import { NORMALIZATION_FACTORS, WEIGHTS, CAPS, MINIMUM_THRESHOLDS, SCALING_OPTIONS, RECENCY_CONFIG } from '../../config/featuredCourses.config';
 import { lookupNotDeleted } from 'src/utils/soft-delete';
 
-/**
- * Lookup optional Grade (singular) and SchoolTypes (array).
- * Grade and SchoolType are independent; each resolves on its own id(s).
- */
-function buildGradeAndSchoolTypeLookupStages(): mongoose.PipelineStage[] {
+/** Lookup the AgeRanges referenced by each course. */
+function buildAgeRangeLookupStages(): mongoose.PipelineStage[] {
   return [
-    lookupNotDeleted('grades', 'gradeId', 'grade'),
-    lookupNotDeleted('schooltypes', 'schoolTypeIds', 'schoolTypes'),
+    lookupNotDeleted('ageranges', 'ageRangeIds', 'ageRanges'),
     {
       $addFields: {
-        grade: {
-          $cond: {
-            if: { $gt: [{ $size: '$grade' }, 0] },
-            // eslint-disable-next-line unicorn/no-thenable
-            then: {
-              _id: { $arrayElemAt: ['$grade._id', 0] },
-              nameEn: { $arrayElemAt: ['$grade.nameEn', 0] },
-              nameAr: { $arrayElemAt: ['$grade.nameAr', 0] },
-            },
-            else: null,
-          },
-        },
-        schoolTypes: {
+        ageRanges: {
           $map: {
-            input: '$schoolTypes',
-            as: 'st',
+            input: '$ageRanges',
+            as: 'ar',
             in: {
-              _id: '$$st._id',
-              nameEn: '$$st.nameEn',
-              nameAr: '$$st.nameAr',
+              _id: '$$ar._id',
+              nameEn: '$$ar.nameEn',
+              nameAr: '$$ar.nameAr',
+              minAge: '$$ar.minAge',
+              maxAge: '$$ar.maxAge',
             },
           },
         },
@@ -549,8 +535,7 @@ export class CourseFeaturedService {
           name: 1,
           createdBy: 1,
           categoriesIds: 1,
-          gradeId: 1,
-          schoolTypeIds: 1,
+          ageRangeIds: 1,
           modulesIds: 1,
           isPaid: 1,
           instructorId: 1,
@@ -627,7 +612,7 @@ export class CourseFeaturedService {
           },
         },
       },
-      ...buildGradeAndSchoolTypeLookupStages(),
+      ...buildAgeRangeLookupStages(),
     ];
 
     const featuredCourses = await this.courseModel.aggregate<FeaturedCourse>(pipeline);
@@ -730,8 +715,7 @@ export class CourseFeaturedService {
             name: 1,
             createdBy: 1,
             categoriesIds: 1,
-            gradeId: 1,
-            schoolTypeIds: 1,
+            ageRangeIds: 1,
             modulesIds: 1,
             isPaid: 1,
             instructorId: 1,
@@ -798,7 +782,7 @@ export class CourseFeaturedService {
             },
           },
         },
-        ...buildGradeAndSchoolTypeLookupStages(),
+        ...buildAgeRangeLookupStages(),
       ];
 
       const recentCourses = await this.courseModel.aggregate<FeaturedCourse>(recentCoursesPipeline);

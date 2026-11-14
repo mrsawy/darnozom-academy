@@ -10,10 +10,9 @@ import CourseCard from '@/components/organs/course-card';
 import { Link } from '@/i18n/navigation';
 import { ANCHOR_HOME_COURSES, ROUTE_COURSES } from '@/lib/data/constants/routes.constants';
 import CategoryFilter from './__components/category-filter';
-import GradeSchoolTypeFilter from './__components/grade-school-type-filter';
+import AgeRangeFilter from './__components/age-range-filter';
 import { useFeaturedCourses } from '@/lib/hooks/course/useFeaturedCourses';
 import type { ILocalizedLookup } from '@/lib/types/course/course.interface';
-import { normalizeCourseSchoolTypes } from '@/lib/utils/course/normalize-course-school-types';
 
 const SKELETON_CARDS = [0, 1, 2, 3, 4, 5];
 
@@ -32,8 +31,7 @@ function CoursesSection() {
   const searchParams = useSearchParams();
   const allText = t('all');
   const selectedCategory = searchParams.get('category') ?? allText;
-  const selectedGrade = searchParams.get('grade') ?? undefined;
-  const selectedSchoolType = searchParams.get('schoolType') ?? undefined;
+  const selectedAgeRange = searchParams.get('ageRange') ?? undefined;
 
   const { data: courses = [], isLoading } = useFeaturedCourses({ limit: 9 });
 
@@ -51,14 +49,8 @@ function CoursesSection() {
     [courses, allText]
   );
 
-  const availableGrades = useMemo(
-    () => uniqueLookups(courses.map((course) => course.grade)),
-    [courses]
-  );
-
-  const availableSchoolTypes = useMemo(
-    () =>
-      uniqueLookups(courses.flatMap((course) => normalizeCourseSchoolTypes(course).schoolTypes)),
+  const availableAgeRanges = useMemo(
+    () => uniqueLookups(courses.flatMap((course) => course.ageRanges ?? [])),
     [courses]
   );
 
@@ -68,12 +60,11 @@ function CoursesSection() {
         const matchesCategory =
           selectedCategory === allText ||
           course.categories?.some((category) => category?.name === selectedCategory);
-        const matchesGrade = !selectedGrade || course.grade?._id === selectedGrade;
-        const schoolTypeIds = normalizeCourseSchoolTypes(course).schoolTypeIds;
-        const matchesSchoolType = !selectedSchoolType || schoolTypeIds.includes(selectedSchoolType);
-        return matchesCategory && matchesGrade && matchesSchoolType;
+        const matchesAgeRange =
+          !selectedAgeRange || (course.ageRanges ?? []).some((a) => a._id === selectedAgeRange);
+        return matchesCategory && matchesAgeRange;
       }),
-    [courses, selectedCategory, selectedGrade, selectedSchoolType, allText]
+    [courses, selectedCategory, selectedAgeRange, allText]
   );
 
   return (
@@ -98,7 +89,7 @@ function CoursesSection() {
 
       <div className="flex flex-col gap-3">
         <CategoryFilter categories={allCategories} />
-        <GradeSchoolTypeFilter grades={availableGrades} schoolTypes={availableSchoolTypes} />
+        <AgeRangeFilter ageRanges={availableAgeRanges} />
       </div>
 
       <div className="grid grid-cols-[repeat(auto-fill,minmax(min(100%,270px),1fr))] gap-5">

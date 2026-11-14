@@ -54,6 +54,7 @@ export class MessageTemplateControllerMessage {
     return this.renderService.render(actorFromContext(ctx), payload.id, {
       groupId: payload.groupId,
       studentId: payload.studentId,
+      locale: payload.locale,
     });
   }
 }

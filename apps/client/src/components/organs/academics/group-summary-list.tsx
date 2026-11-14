@@ -30,7 +30,6 @@ export function GroupSummaryList({ groups }: { groups: IGroup[] }) {
           .map((slot) => `${t(`days.${slot.dayOfWeek}`)} ${slot.startTime} (${slot.durationMinutes}′)`)
           .join(' · ');
         const studentCount = group.students.length;
-        const meetingHref = safeHref(group.meetingLink);
         const whatsappHref = safeHref(group.whatsappGroupLink);
 
         return (
@@ -76,18 +75,9 @@ export function GroupSummaryList({ groups }: { groups: IGroup[] }) {
               </div>
 
               {/* Action links */}
-              {(meetingHref || whatsappHref) ? (
+              {/* No raw meeting link here: sessions are joined through the Join button so attendance is recorded. */}
+              {whatsappHref ? (
                 <div className="flex flex-wrap gap-3 text-sm">
-                  {meetingHref ? (
-                    <a
-                      href={meetingHref}
-                      target="_blank"
-                      rel="noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                      className="text-primary underline-offset-2 hover:underline">
-                      {t('form.meetingLink')}
-                    </a>
-                  ) : null}
                   {whatsappHref ? (
                     <a
                       href={whatsappHref}

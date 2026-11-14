@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/components/atoms/loading-state';
 import { useLocale, useTranslations } from 'next-intl';
 import { LedgerEntryType } from '@darnozom/shared-types';
 import { formatMoney } from '@/lib/utils/billing/format-money';
@@ -17,9 +18,7 @@ export function LedgerTable({ entries, balances, isLoading = false }: LedgerTabl
 
   if (isLoading) {
     return (
-      <div className="bg-card text-muted-foreground flex h-32 items-center justify-center rounded-lg border p-6">
-        {t('loading')}
-      </div>
+      <LoadingState className="bg-card h-32 rounded-lg border p-6" />
     );
   }
 

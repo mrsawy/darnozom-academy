@@ -44,7 +44,7 @@ describe('LedgerTable', () => {
 
   it('renders a loading state when isLoading is true', () => {
     render(<LedgerTable entries={[]} balances={[]} isLoading />);
-    expect(screen.getByText('loading')).toBeInTheDocument();
+    expect(screen.getByRole('status')).toBeInTheDocument();
   });
 
   it('renders one row per entry with description and amount', () => {

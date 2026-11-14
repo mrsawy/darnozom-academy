@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/components/atoms/loading-state';
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { ChevronLeft, Network, Plus, Trash2 } from 'lucide-react';
@@ -106,7 +107,7 @@ export function ProgramsManager() {
         </Dialog>
       </div>
 
-      {isLoading ? <p className="text-muted-foreground text-sm">{t('loading')}</p> : null}
+      {isLoading ? <LoadingState /> : null}
 
       {!isLoading && programs.length === 0 ? (
         <Card className="border-dashed">

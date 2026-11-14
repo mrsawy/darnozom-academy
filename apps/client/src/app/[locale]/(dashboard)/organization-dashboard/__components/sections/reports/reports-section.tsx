@@ -4,17 +4,13 @@ import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Roles } from '@darnozom/shared-types';
 import { OrganizationDashboardReports } from '@/components/molecules/reports/organization-dashboard-reports';
-import {
-  ORG_DASHBOARD_REPORTS_NAMESPACE,
-  ORG_INSTRUCTOR_REPORTS_NAMESPACE,
-} from '@/components/molecules/reports/organization-dashboard-reports/organization-dashboard-reports.types';
+import { ORG_INSTRUCTOR_REPORTS_NAMESPACE } from '@/components/molecules/reports/organization-dashboard-reports/organization-dashboard-reports.types';
 import {
   OrganizationMemberDashboardReports,
   ORG_MEMBER_DASHBOARD_REPORTS_NAMESPACE,
 } from '@/components/molecules/reports/organization-member-dashboard-reports';
 import { useAuthUser } from '@/lib/hooks/user/use-user.hook';
 import { useInstructorDashboardReports } from '@/lib/hooks/reports/use-instructor-dashboard-reports';
-import { useOrganizationDashboardReports } from '@/lib/hooks/reports/use-organization-dashboard-reports';
 import { useOrganizationMemberDashboardReports } from '@/lib/hooks/reports/use-organization-member-dashboard-reports';
 import {
   resolveReportsParams,
@@ -36,15 +32,10 @@ export function ReportsSection() {
   const [filters, setFilters] = useState<ReportsFilters>(defaultFilters);
   const params = useMemo(() => resolveReportsParams(filters), [filters]);
 
-  const orgT = useTranslations(ORG_DASHBOARD_REPORTS_NAMESPACE);
   const instructorT = useTranslations(ORG_INSTRUCTOR_REPORTS_NAMESPACE);
   const memberT = useTranslations(ORG_MEMBER_DASHBOARD_REPORTS_NAMESPACE);
 
   const userReady = !isUserPending && user != null;
-  const orgQuery = useOrganizationDashboardReports({
-    enabled: showOrgReports && userReady,
-    params,
-  });
   const instructorQuery = useInstructorDashboardReports({
     enabled: showInstructorReports && userReady,
     params,
@@ -59,28 +50,9 @@ export function ReportsSection() {
   }
 
   if (showOrgReports) {
-    return (
-      <div className="flex flex-col gap-6">
-        <AdminDashboardSection />
-        <section className="flex flex-col gap-4" aria-labelledby="organization-reports-heading">
-          <div className="px-0 lg:px-0">
-            <h2 id="organization-reports-heading" className="text-lg font-semibold tracking-tight">
-              {orgT('sectionTitle')}
-            </h2>
-          </div>
-          <OrganizationDashboardReports
-            data={orgQuery.data}
-            isLoading={orgQuery.isLoading}
-            isError={orgQuery.isError}
-            error={orgQuery.error instanceof Error ? orgQuery.error : null}
-            onRetry={() => void orgQuery.refetch()}
-            reportsTranslationNamespace={ORG_DASHBOARD_REPORTS_NAMESPACE}
-            filters={filters}
-            onFiltersChange={setFilters}
-          />
-        </section>
-      </div>
-    );
+    // Admins get the focused academy overview (programmes, groups, teachers, students)
+    // instead of the generic course-enrollment / revenue chart wall.
+    return <AdminDashboardSection />;
   }
 
   if (showInstructorReports) {

@@ -12,6 +12,7 @@ const context = () => ({
 
 const expected: [string, string, Actions, Subjects][] = [
   ['createSubscription', 'billing.subscriptions.create', Actions.MANAGE, Subjects.BILLING],
+  ['listAllSubscriptions', 'billing.subscriptions.listAll', Actions.MANAGE, Subjects.BILLING],
   ['listSubscriptionsForGroup', 'billing.subscriptions.listForGroup', Actions.READ, Subjects.BILLING],
   ['listSubscriptionsForFamily', 'billing.subscriptions.listForFamily', Actions.READ, Subjects.BILLING],
   ['endSubscription', 'billing.subscriptions.end', Actions.MANAGE, Subjects.BILLING],
@@ -23,6 +24,7 @@ const expected: [string, string, Actions, Subjects][] = [
   ['attachReceipt', 'billing.payments.attachReceipt', Actions.CREATE, Subjects.FAMILY_PAYMENT],
   ['reviewQueue', 'billing.payments.queue', Actions.MANAGE, Subjects.FAMILY_PAYMENT],
   ['approvePayment', 'billing.payments.approve', Actions.MANAGE, Subjects.FAMILY_PAYMENT],
+  ['recordOfflinePayment', 'billing.payments.recordOffline', Actions.MANAGE, Subjects.FAMILY_PAYMENT],
   ['rejectPayment', 'billing.payments.reject', Actions.MANAGE, Subjects.FAMILY_PAYMENT],
   ['getSettings', 'billing.settings.get', Actions.READ, Subjects.BILLING],
   ['updateSettings', 'billing.settings.update', Actions.MANAGE, Subjects.BILLING],
@@ -31,6 +33,7 @@ const expected: [string, string, Actions, Subjects][] = [
   ['setPaymentMethodConfigEnabled', 'billing.paymentMethodConfigs.setEnabled', Actions.MANAGE, Subjects.BILLING],
   ['createCustomPaymentMethodConfig', 'billing.paymentMethodConfigs.createCustom', Actions.MANAGE, Subjects.BILLING],
   ['listFamilyPayments', 'billing.payments.myFamily', Actions.READ, Subjects.FAMILY_PAYMENT],
+  ['reassignFamily', 'billing.family.reassign', Actions.MANAGE, Subjects.BILLING],
 ];
 
 describe('BillingControllerMessage', () => {
@@ -56,11 +59,13 @@ describe('BillingControllerMessage delegation', () => {
     const paymentMethodConfigs = { listForOrg: jest.fn(), upsertFields: jest.fn(), setEnabled: jest.fn(), createCustom: jest.fn() };
     const controller = new BillingControllerMessage(
       subscriptions as never,
+      {} as never,
       ledger as never,
       familyPayments as never,
       billingRead as never,
       billingSettings as never,
-      paymentMethodConfigs as never
+      paymentMethodConfigs as never,
+      {} as never
     );
     return { controller, billingSettings, paymentMethodConfigs };
   };

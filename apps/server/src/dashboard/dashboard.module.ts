@@ -1,5 +1,7 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { AuthModule } from 'src/auth/auth.module';
+import { RoleModule } from 'src/role/role.module';
 import { DashboardService } from './dashboard.service';
 import { DashboardController } from './dashboard.controller.message';
 import { Group, GroupSchema } from '../academics/group/entities/group.entity';
@@ -11,6 +13,8 @@ import { LedgerEntry, LedgerEntrySchema } from '../billing/entities/ledger-entry
 import { PayStatement, PayStatementSchema } from '../payroll/entities/pay-statement.entity';
 import { Certificate, CertificateSchema } from '../certificate/entities/certificate.entity';
 import { User, UserSchema } from '../user/entities/user.entity';
+import { Program, ProgramSchema } from '../academics/program/entities/program.entity';
+import { Course, CourseSchema } from '../course/entities/course.entity';
 
 @Module({
   imports: [
@@ -24,7 +28,11 @@ import { User, UserSchema } from '../user/entities/user.entity';
       { name: PayStatement.name, schema: PayStatementSchema },
       { name: Certificate.name, schema: CertificateSchema },
       { name: User.name, schema: UserSchema },
+      { name: Program.name, schema: ProgramSchema },
+      { name: Course.name, schema: CourseSchema },
     ]),
+    forwardRef(() => AuthModule),
+    RoleModule,
   ],
   providers: [DashboardService],
   controllers: [DashboardController],

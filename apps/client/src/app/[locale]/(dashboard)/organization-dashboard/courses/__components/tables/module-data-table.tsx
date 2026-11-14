@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/components/atoms/loading-state';
 import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { DataTable, SortableRowHandleContext } from '@/components/molecules/data-table/data-table';
 import { ColumnDef } from '@tanstack/react-table';
@@ -306,7 +307,7 @@ function ModulesDataTable({ courseId }: { courseId: string }) {
           <h2 className="text-xl font-medium">{t('title')}</h2>
         </div>
         <div className="flex items-center justify-center p-8">
-          <div className="text-muted-foreground">{t('loading')}</div>
+          <LoadingState />
         </div>
       </div>
     );

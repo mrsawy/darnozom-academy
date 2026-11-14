@@ -4,6 +4,9 @@ import { BillingSubscriptionStatus, Currency, GroupPaymentStatus, SubscriptionTy
 import { SubscriptionsCard } from './subscriptions-card';
 import type { IGroupDetail } from '@/lib/types/academics/academics';
 
+vi.mock('@/i18n/navigation', () => ({
+  Link: ({ children, href }: { children: React.ReactNode; href: string }) => <a href={href}>{children}</a>,
+}));
 vi.mock('next-intl', () => ({
   // eslint-disable-next-line unicorn/consistent-function-scoping -- vi.mock factories are hoisted
   useTranslations: () => (key: string) => key,

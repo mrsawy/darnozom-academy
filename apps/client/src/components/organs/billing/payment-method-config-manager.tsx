@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/components/atoms/loading-state';
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import {
@@ -153,7 +154,7 @@ export function PaymentMethodConfigManager() {
   return (
     <div className="space-y-3">
       <h3 className="text-sm font-medium">{t('paymentMethods')}</h3>
-      {isLoading ? <p className="text-muted-foreground text-sm">{t('loading')}</p> : null}
+      {isLoading ? <LoadingState /> : null}
       {configs.map((config) => (
         <MethodRow key={config._id} config={config} />
       ))}

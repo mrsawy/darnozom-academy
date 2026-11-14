@@ -1,10 +1,11 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model, Types } from 'mongoose';
-import { AcademicsErrors, AcademicsSuccessMessages } from '@darnozom/shared-types';
-import { Course } from 'src/course/entities/course.entity';
+import { AcademicsErrors, AcademicsSuccessMessages, AgeRangeErrors } from '@darnozom/shared-types';
+import { TrainingCourse } from 'src/academics/training-course/entities/training-course.entity';
 import { buildSoftDeleteSet, withNotDeletedFilter } from 'src/utils/soft-delete';
 import { AcademicsActor } from '../common/actor';
+import { AgeRange } from 'src/age-range/entities/age-range.entity';
 import { Cohort } from '../cohort/entities/cohort.entity';
 import { CreateLevelDto, UpdateLevelDto } from './dto/level.dto';
 import { Level } from './entities/level.entity';
@@ -15,9 +16,26 @@ const oid = (id: string | Types.ObjectId) => new Types.ObjectId(String(id));
 export class LevelService {
   constructor(
     @InjectModel(Level.name) private readonly levelModel: Model<Level>,
-    @InjectModel(Course.name) private readonly courseModel: Model<Course>,
-    @InjectModel(Cohort.name) private readonly cohortModel: Model<Cohort>
+    @InjectModel(TrainingCourse.name) private readonly courseModel: Model<TrainingCourse>,
+    @InjectModel(Cohort.name) private readonly cohortModel: Model<Cohort>,
+    @InjectModel(AgeRange.name) private readonly ageRangeModel: Model<AgeRange>
   ) {}
+
+  private async assertAgeRangeExists(ageRangeId?: string | null) {
+    if (!ageRangeId) return;
+    const exists = await this.ageRangeModel.exists(withNotDeletedFilter({ _id: oid(ageRangeId) }));
+    if (!exists) throw new BadRequestException(AgeRangeErrors.AGE_RANGE_NOT_FOUND);
+  }
+
+  /** Attaches the level's age range (name + bounds) so clients never resolve it themselves. */
+  private async withAgeRanges<T extends { ageRangeId?: Types.ObjectId | null }>(levels: T[]) {
+    const ids = [...new Set(levels.map((l) => (l.ageRangeId ? String(l.ageRangeId) : null)).filter((id): id is string => id !== null))];
+    const ranges = ids.length
+      ? await this.ageRangeModel.find(withNotDeletedFilter({ _id: { $in: ids.map((id) => oid(id)) } })).select('nameEn nameAr minAge maxAge').lean().exec()
+      : [];
+    const byId = new Map(ranges.map((r) => [String(r._id), r]));
+    return levels.map((level) => ({ ...level, ageRange: level.ageRangeId ? (byId.get(String(level.ageRangeId)) ?? null) : null }));
+  }
 
   private async assertOrderFree(courseId: Types.ObjectId, order: number, excludeId?: string) {
     const filter: FilterQuery<Level> = withNotDeletedFilter({ courseId, order });
@@ -27,7 +45,7 @@ export class LevelService {
   }
 
   async findAll(actor: AcademicsActor, courseId: string) {
-    return (
+    const levels = await (
       this.levelModel
         .find(withNotDeletedFilter({ organizationId: oid(actor.organizationId), courseId: oid(courseId) }))
         // eslint-disable-next-line unicorn/no-array-sort -- Mongoose Query.prototype.sort, not Array#sort
@@ -35,6 +53,7 @@ export class LevelService {
         .lean()
         .exec()
     );
+    return this.withAgeRanges(levels);
   }
 
   async findOne(actor: AcademicsActor, id: string) {
@@ -51,11 +70,13 @@ export class LevelService {
       .exec();
     if (!course) throw new NotFoundException(AcademicsErrors.COURSE_NOT_FOUND_IN_ORGANIZATION);
     await this.assertOrderFree(oid(dto.courseId), dto.order);
+    await this.assertAgeRangeExists(dto.ageRangeId);
     const created = await this.levelModel.create({
       organizationId: oid(actor.organizationId),
       courseId: oid(dto.courseId),
       name: dto.name.trim(),
       order: dto.order,
+      ageRangeId: dto.ageRangeId ? oid(dto.ageRangeId) : null,
       certificateRules: dto.certificateRules,
     });
     return created.toObject();
@@ -64,7 +85,13 @@ export class LevelService {
   async update(actor: AcademicsActor, id: string, dto: UpdateLevelDto) {
     const level = await this.findOne(actor, id);
     if (dto.order !== undefined) await this.assertOrderFree(level.courseId, dto.order, id);
-    const changes: UpdateLevelDto = { ...dto, ...(dto.name === undefined ? {} : { name: dto.name.trim() }) };
+    await this.assertAgeRangeExists(dto.ageRangeId);
+    const { ageRangeId, ...rest } = dto;
+    const changes = {
+      ...rest,
+      ...(dto.name === undefined ? {} : { name: dto.name.trim() }),
+      ...(ageRangeId === undefined ? {} : { ageRangeId: ageRangeId === null ? null : oid(ageRangeId) }),
+    };
     return this.levelModel.findOneAndUpdate({ _id: level._id }, { $set: changes }, { new: true, runValidators: true }).lean().exec();
   }
 

@@ -9,11 +9,15 @@ import {
   PAYMENT_METHOD_RECEIPT_UPLOAD,
   PaymentProvider,
 } from '@darnozom/shared-types';
+import { DEFAULT_PRIMARY_COLOR, DEFAULT_SECONDARY_COLOR, DEFAULT_THEME_ID } from '../constants/branding.constants';
 
 @Schema({ timestamps: true })
 export class Organization extends Document<Types.ObjectId> {
   @Prop({ type: String, required: true })
   name: string;
+
+  @Prop({ type: String, required: false, default: null })
+  description: string | null;
 
   @Prop({ required: true, type: mongoose.Types.ObjectId })
   superAdminId: mongoose.Types.ObjectId;
@@ -33,6 +37,7 @@ export class Organization extends Document<Types.ObjectId> {
         logo: String,
         primaryColor: String,
         secondaryColor: String,
+        themeId: String,
       },
       notifications: {
         emailEnabled: Boolean,
@@ -41,8 +46,9 @@ export class Organization extends Document<Types.ObjectId> {
     },
     default: {
       branding: {
-        primaryColor: '#000',
-        secondaryColor: '#fff',
+        primaryColor: DEFAULT_PRIMARY_COLOR,
+        secondaryColor: DEFAULT_SECONDARY_COLOR,
+        themeId: DEFAULT_THEME_ID,
       },
       notifications: {
         emailEnabled: false,
@@ -56,6 +62,7 @@ export class Organization extends Document<Types.ObjectId> {
       logo: string;
       primaryColor: string;
       secondaryColor: string;
+      themeId?: string;
     };
     notifications: {
       emailEnabled: boolean;

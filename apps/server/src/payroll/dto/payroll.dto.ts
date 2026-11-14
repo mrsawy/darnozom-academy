@@ -1,5 +1,6 @@
-import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, Min } from 'class-validator';
-import { Currency, PayStatementStatus, TeacherPayModel } from '@darnozom/shared-types';
+import { IsDateString, IsEnum, IsMongoId, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, Min } from 'class-validator';
+import { Currency, GroupPayModel, PayStatementStatus, TeacherPayModel } from '@darnozom/shared-types';
+import { IsRateValidForModel } from '../../utils/validators/is-rate-valid-for-model.validator';
 
 export class TeacherIdPayload {
   @IsNotEmpty()
@@ -26,6 +27,43 @@ export class UpsertProfilePayload extends UpsertTeacherPayProfileDto {
   @IsNotEmpty()
   @IsString()
   teacherId: string;
+}
+
+export class UpsertGroupPayRulePayload {
+  @IsMongoId()
+  teacherId: string;
+
+  @IsMongoId()
+  groupId: string;
+
+  @IsEnum(GroupPayModel)
+  model: GroupPayModel;
+
+  @IsNumber()
+  @IsRateValidForModel('model')
+  rate: number;
+
+  @IsEnum(Currency)
+  currency: Currency;
+
+  @IsOptional()
+  @IsDateString()
+  effectiveFrom?: string;
+}
+
+export class GroupPayRuleIdPayload {
+  @IsMongoId()
+  id: string;
+}
+
+export class ListGroupPayRulesPayload {
+  @IsOptional()
+  @IsMongoId()
+  teacherId?: string;
+
+  @IsOptional()
+  @IsMongoId()
+  groupId?: string;
 }
 
 export class GenerateStatementsPayload {

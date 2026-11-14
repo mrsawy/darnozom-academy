@@ -27,7 +27,7 @@ export class AdminReviewCourseService {
     const result = await this.courseModel.paginate(filter, {
       ...this.support.extractPaginateOptions(dto),
       ...withDeletedQueryOptions(),
-      populate: ['organization', 'instructor', 'coInstructors', 'categories', 'grade', 'schoolTypes'],
+      populate: ['organization', 'instructor', 'coInstructors', 'categories', 'ageRanges'],
       sort: { createdAt: -1 },
       lean: true,
     });
@@ -52,7 +52,7 @@ export class AdminReviewCourseService {
     const result = await this.courseModel.paginate(filter, {
       ...this.support.extractPaginateOptions(dto),
       ...withDeletedQueryOptions(),
-      populate: ['organization', 'instructor', 'coInstructors', 'categories', 'grade', 'schoolTypes'],
+      populate: ['organization', 'instructor', 'coInstructors', 'categories', 'ageRanges'],
       sort: { createdAt: -1 },
       lean: true,
     });

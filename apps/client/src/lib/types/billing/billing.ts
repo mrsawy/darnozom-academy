@@ -96,6 +96,8 @@ export interface IFamilyPayment {
   reviewedAt?: string | null;
   externalReference?: string | null;
   paymentMethodConfigId?: string | null;
+  subscriptionId?: string | null;
+  note?: string | null;
   methodSnapshot?: IFamilyPaymentMethodSnapshot | null;
   createdAt: string;
   updatedAt: string;
@@ -128,4 +130,44 @@ export interface InitiatePaymentFormValues {
   amountMinor: number;
   currency: Currency;
   meta?: Record<string, unknown>;
+}
+
+export interface ISubscriptionOverviewRow {
+  _id: string;
+  familyId: string;
+  /** The payer: the parent, or the student themselves when no parent is linked. */
+  familyName: string;
+  holderIsStudent: boolean;
+  type: SubscriptionType;
+  status: BillingSubscriptionStatus;
+  amountMinor: number;
+  currency: Currency;
+  students: { id: string; name: string }[];
+  groups: { id: string; name: string }[];
+  chargedMinor: number;
+  paidMinor: number;
+  outstandingMinor: number;
+  note?: string;
+  createdAt?: string;
+  endedAt?: string | null;
+}
+
+export interface ISubscriptionOverviewTotals {
+  currency: Currency;
+  activeCount: number;
+  activeAmountMinor: number;
+  outstandingMinor: number;
+}
+
+export interface ISubscriptionOverview {
+  rows: ISubscriptionOverviewRow[];
+  totals: ISubscriptionOverviewTotals[];
+}
+
+export interface ListSubscriptionsQuery {
+  status?: BillingSubscriptionStatus;
+  type?: SubscriptionType;
+  groupId?: string;
+  holder?: 'PARENT' | 'STUDENT';
+  search?: string;
 }

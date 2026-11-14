@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { AtRiskReason, FinalResult, GroupPaymentStatus, GroupStatus, GroupStudentStatus } from '@darnozom/shared-types';
+import { AtRiskReason, FinalResult, GroupPaymentStatus, GroupStatus, GroupStudentStatus, MeetingProvider } from '@darnozom/shared-types';
 import { applySoftDeleteMiddleware } from 'src/utils/soft-delete';
 
 @Schema({ _id: false })
@@ -93,7 +93,7 @@ export class Group extends Document<Types.ObjectId> {
   @Prop({ type: Types.ObjectId, ref: 'Level', required: true })
   levelId: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId, ref: 'Course', required: true })
+  @Prop({ type: Types.ObjectId, ref: 'TrainingCourse', required: true })
   courseId: Types.ObjectId;
 
   @Prop({ type: String, required: true, trim: true })
@@ -125,6 +125,10 @@ export class Group extends Document<Types.ObjectId> {
   @Prop({ type: String, required: true })
   timezone: string;
 
+  /** The group's own start date. Null = inherit the batch (cohort) start date. */
+  @Prop({ type: Date, required: false, default: null })
+  startDate: Date | null;
+
   @Prop({ type: Number, required: true, min: 1 })
   minStudents: number;
 
@@ -138,6 +142,9 @@ export class Group extends Document<Types.ObjectId> {
   /** Informational estimated end date (UI only, not used in session calculations). */
   @Prop({ type: Date, required: false, default: null })
   estimatedEndDate?: Date | null;
+
+  @Prop({ type: String, enum: Object.values(MeetingProvider), default: MeetingProvider.EXTERNAL_URL })
+  meetingProvider: MeetingProvider;
 
   @Prop({ type: String, required: false, trim: true })
   meetingLink?: string;

@@ -31,8 +31,7 @@ import {
   ROUTE_MAIN_ADMIN_PLATFORM_OPTIONS,
   ROUTE_MAIN_ADMIN_WITHDRAWAL_REQUESTS,
   ROUTE_MAIN_ADMIN_ROLES,
-  ROUTE_MAIN_ADMIN_GRADES,
-  ROUTE_MAIN_ADMIN_SCHOOL_TYPES,
+  ROUTE_MAIN_ADMIN_AGE_RANGES,
 } from '@/lib/data/constants/routes.constants';
 
 export interface MainAdminNavSecondarySource {
@@ -131,16 +130,10 @@ export const data = {
       key: 'roles',
     },
     {
-      titleKey: 'navMain.grades',
-      url: ROUTE_MAIN_ADMIN_GRADES,
+      titleKey: 'navMain.ageRanges',
+      url: ROUTE_MAIN_ADMIN_AGE_RANGES,
       icon: IconSchool,
-      key: 'grades',
-    },
-    {
-      titleKey: 'navMain.schoolTypes',
-      url: ROUTE_MAIN_ADMIN_SCHOOL_TYPES,
-      icon: IconBuildingCommunity,
-      key: 'schoolTypes',
+      key: 'ageRanges',
     },
     {
       titleKey: 'navMain.chat',

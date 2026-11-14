@@ -5,6 +5,7 @@ import { Counter, CounterSchema } from './entities/counter.entity';
 import { Group, GroupSchema } from 'src/academics/group/entities/group.entity';
 import { Level, LevelSchema } from 'src/academics/level/entities/level.entity';
 import { Course, CourseSchema } from 'src/course/entities/course.entity';
+import { TrainingCourse, TrainingCourseSchema } from 'src/academics/training-course/entities/training-course.entity';
 import { User, UserSchema } from 'src/user/entities/user.entity';
 import { Session, SessionSchema } from 'src/academics/session/entities/session.entity';
 import { Organization, OrganizationSchema } from 'src/organization/entities/organization.entity';
@@ -22,6 +23,7 @@ import { RoleModule } from 'src/role/role.module';
       { name: Group.name, schema: GroupSchema },
       { name: Level.name, schema: LevelSchema },
       { name: Course.name, schema: CourseSchema },
+      { name: TrainingCourse.name, schema: TrainingCourseSchema },
       { name: User.name, schema: UserSchema },
       { name: Session.name, schema: SessionSchema },
       { name: Organization.name, schema: OrganizationSchema },

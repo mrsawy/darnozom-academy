@@ -92,10 +92,8 @@ export interface IInstructor extends IUser {
   averageCoursesRating?: number;
   categoriesIds?: string[];
   categories?: Pick<ICategory, '_id' | 'name'>[];
-  gradesIds?: string[];
-  grades?: { _id: string; nameEn: string; nameAr: string }[];
-  schoolTypesIds?: string[];
-  schoolTypes?: { _id: string; nameEn: string; nameAr: string }[];
+  ageRangesIds?: string[];
+  ageRanges?: { _id: string; nameEn: string; nameAr: string }[];
 }
 
 export interface IParent extends IUser {

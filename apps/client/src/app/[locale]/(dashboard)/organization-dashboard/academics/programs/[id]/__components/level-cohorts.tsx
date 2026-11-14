@@ -24,7 +24,9 @@ import {
   useCohorts,
   useCreateCohort,
   useDeleteCohort,
+  useUpdateCohort,
 } from '@/lib/hooks/academics/use-academics.hook';
+import { EditFieldsDialog } from './edit-fields-dialog/edit-fields-dialog';
 import { CohortGroups } from './cohort-groups';
 import { ConfirmButton } from './confirm-button';
 import { StepHeader } from './step-header';
@@ -35,6 +37,7 @@ export function LevelCohorts({ levelId }: { levelId: string }) {
   const { data: cohorts = [] } = useCohorts(levelId);
   const createCohort = useCreateCohort();
   const deleteCohort = useDeleteCohort();
+  const updateCohort = useUpdateCohort();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
   const [startDate, setStartDate] = useState('');
@@ -133,6 +136,26 @@ export function LevelCohorts({ levelId }: { levelId: string }) {
                 </p>
               </div>
               <div className="flex items-center gap-1">
+                <EditFieldsDialog
+                  triggerLabel={t('programs.editCohort')}
+                  title={t('programs.editCohort')}
+                  description={t('programs.editCohortHint')}
+                  fields={[
+                    { name: 'name', label: t('name'), type: 'text', required: true },
+                    { name: 'startDate', label: t('startDate'), type: 'date', required: true },
+                  ]}
+                  values={{
+                    name: cohort.name,
+                    startDate: new Date(cohort.startDate).toISOString().slice(0, 10),
+                  }}
+                  pending={updateCohort.isPending}
+                  onSave={(v, close) =>
+                    updateCohort.mutate(
+                      { id: cohort._id, data: { name: v.name, startDate: v.startDate } },
+                      { onSuccess: close }
+                    )
+                  }
+                />
                 <Button asChild variant="ghost" size="sm">
                   <Link href={`${ROUTE_ORG_ACADEMICS_GROUPS}?cohortId=${cohort._id}`}>
                     <Users className="size-4" />

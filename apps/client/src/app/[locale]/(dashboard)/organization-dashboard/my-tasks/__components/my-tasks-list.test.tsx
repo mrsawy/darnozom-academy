@@ -32,7 +32,7 @@ const makeTask = (overrides: Partial<ITask> = {}): ITask => ({
 describe('MyTasksList', () => {
   it('shows a loading message while fetching', () => {
     render(<MyTasksList tasks={[]} isLoading onMarkDone={vi.fn()} />);
-    expect(screen.getByText('loading')).toBeInTheDocument();
+    expect(screen.getByRole('status')).toBeInTheDocument();
   });
 
   it('shows the empty state when there are no tasks', () => {

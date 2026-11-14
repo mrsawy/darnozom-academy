@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, within } from '@testing-library/react';
-import { AttendanceStatus } from '@darnozom/shared-types';
+import { AttendanceSource, AttendanceStatus, PresenceRole } from '@darnozom/shared-types';
 import { AttendanceTable } from './attendance-table';
 
 vi.mock('next-intl', () => ({
@@ -83,5 +83,45 @@ describe('AttendanceTable', () => {
       />
     );
     expect(within(screen.getByRole('group', { name: 'Amal K' })).getByText(present)).toBeDisabled();
+  });
+
+  it('marks automatic rows as Auto and shows when each student joined and for how long', () => {
+    render(
+      <AttendanceTable
+        roster={['a', 'b']}
+        people={people}
+        attendance={[
+          { studentId: 'a', status: AttendanceStatus.PRESENT, markedAt: '2026-10-12T14:03:00Z', source: AttendanceSource.AUTO },
+          { studentId: 'b', status: AttendanceStatus.LATE, markedAt: '2026-10-12T14:20:00Z', source: AttendanceSource.MANUAL },
+        ]}
+        presence={[{ userId: 'a', role: PresenceRole.STUDENT, firstJoinedAt: '2026-10-12T14:03:00Z', totalSeconds: 2700 }]}
+        disabled={false}
+        pending={false}
+        onSave={vi.fn()}
+      />
+    );
+    const a = within(screen.getByRole('group', { name: 'Amal K' }));
+    const b = within(screen.getByRole('group', { name: 'Bilal R' }));
+    expect(a.getByText('sessions.attendance.auto')).toBeInTheDocument();
+    expect(a.getByText('sessions.presence.minutes')).toBeInTheDocument();
+    expect(b.queryByText('sessions.attendance.auto')).not.toBeInTheDocument();
+    expect(b.queryByText('sessions.presence.minutes')).not.toBeInTheDocument();
+  });
+
+  it('hides the minutes when none were tracked (external-link sessions send no heartbeats)', () => {
+    render(
+      <AttendanceTable
+        roster={['a']}
+        people={people}
+        attendance={[{ studentId: 'a', status: AttendanceStatus.PRESENT, markedAt: '2026-10-12T14:03:00Z', source: AttendanceSource.AUTO }]}
+        presence={[{ userId: 'a', role: PresenceRole.STUDENT, firstJoinedAt: '2026-10-12T14:03:00Z', totalSeconds: 0 }]}
+        disabled={false}
+        pending={false}
+        onSave={vi.fn()}
+      />
+    );
+    const a = within(screen.getByRole('group', { name: 'Amal K' }));
+    expect(a.getByText(/sessions.presence.joinedAt/)).toBeInTheDocument();
+    expect(a.queryByText(/sessions.presence.minutes/)).not.toBeInTheDocument();
   });
 });

@@ -7,6 +7,7 @@ import type {
   IGroup,
   ISession,
   ISessionDetail,
+  JoinSessionResult,
   ReportValues,
   SessionQuery,
 } from '@/lib/types/academics/academics';
@@ -54,4 +55,15 @@ export async function rescheduleSession(data: { id: string; startsAt: string; en
 }
 export async function deleteSession(id: string) {
   return createAuthorizedNatsRequest<{ message: string }>('academics.sessions.delete', { id });
+}
+
+/** Records the caller joining the session (attendance is derived from it) and returns how to reach the meeting. */
+export async function joinSession(id: string) {
+  return createAuthorizedNatsRequest<JoinSessionResult>('academics.sessions.join', { id });
+}
+export async function heartbeatSession(id: string) {
+  return createAuthorizedNatsRequest<void>('academics.sessions.heartbeat', { id });
+}
+export async function leaveSession(id: string) {
+  return createAuthorizedNatsRequest<void>('academics.sessions.leave', { id });
 }

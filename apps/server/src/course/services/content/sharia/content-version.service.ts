@@ -49,7 +49,9 @@ export class ContentVersionService {
       courseId: oid(input.courseId),
       version,
       changes: input.changes,
-      createdBy: input.createdBy ? oid(input.createdBy) : null,
+      // Callers sometimes pass the author's username, not their id; an unreadable author is stored as none
+      // rather than failing a content write that has already been committed.
+      createdBy: input.createdBy && /^[\da-f]{24}$/i.test(String(input.createdBy)) ? oid(input.createdBy) : null,
       shariaStatus: ShariaStatus.PENDING,
     });
     return created as unknown as ContentVersionLean;

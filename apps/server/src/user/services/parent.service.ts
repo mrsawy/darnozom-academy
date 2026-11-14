@@ -19,6 +19,7 @@ import { UpdateChildDto } from '../dto/update-child.dto';
 import { CreateParentForStudentDto } from '../dto/create-parent-for-student.dto';
 import { UserService } from './user.service';
 import { WalletService } from 'src/wallet/wallet.service';
+import { FamilyReassignService } from 'src/billing/family/family-reassign.service';
 
 type EnrollmentProgress = RelatedStudentEnrollmentDetails['enrollment']['progress'];
 
@@ -37,7 +38,8 @@ export class ParentService {
     @InjectModel(CourseContent.name)
     private readonly courseContentModel: PaginateModel<CourseContent>,
     private readonly userService: UserService,
-    private readonly walletService: WalletService
+    private readonly walletService: WalletService,
+    private readonly familyReassign: FamilyReassignService
   ) {}
 
   async createChildStudent(parentId: mongoose.Types.ObjectId, dto: CreateChildDto, session?: ClientSession): Promise<User> {
@@ -112,6 +114,11 @@ export class ParentService {
       await this.walletService.create({ _id: walletId, userId: parentId, currency: Currency.USD }, session);
 
       await this.userModel.updateOne({ _id: studentId }, { $set: { parentUserId: parentId } }, { session });
+
+      // Any subscriptions or ledger entries created before the parent existed were recorded under
+      // the student's own id as the familyId. Re-key them to the new parent so the parent account
+      // can see and pay them.
+      await this.familyReassign.reassignForParent(String(parentId), session);
 
       await session.commitTransaction();
     } catch (error) {

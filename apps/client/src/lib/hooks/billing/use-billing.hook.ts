@@ -12,6 +12,8 @@ import type {
   IBillingSubscription,
   IFamilyPayment,
   IFamilyStatement,
+  ISubscriptionOverview,
+  ListSubscriptionsQuery,
   InitiatePaymentFormValues,
   IPaymentMethodOption,
 } from '@/lib/types/billing/billing';
@@ -21,6 +23,7 @@ import type { PaymentProvider } from '@darnozom/shared-types';
 const ROOT = 'billing';
 
 export const billingKeys = {
+  allSubscriptions: (query: ListSubscriptionsQuery) => [ROOT, 'all-subscriptions', query] as const,
   groupSubscriptions: (groupId: string) => [ROOT, 'group-subscriptions', groupId] as const,
   familySubscriptions: (familyId: string) => [ROOT, 'family-subscriptions', familyId] as const,
   statement: (familyId: string) => [ROOT, 'statement', familyId] as const,
@@ -130,6 +133,13 @@ export const useApprovePayment = () =>
     ['academics']
   );
 
+export const useRecordOfflinePayment = () =>
+  useBillingMutation(
+    async (vars: { subscriptionId: string; amountMinor: number; note?: string }) =>
+      unwrap(await billingApi.recordOfflinePayment(vars)),
+    ['academics']
+  );
+
 export const useRejectPayment = () =>
   useBillingMutation(
     async (vars: { paymentId: string; reason: string }) => unwrap(await billingApi.rejectPayment(vars.paymentId, vars.reason)),
@@ -176,5 +186,12 @@ export const useMyFamilyPayments = (enabled = true) =>
   useQuery({
     queryKey: billingKeys.myFamilyPayments,
     queryFn: async (): Promise<IFamilyPayment[]> => unwrap(await billingApi.getMyFamilyPayments()),
+    enabled,
+  });
+
+export const useAllSubscriptions = (query: ListSubscriptionsQuery = {}, enabled = true) =>
+  useQuery({
+    queryKey: billingKeys.allSubscriptions(query),
+    queryFn: async (): Promise<ISubscriptionOverview> => unwrap(await billingApi.listAllSubscriptions(query)),
     enabled,
   });

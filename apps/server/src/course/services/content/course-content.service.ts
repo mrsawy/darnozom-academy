@@ -139,7 +139,9 @@ export class CourseContentService {
 
       return createdContent;
     } catch (error) {
-      await session.abortTransaction();
+      // After commitTransaction (e.g. a failing post-commit step) there is nothing left to abort, and
+      // aborting would replace the real error with a MongoTransactionError.
+      if (session.inTransaction()) await session.abortTransaction();
       throw error;
     } finally {
       await session.endSession();

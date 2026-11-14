@@ -61,7 +61,7 @@ export function NavSecondary({
                         className={cn(isSettingsActive && 'bg-accent/95 text-secondary')}>
                         <item.icon />
                         <span>{item.title}</span>
-                        <ChevronRight className="ml-auto size-4 transition-transform group-data-[state=open]:rotate-90" />
+                        <ChevronRight className="ml-auto size-4 transition-transform group-data-[state=open]:rotate-90 rtl:rotate-180" />
                       </SidebarMenuButton>
                     </CollapsibleTrigger>
                     <CollapsibleContent>

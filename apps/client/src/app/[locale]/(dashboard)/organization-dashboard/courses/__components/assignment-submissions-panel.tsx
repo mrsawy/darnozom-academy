@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/components/atoms/loading-state';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Badge } from '@/components/atoms/badge';
@@ -269,9 +270,8 @@ export default function AssignmentSubmissionsPanel({
   if (isLoading) {
     return (
       <Card>
-        <CardContent className="text-muted-foreground flex items-center gap-2 py-10">
-          <Loader2 className="h-5 w-5 animate-spin" />
-          {t('loading')}
+        <CardContent>
+          <LoadingState className="py-10" />
         </CardContent>
       </Card>
     );

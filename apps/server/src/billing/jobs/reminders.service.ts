@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { BILLING_REMINDER_INTERVAL_DAYS, Currency, LedgerEntryType, NotificationType } from '@darnozom/shared-types';
+import { BILLING_REMINDER_INTERVAL_DAYS, BillingSubscriptionStatus, Currency, LedgerEntryType, NotificationType } from '@darnozom/shared-types';
 import { LedgerEntry } from '../entities/ledger-entry.entity';
 import { Allocation } from '../entities/allocation.entity';
+import { BillingSubscription } from '../entities/subscription.entity';
 import { NotificationService } from 'src/notification/notification.service';
 
 interface OverdueCharge {
@@ -11,6 +12,7 @@ interface OverdueCharge {
   organizationId: Types.ObjectId;
   familyId: Types.ObjectId;
   type: LedgerEntryType;
+  subscriptionId?: Types.ObjectId | null;
   amountMinor: number;
   currency: Currency;
   dueAt: Date;
@@ -21,7 +23,8 @@ export class RemindersService {
   constructor(
     @InjectModel(LedgerEntry.name) private readonly entryModel: Model<LedgerEntry>,
     @InjectModel(Allocation.name) private readonly allocationModel: Model<Allocation>,
-    private readonly notifications: NotificationService
+    private readonly notifications: NotificationService,
+    @InjectModel(BillingSubscription.name) private readonly subscriptionModel: Model<BillingSubscription>
   ) {}
 
   /**
@@ -36,8 +39,26 @@ export class RemindersService {
       .find({ type: LedgerEntryType.CHARGE, dueAt: { $ne: null, $lte: now } })
       .lean<OverdueCharge[]>()
       .exec();
+    // A charge left behind by an ended subscription no longer counts toward a student's payment status
+    // (see FamilyPaymentStatusService), so it must not keep nagging the parent either.
+    const subscriptionIds = [...new Set(overdue.map((charge) => (charge.subscriptionId ? String(charge.subscriptionId) : null)).filter((id): id is string => id !== null))];
+    const activeSubscriptions = subscriptionIds.length
+      ? new Set(
+          (
+            await this.subscriptionModel
+              .find({ _id: { $in: subscriptionIds.map((id) => new Types.ObjectId(id)) }, status: BillingSubscriptionStatus.ACTIVE })
+              .select('_id')
+              .lean<{ _id: Types.ObjectId }[]>()
+              .exec()
+          ).map((row) => String(row._id))
+        )
+      : new Set<string>();
     const overdueFiltered = overdue.filter(
-      (charge) => charge.type === LedgerEntryType.CHARGE && charge.dueAt && new Date(charge.dueAt).getTime() <= now.getTime()
+      (charge) =>
+        charge.type === LedgerEntryType.CHARGE &&
+        charge.dueAt &&
+        new Date(charge.dueAt).getTime() <= now.getTime() &&
+        (!charge.subscriptionId || activeSubscriptions.has(String(charge.subscriptionId)))
     );
     if (overdueFiltered.length === 0) return 0;
 

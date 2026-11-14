@@ -1,4 +1,5 @@
 import { forwardRef, Module } from '@nestjs/common';
+import { BillingModule } from 'src/billing/billing.module';
 import { UserService } from './services/user.service';
 import { UserControllerHttp } from './controllers/http/user.controller.http';
 import { User, UserSchema } from './entities/user.entity';
@@ -39,6 +40,7 @@ import { PrivateSession, PrivateSessionSchema } from 'src/private-session/entiti
     RoleModule,
     forwardRef(() => WalletModule),
     forwardRef(() => SubscriptionModule),
+    forwardRef(() => BillingModule),
   ],
   controllers: [
     UserControllerHttp,

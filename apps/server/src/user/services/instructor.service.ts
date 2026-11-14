@@ -19,7 +19,7 @@ export class InstructorService {
 
   async findAll(options: PaginateOptionsWithSearch, filterInput?: InstructorFilterInput) {
     try {
-      // Build the Mongo $match from flat filters (search/rating/category/grade/schoolType),
+      // Build the Mongo $match from flat filters (search/rating/category/ageRange),
       // then convert id strings → ObjectIds. Clients never build Mongo operators anymore;
       // all query construction — including regex escaping — lives here in one place.
       const builtMatch = convertObjectValuesToObjectId(buildInstructorMatch(filterInput ?? {}));
@@ -47,7 +47,7 @@ export class InstructorService {
         },
         status: UserStatus.ACTIVE,
         deletedAt: null,
-        // search ($or), rating ($gte), grade/school-type ($in) conditions
+        // search ($or), rating ($gte), age-range ($in) conditions
         ...restMatch,
         categoriesIds: (categoryFilter as { $in?: unknown[]; $type?: string } | undefined) ?? {
           $type: 'array',
@@ -73,8 +73,7 @@ export class InstructorService {
 
       const dataPipeline: mongoose.PipelineStage[] = [
         lookupNotDeleted('categories', 'categoriesIds', 'categories'),
-        lookupNotDeleted('grades', 'gradesIds', 'grades'),
-        lookupNotDeleted('schooltypes', 'schoolTypesIds', 'schoolTypes'),
+        lookupNotDeleted('ageranges', 'ageRangesIds', 'ageRanges'),
       ];
 
       // Add sort stage if provided
@@ -190,8 +189,7 @@ export class InstructorService {
         foreignField: 'name',
       })
       .populate('categories')
-      .populate('grades')
-      .populate('schoolTypes')
+      .populate('ageRanges')
       .exec();
 
     if (!instructor) {

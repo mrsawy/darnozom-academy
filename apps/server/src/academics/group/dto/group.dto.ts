@@ -19,7 +19,7 @@ import {
   ValidateIf,
   ValidateNested,
 } from 'class-validator';
-import { FinalResult, GroupStatus } from '@darnozom/shared-types';
+import { FinalResult, GroupStatus, MeetingProvider } from '@darnozom/shared-types';
 import { IsIanaTimeZone } from 'src/utils/validators/is-iana-timezone.validator';
 import { OptionalNonNull } from '../../common/optional-non-null';
 
@@ -75,9 +75,19 @@ export class CreateGroupDto {
   @Max(500)
   totalSessions!: number;
 
+  /** ISO date. Omitted = the batch's start date. */
+  @IsOptional()
+  @IsDateString()
+  startDate?: string | null;
+
   @IsOptional()
   @IsDateString()
   estimatedEndDate?: string | null;
+
+  /** AGORA runs the sessions inside the platform (no link needed); EXTERNAL_URL uses meetingLink. */
+  @IsOptional()
+  @IsEnum(MeetingProvider)
+  meetingProvider?: MeetingProvider;
 
   /** null clears the link */
   @IsOptional()
@@ -128,9 +138,19 @@ export class UpdateGroupDto {
   @Max(500)
   totalSessions?: number;
 
+  /** ISO date; null resets the group to the batch's start date. */
+  @IsOptional()
+  @IsDateString()
+  startDate?: string | null;
+
   @IsOptional()
   @IsDateString()
   estimatedEndDate?: string | null;
+
+  /** AGORA runs the sessions inside the platform (no link needed); EXTERNAL_URL uses meetingLink. */
+  @IsOptional()
+  @IsEnum(MeetingProvider)
+  meetingProvider?: MeetingProvider;
 
   /** null clears the link */
   @IsOptional()

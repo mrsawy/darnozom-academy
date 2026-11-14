@@ -18,6 +18,9 @@ const expected: [string, string, Actions, Subjects][] = [
   ['markTeacherAttendance', 'academics.sessions.markTeacherAttendance', Actions.UPDATE, Subjects.GROUP],
   ['submitReport', 'academics.sessions.submitReport', Actions.UPDATE, Subjects.SESSION],
   ['editReport', 'academics.sessions.editReport', Actions.UPDATE, Subjects.SESSION],
+  ['join', 'academics.sessions.join', Actions.READ, Subjects.SESSION],
+  ['heartbeat', 'academics.sessions.heartbeat', Actions.READ, Subjects.SESSION],
+  ['leave', 'academics.sessions.leave', Actions.READ, Subjects.SESSION],
   ['listFollowUps', 'academics.followUps.list', Actions.UPDATE, Subjects.GROUP],
   ['updateFollowUp', 'academics.followUps.update', Actions.UPDATE, Subjects.GROUP],
 ];

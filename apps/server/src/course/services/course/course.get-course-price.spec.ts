@@ -12,7 +12,6 @@ describe('CourseService.getCoursePrice', () => {
     undefined as never,
     undefined as never,
     undefined as never,
-    undefined as never,
     { convertFromUSD } as never,
     undefined as never,
     undefined as never,

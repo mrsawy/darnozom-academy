@@ -1,4 +1,10 @@
-import { extractVariables, validateVariables, renderTemplate, normalizePhone } from './template-render';
+import {
+  canonicalVariables,
+  extractVariables,
+  validateVariables,
+  renderTemplate,
+  normalizePhone,
+} from './template-render';
 
 describe('extractVariables', () => {
   it('extracts variable names from {{name}} syntax', () => {
@@ -47,6 +53,29 @@ describe('renderTemplate', () => {
   it('does not substitute {{ x }} with spaces', () => {
     const { text } = renderTemplate('{{ invalid }}', { invalid: 'oops' });
     expect(text).toBe('{{ invalid }}');
+  });
+});
+
+describe('Arabic variable names', () => {
+  it('extracts Arabic variable names', () => {
+    expect(extractVariables('مرحباً {{اسم_الطالب}}')).toEqual(['اسم_الطالب']);
+  });
+  it('accepts Arabic names that map to an allowed variable', () => {
+    expect(validateVariables('STUDENT', '{{اسم_الطالب}} في {{اسم_المجموعة}}')).toEqual([]);
+  });
+  it('rejects an Arabic STUDENT-only name in a GROUP template', () => {
+    expect(validateVariables('GROUP', '{{اسم_الطالب}}')).toEqual(['اسم_الطالب']);
+  });
+  it('rejects unknown Arabic names', () => {
+    expect(validateVariables('STUDENT', '{{شيء_مجهول}}')).toEqual(['شيء_مجهول']);
+  });
+  it('renders Arabic names and reports missing ones by canonical key', () => {
+    const { text, missingVariables } = renderTemplate('{{اسم_الطالب}} {{رابط_الاجتماع}}', { studentName: 'أحمد' });
+    expect(text).toBe('أحمد ');
+    expect(missingVariables).toEqual(['meetingLink']);
+  });
+  it('canonicalVariables mixes spellings and dedupes', () => {
+    expect(canonicalVariables('{{studentName}} {{اسم_الطالب}} {{groupName}}')).toEqual(['studentName', 'groupName']);
   });
 });
 

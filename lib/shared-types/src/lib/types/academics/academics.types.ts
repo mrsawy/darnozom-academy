@@ -34,6 +34,20 @@ export const SESSION_SCORE_MAX = 5;
 export const TOTAL_SESSIONS_MAX = 500;
 /** Teachers/staff may record attendance from this many minutes before a session starts. */
 export const ATTENDANCE_OPEN_MINUTES_BEFORE = 15;
+/** Joining the session counts as LATE when it happens more than this many minutes after the start. */
+export const AUTO_LATE_AFTER_MINUTES = 10;
+/** Participants may still join (and be counted present) this many minutes after a session ends. */
+export const PRESENCE_GRACE_MINUTES = 15;
+
+export enum AttendanceSource {
+  MANUAL = 'MANUAL',
+  AUTO = 'AUTO',
+}
+
+export enum PresenceRole {
+  TEACHER = 'TEACHER',
+  STUDENT = 'STUDENT',
+}
 /** A submitted report stays editable by its teacher for this many hours. */
 export const REPORT_EDIT_WINDOW_HOURS = 24;
 

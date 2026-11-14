@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { LoadingState } from '@/components/atoms/loading-state';
+import { Fragment, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { Badge } from '@/components/atoms/badge';
 import { Button } from '@/components/atoms/button';
@@ -18,9 +19,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/atoms/dialog';
-import { PayStatementStatus, TeacherPayModel } from '@darnozom/shared-types';
+import { Currency, GroupPayModel, PayStatementStatus } from '@darnozom/shared-types';
 import { formatPayrollAmount } from '@/lib/utils/payroll/format-payroll';
-import type { IBonusItem, IPayStatement } from '@/lib/types/payroll/payroll';
+import type { IBonusItem, IPayStatement, IPayStatementLine } from '@/lib/types/payroll/payroll';
 
 export interface PayStatementsTableProps {
   statements: IPayStatement[];
@@ -29,6 +30,8 @@ export interface PayStatementsTableProps {
   onApprove?: (statementId: string) => void;
   onMarkPaid?: (statement: IPayStatement) => void;
   isInstructorView?: boolean;
+  /** Teacher display names by id; the id itself is shown when a name is unknown. */
+  teacherNames?: Record<string, string>;
 }
 
 export function PayStatementsTable({
@@ -38,9 +41,18 @@ export function PayStatementsTable({
   onApprove,
   onMarkPaid,
   isInstructorView = false,
+  teacherNames,
 }: PayStatementsTableProps) {
   const t = useTranslations('Payroll');
   const locale = useLocale();
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
+  const toggle = (id: string) =>
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
 
   const [selectedBonuses, setSelectedBonuses] = useState<{
     teacherId: string;
@@ -52,7 +64,7 @@ export function PayStatementsTable({
   if (isLoading) {
     return (
       <div className="flex h-48 items-center justify-center rounded-lg border border-dashed">
-        <p className="text-muted-foreground text-sm">{t('loading')}</p>
+        <LoadingState />
       </div>
     );
   }
@@ -96,8 +108,7 @@ export function PayStatementsTable({
             <TableRow>
               {!isInstructorView && <TableHead>{t('teacher')}</TableHead>}
               <TableHead>{t('month')}</TableHead>
-              <TableHead>{t('payModel')}</TableHead>
-              <TableHead>{t('basis')}</TableHead>
+              <TableHead>{t('groups')}</TableHead>
               <TableHead>{t('baseAmount')}</TableHead>
               <TableHead>{t('bonuses')}</TableHead>
               <TableHead>{t('total')}</TableHead>
@@ -107,44 +118,34 @@ export function PayStatementsTable({
           </TableHeader>
           <TableBody>
             {statements.map((s) => {
-              const currency = s.profileSnapshot.currency;
-              const isRevShare = s.profileSnapshot.model === TeacherPayModel.REVENUE_SHARE;
-              const formattedRate = isRevShare
-                ? `${s.profileSnapshot.rate}%`
-                : formatPayrollAmount(s.profileSnapshot.rate, currency, locale);
-
+              const currency = s.currency ?? s.profileSnapshot?.currency ?? Currency.SAR;
+              const lines = s.lines ?? [];
+              const isOpen = expanded.has(s._id);
               const bonusTotal = s.bonuses.reduce((acc, b) => acc + b.amount, 0);
 
               return (
-                <TableRow key={s._id}>
+                <Fragment key={s._id}>
+                <TableRow>
                   {!isInstructorView && (
-                    <TableCell className="font-mono text-sm">
-                      {s.teacherId}
+                    <TableCell className="text-sm font-medium">
+                      {teacherNames?.[s.teacherId] ?? s.teacherId}
                     </TableCell>
                   )}
                   <TableCell className="font-medium whitespace-nowrap">
                     {s.month}
                   </TableCell>
                   <TableCell>
-                    <div className="space-y-1">
-                      <Badge variant="outline" className="text-xs">
-                        {t(`models.${s.profileSnapshot.model}`)}
-                      </Badge>
-                      <div className="text-xs text-muted-foreground">
-                        {t('rate')}: {formattedRate}
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-xs text-muted-foreground whitespace-nowrap">
-                    <div>{t('sessionsCount', { count: s.basis.sessions })}</div>
-                    <div>{t('minutesCount', { count: s.basis.minutes })}</div>
-                    {s.basis.students > 0 && (
-                      <div>{t('studentsCount', { count: s.basis.students })}</div>
-                    )}
-                    {isRevShare && s.basis.revenue > 0 && (
-                      <div className="font-medium text-foreground">
-                        Rev: {formatPayrollAmount(s.basis.revenue, currency, locale)}
-                      </div>
+                    {lines.length > 0 ? (
+                      <button
+                        type="button"
+                        onClick={() => toggle(s._id)}
+                        aria-expanded={isOpen}
+                        className="text-primary text-xs underline underline-offset-2 hover:opacity-80">
+                        {t('groupsCount', { count: lines.length })} ·{' '}
+                        {isOpen ? t('hideBreakdown') : t('showBreakdown')}
+                      </button>
+                    ) : (
+                      <span className="text-muted-foreground text-xs">{t('legacyStatement')}</span>
                     )}
                   </TableCell>
                   <TableCell className="font-mono">
@@ -156,7 +157,7 @@ export function PayStatementsTable({
                         type="button"
                         onClick={() =>
                           setSelectedBonuses({
-                            teacherId: s.teacherId,
+                            teacherId: teacherNames?.[s.teacherId] ?? s.teacherId,
                             month: s.month,
                             currency,
                             bonuses: s.bonuses,
@@ -223,6 +224,14 @@ export function PayStatementsTable({
                     </TableCell>
                   )}
                 </TableRow>
+                {isOpen && lines.length > 0 ? (
+                  <TableRow className="bg-muted/30 hover:bg-muted/30">
+                    <TableCell colSpan={isInstructorView ? 6 : 8} className="p-0">
+                      <StatementLines lines={lines} locale={locale} />
+                    </TableCell>
+                  </TableRow>
+                ) : null}
+                </Fragment>
               );
             })}
           </TableBody>
@@ -265,5 +274,45 @@ export function PayStatementsTable({
         </DialogContent>
       </Dialog>
     </>
+  );
+}
+
+function StatementLines({ lines, locale }: { lines: IPayStatementLine[]; locale: string }) {
+  const t = useTranslations('Payroll');
+  return (
+    <div className="overflow-x-auto px-4 py-3">
+      <table className="w-full text-sm">
+        <thead>
+          <tr className="text-muted-foreground text-xs">
+            <th className="py-1 text-start font-medium">{t('group')}</th>
+            <th className="py-1 text-start font-medium">{t('rule')}</th>
+            <th className="py-1 text-start font-medium">{t('subscriptions')}</th>
+            <th className="py-1 text-start font-medium">{t('collected')}</th>
+            <th className="py-1 text-end font-medium">{t('teacherCost')}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {lines.map((line) => (
+            <tr key={line.groupId} className="border-t">
+              <td className="py-1.5 font-medium">{line.groupName}</td>
+              <td className="py-1.5 whitespace-nowrap">
+                {line.model === GroupPayModel.PERCENT_OF_SUBSCRIPTIONS
+                  ? t('ruleValue.PERCENT_OF_SUBSCRIPTIONS', { rate: line.rate })
+                  : t(`ruleValue.${line.model}`, {
+                      amount: formatPayrollAmount(line.rate, line.currency, locale),
+                    })}
+              </td>
+              <td className="py-1.5">{line.subscriptions}</td>
+              <td className="py-1.5 font-mono">
+                {formatPayrollAmount(line.collected, line.currency, locale)}
+              </td>
+              <td className="py-1.5 text-end font-mono font-semibold">
+                {formatPayrollAmount(line.amount, line.currency, locale)}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }

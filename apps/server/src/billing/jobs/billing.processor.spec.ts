@@ -1,6 +1,6 @@
 import { Job } from 'bullmq';
 import { BillingProcessor } from './billing.processor';
-import { BILLING_DAILY_EVERY_MS, BILLING_DAILY_JOB } from './billing.queue';
+import { BILLING_DAILY_CRON, BILLING_DAILY_JOB } from './billing.queue';
 
 const makeProcessor = () => {
   const monthlyCharges = { run: jest.fn(async () => 5) };
@@ -47,7 +47,7 @@ describe('BillingProcessor', () => {
     expect(reminders.run).not.toHaveBeenCalled();
   });
 
-  it('runs daily, as the spec requires', () => {
-    expect(BILLING_DAILY_EVERY_MS).toBe(24 * 60 * 60 * 1000);
+  it('runs once a day at a fixed time, as the spec requires', () => {
+    expect(BILLING_DAILY_CRON).toBe('30 0 * * *');
   });
 });

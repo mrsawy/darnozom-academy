@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from 'src/auth/auth.module';
 import { RoleModule } from 'src/role/role.module';
@@ -10,7 +10,7 @@ import { AiSubscriptionControllerMessage } from './controllers/message/ai-subscr
 import { AiPlanModule } from 'src/ai-plan/ai-plan.module';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: AiSubscription.name, schema: AiSubscriptionSchema }]), AiPlanModule, AuthModule, RoleModule],
+  imports: [MongooseModule.forFeature([{ name: AiSubscription.name, schema: AiSubscriptionSchema }]), AiPlanModule, forwardRef(() => AuthModule), RoleModule],
   controllers: [AiSubscriptionControllerMessage],
   providers: [AiSubscriptionService, AiSubscriptionLimitGuard, AiSubscriptionUsageListener],
   exports: [AiSubscriptionService, AiSubscriptionLimitGuard],

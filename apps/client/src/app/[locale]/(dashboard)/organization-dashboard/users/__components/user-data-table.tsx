@@ -28,7 +28,11 @@ import {
   Users,
 } from 'lucide-react';
 import { Link } from '@/i18n/navigation';
-import { ROUTE_ORG_USERS_CREATE, ROUTE_ORG_USER_EDIT } from '@/lib/data/constants/routes.constants';
+import {
+  ROUTE_ORG_TEACHER,
+  ROUTE_ORG_USERS_CREATE,
+  ROUTE_ORG_USER_EDIT,
+} from '@/lib/data/constants/routes.constants';
 import { canUser } from '@/lib/utils/permissions/can';
 import useUserStore from '@/lib/store/userStore';
 import {
@@ -48,7 +52,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/atoms/select';
-import { Actions, Subjects, UserStatus } from '@darnozom/shared-types';
+import { Actions, Roles, Subjects, UserStatus } from '@darnozom/shared-types';
 import {
   useDeleteUser,
   useUpdateUserStatus,
@@ -89,8 +93,10 @@ function getStatusColor(status: string) {
   }
 }
 
-export default function UserDataTable() {
+export default function UserDataTable({ role }: { role?: Roles } = {}) {
   const t = useTranslations('UserDataTable');
+  const tNav = useTranslations('OrgSidebar');
+  const pageTitle = role ? tNav(`navMain.usersRoles.${role}`) : tNav('navMain.usersAll');
   const currentUser = useUserStore((s) => s.user);
   const canEditUsers = canUser(currentUser, Actions.UPDATE, Subjects.USER);
   const [openRowId, setOpenRowId] = useState<string | null>(null);
@@ -99,11 +105,14 @@ export default function UserDataTable() {
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
 
   // Use custom hooks for user management with pagination and server-side search
-  const usersQuery = useUsersByOrganization({
-    page: pagination.pageIndex + 1,
-    limit: pagination.pageSize,
-    search: globalFilter.trim() || undefined,
-  });
+  const usersQuery = useUsersByOrganization(
+    {
+      page: pagination.pageIndex + 1,
+      limit: pagination.pageSize,
+      search: globalFilter.trim() || undefined,
+    },
+    role ? { roleName: role } : undefined
+  );
   const users = useMemo(
     () =>
       usersQuery.data ?? {
@@ -236,7 +245,15 @@ export default function UserDataTable() {
               </Avatar>
               <div className="min-w-0">
                 <div className="truncate font-medium" title={`${user.firstName} ${user.lastName}`}>
-                  {user.firstName} {user.lastName}
+                  {String(user.roleName).toUpperCase() === 'INSTRUCTOR' ? (
+                    <Link href={ROUTE_ORG_TEACHER(user._id)} className="hover:underline">
+                      {user.firstName} {user.lastName}
+                    </Link>
+                  ) : (
+                    <>
+                      {user.firstName} {user.lastName}
+                    </>
+                  )}
                 </div>
                 <div className="text-muted-foreground truncate text-sm" title={`@${user.username}`}>
                   @{user.username}
@@ -381,7 +398,7 @@ export default function UserDataTable() {
       {/* Header */}
       <div className="flex items-center justify-between p-5">
         <div>
-          <h2 className="text-xl font-medium">{t('users')}</h2>
+          <h2 className="text-xl font-medium">{pageTitle}</h2>
           <p className="text-muted-foreground text-sm">
             {t('manageUsers', { count: users.docs.length })}
           </p>
@@ -409,41 +426,43 @@ export default function UserDataTable() {
         />
       </div>
 
-      {/* Statistics Cards */}
-      <div className="grid grid-cols-1 gap-4 p-5 sm:grid-cols-2 md:grid-cols-4">
-        <InfoCard
-          title={t('students')}
-          icon={<User />}
-          count={users.totalStudents ?? 0}
-          isLoading={usersQuery.isLoading}
-          countClassName="text-purple-600"
-          iconClassName="text-purple-500"
-        />
-        <InfoCard
-          title={t('parents')}
-          icon={<Users />}
-          count={users.totalParents ?? 0}
-          isLoading={usersQuery.isLoading}
-          countClassName="text-amber-600"
-          iconClassName="text-amber-500"
-        />
-        <InfoCard
-          title={t('admins')}
-          icon={<Shield />}
-          count={users.totalAdmins ?? 0}
-          isLoading={usersQuery.isLoading}
-          countClassName="text-red-600"
-          iconClassName="text-red-500"
-        />
-        <InfoCard
-          title={t('instructors')}
-          icon={<GraduationCap />}
-          count={users.totalInstructors ?? 0}
-          isLoading={usersQuery.isLoading}
-          countClassName="text-blue-600"
-          iconClassName="text-blue-500"
-        />
-      </div>
+      {/* Statistics Cards (all-users view only: counts are for the filtered list) */}
+      {role ? null : (
+        <div className="grid grid-cols-1 gap-4 p-5 sm:grid-cols-2 md:grid-cols-4">
+          <InfoCard
+            title={t('students')}
+            icon={<User />}
+            count={users.totalStudents ?? 0}
+            isLoading={usersQuery.isLoading}
+            countClassName="text-purple-600"
+            iconClassName="text-purple-500"
+          />
+          <InfoCard
+            title={t('parents')}
+            icon={<Users />}
+            count={users.totalParents ?? 0}
+            isLoading={usersQuery.isLoading}
+            countClassName="text-amber-600"
+            iconClassName="text-amber-500"
+          />
+          <InfoCard
+            title={t('admins')}
+            icon={<Shield />}
+            count={users.totalAdmins ?? 0}
+            isLoading={usersQuery.isLoading}
+            countClassName="text-red-600"
+            iconClassName="text-red-500"
+          />
+          <InfoCard
+            title={t('instructors')}
+            icon={<GraduationCap />}
+            count={users.totalInstructors ?? 0}
+            isLoading={usersQuery.isLoading}
+            countClassName="text-blue-600"
+            iconClassName="text-blue-500"
+          />
+        </div>
+      )}
 
       <DataTable<IUser>
         data={users.docs}

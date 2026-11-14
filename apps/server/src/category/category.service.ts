@@ -13,7 +13,7 @@ import { NOT_DELETED_FILTER, buildSoftDeleteSet, withNotDeletedFilter } from 'sr
 
 /**
  * Builds a nested tree from a flat descendants array.
- * Serialized and executed inside MongoDB's $function stage — must remain pure.
+ * Runs in Node on the graphLookup result (MongoDB's $function is not available on Atlas free/shared tiers).
  */
 function buildTreeFn(descendants: unknown[], rootId: unknown) {
   interface CategoryItem {
@@ -69,6 +69,45 @@ function buildTreeFn(descendants: unknown[], rootId: unknown) {
   }
 
   return directChildren;
+}
+
+interface FlatCategory {
+  _id: unknown;
+  name: string;
+  description: string;
+  organizationId: unknown;
+  parentId: unknown;
+  approvalStatus: unknown;
+  approvalComment: unknown;
+  pendingUpdate: unknown;
+  coursesCount: unknown;
+  instructorsCount: unknown;
+  createdAt: unknown;
+  updatedAt: unknown;
+}
+
+const idString = (value: unknown) => (value ? String((value as { valueOf: () => unknown }).valueOf()) : '');
+
+/** Recursively nests `items` under `parentId` (same shape the old $function stage produced). */
+function buildNestedTree(items: FlatCategory[], parentId: unknown): CategoryWithChildren[] {
+  const parentKey = idString(parentId);
+  return items
+    .filter((item) => item.parentId && idString(item.parentId) === parentKey)
+    .map((item) => ({
+      _id: item._id,
+      name: item.name,
+      description: item.description,
+      organizationId: item.organizationId,
+      parentId: item.parentId,
+      approvalStatus: item.approvalStatus,
+      approvalComment: item.approvalComment,
+      pendingUpdate: item.pendingUpdate,
+      coursesCount: item.coursesCount,
+      instructorsCount: item.instructorsCount,
+      createdAt: item.createdAt,
+      updatedAt: item.updatedAt,
+      childCategories: buildNestedTree(items, item._id),
+    })) as unknown as CategoryWithChildren[];
 }
 
 @Injectable()
@@ -151,6 +190,14 @@ export class CategoryService {
     });
   }
 
+  /** Builds each root's nested `childCategories` from its graphLookup descendants, then drops the raw list. */
+  private attachTrees(docs: (CategoryWithChildren & { allDescendants?: unknown[] })[]): CategoryWithChildren[] {
+    return docs.map((doc) => {
+      const { allDescendants, ...rest } = doc;
+      return { ...rest, childCategories: buildTreeFn(allDescendants ?? [], doc._id) } as unknown as CategoryWithChildren;
+    });
+  }
+
   async getAllWithAggregation(
     options: PaginateOptionsWithSearch,
     organizationId?: string,
@@ -160,7 +207,8 @@ export class CategoryService {
     const page = options.page ?? 1;
     const orgObjectId = organizationId ? new this.categoryModel.base.Types.ObjectId(organizationId) : undefined;
 
-    // Stages that are shared between both paths: graphLookup descendants → build tree → clean up
+    // Shared by both paths: graphLookup descendants. The tree is assembled in Node (`attachTrees`)
+    // because Atlas free/shared tiers reject the $function stage.
     const treeStages: mongoose.PipelineStage[] = [
       {
         $graphLookup: {
@@ -173,18 +221,6 @@ export class CategoryService {
           restrictSearchWithMatch: NOT_DELETED_FILTER,
         },
       },
-      {
-        $addFields: {
-          childCategories: {
-            $function: {
-              body: buildTreeFn,
-              args: ['$allDescendants', '$_id'],
-              lang: 'js',
-            },
-          },
-        },
-      },
-      { $project: { allDescendants: 0 } },
     ];
 
     // --- Search path ---
@@ -279,7 +315,7 @@ export class CategoryService {
       ]);
 
       return {
-        docs: results,
+        docs: this.attachTrees(results),
         totalDocs: totalCount,
         limit,
         page,
@@ -309,7 +345,7 @@ export class CategoryService {
     ]);
 
     return {
-      docs: results,
+      docs: this.attachTrees(results),
       totalDocs: totalCount,
       limit,
       page,
@@ -410,81 +446,16 @@ export class CategoryService {
           as: 'allCategories',
         },
       },
-      {
-        $addFields: {
-          childCategories: {
-            $function: {
-              body: function (allCategories: unknown[], parentId: unknown): CategoryWithChildren[] {
-                interface CategoryItem {
-                  _id: unknown;
-                  name: string;
-                  description: string;
-                  organizationId: unknown;
-                  parentId: unknown;
-                  approvalStatus: unknown;
-                  approvalComment: unknown;
-                  pendingUpdate: unknown;
-                  coursesCount: unknown;
-                  instructorsCount: unknown;
-                  createdAt: unknown;
-                  updatedAt: unknown;
-                }
-                function buildTree(items: CategoryItem[], currentParentId: unknown): CategoryWithChildren[] {
-                  let currentParentIdStr: string;
-                  if (!currentParentId) {
-                    currentParentIdStr = '';
-                  } else if (typeof (currentParentId as { valueOf?: () => unknown }).valueOf === 'function') {
-                    currentParentIdStr = String((currentParentId as { valueOf: () => unknown }).valueOf());
-                  } else {
-                    currentParentIdStr = String(currentParentId);
-                  }
-
-                  return items
-                    .filter((item) => {
-                      if (!item.parentId) return false;
-                      const parentIdStr =
-                        typeof (item.parentId as { valueOf?: () => unknown }).valueOf === 'function'
-                          ? String((item.parentId as { valueOf: () => unknown }).valueOf())
-                          : String(item.parentId);
-                      return parentIdStr === currentParentIdStr;
-                    })
-                    .map((item) => ({
-                      _id: item._id,
-                      name: item.name,
-                      description: item.description,
-                      organizationId: item.organizationId,
-                      parentId: item.parentId,
-                      approvalStatus: item.approvalStatus,
-                      approvalComment: item.approvalComment,
-                      pendingUpdate: item.pendingUpdate,
-                      coursesCount: item.coursesCount,
-                      instructorsCount: item.instructorsCount,
-                      createdAt: item.createdAt,
-                      updatedAt: item.updatedAt,
-                      childCategories: buildTree(items, item._id),
-                    })) as unknown as CategoryWithChildren[];
-                }
-                return buildTree(allCategories as CategoryItem[], parentId);
-              },
-              args: ['$allCategories', '$_id'],
-              lang: 'js',
-            },
-          },
-        },
-      },
-      {
-        $project: {
-          allCategories: 0,
-        },
-      },
     ];
 
-    const result = await this.categoryModel.aggregate<CategoryWithChildren>(pipeline);
+    // Assembled in Node: Atlas free/shared tiers reject the $function stage.
+    const result = await this.categoryModel.aggregate<CategoryWithChildren & { allCategories?: unknown[] }>(pipeline);
 
     if (!result || result.length === 0) {
       throw new NotFoundException(`Category with id ${categoryId} not found`);
     }
 
-    return result[0];
+    const { allCategories, ...category } = result[0];
+    return { ...category, childCategories: buildNestedTree((allCategories ?? []) as FlatCategory[], category._id) } as unknown as CategoryWithChildren;
   }
 }

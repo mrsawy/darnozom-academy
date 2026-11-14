@@ -89,8 +89,7 @@ function buildBaseUserSchema(tVal: TVal) {
       .oneOf(Object.values(Country), tVal('countryInvalid'))
       .required(tVal('countryRequired')),
     categoriesIds: yup.array().of(yup.string()).optional(),
-    gradesIds: yup.array().of(yup.string()).optional(),
-    schoolTypesIds: yup.array().of(yup.string()).optional(),
+    ageRangesIds: yup.array().of(yup.string()).optional(),
     parentUserId: yup.string().optional().nullable(),
     childUsersIds: yup.array().of(yup.string()).optional(),
     childUsers: yup
@@ -112,17 +111,7 @@ function buildBaseUserSchema(tVal: TVal) {
         })
       )
       .optional(),
-    grades: yup
-      .array()
-      .of(
-        yup.object({
-          _id: yup.string().required(),
-          nameEn: yup.string().required(),
-          nameAr: yup.string().required(),
-        })
-      )
-      .optional(),
-    schoolTypes: yup
+    ageRanges: yup
       .array()
       .of(
         yup.object({

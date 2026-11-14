@@ -219,13 +219,9 @@ export class CreateCourseDto {
   @IsOptional()
   modulesIds?: mongoose.Types.ObjectId[];
 
-  @IsMongoId()
-  @IsOptional()
-  gradeId?: string | null;
-
   @IsMongoId({ each: true })
   @IsOptional()
-  schoolTypeIds?: string[];
+  ageRangeIds?: string[];
 
   @IsMongoId()
   @IsOptional()

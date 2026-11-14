@@ -7,7 +7,7 @@ import { ApplyRpcErrorHandling } from 'src/utils/docerators/error-handeling/clas
 import { IUserContext } from 'src/utils/types/IUserContext.interface';
 import { actorFromContext } from '../common/actor';
 import { IdPayload } from '../common/payloads';
-import { CourseIdPayload, CreateProgramDto, LinkCoursePayload, UpdateProgramPayload } from './dto/program.dto';
+import { CourseIdPayload, CreateProgramDto, CreateTrainingCourseDto, UpdateTrainingCoursePayload, LinkCoursePayload, UpdateProgramPayload } from './dto/program.dto';
 import { ProgramService } from './program.service';
 
 @Controller()
@@ -55,6 +55,30 @@ export class ProgramControllerMessage {
   @MessagePattern('academics.programs.courseOptions')
   courseOptions(@Ctx() context: IUserContext) {
     return this.programService.courseOptions(actorFromContext(context));
+  }
+
+  @RequirePermissionsGuard({ action: Actions.UPDATE, subject: Subjects.PROGRAM })
+  @MessagePattern('academics.programs.createCourse')
+  createCourse(@Payload(new RpcValidationPipe()) payload: CreateTrainingCourseDto, @Ctx() context: IUserContext) {
+    return this.programService.createCourse(actorFromContext(context), payload.name);
+  }
+
+  @RequirePermissionsGuard({ action: Actions.UPDATE, subject: Subjects.PROGRAM })
+  @MessagePattern('academics.programs.findCourse')
+  findCourse(@Payload(new RpcValidationPipe()) payload: IdPayload, @Ctx() context: IUserContext) {
+    return this.programService.findCourse(actorFromContext(context), payload.id);
+  }
+
+  @RequirePermissionsGuard({ action: Actions.UPDATE, subject: Subjects.PROGRAM })
+  @MessagePattern('academics.programs.updateCourse')
+  updateCourse(@Payload(new RpcValidationPipe()) payload: UpdateTrainingCoursePayload, @Ctx() context: IUserContext) {
+    return this.programService.updateCourse(actorFromContext(context), payload.id, payload.name);
+  }
+
+  @RequirePermissionsGuard({ action: Actions.UPDATE, subject: Subjects.PROGRAM })
+  @MessagePattern('academics.programs.deleteCourse')
+  deleteCourse(@Payload(new RpcValidationPipe()) payload: IdPayload, @Ctx() context: IUserContext) {
+    return this.programService.removeCourse(actorFromContext(context), payload.id);
   }
 
   @RequirePermissionsGuard({ action: Actions.UPDATE, subject: Subjects.PROGRAM })

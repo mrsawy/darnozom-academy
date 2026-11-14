@@ -20,11 +20,9 @@ import FiltersDrawer from '@/components/organs/filters-drawer/filters-drawer';
 import {
   CategoryFilterField,
   RatingFilterField,
-  GradeMultiFilterField,
-  SchoolTypeMultiFilterField,
+  AgeRangeMultiFilterField,
 } from '@/components/organs/filters-drawer/filter-fields';
-import { usePublicGrades } from '@/lib/hooks/grade/use-grades.hook';
-import { usePublicSchoolTypes } from '@/lib/hooks/school-type/use-school-types.hook';
+import { usePublicAgeRanges } from '@/lib/hooks/age-range/use-age-ranges.hook';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -36,8 +34,7 @@ const DEFAULT_FILTERS: IInstructorFilters = {
   search: undefined,
   minRating: undefined,
   selectedCategory: undefined,
-  gradeIds: undefined,
-  schoolTypeIds: undefined,
+  ageRangeIds: undefined,
 };
 
 function buildSearchParams(filters: IInstructorFilters): string {
@@ -73,8 +70,7 @@ function parseFiltersFromParams(
     search: searchParams.get('search') ?? undefined,
     minRating: ratingParam ? Number(ratingParam) : undefined,
     selectedCategory: searchParams.get('selectedCategory') ?? undefined,
-    gradeIds: parseCsv(searchParams.get('gradeIds')),
-    schoolTypeIds: parseCsv(searchParams.get('schoolTypeIds')),
+    ageRangeIds: parseCsv(searchParams.get('ageRangeIds')),
   };
 }
 
@@ -212,8 +208,7 @@ function InstructorsHeaderSection() {
       ...activeFilters,
       minRating: draftFilters.minRating,
       selectedCategory: draftFilters.selectedCategory,
-      gradeIds: draftFilters.gradeIds,
-      schoolTypeIds: draftFilters.schoolTypeIds,
+      ageRangeIds: draftFilters.ageRangeIds,
     });
     setShowFilters(false);
   };
@@ -233,7 +228,7 @@ function InstructorsHeaderSection() {
   );
 
   const handleRemoveArrayItem = useCallback(
-    (key: 'gradeIds' | 'schoolTypeIds', id: string) => {
+    (key: 'ageRangeIds', id: string) => {
       const remaining = (activeFilters[key] ?? []).filter((value) => value !== id);
       const updated = { ...activeFilters, [key]: remaining.length > 0 ? remaining : undefined };
       setDraftFilters(updated);
@@ -252,8 +247,7 @@ function InstructorsHeaderSection() {
   );
 
   const locale = useLocale();
-  const { data: grades } = usePublicGrades();
-  const { data: schoolTypes } = usePublicSchoolTypes();
+  const { data: ageRanges } = usePublicAgeRanges();
 
   const activeFilterChips = useMemo<ActiveFilterChip[]>(() => {
     const chips: ActiveFilterChip[] = [];
@@ -281,30 +275,20 @@ function InstructorsHeaderSection() {
         onRemove: () => handleRemoveFilter('selectedCategory'),
       });
     }
-    for (const id of activeFilters.gradeIds ?? []) {
-      const grade = grades?.find((g) => g._id === id);
+    for (const id of activeFilters.ageRangeIds ?? []) {
+      const ageRange = ageRanges?.find((a) => a._id === id);
       chips.push({
-        id: `grade-${id}`,
-        label: t('grade'),
-        value: grade ? (locale === 'ar' ? grade.nameAr : grade.nameEn) : id,
-        onRemove: () => handleRemoveArrayItem('gradeIds', id),
-      });
-    }
-    for (const id of activeFilters.schoolTypeIds ?? []) {
-      const schoolType = schoolTypes?.find((s) => s._id === id);
-      chips.push({
-        id: `school-${id}`,
-        label: t('schoolType'),
-        value: schoolType ? (locale === 'ar' ? schoolType.nameAr : schoolType.nameEn) : id,
-        onRemove: () => handleRemoveArrayItem('schoolTypeIds', id),
+        id: `ageRange-${id}`,
+        label: t('ageRange'),
+        value: ageRange ? (locale === 'ar' ? ageRange.nameAr : ageRange.nameEn) : id,
+        onRemove: () => handleRemoveArrayItem('ageRangeIds', id),
       });
     }
     return chips;
   }, [
     activeFilters,
     selectedCategoryData,
-    grades,
-    schoolTypes,
+    ageRanges,
     locale,
     t,
     handleRemoveFilter,
@@ -383,28 +367,16 @@ function InstructorsHeaderSection() {
               label={t('subject')}
             />
 
-            <GradeMultiFilterField
-              value={draftFilters.gradeIds}
+            <AgeRangeMultiFilterField
+              value={draftFilters.ageRangeIds}
               onChange={(value) =>
                 setDraftFilters((prev) => ({
                   ...prev,
-                  gradeIds: value.length > 0 ? value : undefined,
+                  ageRangeIds: value.length > 0 ? value : undefined,
                 }))
               }
-              label={t('grade')}
-              placeholder={t('selectGrades')}
-            />
-
-            <SchoolTypeMultiFilterField
-              value={draftFilters.schoolTypeIds}
-              onChange={(value) =>
-                setDraftFilters((prev) => ({
-                  ...prev,
-                  schoolTypeIds: value.length > 0 ? value : undefined,
-                }))
-              }
-              label={t('schoolType')}
-              placeholder={t('selectSchoolTypes')}
+              label={t('ageRange')}
+              placeholder={t('selectAgeRanges')}
             />
 
             <RatingFilterField

@@ -32,7 +32,13 @@ const openCharge = (id: Types.ObjectId, amountMinor: number, currency = Currency
   ...overrides,
 });
 
-const makeService = (existingCharges: Record<string, unknown>[] = [], duplicateKeys: string[] = []) => {
+const makeService = (
+  existingCharges: Record<string, unknown>[] = [],
+  duplicateKeys: string[] = [],
+  existingPayments: Record<string, unknown>[] = [],
+  allocatedByPayment: Record<string, number> = {},
+  paymentScopes: Record<string, unknown>[] = []
+) => {
   const written: Record<string, unknown>[] = [];
   const entryModel = {
     create: jest.fn(async (doc: Record<string, unknown>) => {
@@ -44,18 +50,28 @@ const makeService = (existingCharges: Record<string, unknown>[] = [], duplicateK
       written.push({ ...doc, _id: new Types.ObjectId(), createdAt: new Date() });
       return written.at(-1);
     }),
-    find: jest.fn(() => ({
-      sort: () => ({ lean: () => ({ exec: async () => existingCharges }) }),
-      select: () => ({ lean: () => ({ exec: async () => existingCharges }) }),
-    })),
+    find: jest.fn((filter: Record<string, unknown> = {}) => {
+      const rows =
+        filter.type === LedgerEntryType.PAYMENT ? existingPayments.filter((payment) => !filter.currency || payment.currency === filter.currency) : existingCharges;
+      return {
+        sort: () => ({ lean: () => ({ exec: async () => rows }) }),
+        select: () => ({ lean: () => ({ exec: async () => rows }) }),
+      };
+    }),
     aggregate: jest.fn(async () => []),
   };
   const allocationModel = {
     insertMany: jest.fn(async (docs: unknown[]) => docs),
-    aggregate: jest.fn(async () => []),
+    // Credit lookups group by payment; charge lookups group by charge. Only the former is seeded.
+    aggregate: jest.fn(async (pipeline: { $match?: Record<string, unknown> }[]) =>
+      pipeline[0]?.$match && 'paymentLedgerEntryId' in pipeline[0].$match
+        ? Object.entries(allocatedByPayment).map(([id, total]) => ({ _id: new Types.ObjectId(id), total }))
+        : []
+    ),
   };
+  const paymentModel = { find: jest.fn(() => ({ select: () => ({ lean: () => ({ exec: async () => paymentScopes }) }) })) };
   const events = { emit: jest.fn() };
-  const service = new LedgerService(entryModel as never, allocationModel as never, events as never);
+  const service = new LedgerService(entryModel as never, allocationModel as never, events as never, paymentModel as never);
   return { service, entryModel, allocationModel, events, written };
 };
 
@@ -123,6 +139,99 @@ describe('LedgerService.postCharges', () => {
         charges: [charge({ amountMinor: 10.5 })],
       })
     ).rejects.toThrow(new BadRequestException(BillingErrors.AMOUNT_INVALID));
+  });
+});
+
+describe('LedgerService.postCharges - prepaid credit', () => {
+  const PAID_LEDGER_ID = new Types.ObjectId();
+  const PAID_PAYMENT_ID = new Types.ObjectId();
+  const credit = (overrides: Record<string, unknown> = {}) => ({
+    _id: PAID_LEDGER_ID,
+    paymentId: PAID_PAYMENT_ID,
+    amountMinor: 10_000,
+    type: LedgerEntryType.PAYMENT,
+    currency: Currency.EGP,
+    ...overrides,
+  });
+  const input = (extra: Record<string, unknown> = {}) => ({
+    organizationId: String(ORG),
+    familyId: String(FAMILY),
+    currency: Currency.EGP,
+    charges: [charge({ amountMinor: 10_000 })],
+    ...extra,
+  });
+  // The new charge is read back through openCharges, which uses the same mocked find.
+  const newCharge = (id: Types.ObjectId, amountMinor: number, overrides: Record<string, unknown> = {}) =>
+    openCharge(id, amountMinor, Currency.EGP, overrides);
+
+  it('settles a newly posted charge with money the family already paid ahead', async () => {
+    const chargeId = new Types.ObjectId();
+    const { service, allocationModel } = makeService([newCharge(chargeId, 10_000)], [], [credit()]);
+    await service.postCharges(input());
+    expect(allocationModel.insertMany).toHaveBeenCalledTimes(1);
+    const rows = allocationModel.insertMany.mock.calls[0][0] as {
+      amountMinor: number;
+      chargeLedgerEntryId: Types.ObjectId;
+      paymentLedgerEntryId: Types.ObjectId;
+    }[];
+    expect(rows).toHaveLength(1);
+    expect(rows[0].amountMinor).toBe(10_000);
+    expect(String(rows[0].chargeLedgerEntryId)).toBe(String(chargeId));
+    expect(String(rows[0].paymentLedgerEntryId)).toBe(String(PAID_LEDGER_ID));
+  });
+
+  it('only spends what is left of a payment, never money it already settled', async () => {
+    const { service, allocationModel } = makeService([newCharge(new Types.ObjectId(), 10_000)], [], [credit()], {
+      [String(PAID_LEDGER_ID)]: 7000,
+    });
+    await service.postCharges(input());
+    const rows = allocationModel.insertMany.mock.calls[0][0] as { amountMinor: number }[];
+    expect(rows[0].amountMinor).toBe(3000);
+  });
+
+  it('does nothing when every payment is already fully spent', async () => {
+    const { service, allocationModel } = makeService([newCharge(new Types.ObjectId(), 10_000)], [], [credit()], {
+      [String(PAID_LEDGER_ID)]: 10_000,
+    });
+    await service.postCharges(input());
+    expect(allocationModel.insertMany).not.toHaveBeenCalled();
+  });
+
+  it('does nothing when the family has never paid', async () => {
+    const { service, allocationModel } = makeService([newCharge(new Types.ObjectId(), 10_000)]);
+    await service.postCharges(input());
+    expect(allocationModel.insertMany).not.toHaveBeenCalled();
+  });
+
+  it('keeps a payment raised for one subscription away from another subscription charge', async () => {
+    const subA = new Types.ObjectId();
+    const subB = new Types.ObjectId();
+    const { service, allocationModel } = makeService([newCharge(new Types.ObjectId(), 10_000, { subscriptionId: subB })], [], [credit()], {}, [
+      { _id: PAID_PAYMENT_ID, subscriptionId: subA },
+    ]);
+    await service.postCharges(input());
+    expect(allocationModel.insertMany).not.toHaveBeenCalled();
+  });
+
+  it('lets a payment raised for a subscription settle that subscription own new charge', async () => {
+    const subA = new Types.ObjectId();
+    const { service, allocationModel } = makeService([newCharge(new Types.ObjectId(), 10_000, { subscriptionId: subA })], [], [credit()], {}, [
+      { _id: PAID_PAYMENT_ID, subscriptionId: subA },
+    ]);
+    await service.postCharges(input());
+    expect(allocationModel.insertMany).toHaveBeenCalledTimes(1);
+  });
+
+  it('never applies a payment in another currency', async () => {
+    const { service, allocationModel } = makeService([newCharge(new Types.ObjectId(), 10_000)], [], [credit({ currency: Currency.USD })]);
+    await service.postCharges(input());
+    expect(allocationModel.insertMany).not.toHaveBeenCalled();
+  });
+
+  it('does not touch credit when nothing new was written (a repeated job run)', async () => {
+    const { service, entryModel } = makeService([], ['monthly:sub1:x'], [credit()]);
+    await service.postCharges(input({ charges: [charge({ idempotencyKey: 'monthly:sub1:x' })] }));
+    expect(entryModel.find).not.toHaveBeenCalled();
   });
 });
 

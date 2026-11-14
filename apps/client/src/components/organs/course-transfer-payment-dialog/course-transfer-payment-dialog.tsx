@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/components/atoms/loading-state';
 import { useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { Landmark } from 'lucide-react';
@@ -114,7 +115,7 @@ export function CourseTransferPaymentDialog({
         </DialogHeader>
 
         {isLoading ? (
-          <p className="text-muted-foreground text-sm">{t('loading')}</p>
+          <LoadingState />
         ) : methods.length === 0 || !price ? (
           <p className="text-muted-foreground text-sm">{t('noMethods')}</p>
         ) : (

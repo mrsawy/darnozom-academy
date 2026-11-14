@@ -25,8 +25,7 @@ export * from './role-errors.enum';
 export * from './ai-subscription-errors.enum';
 export * from './ai-attachment-errors.enum';
 export * from './organization-errors.enum';
-export * from './grade-errors.enum';
-export * from './school-type-errors.enum';
+export * from './age-range-errors.enum';
 export * from './admin-review-errors.enum';
 export * from './payment-errors.enum';
 export * from './academics-errors.enum';
@@ -59,8 +58,7 @@ import { RoleErrors, RoleSuccessMessages } from './role-errors.enum';
 import { AiSubscriptionErrors } from './ai-subscription-errors.enum';
 import { AiAttachmentErrors } from './ai-attachment-errors.enum';
 import { OrganizationErrors, OrganizationSuccessMessages } from './organization-errors.enum';
-import { GradeErrors, GradeSuccessMessages } from './grade-errors.enum';
-import { SchoolTypeErrors, SchoolTypeSuccessMessages } from './school-type-errors.enum';
+import { AgeRangeErrors, AgeRangeSuccessMessages } from './age-range-errors.enum';
 import { AdminReviewErrors, AdminReviewSuccessMessages } from './admin-review-errors.enum';
 import { PaymentErrors } from './payment-errors.enum';
 import { AcademicsErrors, AcademicsSuccessMessages } from './academics-errors.enum';
@@ -103,10 +101,8 @@ export const ALL_ERROR_KEYS: readonly string[] = [
   ...Object.values(AiAttachmentErrors),
   ...Object.values(OrganizationErrors),
   ...Object.values(OrganizationSuccessMessages),
-  ...Object.values(GradeErrors),
-  ...Object.values(GradeSuccessMessages),
-  ...Object.values(SchoolTypeErrors),
-  ...Object.values(SchoolTypeSuccessMessages),
+  ...Object.values(AgeRangeErrors),
+  ...Object.values(AgeRangeSuccessMessages),
   ...Object.values(AdminReviewErrors),
   ...Object.values(AdminReviewSuccessMessages),
   ...Object.values(PaymentErrors),

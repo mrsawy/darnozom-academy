@@ -77,7 +77,7 @@ export class TeacherAvailabilityService {
 
     const groups = await this.groupModel
       .find({ teacherId: oid(teacherId), status: { $ne: GroupStatus.CANCELLED }, deletedAt: null })
-      .select('_id name schedule timezone cohortId status')
+      .select('_id name schedule timezone cohortId status startDate')
       .lean()
       .exec();
     if (groups.length > 0) {
@@ -93,7 +93,7 @@ export class TeacherAvailabilityService {
             isInstructor: true,
             groupSchedule: group.schedule,
             groupTimezone: group.timezone,
-            referenceDate: startDates.get(String(group.cohortId)) ?? new Date(),
+            referenceDate: group.startDate ?? startDates.get(String(group.cohortId)) ?? new Date(),
             availability: { timezone, slots },
             otherGroups: [],
           }).ok

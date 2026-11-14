@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/components/atoms/loading-state';
 import { useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { BillingSubscriptionStatus, GroupPaymentStatus } from '@darnozom/shared-types';
@@ -23,7 +24,11 @@ import {
 import { formatMoney } from '@/lib/utils/billing/format-money';
 import type { IGroupDetail } from '@/lib/types/academics/academics';
 import { SubscriptionForm } from '@/components/organs/billing/subscription-form';
+import type { IBillingSubscription } from '@/lib/types/billing/billing';
 import { ReviewPaymentsModal } from './review-payments-modal';
+import { RecordPaymentDialog } from './record-payment-dialog';
+import { PaymentDetailsDialog } from './payment-details-dialog';
+import { Link } from '@/i18n/navigation';
 
 export function SubscriptionsCard({ group, disabled }: { group: IGroupDetail; disabled: boolean }) {
   const t = useTranslations('Billing');
@@ -33,6 +38,8 @@ export function SubscriptionsCard({ group, disabled }: { group: IGroupDetail; di
   const endSubscription = useEndSubscription();
   const [showForm, setShowForm] = useState(false);
   const [showReview, setShowReview] = useState(false);
+  const [payingSub, setPayingSub] = useState<IBillingSubscription | null>(null);
+  const [detailsSub, setDetailsSub] = useState<IBillingSubscription | null>(null);
   const { data: pendingPayments = [] } = useReceiptQueue({ groupId: group._id, status: 'PENDING_REVIEW' });
 
   const studentCandidates = group.students.map((s) => ({
@@ -79,7 +86,7 @@ export function SubscriptionsCard({ group, disabled }: { group: IGroupDetail; di
         ) : null}
 
         {isLoading ? (
-          <p className="text-muted-foreground text-sm">{t('loading')}</p>
+          <LoadingState />
         ) : subscriptions.length === 0 ? (
           <p className="text-muted-foreground text-sm">{t('empty')}</p>
         ) : (
@@ -123,15 +130,32 @@ export function SubscriptionsCard({ group, disabled }: { group: IGroupDetail; di
                         {isActive ? t('active') : t('ended')}
                       </span>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="space-x-1 whitespace-nowrap">
+                      {pendingPayments.some((p) => p.familyId === sub.familyId) ? (
+                        <>
+                          <Button size="sm" variant="outline" onClick={() => setDetailsSub(sub)}>
+                            {t('paymentDetails')}
+                          </Button>
+                          <Button asChild size="sm" variant="outline">
+                            <Link href="/organization-dashboard/billing/receipts">
+                              {t('openPaymentsPage')}
+                            </Link>
+                          </Button>
+                        </>
+                      ) : null}
                       {isActive && !disabled ? (
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          disabled={endSubscription.isPending}
-                          onClick={() => endSubscription.mutate(sub._id)}>
-                          {t('end')}
-                        </Button>
+                        <>
+                          <Button size="sm" variant="outline" onClick={() => setPayingSub(sub)}>
+                            {t('recordPayment')}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            disabled={endSubscription.isPending}
+                            onClick={() => endSubscription.mutate(sub._id)}>
+                            {t('end')}
+                          </Button>
+                        </>
                       ) : null}
                     </TableCell>
                   </TableRow>
@@ -141,6 +165,24 @@ export function SubscriptionsCard({ group, disabled }: { group: IGroupDetail; di
           </Table>
         )}
       </CardContent>
+      {detailsSub ? (
+        <PaymentDetailsDialog
+          payments={pendingPayments.filter((p) => p.familyId === detailsSub.familyId)}
+          open
+          onOpenChange={(open) => {
+            if (!open) setDetailsSub(null);
+          }}
+        />
+      ) : null}
+      {payingSub ? (
+        <RecordPaymentDialog
+          subscription={payingSub}
+          open
+          onOpenChange={(open) => {
+            if (!open) setPayingSub(null);
+          }}
+        />
+      ) : null}
     </Card>
   );
 }

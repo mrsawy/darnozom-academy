@@ -74,6 +74,10 @@ export class FamilyPayment extends Document<Types.ObjectId> {
   @Prop({ type: Types.ObjectId, ref: 'BillingSubscription', required: false, default: null })
   subscriptionId: Types.ObjectId | null;
 
+  /** Staff's free-text note, e.g. on an offline payment received in person. */
+  @Prop({ type: String, required: false, default: null })
+  note: string | null;
+
   /** The manual-transfer method's fields as they were when the family paid — never re-read from the live config. */
   @Prop({ type: FamilyPaymentMethodSnapshot, required: false, default: null })
   methodSnapshot: FamilyPaymentMethodSnapshot | null;

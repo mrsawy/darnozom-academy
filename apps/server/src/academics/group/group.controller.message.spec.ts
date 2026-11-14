@@ -9,6 +9,7 @@ const proto = GroupControllerMessage.prototype as unknown as Record<string, (...
 const expected: [string, string, Actions, Subjects][] = [
   ['findAll', 'academics.groups.findAll', Actions.READ, Subjects.GROUP],
   ['findOne', 'academics.groups.findOne', Actions.READ, Subjects.GROUP],
+  ['attendanceMatrix', 'academics.groups.attendanceMatrix', Actions.READ, Subjects.GROUP],
   ['create', 'academics.groups.create', Actions.CREATE, Subjects.GROUP],
   ['update', 'academics.groups.update', Actions.UPDATE, Subjects.GROUP],
   ['remove', 'academics.groups.delete', Actions.DELETE, Subjects.GROUP],

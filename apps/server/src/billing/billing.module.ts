@@ -12,8 +12,10 @@ import { FamilyPayment, FamilyPaymentSchema } from './entities/payment.entity';
 import { Allocation, AllocationSchema } from './entities/allocation.entity';
 import { PaymentMethodConfig, PaymentMethodConfigSchema } from './entities/payment-method-config.entity';
 import { FamilyService } from './family/family.service';
+import { FamilyReassignService } from './family/family-reassign.service';
 import { LedgerService } from './ledger/ledger.service';
 import { SubscriptionService } from './subscription/subscription.service';
+import { SubscriptionOverviewService } from './subscription/subscription-overview.service';
 import { ReceiptUploadMethod } from './payment/methods/receipt-upload.method';
 import { OnlineGatewayMethod } from './payment/methods/online-gateway.method';
 import { ManualTransferMethod } from './payment/methods/manual-transfer.method';
@@ -25,14 +27,12 @@ import { FamilyPaymentStatusService } from './status/family-payment-status.servi
 import { FamilyPaymentMethodRegistry } from './payment/payment-method.registry';
 import { FAMILY_PAYMENT_METHODS } from './payment/payment-method.interface';
 import { MonthlyChargesService } from './jobs/monthly-charges.service';
-import { SessionChargesService } from './jobs/session-charges.service';
 import { RemindersService } from './jobs/reminders.service';
 import { BillingProcessor } from './jobs/billing.processor';
 import { BillingScheduler } from './jobs/billing.scheduler';
 import { BILLING_QUEUE } from './jobs/billing.queue';
 import { BillingReadService } from './billing-read.service';
 import { BillingControllerMessage } from './billing.controller.message';
-import { SessionCompletedBillingListener } from './events/session-completed.listener';
 import { PaymentModule } from '../payment/payment.module';
 import { NotificationModule } from '../notification/notification.module';
 import { FileModule } from '../file/file.module';
@@ -62,8 +62,10 @@ import { RoleModule } from '../role/role.module';
   ],
   providers: [
     FamilyService,
+    FamilyReassignService,
     LedgerService,
     SubscriptionService,
+    SubscriptionOverviewService,
     ReceiptUploadMethod,
     OnlineGatewayMethod,
     ManualTransferMethod,
@@ -74,12 +76,10 @@ import { RoleModule } from '../role/role.module';
     PaymentMethodConfigService,
     BillingSettingsService,
     MonthlyChargesService,
-    SessionChargesService,
     RemindersService,
     BillingProcessor,
     BillingScheduler,
     BillingReadService,
-    SessionCompletedBillingListener,
     {
       provide: FAMILY_PAYMENT_METHODS,
       useFactory: (receipt: ReceiptUploadMethod, gateway: OnlineGatewayMethod, manualTransfer: ManualTransferMethod) => [receipt, gateway, manualTransfer],
@@ -90,6 +90,7 @@ import { RoleModule } from '../role/role.module';
   exports: [
     MongooseModule,
     FamilyService,
+    FamilyReassignService,
     LedgerService,
     SubscriptionService,
     FamilyPaymentMethodRegistry,
@@ -102,7 +103,6 @@ import { RoleModule } from '../role/role.module';
     PaymentMethodConfigService,
     BillingSettingsService,
     MonthlyChargesService,
-    SessionChargesService,
     RemindersService,
     BillingReadService,
   ],

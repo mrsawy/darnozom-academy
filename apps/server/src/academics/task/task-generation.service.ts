@@ -46,7 +46,7 @@ export class TaskGenerationService {
     let created = 0;
     for (const group of groups) {
       try {
-        created += await this.runForGroup(group, startDates.get(String(group.cohortId)), now);
+        created += await this.runForGroup(group, group.startDate ?? startDates.get(String(group.cohortId)), now);
       } catch (error) {
         // One malformed group must never abort the sweep for every other group.
         this.logger.error(`Pre-start tasks skipped for group ${String(group._id)}: ${(error as Error).message}`);

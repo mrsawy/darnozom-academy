@@ -7,6 +7,7 @@ import { MessageTemplateControllerMessage } from './message-template.controller.
 import { Group, GroupSchema } from 'src/academics/group/entities/group.entity';
 import { Level, LevelSchema } from 'src/academics/level/entities/level.entity';
 import { Course, CourseSchema } from 'src/course/entities/course.entity';
+import { TrainingCourse, TrainingCourseSchema } from 'src/academics/training-course/entities/training-course.entity';
 import { User, UserSchema } from 'src/user/entities/user.entity';
 import { AuthModule } from 'src/auth/auth.module';
 import { RoleModule } from 'src/role/role.module';
@@ -18,6 +19,7 @@ import { RoleModule } from 'src/role/role.module';
       { name: Group.name, schema: GroupSchema },
       { name: Level.name, schema: LevelSchema },
       { name: Course.name, schema: CourseSchema },
+      { name: TrainingCourse.name, schema: TrainingCourseSchema },
       { name: User.name, schema: UserSchema },
     ]),
     forwardRef(() => AuthModule),

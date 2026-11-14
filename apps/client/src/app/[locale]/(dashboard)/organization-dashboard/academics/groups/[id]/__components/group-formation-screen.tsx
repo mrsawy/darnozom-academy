@@ -1,8 +1,10 @@
 'use client';
 
+import { LoadingState } from '@/components/atoms/loading-state';
 import { useState } from 'react';
-import { useTranslations } from 'next-intl';
-import { GroupStatus } from '@darnozom/shared-types';
+import { useLocale, useTranslations } from 'next-intl';
+import { GroupStatus, MeetingProvider } from '@darnozom/shared-types';
+import { Badge } from '@/components/atoms/badge';
 import { Button } from '@/components/atoms/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/card';
 import {
@@ -22,6 +24,7 @@ import { GroupForm } from '../../__components/group-form';
 import { StatusBadge } from '../../__components/status-badge';
 import { CancelGroupDialog } from './cancel-group-dialog';
 import { FollowUpsCard } from './follow-ups-card';
+import { GroupAttendanceCard } from './group-attendance-card';
 import { GroupSessionsCard } from './group-sessions-card';
 import { OpenTasksCard } from './open-tasks-card';
 import { ReadinessPanel } from './readiness-panel';
@@ -34,6 +37,7 @@ import { SendTemplateDialog } from '@/components/organs/message-template/send-te
 
 export function GroupFormationScreen({ groupId }: { groupId: string }) {
   const t = useTranslations('Academics');
+  const locale = useLocale();
   const [sendTemplateOpen, setSendTemplateOpen] = useState(false);
   const { data: group, isLoading } = useGroup(groupId);
   const { data: user } = useAuthUser();
@@ -52,7 +56,7 @@ export function GroupFormationScreen({ groupId }: { groupId: string }) {
   }));
   const { data: groupTasks = [], isLoading: tasksLoading } = useGroupTasks(groupId);
 
-  if (isLoading || !group) return <p className="p-4">{t('loading')}</p>;
+  if (isLoading || !group) return <LoadingState fullPage />;
   const { locked, scheduleLocked, canStart, canCancel, canManage } = groupScreenAccess(
     user,
     group.status
@@ -66,6 +70,11 @@ export function GroupFormationScreen({ groupId }: { groupId: string }) {
         <div className="flex items-center gap-3">
           <h1 className="text-2xl font-semibold">{group.name}</h1>
           <StatusBadge status={group.status} />
+          {group.ageRange ? (
+            <Badge variant="secondary" title={t('ageRange')}>
+              {locale === 'ar' ? group.ageRange.nameAr : group.ageRange.nameEn}
+            </Badge>
+          ) : null}
         </div>
         <div className="flex items-center gap-2">
           {canStart ? (
@@ -102,7 +111,9 @@ export function GroupFormationScreen({ groupId }: { groupId: string }) {
                   minStudents: group.minStudents,
                   maxStudents: group.maxStudents,
                   totalSessions: group.totalSessions ?? 12,
+                  startDate: group.startDate ? new Date(group.startDate).toISOString().slice(0, 10) : null,
                   estimatedEndDate: group.estimatedEndDate ? new Date(group.estimatedEndDate).toISOString().slice(0, 10) : null,
+                  meetingProvider: group.meetingProvider ?? MeetingProvider.EXTERNAL_URL,
                   meetingLink: group.meetingLink ?? null,
                   whatsappGroupLink: group.whatsappGroupLink ?? null,
                 }}
@@ -116,6 +127,7 @@ export function GroupFormationScreen({ groupId }: { groupId: string }) {
           <StudentsCard group={group} disabled={locked} />
           <SubscriptionsCard group={group} disabled={locked} />
           {started ? <GroupSessionsCard group={group} canManage={canManage} /> : null}
+          {started ? <GroupAttendanceCard groupId={group._id} /> : null}
           {started && canManage ? <FollowUpsCard groupId={group._id} /> : null}
           {started ? <GroupCertificatesCard group={group} canManage={canManage} /> : null}
         </div>

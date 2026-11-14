@@ -22,7 +22,7 @@ const PROFILE: ITeacherPayProfile = {
 describe('PayProfilesTable', () => {
   it('renders loading state when isLoading is true', () => {
     render(<PayProfilesTable profiles={[]} isLoading onEditProfile={vi.fn()} />);
-    expect(screen.getByText('loading')).toBeInTheDocument();
+    expect(screen.getByRole('status')).toBeInTheDocument();
   });
 
   it('renders empty state when profiles array is empty', () => {

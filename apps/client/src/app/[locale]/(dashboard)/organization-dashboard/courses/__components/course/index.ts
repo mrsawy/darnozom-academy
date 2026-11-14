@@ -5,7 +5,7 @@ export { CourseThumbnailSection } from './course-thumbnail-section';
 export { CourseTrailerSection } from './course-trailer-section';
 export { CourseInstructorSection } from './course-instructor-section';
 export { CourseCategoriesSection } from './course-categories-section';
-export { CourseGradeSchoolTypeSection } from './course-grade-school-type-section';
+export { CourseAgeRangeSection } from './course-age-range-section';
 export { CoursePricingSection } from './course-pricing-section';
 export { CourseSettingsSection } from './course-settings-section';
 export { CourseAttendanceSection } from './course-attendance-section';

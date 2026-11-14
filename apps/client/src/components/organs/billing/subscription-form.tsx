@@ -27,8 +27,6 @@ export function SubscriptionForm({
   const [note, setNote] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
 
-  const isFamily = type === SubscriptionType.FAMILY;
-
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -68,13 +66,7 @@ export function SubscriptionForm({
           aria-label="type"
           className="bg-background w-full rounded-md border px-3 py-2 text-sm"
           value={type}
-          onChange={(e) => {
-            const next = e.target.value as SubscriptionType;
-            setType(next);
-            if (next !== SubscriptionType.FAMILY && selectedStudentIds.length > 1) {
-              setSelectedStudentIds(selectedStudentIds.slice(0, 1));
-            }
-          }}>
+          onChange={(e) => setType(e.target.value as SubscriptionType)}>
           {Object.values(SubscriptionType).map((val) => (
             <option key={val} value={val}>
               {t(`type.${val}`)}
@@ -85,40 +77,21 @@ export function SubscriptionForm({
 
       <div className="space-y-1">
         <label htmlFor="subscription-students" className="text-sm font-medium">
-          {isFamily ? t('students') : t('student')}
+          {t('student')}
         </label>
-        {isFamily ? (
-          <select
-            id="subscription-students"
-            aria-label="students"
-            multiple
-            className="bg-background min-h-[100px] w-full rounded-md border px-3 py-2 text-sm"
-            value={selectedStudentIds}
-            onChange={(e) => {
-              const selected = Array.from(e.target.selectedOptions, (option) => option.value);
-              setSelectedStudentIds(selected);
-            }}>
-            {students.map((student) => (
-              <option key={student._id} value={student._id}>
-                {student.name}
-              </option>
-            ))}
-          </select>
-        ) : (
-          <select
-            id="subscription-students"
-            aria-label="student"
-            className="bg-background w-full rounded-md border px-3 py-2 text-sm"
-            value={selectedStudentIds[0] ?? ''}
-            onChange={(e) => setSelectedStudentIds(e.target.value ? [e.target.value] : [])}>
-            <option value="">--</option>
-            {students.map((student) => (
-              <option key={student._id} value={student._id}>
-                {student.name}
-              </option>
-            ))}
-          </select>
-        )}
+        <select
+          id="subscription-students"
+          aria-label="student"
+          className="bg-background w-full rounded-md border px-3 py-2 text-sm"
+          value={selectedStudentIds[0] ?? ''}
+          onChange={(e) => setSelectedStudentIds(e.target.value ? [e.target.value] : [])}>
+          <option value="">--</option>
+          {students.map((student) => (
+            <option key={student._id} value={student._id}>
+              {student.name}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div className="grid grid-cols-2 gap-4">

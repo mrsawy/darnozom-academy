@@ -208,14 +208,8 @@ export class CreateUserDto {
   @IsOptional()
   @IsArray()
   @IsMongoId({ each: true })
-  @MustBeEmptyWhen((o) => (o as CreateUserDto).roleName !== Roles.INSTRUCTOR, { message: 'gradesIds is only allowed for instructors.' })
-  gradesIds?: string[];
-
-  @IsOptional()
-  @IsArray()
-  @IsMongoId({ each: true })
-  @MustBeEmptyWhen((o) => (o as CreateUserDto).roleName !== Roles.INSTRUCTOR, { message: 'schoolTypesIds is only allowed for instructors.' })
-  schoolTypesIds?: string[];
+  @MustBeEmptyWhen((o) => (o as CreateUserDto).roleName !== Roles.INSTRUCTOR, { message: 'ageRangesIds is only allowed for instructors.' })
+  ageRangesIds?: string[];
 
   @IsOptional()
   @IsDate()

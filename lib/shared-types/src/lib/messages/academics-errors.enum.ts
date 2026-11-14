@@ -56,6 +56,9 @@ export enum AcademicsErrors {
   EVALUATION_ALREADY_EXISTS = 'evaluationAlreadyExists',
   EVALUATION_INVALID = 'evaluationInvalid',
   EVALUATION_EDIT_WINDOW_CLOSED = 'evaluationEditWindowClosed',
+  NOT_SESSION_PARTICIPANT = 'notSessionParticipant',
+  JOIN_WINDOW_CLOSED = 'joinWindowClosed',
+  TEACHER_ACCESS_DENIED = 'teacherAccessDenied',
 }
 
 export enum AcademicsSuccessMessages {

@@ -26,16 +26,37 @@ export interface PaymentMethodConfigLean {
   createdBy: Types.ObjectId | string;
 }
 
-const BUILT_IN_DEFAULT_FIELDS: Omit<PaymentMethodConfigLean['fields'][number], 'value'>[] = [
-  { key: 'transferNumber', label: 'InstaPay Number', type: PaymentMethodFieldType.TEXT, order: 0 },
-  { key: 'accountName', label: 'Account Name', type: PaymentMethodFieldType.TEXT, order: 1 },
-  { key: 'qrCodeImage', label: 'QR Code', type: PaymentMethodFieldType.IMAGE, order: 2 },
-  { key: 'instructions', label: 'Instructions', type: PaymentMethodFieldType.TEXT, order: 3 },
-];
+type DefaultField = Omit<PaymentMethodConfigLean['fields'][number], 'value' | 'order'>;
 
-const BUILT_INS: { key: string; label: string }[] = [
-  { key: 'INSTAPAY', label: 'InstaPay' },
-  { key: 'WALLET_TRANSFER', label: 'Wallet Transfer' },
+const withOrder = (fields: DefaultField[]) => fields.map((f, order) => ({ ...f, order }));
+
+const NUMBER_METHOD_FIELDS = withOrder([
+  { key: 'transferNumber', label: 'InstaPay Number', type: PaymentMethodFieldType.TEXT },
+  { key: 'accountName', label: 'Account Name', type: PaymentMethodFieldType.TEXT },
+  { key: 'qrCodeImage', label: 'QR Code', type: PaymentMethodFieldType.IMAGE },
+  { key: 'instructions', label: 'Instructions', type: PaymentMethodFieldType.TEXT },
+]);
+
+const PAYPAL_FIELDS = withOrder([
+  { key: 'paypalEmail', label: 'PayPal Email', type: PaymentMethodFieldType.TEXT },
+  { key: 'paypalLink', label: 'PayPal.me Link', type: PaymentMethodFieldType.LINK },
+  { key: 'accountName', label: 'Account Name', type: PaymentMethodFieldType.TEXT },
+  { key: 'instructions', label: 'Instructions', type: PaymentMethodFieldType.TEXT },
+]);
+
+const BANK_TRANSFER_FIELDS = withOrder([
+  { key: 'iban', label: 'IBAN', type: PaymentMethodFieldType.TEXT },
+  { key: 'accountName', label: 'Account Holder Name', type: PaymentMethodFieldType.TEXT },
+  { key: 'bankName', label: 'Bank Name', type: PaymentMethodFieldType.TEXT },
+  { key: 'swift', label: 'SWIFT / BIC', type: PaymentMethodFieldType.TEXT },
+  { key: 'instructions', label: 'Instructions', type: PaymentMethodFieldType.TEXT },
+]);
+
+const BUILT_INS: { key: string; label: string; enabled: boolean; fields: typeof NUMBER_METHOD_FIELDS }[] = [
+  { key: 'INSTAPAY', label: 'InstaPay', enabled: false, fields: NUMBER_METHOD_FIELDS },
+  { key: 'WALLET_TRANSFER', label: 'Wallet Transfer', enabled: false, fields: NUMBER_METHOD_FIELDS },
+  { key: 'PAYPAL', label: 'PayPal', enabled: true, fields: PAYPAL_FIELDS },
+  { key: 'BANK_TRANSFER_IBAN', label: 'تحويل بنكي (IBAN)', enabled: true, fields: BANK_TRANSFER_FIELDS },
 ];
 
 const toFields = (inputs: PaymentMethodConfigFieldInput[]) =>
@@ -80,8 +101,8 @@ export class PaymentMethodConfigService {
           key: b.key,
           kind: 'BUILT_IN',
           label: b.label,
-          enabled: false,
-          fields: BUILT_IN_DEFAULT_FIELDS.map((f) => ({ ...f, value: '' })),
+          enabled: b.enabled,
+          fields: b.fields.map((f) => ({ ...f, value: '' })),
           createdBy: oid(actor._id),
         })
       )

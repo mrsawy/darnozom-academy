@@ -115,9 +115,7 @@ export function getCreateCourseSchema(translate: CourseSchemaTranslateFn) {
 
     categoriesIds: Yup.array().of(Yup.string().required()).optional(),
 
-    gradeId: Yup.string().optional().nullable(),
-
-    schoolTypeIds: Yup.array().of(Yup.string().required()).optional(),
+    ageRangeIds: Yup.array().of(Yup.string().required()).optional(),
 
     instructor: Yup.string().optional().nullable(),
 

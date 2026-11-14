@@ -1,6 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { DashboardController } from './dashboard.controller.message';
 import { DashboardService } from './dashboard.service';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { IUserContext } from 'src/utils/types/IUserContext.interface';
 
 describe('DashboardController', () => {
@@ -26,7 +27,10 @@ describe('DashboardController', () => {
     const module = await Test.createTestingModule({
       controllers: [DashboardController],
       providers: [{ provide: DashboardService, useValue: mockService }],
-    }).compile();
+    })
+      .overrideGuard(AuthGuard)
+      .useValue({ canActivate: () => true })
+      .compile();
     controller = module.get(DashboardController);
   });
 

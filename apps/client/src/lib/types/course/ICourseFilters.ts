@@ -10,8 +10,5 @@ export type ICourseFilters = PaginationOptions<{
   minModules?: number;
   searchCategories?: string;
   selectedCategory?: string;
-  gradeId?: string;
-  schoolTypeIds?: string[];
-  /** @deprecated Prefer schoolTypeIds */
-  schoolTypeId?: string;
+  ageRangeIds?: string[];
 }>;

@@ -1,16 +1,18 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model, Types } from 'mongoose';
-import { AcademicsErrors, GroupStudentStatus } from '@darnozom/shared-types';
+import { AcademicsErrors, GroupStudentStatus, MeetingProvider, PRESENCE_GRACE_MINUTES, PresenceRole } from '@darnozom/shared-types';
 import { User } from 'src/user/entities/user.entity';
 import { ParentService } from 'src/user/services/parent.service';
 import { withNotDeletedFilter } from 'src/utils/soft-delete';
 import { AcademicsActor } from '../common/actor';
+import { PresenceSegment, totalSeconds } from '../domain/presence';
 import { effectiveSessionStatus, redactSession, SessionAudience, statusFilterFor } from '../domain/session-rules';
 import { resolveSessionScope } from '../domain/session-scope';
 import { Group } from '../group/entities/group.entity';
 import { FindSessionsPayload } from './dto/session.dto';
 import { Session } from './entities/session.entity';
+import { SessionPresence } from './entities/session-presence.entity';
 import { SessionDetailView, SessionLean, SessionView } from './session.types';
 
 const oid = (id: string | Types.ObjectId) => new Types.ObjectId(String(id));
@@ -28,6 +30,7 @@ export class SessionQueryService {
     @InjectModel(Session.name) private readonly sessionModel: Model<Session>,
     @InjectModel(Group.name) private readonly groupModel: Model<Group>,
     @InjectModel(User.name) private readonly userModel: Model<User>,
+    @InjectModel(SessionPresence.name) private readonly presenceModel: Model<SessionPresence>,
     private readonly parentService: ParentService
   ) {}
 
@@ -127,6 +130,25 @@ export class SessionQueryService {
     return sessions.map((session) => this.present(session, resolved, actor._id, now, names.get(String(session.groupId))));
   }
 
+  /** Who joined through the platform and for how long. Staff and the session's own teacher only; never families or accountants. */
+  private async presenceFor(session: SessionLean, own: boolean, resolved: ResolvedScope): Promise<SessionDetailView['presence']> {
+    if (!own && resolved.audience !== 'STAFF') return [];
+    const rows = await this.presenceModel
+      .find({ sessionId: session._id })
+      .lean<{ userId: Types.ObjectId; role: PresenceRole; firstJoinedAt: Date; lastSeenAt: Date; segments: PresenceSegment[] }[]>()
+      .exec();
+    const cap = new Date(session.endsAt.getTime() + PRESENCE_GRACE_MINUTES * 60_000);
+    const visible = own ? null : resolved.visibleStudentIds;
+    return rows
+      .filter((row) => !visible || row.role === PresenceRole.TEACHER || visible.includes(String(row.userId)))
+      .map((row) => ({
+        userId: String(row.userId),
+        role: row.role,
+        firstJoinedAt: row.firstJoinedAt,
+        totalSeconds: totalSeconds(row.segments, row.lastSeenAt, cap),
+      }));
+  }
+
   async findOne(actor: AcademicsActor, id: string): Promise<SessionDetailView> {
     const now = new Date();
     const resolved = await this.resolveScope(actor);
@@ -139,10 +161,11 @@ export class SessionQueryService {
 
     const group = await this.groupModel
       .findOne({ _id: session.groupId })
-      .select('name students')
-      .lean<{ name: string; students?: { studentId: Types.ObjectId; status?: GroupStudentStatus }[] }>()
+      .select('name students meetingProvider')
+      .lean<{ name: string; meetingProvider?: MeetingProvider; students?: { studentId: Types.ObjectId; status?: GroupStudentStatus }[] }>()
       .exec();
     const view = this.present(session, resolved, actor._id, now, group?.name);
+    const own = String(session.teacherId) === actor._id;
     const visibleIds = String(session.teacherId) === actor._id ? null : resolved.visibleStudentIds;
     const active = (group?.students ?? []).filter((s) => s.status !== GroupStudentStatus.WITHDRAWN).map((s) => String(s.studentId));
     const roster = visibleIds ? active.filter((studentId) => visibleIds.includes(studentId)) : active;
@@ -152,6 +175,7 @@ export class SessionQueryService {
       ...view.attendance.map((a) => String(a.studentId)),
       ...(view.report?.evaluations ?? []).map((e) => String(e.studentId)),
     ]);
-    return { ...view, roster, people };
+    const presence = await this.presenceFor(session, own, resolved);
+    return { ...view, roster, people, presence, ...(group?.meetingProvider ? { meetingProvider: group.meetingProvider } : {}) };
   }
 }

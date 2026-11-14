@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { BillingSubscriptionStatus, Currency, FamilyPaymentState, FamilyPaymentStatus, LedgerEntryType, SubscriptionType } from '@darnozom/shared-types';
+import { BillingSubscriptionStatus, Currency, FamilyPaymentState, FamilyPaymentStatus, LedgerEntryType } from '@darnozom/shared-types';
 import { Allocation } from '../entities/allocation.entity';
 import { LedgerEntry } from '../entities/ledger-entry.entity';
 import { BillingSubscription } from '../entities/subscription.entity';
@@ -24,7 +24,7 @@ export class FamilyPaymentStatusService {
     @InjectModel(FamilyPayment.name) private readonly paymentModel: Model<FamilyPayment>
   ) {}
 
-  /** The active subscriptions covering this group's roster, and which students a FAMILY subscription fans out to. */
+  /** The active subscriptions covering this group's roster, by student. */
   private async subscriptionsForGroup(groupId: string | Types.ObjectId, studentIds: string[]) {
     const subscriptions = await this.subscriptionModel
       .find({
@@ -36,7 +36,6 @@ export class FamilyPaymentStatusService {
         {
           _id: Types.ObjectId;
           familyId: Types.ObjectId;
-          type: SubscriptionType;
           amountMinor: number;
           items: { studentId: Types.ObjectId; groupId: Types.ObjectId }[];
         }[]
@@ -44,25 +43,17 @@ export class FamilyPaymentStatusService {
       .exec();
 
     const subscriptionByStudent = new Map<string, { amountMinor: number; familyId: Types.ObjectId; subscriptionId: Types.ObjectId }>();
-    const familySubToStudents = new Map<string, string[]>();
 
     for (const subscription of subscriptions) {
-      const isFamily = subscription.type === SubscriptionType.FAMILY;
-      const familyStudentIds: string[] = [];
-
       for (const item of subscription.items) {
         if (String(item.groupId) !== String(groupId)) continue;
         const sId = String(item.studentId);
         subscriptionByStudent.set(sId, { amountMinor: subscription.amountMinor, familyId: subscription.familyId, subscriptionId: subscription._id });
-        if (isFamily) familyStudentIds.push(sId);
       }
 
-      if (isFamily && familyStudentIds.length > 0) {
-        familySubToStudents.set(String(subscription._id), familyStudentIds);
-      }
     }
 
-    return { subscriptionByStudent, familySubToStudents };
+    return { subscriptionByStudent };
   }
 
   /** studentId → PAID/UNPAID for one group, in a fixed number of queries whatever the roster size. */
@@ -75,7 +66,7 @@ export class FamilyPaymentStatusService {
     const result = new Map<string, FamilyPaymentStatus>();
     if (studentIds.length === 0) return result;
 
-    const { subscriptionByStudent, familySubToStudents } = await this.subscriptionsForGroup(groupId, studentIds);
+    const { subscriptionByStudent } = await this.subscriptionsForGroup(groupId, studentIds);
 
     // Only the charges raised by a student's currently *active* subscription count toward their
     // status. A charge left behind by a subscription that was later ended or replaced is not the
@@ -117,14 +108,7 @@ export class FamilyPaymentStatusService {
         currency: charge.currency,
       };
 
-      if (charge.subscriptionId && familySubToStudents.has(String(charge.subscriptionId))) {
-        const siblings = familySubToStudents.get(String(charge.subscriptionId))!;
-        for (const sId of siblings) {
-          const list = chargesByStudent.get(sId) ?? [];
-          list.push(chargeData);
-          chargesByStudent.set(sId, list);
-        }
-      } else if (charge.studentId) {
+      if (charge.studentId) {
         const key = String(charge.studentId);
         const list = chargesByStudent.get(key) ?? [];
         list.push(chargeData);

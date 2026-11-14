@@ -10,6 +10,8 @@ import { LedgerEntry } from '../billing/entities/ledger-entry.entity';
 import { PayStatement } from '../payroll/entities/pay-statement.entity';
 import { Certificate } from '../certificate/entities/certificate.entity';
 import { User } from '../user/entities/user.entity';
+import { Program } from '../academics/program/entities/program.entity';
+import { Course } from '../course/entities/course.entity';
 
 const mockModel = () => ({
   countDocuments: jest.fn().mockResolvedValue(0),
@@ -50,6 +52,8 @@ describe('DashboardService', () => {
         { provide: getModelToken(PayStatement.name), useFactory: mockModel },
         { provide: getModelToken(Certificate.name), useFactory: mockModel },
         { provide: getModelToken(User.name), useFactory: mockModel },
+        { provide: getModelToken(Program.name), useFactory: mockModel },
+        { provide: getModelToken(Course.name), useFactory: mockModel },
       ],
     }).compile();
     service = module.get(DashboardService);

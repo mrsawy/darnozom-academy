@@ -1,13 +1,13 @@
 import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { BillingErrors, BillingSubscriptionStatus, FamilyPaymentState } from '@darnozom/shared-types';
+import { BillingErrors, BillingSubscriptionStatus, FamilyPaymentState, PAYMENT_METHOD_OFFLINE } from '@darnozom/shared-types';
 import { Organization } from 'src/organization/entities/organization.entity';
 import { FileService } from 'src/file/file.service';
 import { NotificationService } from 'src/notification/notification.service';
 import { isValidAmountMinor } from '../domain/money';
 import { BillingActor } from '../billing.types';
-import { InitiatePaymentPayload } from '../dto/billing.dto';
+import { InitiatePaymentPayload, RecordOfflinePaymentPayload } from '../dto/billing.dto';
 import { FamilyPayment } from '../entities/payment.entity';
 import { BillingSubscription } from '../entities/subscription.entity';
 import { FamilyService } from '../family/family.service';
@@ -266,6 +266,56 @@ export class FamilyPaymentService {
       params: { reason: trimmedReason },
       data: { paymentId: String(payment._id) },
     });
+  }
+
+  /**
+   * Staff recording money received in person. There is no receipt to review, so the payment is born
+   * CONFIRMED and settles that subscription's own charges immediately. Corrections stay append-only:
+   * a mistaken amount is fixed with a ledger adjustment, never by editing this payment.
+   */
+  async recordOffline(actor: BillingActor, dto: RecordOfflinePaymentPayload): Promise<{ paymentId: string }> {
+    if (!isValidAmountMinor(dto.amountMinor) || dto.amountMinor <= 0) {
+      throw new BadRequestException(BillingErrors.AMOUNT_INVALID);
+    }
+
+    const subscription = await this.subscriptionModel
+      .findOne({ _id: oid(dto.subscriptionId), organizationId: oid(actor.organizationId) })
+      .lean<BillingSubscription | null>()
+      .exec();
+    if (!subscription) throw new NotFoundException(BillingErrors.SUBSCRIPTION_NOT_FOUND);
+
+    const payment = await this.paymentModel.create({
+      organizationId: subscription.organizationId,
+      familyId: subscription.familyId,
+      method: PAYMENT_METHOD_OFFLINE,
+      amountMinor: dto.amountMinor,
+      currency: subscription.currency,
+      status: FamilyPaymentState.CONFIRMED,
+      payerId: oid(actor._id),
+      reviewedBy: oid(actor._id),
+      reviewedAt: new Date(),
+      subscriptionId: subscription._id,
+      note: dto.note?.trim() || null,
+    });
+
+    await this.ledger.postPaymentAndAllocate({
+      organizationId: String(subscription.organizationId),
+      familyId: String(subscription.familyId),
+      paymentId: String(payment._id),
+      amountMinor: dto.amountMinor,
+      currency: subscription.currency,
+      createdBy: actor._id,
+      subscriptionId: String(subscription._id),
+    });
+
+    await this.notifications.create({
+      userId: String(subscription.familyId),
+      titleKey: 'billingPaymentApprovedTitle',
+      bodyKey: 'billingPaymentApprovedBody',
+      data: { paymentId: String(payment._id) },
+    });
+
+    return { paymentId: String(payment._id) };
   }
 
   private async load(actor: BillingActor, paymentId: string): Promise<FamilyPayment> {

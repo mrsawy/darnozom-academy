@@ -33,7 +33,7 @@ import { BillingModule } from 'src/billing/billing.module';
     forwardRef(() => OrganizationModule),
     forwardRef(() => WalletModule),
     DatabaseModule,
-    SubscriptionModule,
+    forwardRef(() => SubscriptionModule),
     AiSubscriptionModule,
     forwardRef(() => CourseModule),
     forwardRef(() => UserModule),

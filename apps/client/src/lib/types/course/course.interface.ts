@@ -59,11 +59,13 @@ export interface AttendanceSettings {
   offlineSchedule?: TimeSlot[];
 }
 
-/** Localized lookup shape for the independent Grade / SchoolType relations. */
+/** Localized lookup shape for the AgeRange relation. */
 export interface ILocalizedLookup {
   _id: string;
   nameEn: string;
   nameAr: string;
+  minAge?: number;
+  maxAge?: number | null;
 }
 
 // ----- Main Course Interface -----
@@ -80,14 +82,8 @@ export interface ICourse {
   coInstructors?: IUser[];
   categoriesIds?: string[];
   categories?: ICategory[];
-  gradeId?: string | null;
-  grade?: ILocalizedLookup | null;
-  schoolTypeIds?: string[];
-  schoolTypes?: ILocalizedLookup[];
-  /** @deprecated legacy read compat */
-  schoolTypeId?: string | null;
-  /** @deprecated legacy read compat */
-  schoolType?: ILocalizedLookup | null;
+  ageRangeIds?: string[];
+  ageRanges?: ILocalizedLookup[];
   modulesIds?: string[];
 
   isPaid: boolean;

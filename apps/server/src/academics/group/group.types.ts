@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { AtRiskReason, GroupPaymentStatus, GroupStatus, GroupStudentStatus, Readiness, ScheduleSlot } from '@darnozom/shared-types';
+import { AtRiskReason, GroupPaymentStatus, GroupStatus, GroupStudentStatus, MeetingProvider, Readiness, ScheduleSlot } from '@darnozom/shared-types';
 
 export interface GroupStudentLean {
   studentId: Types.ObjectId;
@@ -29,7 +29,10 @@ export interface GroupLean {
   minStudents: number;
   maxStudents: number;
   totalSessions?: number | null;
+  /** Own start date; null/absent = inherits the batch's. Views always carry the effective date. */
+  startDate?: Date | null;
   estimatedEndDate?: Date | null;
+  meetingProvider?: MeetingProvider;
   meetingLink?: string | null;
   whatsappGroupLink?: string | null;
   contentSent: { done: boolean; by?: Types.ObjectId; at?: Date };
@@ -38,7 +41,16 @@ export interface GroupLean {
   statusHistory: { from: GroupStatus | null; to: GroupStatus; by: Types.ObjectId | null; at: Date; reason?: string }[];
 }
 
-export type GroupView = GroupLean & { readiness: Readiness };
+/** Age range inherited from the group's level. */
+export interface GroupAgeRange {
+  _id: Types.ObjectId;
+  nameEn: string;
+  nameAr: string;
+  minAge: number;
+  maxAge?: number | null;
+}
+
+export type GroupView = GroupLean & { readiness: Readiness; ageRange?: GroupAgeRange | null };
 
 /** findOne adds display names (id → "First Last") for the teacher and every visible student. */
 export type GroupDetailView = GroupView & { people: Record<string, string> };

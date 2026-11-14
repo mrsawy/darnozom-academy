@@ -36,7 +36,7 @@ describe('ReceiptQueue', () => {
 
   it('renders a loading state when isLoading is true', () => {
     render(<ReceiptQueue payments={[]} isLoading onApprove={vi.fn()} onReject={vi.fn()} />);
-    expect(screen.getByText('loading')).toBeInTheDocument();
+    expect(screen.getByRole('status')).toBeInTheDocument();
   });
 
   it('renders a receipt link resolved to a real S3 URL, not a local server path', async () => {

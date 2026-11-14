@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { ArrayMinSize, IsArray, IsBoolean, IsEnum, IsIn, IsInt, IsMongoId, IsObject, IsOptional, IsString, Min, MinLength, ValidateNested } from 'class-validator';
-import { Currency, FamilyPaymentState, PaymentMethodFieldType, PaymentProvider, SubscriptionType } from '@darnozom/shared-types';
+import { BillingSubscriptionStatus, Currency, FamilyPaymentState, PaymentMethodFieldType, PaymentProvider, SubscriptionType } from '@darnozom/shared-types';
 
 export class SubscriptionItemDto {
   @IsMongoId() studentId: string;
@@ -65,6 +65,12 @@ export class RejectPaymentPayload extends ReviewPaymentPayload {
   @IsString() @MinLength(1) reason: string;
 }
 
+export class RecordOfflinePaymentPayload {
+  @IsMongoId() subscriptionId: string;
+  @IsInt() @Min(1) amountMinor: number;
+  @IsOptional() @IsString() note?: string;
+}
+
 export class UpdateBillingSettingsPayload {
   @IsArray() @IsString({ each: true }) enabledFamilyPaymentMethods: string[];
   @IsOptional() @IsEnum(PaymentProvider) academyFeeGatewayProvider?: PaymentProvider | null;
@@ -102,4 +108,13 @@ export class ReviewQueueFilterPayload {
 
 export class ListFamilyPaymentsPayload {
   @IsOptional() @IsMongoId() familyId?: string;
+}
+
+export class ListSubscriptionsPayload {
+  @IsOptional() @IsEnum(BillingSubscriptionStatus) status?: BillingSubscriptionStatus;
+  @IsOptional() @IsEnum(SubscriptionType) type?: SubscriptionType;
+  @IsOptional() @IsMongoId() groupId?: string;
+  /** PARENT: the payer is a parent. STUDENT: the student pays for themselves (no parent linked). */
+  @IsOptional() @IsIn(['PARENT', 'STUDENT']) holder?: 'PARENT' | 'STUDENT';
+  @IsOptional() @IsString() search?: string;
 }

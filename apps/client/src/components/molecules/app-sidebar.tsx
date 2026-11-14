@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { type Icon } from '@tabler/icons-react';
 import Link from 'next/link';
+import { Link as LocaleLink } from '@/i18n/navigation';
 import { NavDocuments } from '@/components/molecules/nav-bar/nav-documents';
 import { NavMain } from '@/components/molecules/nav-bar/nav-main';
 import { NavSecondary } from '@/components/molecules/nav-bar/nav-secondary';
@@ -48,9 +49,33 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
     };
     documentComponent?: React.ReactNode;
   };
+  /** Overrides the default platform name/link in the header (e.g. the academy's own branding). */
+  brand?: {
+    name: string;
+    /** Resolved image URL; when empty/failing, `fallbackLogoSrc` is shown. */
+    logoUrl?: string | null;
+    href: string;
+  };
 }
 
-export function AppSidebar({ data, ...props }: AppSidebarProps) {
+/** Shown whenever the academy has no logo or its logo fails to load. */
+const FALLBACK_LOGO_SRC = '/images/logo.png';
+
+function BrandLogo({ src, alt }: { src?: string | null; alt: string }) {
+  const [failed, setFailed] = React.useState(false);
+  const resolved = src && !failed ? src : FALLBACK_LOGO_SRC;
+  return (
+    // eslint-disable-next-line @next/next/no-img-element -- presigned URL from an arbitrary host
+    <img
+      src={resolved}
+      alt={alt}
+      onError={() => setFailed(true)}
+      className="size-7 shrink-0 rounded-md object-contain"
+    />
+  );
+}
+
+export function AppSidebar({ data, brand, ...props }: AppSidebarProps) {
   const locale = useLocale();
   const isRTL = locale === 'ar';
   const t = useTranslations('AppSidebar');
@@ -63,11 +88,16 @@ export function AppSidebar({ data, ...props }: AppSidebarProps) {
             <SidebarMenuButton
               asChild
               className="transition-all duration-900! ease-linear data-[slot=sidebar-menu-button]:!p-1.5">
-              <Link href="/">
-                {/* <IconInnerShadowTop className="!size-5" /> */}
-
-                <span className="text-base font-semibold">{t('appName')}</span>
-              </Link>
+              {brand ? (
+                <LocaleLink href={brand.href}>
+                  <BrandLogo src={brand.logoUrl} alt={brand.name} />
+                  <span className="truncate text-base font-semibold">{brand.name}</span>
+                </LocaleLink>
+              ) : (
+                <Link href="/">
+                  <span className="text-base font-semibold">{t('appName')}</span>
+                </Link>
+              )}
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

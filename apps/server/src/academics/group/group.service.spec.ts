@@ -53,10 +53,12 @@ function setup() {
     loadInOrg: jest.fn(),
     loadForWrite: jest.fn(),
     syncReadiness: jest.fn(async (id) => ({ _id: id, synced: true })),
+    startDateChanged: jest.fn(async () => true),
   };
   const parentService = { validateParentChildLink: jest.fn() };
   const groupTeacher = { assertScheduleChangeFits: jest.fn().mockResolvedValue(undefined) };
   const taskClosing = { closeDoneItems: jest.fn(async () => 0), closeAll: jest.fn(async () => 0) };
+  const sessionSchedule = { regenerateUpcoming: jest.fn(async () => ({ removed: 0, created: 0 })) };
   const service = new GroupService(
     groupModel as never,
     cohortModel as never,
@@ -65,9 +67,10 @@ function setup() {
     state as never,
     parentService as never,
     groupTeacher as never,
-    taskClosing as never
+    taskClosing as never,
+    sessionSchedule as never
   );
-  return { service, groupModel, cohortModel, levelModel, userModel, state, parentService, groupTeacher };
+  return { service, groupModel, cohortModel, levelModel, userModel, state, parentService, groupTeacher, sessionSchedule };
 }
 
 describe('GroupService', () => {
@@ -297,19 +300,40 @@ describe('GroupService totalSessions and running locks', () => {
       ...over,
     });
 
-  it('update rejects a real schedule, timezone or totalSessions change while RUNNING', async () => {
+  it('update rejects a totalSessions change while RUNNING', async () => {
     const { service, state, groupModel } = setup();
     state.loadForWrite.mockResolvedValue(running());
-    await expect(service.update(staff, String(groupId), { timezone: 'Asia/Riyadh' })).rejects.toThrow(
-      new ConflictException(AcademicsErrors.GROUP_RUNNING_SCHEDULE_LOCKED)
-    );
-    await expect(service.update(staff, String(groupId), { schedule: [{ dayOfWeek: 2, startTime: '10:00', durationMinutes: 60 }] })).rejects.toThrow(
-      new ConflictException(AcademicsErrors.GROUP_RUNNING_SCHEDULE_LOCKED)
-    );
     await expect(service.update(staff, String(groupId), { totalSessions: 20 })).rejects.toThrow(
       new ConflictException(AcademicsErrors.GROUP_RUNNING_SCHEDULE_LOCKED)
     );
     expect(groupModel.updateOne).not.toHaveBeenCalled();
+  });
+
+  it('update lets a RUNNING group change its weekly schedule and re-plans the upcoming sessions', async () => {
+    const { service, state, groupModel, groupTeacher, sessionSchedule } = setup();
+    const group = running();
+    state.loadForWrite.mockResolvedValue(group);
+    groupModel.updateOne.mockReturnValue(mockQuery({ modifiedCount: 1 }));
+    const schedule = [{ dayOfWeek: 2, startTime: '18:00', durationMinutes: 45 }];
+    await service.update(staff, String(groupId), { schedule });
+    expect(groupTeacher.assertScheduleChangeFits).toHaveBeenCalled();
+    expect(sessionSchedule.regenerateUpcoming).toHaveBeenCalledWith(group, { schedule, timezone: 'UTC' });
+  });
+
+  it('update lets a RUNNING group change its time zone', async () => {
+    const { service, state, groupModel, sessionSchedule } = setup();
+    state.loadForWrite.mockResolvedValue(running());
+    groupModel.updateOne.mockReturnValue(mockQuery({ modifiedCount: 1 }));
+    await service.update(staff, String(groupId), { timezone: 'Asia/Riyadh' });
+    expect(sessionSchedule.regenerateUpcoming).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ timezone: 'Asia/Riyadh' }));
+  });
+
+  it('update does not re-plan sessions when a RUNNING group is edited without a schedule change', async () => {
+    const { service, state, groupModel, sessionSchedule } = setup();
+    state.loadForWrite.mockResolvedValue(running());
+    groupModel.updateOne.mockReturnValue(mockQuery({ modifiedCount: 1 }));
+    await service.update(staff, String(groupId), { meetingLink: 'https://meet.example.com/x' });
+    expect(sessionSchedule.regenerateUpcoming).not.toHaveBeenCalled();
   });
 
   it('update accepts the unchanged schedule re-posted with another field and skips the teacher-fit re-check', async () => {
@@ -340,5 +364,61 @@ describe('GroupService totalSessions and running locks', () => {
     );
     groupModel.updateOne.mockReturnValue(mockQuery({ modifiedCount: 1 }));
     await expect(service.update(staff, String(groupId), { maxStudents: 1 })).resolves.toBeDefined();
+  });
+});
+
+describe('GroupService own start date', () => {
+  const batchStart = new Date('2026-10-20T00:00:00.000Z');
+
+  it('create defaults the group start date to the batch start date', async () => {
+    const { service, cohortModel, levelModel, groupModel } = setup();
+    cohortModel.findOne.mockReturnValue(mockQuery({ _id: cohortId, levelId, startDate: batchStart }));
+    levelModel.findOne.mockReturnValue(mockQuery({ _id: levelId, courseId }));
+    groupModel.create.mockResolvedValue({ toObject: () => baseGroup() });
+    await service.create(staff, validDto);
+    expect(groupModel.create).toHaveBeenCalledWith(expect.objectContaining({ startDate: batchStart }));
+  });
+
+  it('create keeps an explicit group start date instead of the batch one', async () => {
+    const { service, cohortModel, levelModel, groupModel } = setup();
+    cohortModel.findOne.mockReturnValue(mockQuery({ _id: cohortId, levelId, startDate: batchStart }));
+    levelModel.findOne.mockReturnValue(mockQuery({ _id: levelId, courseId }));
+    groupModel.create.mockResolvedValue({ toObject: () => baseGroup() });
+    await service.create(staff, { ...validDto, startDate: '2026-11-03' });
+    expect(groupModel.create).toHaveBeenCalledWith(expect.objectContaining({ startDate: new Date('2026-11-03') }));
+  });
+
+  it('update changes the start date and re-checks the teacher fit against it', async () => {
+    const { service, state, groupModel, groupTeacher } = setup();
+    state.loadForWrite.mockResolvedValue(baseGroup());
+    groupModel.updateOne.mockReturnValue(mockQuery({ modifiedCount: 1 }));
+    await service.update(staff, String(groupId), { startDate: '2026-11-03' });
+    expect(groupTeacher.assertScheduleChangeFits).toHaveBeenCalledWith(
+      staff,
+      expect.anything(),
+      expect.objectContaining({ startDate: new Date('2026-11-03') })
+    );
+    const [, update] = groupModel.updateOne.mock.calls[0];
+    expect(update.$set.startDate).toEqual(new Date('2026-11-03'));
+  });
+
+  it('update refuses a real start date change while RUNNING', async () => {
+    const { service, state, groupModel } = setup();
+    state.loadForWrite.mockResolvedValue(baseGroup({ status: GroupStatus.RUNNING, totalSessions: 12 }));
+    await expect(service.update(staff, String(groupId), { startDate: '2026-11-03' })).rejects.toThrow(
+      new ConflictException(AcademicsErrors.GROUP_RUNNING_SCHEDULE_LOCKED)
+    );
+    expect(groupModel.updateOne).not.toHaveBeenCalled();
+  });
+
+  it('update does not touch the stored start date when it resolves to the same date', async () => {
+    const { service, state, groupModel, groupTeacher } = setup();
+    state.loadForWrite.mockResolvedValue(baseGroup({ status: GroupStatus.RUNNING, totalSessions: 12 }));
+    state.startDateChanged.mockResolvedValue(false);
+    groupModel.updateOne.mockReturnValue(mockQuery({ modifiedCount: 1 }));
+    await service.update(staff, String(groupId), { name: 'Renamed', startDate: '2026-10-20' });
+    const [, update] = groupModel.updateOne.mock.calls[0];
+    expect(update.$set).not.toHaveProperty('startDate');
+    expect(groupTeacher.assertScheduleChangeFits).not.toHaveBeenCalled();
   });
 });

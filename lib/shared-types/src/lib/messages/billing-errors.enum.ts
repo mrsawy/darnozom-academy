@@ -3,7 +3,6 @@ export enum BillingErrors {
   SUBSCRIPTION_NOT_FOUND = 'billingSubscriptionNotFound',
   SUBSCRIPTION_ALREADY_ACTIVE = 'billingSubscriptionAlreadyActive',
   SUBSCRIPTION_ITEMS_INVALID = 'billingSubscriptionItemsInvalid',
-  FAMILY_SUBSCRIPTION_NEEDS_SIBLINGS = 'billingFamilySubscriptionNeedsSiblings',
   AMOUNT_INVALID = 'billingAmountInvalid',
   AMOUNT_LOCKED = 'billingAmountLocked',
   PAYMENT_NOT_FOUND = 'billingPaymentNotFound',

@@ -16,6 +16,8 @@ import {
   GroupIdPayload,
   InitiatePaymentPayload,
   ListFamilyPaymentsPayload,
+  ListSubscriptionsPayload,
+  RecordOfflinePaymentPayload,
   RejectPaymentPayload,
   ReviewPaymentPayload,
   ReviewQueueFilterPayload,
@@ -27,25 +29,35 @@ import {
 import { LedgerService } from './ledger/ledger.service';
 import { FamilyPaymentService } from './payment/family-payment.service';
 import { SubscriptionService } from './subscription/subscription.service';
+import { SubscriptionOverviewService } from './subscription/subscription-overview.service';
 import { BillingSettingsService } from './settings/billing-settings.service';
 import { PaymentMethodConfigService } from './payment-method-config/payment-method-config.service';
+import { FamilyReassignService } from './family/family-reassign.service';
 
 @Controller()
 @ApplyRpcErrorHandling
 export class BillingControllerMessage {
   constructor(
     private readonly subscriptions: SubscriptionService,
+    private readonly subscriptionOverview: SubscriptionOverviewService,
     private readonly ledger: LedgerService,
     private readonly familyPayments: FamilyPaymentService,
     private readonly billingRead: BillingReadService,
     private readonly billingSettings: BillingSettingsService,
-    private readonly paymentMethodConfigs: PaymentMethodConfigService
+    private readonly paymentMethodConfigs: PaymentMethodConfigService,
+    private readonly familyReassign: FamilyReassignService
   ) {}
 
   @RequirePermissionsGuard({ action: Actions.MANAGE, subject: Subjects.BILLING })
   @MessagePattern('billing.subscriptions.create')
   createSubscription(@Payload(new RpcValidationPipe()) payload: CreateSubscriptionPayload, @Ctx() context: IUserContext) {
     return this.subscriptions.create(actorFromContext(context), payload);
+  }
+
+  @RequirePermissionsGuard({ action: Actions.MANAGE, subject: Subjects.BILLING })
+  @MessagePattern('billing.subscriptions.listAll')
+  listAllSubscriptions(@Payload(new RpcValidationPipe()) payload: ListSubscriptionsPayload, @Ctx() context: IUserContext) {
+    return this.subscriptionOverview.list(actorFromContext(context), payload);
   }
 
   @RequirePermissionsGuard({ action: Actions.READ, subject: Subjects.BILLING })
@@ -56,7 +68,8 @@ export class BillingControllerMessage {
 
   @RequirePermissionsGuard({ action: Actions.READ, subject: Subjects.BILLING })
   @MessagePattern('billing.subscriptions.listForFamily')
-  listSubscriptionsForFamily(@Payload(new RpcValidationPipe()) payload: FamilyIdPayload, @Ctx() context: IUserContext) {
+  async listSubscriptionsForFamily(@Payload(new RpcValidationPipe()) payload: FamilyIdPayload, @Ctx() context: IUserContext) {
+    await this.familyReassign.healOwnFamily(actorFromContext(context), payload.familyId);
     return this.billingRead.subscriptionsFor(actorFromContext(context), payload.familyId);
   }
 
@@ -68,7 +81,8 @@ export class BillingControllerMessage {
 
   @RequirePermissionsGuard({ action: Actions.READ, subject: Subjects.BILLING })
   @MessagePattern('billing.ledger.statement')
-  statement(@Payload(new RpcValidationPipe()) payload: FamilyIdPayload, @Ctx() context: IUserContext) {
+  async statement(@Payload(new RpcValidationPipe()) payload: FamilyIdPayload, @Ctx() context: IUserContext) {
+    await this.familyReassign.healOwnFamily(actorFromContext(context), payload.familyId);
     return this.billingRead.statementFor(actorFromContext(context), payload.familyId);
   }
 
@@ -97,7 +111,8 @@ export class BillingControllerMessage {
 
   @RequirePermissionsGuard({ action: Actions.CREATE, subject: Subjects.FAMILY_PAYMENT })
   @MessagePattern('billing.payments.initiate')
-  initiatePayment(@Payload(new RpcValidationPipe()) payload: InitiatePaymentPayload, @Ctx() context: IUserContext) {
+  async initiatePayment(@Payload(new RpcValidationPipe()) payload: InitiatePaymentPayload, @Ctx() context: IUserContext) {
+    await this.familyReassign.healOwnFamily(actorFromContext(context));
     return this.familyPayments.initiate(actorFromContext(context), payload);
   }
 
@@ -117,6 +132,12 @@ export class BillingControllerMessage {
   @MessagePattern('billing.payments.approve')
   approvePayment(@Payload(new RpcValidationPipe()) payload: ReviewPaymentPayload, @Ctx() context: IUserContext) {
     return this.familyPayments.approve(actorFromContext(context), payload.paymentId);
+  }
+
+  @RequirePermissionsGuard({ action: Actions.MANAGE, subject: Subjects.FAMILY_PAYMENT })
+  @MessagePattern('billing.payments.recordOffline')
+  recordOfflinePayment(@Payload(new RpcValidationPipe()) payload: RecordOfflinePaymentPayload, @Ctx() context: IUserContext) {
+    return this.familyPayments.recordOffline(actorFromContext(context), payload);
   }
 
   @RequirePermissionsGuard({ action: Actions.MANAGE, subject: Subjects.FAMILY_PAYMENT })
@@ -163,7 +184,14 @@ export class BillingControllerMessage {
 
   @RequirePermissionsGuard({ action: Actions.READ, subject: Subjects.FAMILY_PAYMENT })
   @MessagePattern('billing.payments.myFamily')
-  listFamilyPayments(@Payload(new RpcValidationPipe()) payload: ListFamilyPaymentsPayload, @Ctx() context: IUserContext) {
+  async listFamilyPayments(@Payload(new RpcValidationPipe()) payload: ListFamilyPaymentsPayload, @Ctx() context: IUserContext) {
+    await this.familyReassign.healOwnFamily(actorFromContext(context), payload.familyId);
     return this.familyPayments.listForFamily(actorFromContext(context), payload.familyId);
+  }
+
+  @RequirePermissionsGuard({ action: Actions.MANAGE, subject: Subjects.BILLING })
+  @MessagePattern('billing.family.reassign')
+  reassignFamily(@Payload(new RpcValidationPipe()) payload: FamilyIdPayload, @Ctx() context: IUserContext) {
+    return this.familyReassign.reassignForParentAsActor(actorFromContext(context).organizationId, payload.familyId);
   }
 }

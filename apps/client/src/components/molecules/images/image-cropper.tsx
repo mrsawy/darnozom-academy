@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/components/atoms/loading-state';
 import React, { type SyntheticEvent } from 'react';
 
 import ImageCrop, { centerCrop, makeAspectCrop, type Crop, type PixelCrop } from 'react-image-crop';
@@ -160,9 +161,7 @@ export function ImageCropper({
                 className="mx-auto block h-auto max-h-[min(72vh,800px)] w-full max-w-full object-contain"
               />
             ) : (
-              <div className="bg-muted text-muted-foreground flex min-h-[min(72vh,800px)] w-full items-center justify-center rounded-md text-sm">
-                {t('loading')}
-              </div>
+              <LoadingState className="min-h-[min(72vh,800px)] w-full" />
             )}
           </ImageCrop>
         </div>

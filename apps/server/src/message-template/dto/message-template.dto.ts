@@ -1,5 +1,5 @@
-import { IsEnum, IsMongoId, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
-import { TemplateContext } from '@darnozom/shared-types';
+import { IsEnum, IsIn, IsMongoId, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
+import { TemplateContext, TemplateLocale } from '@darnozom/shared-types';
 
 export class CreateMessageTemplateDtoServer {
   @IsString() @MinLength(1) @MaxLength(100) name: string;
@@ -15,6 +15,7 @@ export class UpdateMessageTemplateDtoServer {
 export class RenderMessageTemplateDtoServer {
   @IsMongoId() groupId: string;
   @IsOptional() @IsMongoId() studentId?: string;
+  @IsOptional() @IsIn(['en', 'ar'] as TemplateLocale[]) locale?: TemplateLocale;
 }
 
 export class MessageTemplateIdPayload {

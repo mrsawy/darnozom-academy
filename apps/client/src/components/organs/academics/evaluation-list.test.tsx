@@ -41,7 +41,7 @@ describe('EvaluationList', () => {
 
   it('shows the loading state instead of the empty state while fetching', () => {
     render(<EvaluationList evaluations={[]} isLoading />);
-    expect(screen.getByText('loading')).toBeInTheDocument();
+    expect(screen.getByRole('status')).toBeInTheDocument();
     expect(screen.queryByText('supervision.empty')).not.toBeInTheDocument();
   });
 

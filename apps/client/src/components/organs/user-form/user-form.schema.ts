@@ -68,25 +68,14 @@ export function buildSelfUserSchema(tVal: TVal) {
       .optional(),
     /** Read-only here, but kept so the form can tell whether to show instructor fields. */
     roleName: yup.string().optional(),
-    /** Instructor subjects (categories), grades, and school types — self-editable. */
+    /** Instructor subjects (categories), and age ranges — self-editable. */
     categoriesIds: yup.array().of(yup.string()).optional(),
-    gradesIds: yup.array().of(yup.string()).optional(),
-    schoolTypesIds: yup.array().of(yup.string()).optional(),
+    ageRangesIds: yup.array().of(yup.string()).optional(),
     categories: yup
       .array()
       .of(yup.object({ _id: yup.string().required(), name: yup.string().required() }))
       .optional(),
-    grades: yup
-      .array()
-      .of(
-        yup.object({
-          _id: yup.string().required(),
-          nameEn: yup.string().required(),
-          nameAr: yup.string().required(),
-        })
-      )
-      .optional(),
-    schoolTypes: yup
+    ageRanges: yup
       .array()
       .of(
         yup.object({

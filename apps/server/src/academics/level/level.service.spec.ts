@@ -1,5 +1,5 @@
-import { ConflictException, NotFoundException } from '@nestjs/common';
-import { AcademicsErrors, Roles } from '@darnozom/shared-types';
+import { BadRequestException, ConflictException, NotFoundException } from '@nestjs/common';
+import { AcademicsErrors, AgeRangeErrors, Roles } from '@darnozom/shared-types';
 import { mockQuery } from '__test__/academics/mock-query';
 import { AcademicsActor } from '../common/actor';
 import { LevelService } from './level.service';
@@ -12,8 +12,9 @@ function setup() {
   const levelModel = { find: jest.fn(), findOne: jest.fn(), findOneAndUpdate: jest.fn(), create: jest.fn(), updateOne: jest.fn() };
   const courseModel = { findOne: jest.fn() };
   const cohortModel = { countDocuments: jest.fn() };
-  const service = new LevelService(levelModel as never, courseModel as never, cohortModel as never);
-  return { service, levelModel, courseModel, cohortModel };
+  const ageRangeModel = { exists: jest.fn(), find: jest.fn() };
+  const service = new LevelService(levelModel as never, courseModel as never, cohortModel as never, ageRangeModel as never);
+  return { service, levelModel, courseModel, cohortModel, ageRangeModel };
 }
 
 describe('LevelService', () => {
@@ -38,6 +39,17 @@ describe('LevelService', () => {
     levelModel.create.mockResolvedValue({ toObject: () => ({ _id: levelId }) });
     await expect(service.create(actor, { courseId, name: 'Level 1', order: 1 })).resolves.toEqual({ _id: levelId });
     expect(String(levelModel.create.mock.calls[0][0].organizationId)).toBe(actor.organizationId);
+  });
+
+  it('rejects an unknown age range', async () => {
+    const { service, courseModel, levelModel, ageRangeModel } = setup();
+    courseModel.findOne.mockReturnValue(mockQuery({ _id: courseId }));
+    levelModel.findOne.mockReturnValue(mockQuery(null));
+    ageRangeModel.exists.mockResolvedValue(null);
+    await expect(service.create(actor, { courseId, name: 'Level 1', order: 1, ageRangeId: '64b0000000000000000000cc' })).rejects.toThrow(
+      new BadRequestException(AgeRangeErrors.AGE_RANGE_NOT_FOUND)
+    );
+    expect(levelModel.create).not.toHaveBeenCalled();
   });
 
   it('refuses to delete a level that has cohorts', async () => {

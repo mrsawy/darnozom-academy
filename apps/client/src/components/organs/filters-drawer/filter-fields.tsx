@@ -9,8 +9,7 @@ import { DualRangeSlider } from '@/components/molecules/dual-range-slider';
 import { Tabs, TabsList, TabsTrigger } from '@/components/atoms/tabs';
 import { Currency, CURRENCIES } from '@darnozom/shared-types';
 import { BillingCycle } from '@/lib/types/course/enum/BillingCycle.enum';
-import { usePublicGrades } from '@/lib/hooks/grade/use-grades.hook';
-import { usePublicSchoolTypes } from '@/lib/hooks/school-type/use-school-types.hook';
+import { usePublicAgeRanges } from '@/lib/hooks/age-range/use-age-ranges.hook';
 import MultipleSelector, { Option } from '@/components/molecules/multi-select/multi-select';
 
 const ALL_VALUE = '__all__';
@@ -185,82 +184,6 @@ function PriceRangeFilterField({
   );
 }
 
-interface LookupFilterFieldProps {
-  value?: string;
-  onChange: (value?: string) => void;
-  label: string;
-  allLabel: string;
-  placeholder: string;
-}
-
-function GradeFilterField({
-  value,
-  onChange,
-  label,
-  allLabel,
-  placeholder,
-}: LookupFilterFieldProps) {
-  const locale = useLocale();
-  const { data: grades, isLoading } = usePublicGrades();
-
-  const data = [
-    { value: ALL_VALUE, label: allLabel },
-    ...(grades ?? []).map((grade) => ({
-      value: grade._id,
-      label: locale === 'ar' ? grade.nameAr : grade.nameEn,
-    })),
-  ];
-
-  return (
-    <div>
-      <Label className="text-lms-text-primary mb-3 block font-medium">{label}</Label>
-      <Combobox
-        data={data}
-        value={value ?? ALL_VALUE}
-        title={allLabel}
-        placeholder={placeholder}
-        isLoading={isLoading}
-        onValueChange={(selected) => onChange(selected === ALL_VALUE ? undefined : selected)}
-        buttonClassName="w-full"
-      />
-    </div>
-  );
-}
-
-function SchoolTypeFilterField({
-  value,
-  onChange,
-  label,
-  allLabel,
-  placeholder,
-}: LookupFilterFieldProps) {
-  const locale = useLocale();
-  const { data: schoolTypes, isLoading } = usePublicSchoolTypes();
-
-  const data = [
-    { value: ALL_VALUE, label: allLabel },
-    ...(schoolTypes ?? []).map((schoolType) => ({
-      value: schoolType._id,
-      label: locale === 'ar' ? schoolType.nameAr : schoolType.nameEn,
-    })),
-  ];
-
-  return (
-    <div>
-      <Label className="text-lms-text-primary mb-3 block font-medium">{label}</Label>
-      <Combobox
-        data={data}
-        value={value ?? ALL_VALUE}
-        title={allLabel}
-        placeholder={placeholder}
-        isLoading={isLoading}
-        onValueChange={(selected) => onChange(selected === ALL_VALUE ? undefined : selected)}
-        buttonClassName="w-full"
-      />
-    </div>
-  );
-}
-
 interface LookupMultiFilterFieldProps {
   value?: string[];
   onChange: (value: string[]) => void;
@@ -268,48 +191,18 @@ interface LookupMultiFilterFieldProps {
   placeholder: string;
 }
 
-function GradeMultiFilterField({
+function AgeRangeMultiFilterField({
   value,
   onChange,
   label,
   placeholder,
 }: LookupMultiFilterFieldProps) {
   const locale = useLocale();
-  const { data: grades, isLoading } = usePublicGrades();
+  const { data: ageRanges, isLoading } = usePublicAgeRanges();
 
-  const options: Option[] = (grades ?? []).map((grade) => ({
-    value: grade._id,
-    label: locale === 'ar' ? grade.nameAr : grade.nameEn,
-  }));
-
-  const selected = options.filter((option) => (value ?? []).includes(option.value));
-
-  return (
-    <div>
-      <Label className="text-lms-text-primary mb-3 block font-medium">{label}</Label>
-      <MultipleSelector
-        options={options}
-        value={selected}
-        placeholder={placeholder}
-        loadingIndicator={isLoading ? <span className="text-sm text-gray-500">…</span> : undefined}
-        onChange={(opts) => onChange(opts.map((o) => o.value))}
-      />
-    </div>
-  );
-}
-
-function SchoolTypeMultiFilterField({
-  value,
-  onChange,
-  label,
-  placeholder,
-}: LookupMultiFilterFieldProps) {
-  const locale = useLocale();
-  const { data: schoolTypes, isLoading } = usePublicSchoolTypes();
-
-  const options: Option[] = (schoolTypes ?? []).map((schoolType) => ({
-    value: schoolType._id,
-    label: locale === 'ar' ? schoolType.nameAr : schoolType.nameEn,
+  const options: Option[] = (ageRanges ?? []).map((ageRange) => ({
+    value: ageRange._id,
+    label: locale === 'ar' ? ageRange.nameAr : ageRange.nameEn,
   }));
 
   const selected = options.filter((option) => (value ?? []).includes(option.value));
@@ -333,8 +226,5 @@ export {
   RatingFilterField,
   ModulesFilterField,
   PriceRangeFilterField,
-  GradeFilterField,
-  SchoolTypeFilterField,
-  GradeMultiFilterField,
-  SchoolTypeMultiFilterField,
+  AgeRangeMultiFilterField,
 };

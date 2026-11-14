@@ -24,13 +24,12 @@ export async function findInstructors(rawFilters: IInstructorFilters) {
     const idToken = await getCookie(AUTH_COOKIE_NAME);
 
     // Flat filter contract — the server builds the Mongo query (search escaping,
-    // rating $gte, subject/grade/school-type $in). No Mongo operators are built here.
+    // rating $gte, subject/age-range $in). No Mongo operators are built here.
     const flatFilters: {
       search?: string;
       minRating?: number;
       categoryIds?: string[];
-      gradeIds?: string[];
-      schoolTypeIds?: string[];
+      ageRangeIds?: string[];
     } = {};
 
     if (filters.search) {
@@ -45,12 +44,8 @@ export async function findInstructors(rawFilters: IInstructorFilters) {
       flatFilters.categoryIds = [filters.selectedCategory];
     }
 
-    if (filters.gradeIds && filters.gradeIds.length > 0) {
-      flatFilters.gradeIds = filters.gradeIds;
-    }
-
-    if (filters.schoolTypeIds && filters.schoolTypeIds.length > 0) {
-      flatFilters.schoolTypeIds = filters.schoolTypeIds;
+    if (filters.ageRangeIds && filters.ageRangeIds.length > 0) {
+      flatFilters.ageRangeIds = filters.ageRangeIds;
     }
 
     const response = await request<Paginated<IInstructor>>(

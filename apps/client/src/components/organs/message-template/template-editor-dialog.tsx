@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useTranslations } from 'next-intl';
-import { ALLOWED_VARIABLES } from '@darnozom/shared-types';
-import type { IMessageTemplate, TemplateContext } from '@darnozom/shared-types';
+import { useLocale, useTranslations } from 'next-intl';
+import { ALLOWED_VARIABLES, variableTokenName } from '@darnozom/shared-types';
+import type { IMessageTemplate, TemplateContext, TemplateLocale } from '@darnozom/shared-types';
 import {
   Dialog,
   DialogContent,
@@ -33,6 +33,7 @@ export interface TemplateEditorDialogProps {
 
 export function TemplateEditorDialog({ open, onOpenChange, template }: TemplateEditorDialogProps) {
   const t = useTranslations('MessageTemplates');
+  const templateLocale: TemplateLocale = useLocale() === 'ar' ? 'ar' : 'en';
   const create = useCreateTemplate();
   const update = useUpdateTemplate();
 
@@ -72,7 +73,7 @@ export function TemplateEditorDialog({ open, onOpenChange, template }: TemplateE
   }
 
   function insertVariable(v: string) {
-    setBody((prev) => `${prev}{{${v}}}`);
+    setBody((prev) => `${prev}{{${variableTokenName(v, templateLocale)}}}`);
   }
 
   return (
@@ -114,6 +115,7 @@ export function TemplateEditorDialog({ open, onOpenChange, template }: TemplateE
               onChange={(e) => setBody(e.target.value)}
               rows={6}
               placeholder={t('form.bodyPlaceholder')}
+              dir="auto"
               className="font-mono text-sm"
             />
             <p className="text-muted-foreground text-xs">{t('form.variableHint')}</p>
@@ -128,7 +130,7 @@ export function TemplateEditorDialog({ open, onOpenChange, template }: TemplateE
                   variant="outline"
                   className="cursor-pointer text-xs hover:bg-accent"
                   onClick={() => insertVariable(v)}>
-                  {`{{${v}}}`}
+                  {`{{${variableTokenName(v, templateLocale)}}}`}
                 </Badge>
               ))}
             </div>

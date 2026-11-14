@@ -1,5 +1,5 @@
-import { SessionStatus, TeacherPayModel, PayrollErrors } from '@darnozom/shared-types';
-import { calculateBaseAmount, calculateTotal, getMonthInterval, isSessionCountable } from './payroll-calculator';
+import { GroupPayModel, SessionStatus, TeacherPayModel, PayrollErrors } from '@darnozom/shared-types';
+import { calculateBaseAmount, calculateGroupAmount, calculateTotal, getMonthInterval, isSessionCountable } from './payroll-calculator';
 
 describe('payroll-calculator', () => {
   describe('getMonthInterval', () => {
@@ -137,6 +137,31 @@ describe('payroll-calculator', () => {
 
     it('handles empty bonuses', () => {
       expect(calculateTotal(1000, [])).toBe(1000);
+    });
+  });
+
+  describe('calculateGroupAmount', () => {
+    const basis = { subscriptions: 4, collected: 1250.5 };
+
+    it('FIXED_PER_GROUP ignores the basis', () => {
+      expect(calculateGroupAmount(GroupPayModel.FIXED_PER_GROUP, 300, basis)).toBe(300);
+    });
+
+    it('FIXED_PER_SUBSCRIPTION multiplies by active subscriptions', () => {
+      expect(calculateGroupAmount(GroupPayModel.FIXED_PER_SUBSCRIPTION, 25.5, basis)).toBe(102);
+    });
+
+    it('PERCENT_OF_SUBSCRIPTIONS takes the percentage of what was collected, rounded to cents', () => {
+      expect(calculateGroupAmount(GroupPayModel.PERCENT_OF_SUBSCRIPTIONS, 30, basis)).toBe(375.15);
+    });
+
+    it('pays nothing on a percentage when nothing was collected', () => {
+      expect(calculateGroupAmount(GroupPayModel.PERCENT_OF_SUBSCRIPTIONS, 30, { subscriptions: 2, collected: 0 })).toBe(0);
+    });
+
+    it('rejects a negative rate or a percentage over 100', () => {
+      expect(() => calculateGroupAmount(GroupPayModel.FIXED_PER_GROUP, -1, basis)).toThrow(PayrollErrors.INVALID_PAY_RATE);
+      expect(() => calculateGroupAmount(GroupPayModel.PERCENT_OF_SUBSCRIPTIONS, 101, basis)).toThrow(PayrollErrors.INVALID_PAY_RATE);
     });
   });
 });

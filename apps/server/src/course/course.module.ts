@@ -39,8 +39,7 @@ import { ContentControllerHttp } from './controller/http/content.controller.http
 import { ModuleControllerHttp } from './controller/http/module.controller.http';
 import { Organization, OrganizationSchema } from 'src/organization/entities/organization.entity';
 import { Category, CategorySchema } from 'src/category/entities/category.entity';
-import { Grade, GradeSchema } from 'src/grade/entities/grade.entity';
-import { SchoolType, SchoolTypeSchema } from 'src/school-type/entities/school-type.entity';
+import { AgeRange, AgeRangeSchema } from 'src/age-range/entities/age-range.entity';
 import { Enrollment, EnrollmentSchema } from 'src/enrollment/entities/enrollment.entity';
 import { SubscriptionModule } from 'src/subscription/subscription.module';
 import { AssignmentService } from './services/content/assignment/assignment.service';
@@ -58,8 +57,7 @@ import { ShariaFileCleanupService } from './services/content/sharia/sharia-file-
       { name: 'CourseModule', schema: CourseModuleSchema },
       { name: Organization.name, schema: OrganizationSchema },
       { name: Category.name, schema: CategorySchema },
-      { name: Grade.name, schema: GradeSchema },
-      { name: SchoolType.name, schema: SchoolTypeSchema },
+      { name: AgeRange.name, schema: AgeRangeSchema },
       { name: Enrollment.name, schema: EnrollmentSchema },
       { name: ContentVersion.name, schema: ContentVersionSchema },
       {
@@ -79,11 +77,11 @@ import { ShariaFileCleanupService } from './services/content/sharia/sharia-file-
     forwardRef(() => AuthModule),
     RoleModule,
     forwardRef(() => UserModule),
-    FileModule,
+    forwardRef(() => FileModule),
     CurrencyModule,
     forwardRef(() => EnrollmentModule),
     CategoryModule,
-    SubscriptionModule,
+    forwardRef(() => SubscriptionModule),
     TranscriptionModule,
   ],
   controllers: [

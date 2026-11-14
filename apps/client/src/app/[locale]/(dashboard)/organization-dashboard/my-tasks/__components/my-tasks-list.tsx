@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/components/atoms/loading-state';
 import { useTranslations } from 'next-intl';
 import type { ITask } from '@/lib/types/academics/academics';
 import { Badge } from '@/components/atoms/badge';
@@ -14,7 +15,7 @@ interface Props {
 export function MyTasksList({ tasks, isLoading, onMarkDone }: Props) {
   const t = useTranslations('Academics');
 
-  if (isLoading) return <p>{t('loading')}</p>;
+  if (isLoading) return <LoadingState />;
   if (tasks.length === 0) return <p className="text-muted-foreground">{t('tasks.empty')}</p>;
 
   return (

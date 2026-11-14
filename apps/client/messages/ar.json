@@ -206,21 +206,37 @@
     "startFreeTrial": "ابدأ تجربتك المجانية",
     "dashboardPreview": {
       "courseProgress": {
-        "title": "تقدم الدورات",
-        "0": { "label": "الجبر 2" },
-        "1": { "label": "الفيزياء" },
-        "2": { "label": "الكيمياء" }
+        "0": {
+          "label": "الجبر 2"
+        },
+        "1": {
+          "label": "الفيزياء"
+        },
+        "2": {
+          "label": "الكيمياء"
+        },
+        "title": "تقدم الدورات"
       },
       "quizScores": {
         "title": "درجات الاختبارات"
       },
       "activity": {
-        "title": "النشاط حسب النوع",
-        "0": { "label": "فيديو" },
-        "1": { "label": "مقال" },
-        "2": { "label": "مشروع" },
-        "3": { "label": "واجب" },
-        "4": { "label": "جلسة مباشرة" }
+        "0": {
+          "label": "فيديو"
+        },
+        "1": {
+          "label": "مقال"
+        },
+        "2": {
+          "label": "مشروع"
+        },
+        "3": {
+          "label": "واجب"
+        },
+        "4": {
+          "label": "جلسة مباشرة"
+        },
+        "title": "النشاط حسب النوع"
       },
       "attendance": {
         "title": "تم تسجيل الحضور",
@@ -339,7 +355,7 @@
           },
           {
             "title": "ملف طالب موحد",
-            "description": "دمج التقدم الإلكتروني مع الحضور الحضوري."
+            "description": "دمج التقدم الإلكتروني مع الحضور الجسدي."
           }
         ]
       },
@@ -659,10 +675,8 @@
     "typeToSearchCategories": "اكتب للبحث عن الفئات",
     "noCategoriesFound": "لم يتم العثور على فئات",
     "subject": "المادة",
-    "grade": "الصف",
-    "schoolType": "نوع المدرسة",
-    "selectGrades": "اختر الصفوف",
-    "selectSchoolTypes": "اختر أنواع المدارس",
+    "ageRange": "الفئة العمرية",
+    "selectAgeRanges": "اختر الفئات العمرية",
     "messageInstructor": "مراسلة"
   },
   "Courses": {
@@ -677,10 +691,8 @@
     "priceRange": "نطاق السعر",
     "billingCycle": "دورة الفوترة",
     "category": "الفئة",
-    "grade": "الصف الدراسي",
-    "schoolType": "نوع المدرسة",
-    "allGrades": "كل الصفوف",
-    "allSchoolTypes": "كل أنواع المدارس",
+    "ageRange": "الفئة العمرية",
+    "allAgeRanges": "كل الفئات العمرية",
     "searchCategoryPlaceholder": "البحث عن فئة",
     "filterByCategory": "تصفية حسب الفئة",
     "typeToSearchCategories": "اكتب للبحث عن الفئات",
@@ -974,10 +986,8 @@
     "description": "اكتشف دوراتنا الأكثر شعبية المصممة من قبل خبراء الصناعة لتطوير مهاراتك وتسريع نموك المهني.",
     "viewAllButton": "عرض جميع الدورات",
     "all": "الكل",
-    "grade": "الصف الدراسي",
-    "schoolType": "نوع المدرسة",
-    "allGrades": "كل الصفوف",
-    "allSchoolTypes": "كل أنواع المدارس",
+    "ageRange": "الفئة العمرية",
+    "allAgeRanges": "كل الفئات العمرية",
     "noCoursesFound": "لم يتم العثور على دورات في هذا التصنيف"
   },
   "footer": {
@@ -1752,10 +1762,8 @@
       "selectCountryPlaceholder": "اختر البلد",
       "categories": "الفئات",
       "subjects": "المواد",
-      "grades": "الصفوف",
-      "selectGrades": "اختر الصفوف...",
-      "schoolTypes": "أنواع المدارس",
-      "selectSchoolTypes": "اختر أنواع المدارس...",
+      "ageRanges": "الفئات العمرية",
+      "selectAgeRanges": "اختر الفئات العمرية...",
       "selectCategories": "اختر الفئات...",
       "noCategoriesFound": "لم يتم العثور على فئات.",
       "childUsers": "المستخدمون التابعون",
@@ -2310,7 +2318,8 @@
     "loadingCalendar": "جارٍ تحميل التقويم"
   },
   "AppSidebar": {
-    "appName": "دار نظم لإدارة المحتوى"
+    "appName": "دار نظم لإدارة المحتوى",
+    "academyFallbackName": "الأكاديمية"
   },
   "DateTimePicker": {
     "placeholder": "اختر التاريخ والوقت",
@@ -2382,6 +2391,9 @@
   "OrgSidebar": {
     "navMain": {
       "courses": "الدورات",
+      "coursesAll": "جميع الدورات",
+      "coursesRecorded": "الدورات المسجلة",
+      "coursesTraining": "الدورات التدريبية",
       "content": "المحتوى",
       "contentTypes": {
         "article": "المقالات",
@@ -2393,11 +2405,32 @@
         "attachment": "المرفقات"
       },
       "users": "المستخدمون",
+      "usersAll": "جميع المستخدمين",
+      "usersRoles": {
+        "INSTRUCTOR": "المعلمون",
+        "STUDENT": "الطلاب",
+        "PARENT": "أولياء الأمور",
+        "OWNER": "المالكون",
+        "SUPER_ADMIN": "المشرفون العامون",
+        "ADMIN": "المسؤولون",
+        "MANAGER": "المدراء",
+        "COORDINATOR": "المنسقون",
+        "SUPERVISOR": "المشرفون",
+        "SECRETARY": "السكرتارية",
+        "CONTENT_OFFICER": "مسؤولو المحتوى",
+        "SHARIA_REVIEWER": "المراجعون الشرعيون",
+        "HR": "الموارد البشرية",
+        "ACCOUNTANT": "المحاسبون",
+        "GUEST": "الضيوف"
+      },
       "enrollments": "التسجيلات",
       "gallery": "المعرض",
       "home_page": "صفحاتي",
+      "allPages": "كل الصفحات",
       "attendance": "الحضور",
       "wallet": "المحفظة",
+      "attendanceOffline": "الحضور الجسدي",
+      "attendanceSessions": "حضور الجلسات",
       "privateSessions": "الجلسات الخاصة",
       "chat": "الرسائل",
       "booksStore": "متجر الكتب",
@@ -2413,6 +2446,9 @@
       "billing": "المالية",
       "billingReceipts": "إيصالات السداد",
       "billingCoursePayments": "مدفوعات الدورات",
+      "accounting": "المحاسبة",
+      "accountingSubscriptions": "الاشتراكات",
+      "salaries": "الرواتب",
       "payroll": "مستحقات المعلمين",
       "myPayStatements": "مستحقاتي الشهرية",
       "myCertificates": "شهاداتي",
@@ -2433,6 +2469,7 @@
       },
       "settings": {
         "settings": "الإعدادات",
+        "academy": "الأكاديمية",
         "plan": "الخطة",
         "payments": "إعدادات الدفع",
         "usage": "الاستخدام",
@@ -3590,30 +3627,38 @@
     "create": "إنشاء",
     "creating": "جاري الإنشاء..."
   },
-  "AdminGrades": {
-    "title": "الصفوف",
-    "description": "إدارة المستويات الدراسية المتاحة للدورات على مستوى المنصة.",
-    "createGrade": "إضافة صف",
-    "loadError": "فشل تحميل الصفوف.",
+  "AdminAgeRanges": {
+    "title": "الفئات العمرية",
+    "description": "إدارة الفئات العمرية المتاحة للدورات والمدرّسين على مستوى المنصة.",
+    "createAgeRange": "إضافة فئة عمرية",
+    "loadError": "تعذّر تحميل الفئات العمرية.",
     "retry": "إعادة المحاولة",
-    "empty": "لا توجد صفوف بعد. أضف أول صف للبدء.",
+    "empty": "لا توجد فئات عمرية بعد. أضف أول فئة عمرية للبدء.",
     "toasts": {
-      "created": "تم إنشاء الصف بنجاح.",
-      "updated": "تم تحديث الصف بنجاح.",
-      "deleted": "تم حذف الصف بنجاح."
+      "created": "تم إنشاء الفئة العمرية بنجاح.",
+      "updated": "تم تحديث الفئة العمرية بنجاح.",
+      "deleted": "تم حذف الفئة العمرية بنجاح."
     },
     "validation": {
       "nameEnRequired": "الاسم بالإنجليزية مطلوب.",
-      "nameArRequired": "الاسم بالعربية مطلوب."
+      "nameArRequired": "الاسم بالعربية مطلوب.",
+      "minAgeRequired": "الحد الأدنى للعمر مطلوب.",
+      "ageInteger": "يجب أن يكون العمر رقمًا صحيحًا.",
+      "ageMin": "لا يمكن أن يكون العمر سالبًا.",
+      "ageMax": "لا يمكن أن يتجاوز العمر 120.",
+      "maxAgeBelowMin": "لا يمكن أن يكون الحد الأقصى للعمر أقل من الحد الأدنى."
     },
     "form": {
-      "createTitle": "إضافة صف",
-      "editTitle": "تعديل الصف",
-      "description": "أدخل اسم الصف باللغتين الإنجليزية والعربية.",
+      "createTitle": "إضافة فئة عمرية",
+      "editTitle": "تعديل الفئة العمرية",
+      "description": "أدخل الاسم بالإنجليزية والعربية وحدود العمر.",
       "nameEn": "الاسم بالإنجليزية",
-      "nameEnPlaceholder": "مثال: 1st Preparatory",
+      "nameEnPlaceholder": "e.g. 6-8 years",
       "nameAr": "الاسم بالعربية",
-      "nameArPlaceholder": "مثال: الصف الأول الإعدادي",
+      "nameArPlaceholder": "مثال: ٦-٨ سنوات",
+      "minAge": "الحد الأدنى للعمر",
+      "maxAge": "الحد الأقصى للعمر",
+      "maxAgePlaceholder": "بدون حد",
       "cancel": "إلغاء",
       "save": "حفظ",
       "create": "إنشاء"
@@ -3621,52 +3666,15 @@
     "table": {
       "nameEn": "الاسم بالإنجليزية",
       "nameAr": "الاسم بالعربية",
+      "ages": "الأعمار",
+      "range": "من {min} إلى {max} سنة",
+      "openEnded": "{min} سنة فأكثر",
       "actions": "الإجراءات",
-      "editAria": "تعديل الصف",
-      "deleteAria": "حذف الصف"
+      "editAria": "تعديل الفئة العمرية",
+      "deleteAria": "حذف الفئة العمرية"
     },
     "deleteConfirm": {
-      "title": "حذف الصف",
-      "description": "هل أنت متأكد من حذف \"{name}\"؟ لا يمكن التراجع عن هذا الإجراء."
-    }
-  },
-  "AdminSchoolTypes": {
-    "title": "أنواع المدارس",
-    "description": "إدارة أنواع المدارس المتاحة للدورات على مستوى المنصة.",
-    "createSchoolType": "إضافة نوع مدرسة",
-    "loadError": "فشل تحميل أنواع المدارس.",
-    "retry": "إعادة المحاولة",
-    "empty": "لا توجد أنواع مدارس بعد. أضف أول نوع للبدء.",
-    "toasts": {
-      "created": "تم إنشاء نوع المدرسة بنجاح.",
-      "updated": "تم تحديث نوع المدرسة بنجاح.",
-      "deleted": "تم حذف نوع المدرسة بنجاح."
-    },
-    "validation": {
-      "nameEnRequired": "الاسم بالإنجليزية مطلوب.",
-      "nameArRequired": "الاسم بالعربية مطلوب."
-    },
-    "form": {
-      "createTitle": "إضافة نوع مدرسة",
-      "editTitle": "تعديل نوع المدرسة",
-      "description": "أدخل اسم نوع المدرسة باللغتين الإنجليزية والعربية.",
-      "nameEn": "الاسم بالإنجليزية",
-      "nameEnPlaceholder": "مثال: International",
-      "nameAr": "الاسم بالعربية",
-      "nameArPlaceholder": "مثال: دولي",
-      "cancel": "إلغاء",
-      "save": "حفظ",
-      "create": "إنشاء"
-    },
-    "table": {
-      "nameEn": "الاسم بالإنجليزية",
-      "nameAr": "الاسم بالعربية",
-      "actions": "الإجراءات",
-      "editAria": "تعديل نوع المدرسة",
-      "deleteAria": "حذف نوع المدرسة"
-    },
-    "deleteConfirm": {
-      "title": "حذف نوع المدرسة",
+      "title": "حذف الفئة العمرية",
       "description": "هل أنت متأكد من حذف \"{name}\"؟ لا يمكن التراجع عن هذا الإجراء."
     }
   },
@@ -3746,12 +3754,9 @@
     "categoriesHelp": "ساعد الطلاب على اكتشاف هذه الدورة حسب الموضوع.",
     "selectCourseCategories": "اختر فئات الدورة...",
     "noCategoriesFound": "لم يتم العثور على فئات.",
-    "gradeAndSchoolType": "الصف ونوع المدرسة",
-    "gradeAndSchoolTypeHelp": "استهداف اختياري حسب الصف ونوع المدرسة.",
-    "grade": "الصف",
-    "schoolType": "نوع المدرسة",
-    "gradeNone": "بدون",
-    "schoolTypeNone": "بدون",
+    "ageRangeSection": "الفئة العمرية",
+    "ageRangeSectionHelp": "تحديد اختياري للأعمار التي تستهدفها هذه الدورة.",
+    "ageRange": "الفئة العمرية",
     "searchPlaceholder": "بحث...",
     "pricing": "التسعير",
     "pricingHelp": "اختر ما إذا كانت هذه الدورة مجانية أو مدفوعة.",
@@ -3785,7 +3790,7 @@
     "enrollmentLimit": "حد التسجيل",
     "noLimit": "بدون حد",
     "attendanceSettings": "إعدادات الحضور",
-    "attendanceSettingsHelp": "تتبع الحضور الحضوري عبر أوقات مجدولة.",
+    "attendanceSettingsHelp": "تتبع الحضور الجسدي عبر أوقات مجدولة.",
     "requireAttendanceTracking": "تطلب تتبع الحضور",
     "offlineScheduleTimeSlots": "أوقات الجدول الحضوري",
     "addTimeSlot": "إضافة وقت",
@@ -4333,6 +4338,18 @@
     "dark": "داكن",
     "light": "فاتح"
   },
+  "SessionsAttendance": {
+    "title": "حضور الجلسات",
+    "description": "الحضور المسجَّل لجلسات المجموعات، يدويًا من المعلمين أو تلقائيًا عند الانضمام.",
+    "group": "المجموعة",
+    "allGroups": "كل المجموعات",
+    "from": "من",
+    "to": "إلى",
+    "sessions": "الجلسات",
+    "session": "الجلسة",
+    "rate": "نسبة الحضور",
+    "empty": "لا توجد جلسات في هذه الفترة."
+  },
   "AttendancePage": {
     "title": "إدارة الحضور",
     "description": "إدارة وتتبع الحضور لدوراتك.",
@@ -4624,12 +4641,10 @@
     "accountLoggedOutFromAnotherDevice": "تم تسجيل خروجك من جهاز آخر",
     "sessionReplacedByAnotherDevice": "تم تسجيل الدخول من جهاز آخر",
     "sessionReplacedRedirectIn": "إعادة التوجيه لتسجيل الدخول خلال {seconds} ثوانٍ…",
-    "gradeNotFound": "الصف غير موجود.",
-    "gradeNameAlreadyExists": "يوجد صف بهذا الاسم بالفعل.",
-    "gradeInUseCannotDelete": "هذا الصف مستخدم في دورة واحدة أو أكثر ولا يمكن حذفه.",
-    "schoolTypeNotFound": "نوع المدرسة غير موجود.",
-    "schoolTypeNameAlreadyExists": "يوجد نوع مدرسة بهذا الاسم بالفعل.",
-    "schoolTypeInUseCannotDelete": "نوع المدرسة هذا مستخدم في دورة واحدة أو أكثر ولا يمكن حذفه.",
+    "ageRangeNotFound": "الفئة العمرية غير موجودة.",
+    "ageRangeNameAlreadyExists": "توجد فئة عمرية بهذا الاسم بالفعل.",
+    "ageRangeInvalid": "لا يمكن أن يكون الحد الأقصى للعمر أقل من الحد الأدنى.",
+    "ageRangeInUseCannotDelete": "هذه الفئة العمرية مستخدمة في دورة واحدة أو أكثر ولا يمكن حذفها.",
     "planNotFound": "الخطة غير موجودة.",
     "planNotActive": "هذه الخطة غير نشطة.",
     "subscriptionNotFound": "لم يتم العثور على اشتراك لهذه المؤسسة.",
@@ -4837,12 +4852,15 @@
     "academicsDeletedSuccessfully": "تم الحذف بنجاح.",
     "groupCompleted": "اكتملت هذه المجموعة ولم يعد بالإمكان تعديلها.",
     "groupTotalSessionsRequired": "حدّد عدد الجلسات لهذه المجموعة قبل بدئها.",
-    "groupRunningScheduleLocked": "لا يمكن تغيير الجدول أو المنطقة الزمنية أو عدد الجلسات أثناء سير المجموعة.",
+    "groupRunningScheduleLocked": "أثناء جريان المجموعة لا يمكن تغيير عدد الجلسات أو تاريخ البدء.",
     "groupRunningTeacherLocked": "لا يمكن تغيير معلم المجموعة أثناء سيرها.",
     "sessionNotFound": "الجلسة غير موجودة.",
     "sessionCancelNotAllowed": "يمكن إلغاء الجلسة التي لم تنتهِ بعد فقط.",
     "notSessionTeacher": "معلم هذه الجلسة وحده يمكنه تنفيذ ذلك.",
     "attendanceNotOpen": "يُفتح الحضور قبل بدء الجلسة بـ 15 دقيقة.",
+    "notSessionParticipant": "لست مشاركًا في هذه الجلسة.",
+    "joinWindowClosed": "باب الانضمام إلى هذه الجلسة مغلق حاليًا.",
+    "teacherAccessDenied": "ليس لديك صلاحية الوصول إلى صفحة هذا المعلم.",
     "attendanceClosed": "تم إغلاق الحضور لهذه الجلسة.",
     "attendanceStudentInvalid": "يمكن تسجيل الحضور مرة واحدة فقط لكل طالب نشط في هذه المجموعة.",
     "attendanceIncomplete": "سجّل حضور كل طالب نشط قبل إرسال التقرير.",
@@ -5135,8 +5153,7 @@
       "platformOptions": "إعدادات المنصة",
       "withdrawalRequests": "طلبات السحب",
       "roles": "الأدوار والصلاحيات",
-      "grades": "الصفوف",
-      "schoolTypes": "أنواع المدارس",
+      "ageRanges": "الفئات العمرية",
       "chat": "الرسائل"
     }
   },
@@ -5424,8 +5441,7 @@
       "detailsColumn": "التفاصيل",
       "shortDescription": "وصف مختصر",
       "categories": "التصنيفات",
-      "grade": "الصف",
-      "schoolType": "نوع المدرسة",
+      "ageRange": "الفئة العمرية",
       "pricing": "التسعير",
       "approvalComment": "تعليق الاعتماد",
       "reviewedAt": "تاريخ المراجعة",
@@ -5457,6 +5473,25 @@
     },
     "reviews": {
       "selectAll": "تحديد الكل"
+    },
+    "overview": {
+      "programs": "البرامج",
+      "groups": "المجموعات",
+      "runningGroups": "المجموعات الجارية",
+      "activeStudents": "الطلاب النشطون",
+      "teachers": "المعلمون",
+      "attendance": "الحضور",
+      "needsAttention": "يحتاج إلى متابعة:",
+      "programsTitle": "البرامج",
+      "noPrograms": "لا توجد برامج بعد.",
+      "teachersTitle": "المعلمون",
+      "teachersHint": "بناءً على درجات تقارير الطلاب (1–5) والحضور في الجلسات المكتملة.",
+      "studentsTitle": "الطلاب",
+      "studentsHint": "متوسط المشاركة والفهم والسلوك والواجبات.",
+      "best": "الأفضل أداءً",
+      "needsSupport": "يحتاجون إلى دعم",
+      "noData": "لا توجد بيانات كافية بعد.",
+      "teacherMeta": "{groups} مجموعات · {students} طلاب"
     }
   },
   "PublishStatus": {
@@ -6208,6 +6243,8 @@
   "AgoraCall": {
     "liveSessionTitle": "حصة مباشرة",
     "privateSessionTitle": "جلسة خاصة",
+    "groupSessionTitle": "جلسة المجموعة",
+    "notInPlatform": "هذه المجموعة لا تعقد اجتماعاتها داخل المنصة.",
     "you": "أنت",
     "participant": "مشارك",
     "participants": "مشاركون",
@@ -7046,10 +7083,12 @@
     "delete": "حذف",
     "create": "إنشاء",
     "add": "إضافة",
+      "edit": "تعديل",
     "remove": "إزالة",
     "name": "الاسم",
     "description": "الوصف",
     "order": "الترتيب",
+    "ageRange": "الفئة العمرية",
     "startDate": "تاريخ البدء",
     "confirmDelete": "هل تريد حذف هذا العنصر؟",
     "sendTemplate": "إرسال رسالة",
@@ -7078,7 +7117,24 @@
       "new": "برنامج جديد",
       "courses": "الدورات",
       "linkCourse": "ربط دورة",
-      "selectCourse": "اختر دورة",
+      "trainingCourse": "دورة تدريبية",
+      "createNew": "إنشاء جديد",
+      "trainingCoursesTitle": "الدورات التدريبية",
+      "trainingCoursesEmpty": "لا توجد دورات تدريبية بعد. أنشئ أول دورة.",
+      "connectedPrograms": "البرامج المرتبطة",
+      "noConnectedPrograms": "غير مرتبطة بأي برنامج.",
+      "editName": "تعديل الاسم",
+      "save": "حفظ",
+      "disconnect": "فصل الربط",
+      "confirmDisconnectTitle": "فصل الربط عن هذا البرنامج؟",
+      "confirmDisconnectHint": "تبقى الدورة التدريبية موجودة لكنها لن تكون جزءًا من البرنامج.",
+      "deleteTrainingCourse": "حذف الدورة التدريبية",
+      "deleteBlocked": "افصل ربطها عن البرامج أولًا. لا يمكن الحذف إلا عند عدم وجود برنامج مرتبط.",
+      "confirmDeleteTrainingCourseHint": "سيتم حذف هذه الدورة التدريبية نهائيًا.",
+      "newTrainingCourse": "دورة تدريبية جديدة",
+      "trainingCourseHint": "الاسم فقط حاليًا. يمكنك ربطها بهذا البرنامج فورًا.",
+      "trainingCourseNamePlaceholder": "مثال: أساسيات التجويد",
+      "selectCourse": "اختر دورة تدريبية",
       "unlink": "إلغاء الربط",
       "levels": "المستويات",
       "newLevel": "مستوى جديد",
@@ -7087,7 +7143,7 @@
       "newGroup": "مجموعة جديدة",
       "viewGroups": "عرض المجموعات",
       "hierarchyDisclaimerTitle": "كيف يعمل الهيكل التعليمي للبرنامج؟",
-      "hierarchyStep1": "اربط الدورات التعليمية بهذا البرنامج.",
+      "hierarchyStep1": "اربط الدورات التدريبية بهذا البرنامج.",
       "hierarchyStep2": "حدّد المستويات المتسلسلة داخل كل دورة.",
       "hierarchyStep3": "أنشئ الدفعات وحدّد تاريخ بدء كل دفعة.",
       "hierarchyStep4": "كوّن المجموعات ووزّع الطلاب والمعلمين عليها.",
@@ -7100,7 +7156,7 @@
       "confirmDeleteHint": "سيُحذف البرنامج وتُلغى علاقته بالدورات المرتبطة به.",
       "coursesHint": "الدورات التي يتكوّن منها هذا البرنامج.",
       "courseBadge": "دورة",
-      "noLinkableCourses": "لا توجد دورات متاحة للربط.",
+      "noLinkableCourses": "لا توجد دورات تدريبية متاحة للربط.",
       "emptyCoursesTitle": "لم تُربط أي دورة بعد",
       "emptyCoursesHint": "اختر دورة من القائمة أعلاه واربطها بالبرنامج لتبدأ بإضافة المستويات.",
       "confirmUnlinkTitle": "إلغاء ربط الدورة؟",
@@ -7108,12 +7164,20 @@
       "levelsHint": "المراحل المتسلسلة داخل الدورة، ولكل مستوى شروط الشهادة الخاصة به.",
       "levelNamePlaceholder": "مثال: المستوى الأول",
       "orderHint": "يحدد ترتيب المستوى تسلسله داخل الدورة.",
+      "ageRangeHint": "الفئة العمرية لهذا المستوى، وترثها مجموعاته.",
+      "ageRangeAddNew": "+ إضافة فئة عمرية جديدة…",
+      "ageRangeNone": "بدون فئة عمرية",
       "emptyLevelsHint": "أضف أول مستوى لهذه الدورة لتتمكن من إنشاء الدفعات.",
       "confirmDeleteLevelHint": "سيُحذف المستوى وجميع الدفعات المرتبطة به.",
       "cohortsHint": "كل دفعة تمثل فوجًا يبدأ في تاريخ محدد.",
       "cohortNamePlaceholder": "مثال: دفعة يناير",
       "emptyCohortsHint": "أضف دفعة لتتمكن من إنشاء المجموعات.",
       "confirmDeleteCohortHint": "ستُحذف الدفعة وما يرتبط بها من مجموعات.",
+      "editProgram": "تعديل البرنامج",
+      "editCourse": "تعديل الدورة",
+      "editLevel": "تعديل المستوى",
+      "editCohort": "تعديل الدفعة",
+      "editCohortHint": "تغيير تاريخ البدء ينقل كل مجموعة في هذه الدفعة لم تحدد تاريخ بدء خاصًا بها.",
       "emptyGroupsHint": "لا توجد مجموعات في هذه الدفعة بعد."
     },
     "groups": {
@@ -7145,9 +7209,31 @@
       "maxStudents": "الحد الأقصى للطلاب",
       "meetingLink": "رابط اللقاء",
       "whatsappGroupLink": "رابط مجموعة واتساب",
+      "meetingProvider": "مكان عقد الجلسات",
+      "providerExternal": "رابط خارجي (Zoom أو Meet…)",
+      "providerAgora": "داخل المنصة",
+      "providerAgoraHint": "ينضم المعلمون والطلاب من المنصة ويُسجَّل الحضور ومدة البقاء في الجلسة تلقائيًا.",
       "missingCohort": "افتح هذه الصفحة من دفعة لإنشاء مجموعة.",
       "totalSessions": "عدد الجلسات",
-      "estimatedEndDate": "تاريخ الانتهاء التقديري"
+      "estimatedEndDate": "تاريخ الانتهاء التقديري",
+      "startDate": "تاريخ البدء",
+      "startDateHint": "القيمة الافتراضية هي تاريخ بدء الدفعة. غيّره لتبدأ هذه المجموعة في تاريخها الخاص.",
+      "runningScheduleHint": "هذه المجموعة جارية. تغيير المواعيد الأسبوعية يعيد جدولة الجلسات التي لم تبدأ بعد، أما الجلسات المنتهية والسابقة والملغاة فتبقى كما هي.",
+      "sectionBasics": "بيانات المجموعة",
+      "sectionBasicsHint": "سمِّ المجموعة وحدد عدد الطلاب الذي تستوعبه.",
+      "sectionSchedule": "الجدول الأسبوعي",
+      "sectionScheduleHint": "اختر الأيام والأوقات التي تلتقي فيها المجموعة كل أسبوع.",
+      "sectionSessions": "الجلسات",
+      "sectionSessionsHint": "عدد جلسات المجموعة والتاريخ المتوقع لانتهائها.",
+      "sectionMeeting": "الاجتماع والتواصل",
+      "sectionMeetingHint": "مكان انعقاد الجلسات وطريقة التواصل مع المجموعة.",
+      "endsAt": "ينتهي",
+      "minutesShort": "د",
+      "noSlots": "لا توجد مواعيد بعد. أضف موعدًا واحدًا على الأقل لإنشاء المجموعة.",
+      "slotLabel": "الموعد {n}",
+      "removeSlot": "حذف الموعد",
+      "slotsSummary": "{count} جلسات أسبوعيًا",
+      "startsAt": "يبدأ"
     },
     "readiness": {
       "title": "قائمة الجاهزية",
@@ -7242,6 +7328,40 @@
       "title": "المجموعات",
       "empty": "ليس في أي مجموعة بعد."
     },
+    "teacherPage": {
+      "unavailable": "هذه الصفحة غير متاحة.",
+      "from": "من",
+      "to": "إلى",
+      "groups": "المجموعات",
+      "noGroups": "لا توجد مجموعات مسندة.",
+      "students": "{count} طلاب",
+      "group": "المجموعة",
+      "joined": "وقت الانضمام",
+      "recentSessions": "أحدث الجلسات",
+      "reportDone": "تم التسليم",
+      "reportMissing": "غير مسلَّم",
+      "minutes": "{count} دقيقة",
+      "hours": "{count} ساعة",
+      "evaluations": "تقييمات الإشراف",
+      "noEvaluations": "لا توجد تقييمات بعد.",
+      "evaluationCount": "المتوسط من {count} تقييمات (1–5)",
+      "stats": {
+        "total": "الجلسات",
+        "completed": "المكتملة",
+        "cancelled": "الملغاة",
+        "reportsMissing": "تقارير ناقصة",
+        "avgJoinDelay": "متوسط التأخر في الانضمام",
+        "avgReportDelay": "متوسط الوقت حتى التقرير",
+        "unrecorded": "غير مسجَّل"
+      },
+      "criteria": {
+        "commitment": "الالتزام",
+        "teaching": "التدريس",
+        "pedagogy": "الأسلوب التربوي",
+        "contentAdherence": "الالتزام بالمحتوى",
+        "technicalQuality": "الجودة التقنية"
+      }
+    },
     "sessions": {
       "title": "الجلسات",
       "empty": "لا توجد جلسات بعد.",
@@ -7281,6 +7401,15 @@
         "save": "حفظ الحضور",
         "teacher": "حضور المعلم",
         "locked": "الحضور مغلق.",
+        "auto": "تلقائي",
+        "gridTitle": "نظرة عامة على الحضور",
+        "rate": "النسبة",
+        "short": {
+          "PRESENT": "ح",
+          "LATE": "م",
+          "EXCUSED": "ع",
+          "ABSENT": "غ"
+        },
         "statuses": {
           "PRESENT": "حاضر",
           "LATE": "متأخر",
@@ -7302,6 +7431,15 @@
         "pendingAttendance": "سجّل حضور جميع الطلاب أولًا.",
         "submittedAt": "تاريخ الإرسال",
         "empty": "لا يوجد تقرير بعد."
+      },
+      "join": {
+        "button": "انضمام",
+        "noLink": "لم يتم تحديد رابط اجتماع لهذه المجموعة.",
+        "failed": "تعذّر الانضمام إلى الجلسة. حاول مرة أخرى."
+      },
+      "presence": {
+        "joinedAt": "انضم {time}",
+        "minutes": "{count} دقيقة في الجلسة"
       },
       "mySessions": {
         "title": "جلساتي",
@@ -7387,6 +7525,35 @@
       "migrated": "اعتُمدت تلقائيًا عند تطبيق المراجعة الشرعية"
     }
   },
+  "AcademySettings": {
+    "title": "إعدادات الأكاديمية",
+    "subtitle": "إدارة اسم أكاديميتك وشعارها ولوحة الألوان",
+    "generalSection": "عام",
+    "name": "اسم الأكاديمية",
+    "description": "وصف",
+    "logoSection": "الشعار",
+    "logoHint": "ارفع شعار أكاديميتك (PNG أو JPG أو SVG — بحد أقصى 2 ميجابايت). سيظهر في جميع أنحاء لوحة التحكم.",
+    "logoUploading": "جاري رفع الشعار…",
+    "logoUploadError": "فشل رفع الشعار. يرجى المحاولة مجدداً.",
+    "primaryColor": "اللون الأساسي",
+    "secondaryColor": "اللون الثانوي",
+    "save": "حفظ التغييرات",
+    "saved": "تم حفظ الإعدادات",
+    "slug": "المعرّف المختصر للأكاديمية",
+    "slugHint": "يتم تحديد المعرّف عند إنشاء الأكاديمية ولا يمكن تغييره.",
+    "themeSection": "المظهر",
+    "themeHint": "اختر مظهراً جاهزاً، أو اختر مخصص لتحديد ألوانك. تظهر التغييرات مباشرة وتُطبَّق على لوحتك بعد الحفظ.",
+    "themeDefault": "الافتراضي للمنصة",
+    "themeCustom": "مخصص",
+    "customThemeHint": "حدد ألوانك الأساسية. يتم ضبط تباين النص والوضع الداكن تلقائياً.",
+    "resetColors": "إعادة ألوان المنصة",
+    "validation": {
+      "nameRequired": "اسم الأكاديمية مطلوب",
+      "nameTooLong": "يجب ألا يتجاوز الاسم 120 حرفاً",
+      "descriptionTooLong": "يجب ألا يتجاوز الوصف 1000 حرف",
+      "invalidColor": "أدخل لوناً صالحاً بصيغة hex مثل #9a5b2e"
+    }
+  },
   "Billing": {
     "title": "المالية",
     "subscriptions": "الاشتراكات",
@@ -7412,6 +7579,19 @@
     "paymentsUnderReview": "المدفوعات قيد المراجعة",
     "paymentSubmittedUnderReview": "تم إرسال دفعتك وهي الآن قيد المراجعة.",
     "reviewPayments": "مراجعة المدفوعات",
+    "paymentDetails": "تفاصيل الدفعة",
+    "openPaymentsPage": "الذهاب إلى صفحة المدفوعات",
+    "noPendingDetails": "لا توجد دفعة قيد المراجعة لهذا الاشتراك.",
+    "methodLabel": "طريقة الدفع",
+    "recordPayment": "تسجيل دفعة",
+    "recordPaymentTitle": "تسجيل دفعة مستلمة شخصيًا",
+    "recordPaymentHint": "استخدم هذا فقط عندما تدفع الأسرة لك مباشرة. تُضاف الدفعة إلى كشف الحساب وتسدد أقدم المستحقات غير المسددة لهذا الاشتراك.",
+    "recordPaymentAmount": "المبلغ المستلم",
+    "recordPaymentNote": "ملاحظة (اختياري)",
+    "recordPaymentOutstanding": "المتبقي",
+    "recordPaymentFull": "سداد كامل المتبقي",
+    "recordPaymentInvalid": "أدخل مبلغًا صحيحًا",
+    "recordPaymentConfirm": "تسجيل الدفعة",
     "rejectReasonPlaceholder": "سبب الرفض",
     "approve": "اعتماد",
     "reject": "رفض",
@@ -7448,11 +7628,8 @@
       "instructions": "تعليمات"
     },
     "type": {
-      "FULL_COURSE": "دورة كاملة",
-      "MONTHLY": "شهري",
-      "PER_SESSION": "لكل جلسة",
-      "FAMILY": "عائلي",
-      "SCHOLARSHIP": "منحة دراسية"
+      "FULL_COURSE": "دفعة واحدة",
+      "MONTHLY": "شهري"
     },
     "entry": {
       "charge": "رسوم مستحقة",
@@ -7490,9 +7667,103 @@
     "createMethod": "إنشاء طريقة",
     "remove": "إزالة"
   },
+  "Accounting": {
+    "subscriptions": {
+      "title": "الاشتراكات",
+      "subtitle": "جميع اشتراكات الطلاب وأولياء الأمور: من يدفع، وكم، وما المتبقي",
+      "searchPlaceholder": "ابحث عن دافع أو طالب أو مجموعة",
+      "allStatuses": "كل الحالات",
+      "allTypes": "كل الأنواع",
+      "allGroups": "كل المجموعات",
+      "payers": {
+        "ALL": "كل الدافعين",
+        "PARENT": "أولياء الأمور",
+        "STUDENT": "الطلاب (يدفعون بأنفسهم)"
+      },
+      "summary": {
+        "active": "الاشتراكات النشطة",
+        "billed": "المفوتر لكل دورة",
+        "outstanding": "المتبقي"
+      },
+      "columns": {
+        "payer": "الدافع",
+        "students": "الطلاب",
+        "groups": "المجموعات",
+        "type": "النوع",
+        "amount": "المبلغ",
+        "paid": "المدفوع",
+        "outstanding": "المتبقي",
+        "status": "الحالة",
+        "started": "تاريخ البدء"
+      },
+      "payerParent": "ولي أمر",
+      "payerStudent": "طالب",
+      "settled": "مسدد",
+      "empty": "لا توجد اشتراكات مطابقة لهذه التصفية",
+      "loading": "جارٍ تحميل الاشتراكات...",
+      "openFamily": "فتح كشف حساب الأسرة",
+      "scholarship": "منحة"
+    }
+  },
   "Payroll": {
     "title": "مستحقات المعلمين",
-    "subtitle": "إدارة نماذج أجور المعلمين، وكشوف المستحقات الشهرية، والمكافآت، والمدفوعات",
+    "subtitle": "حدد أجر كل معلم لكل مجموعة، وراجع الشهر حسب المعلم أو حسب المجموعة، ثم اعتمد وادفع",
+    "groups": "المجموعات",
+    "invalidRule": "اختر مجموعة وأدخل قيمة صحيحة (النسبة لا تتجاوز 100).",
+    "tabs": { "payroll": "كشف الشهر", "rules": "قواعد الأجر" },
+    "views": { "byTeacher": "حسب المعلم", "byGroup": "حسب المجموعة" },
+    "allStatuses": "الكل",
+    "summary": {
+      "totalPayable": "إجمالي الرواتب",
+      "teachers": "المعلمون",
+      "groups": "المجموعات",
+      "collected": "المحصّل من الاشتراكات",
+      "draft": "مسودة",
+      "approved": "معتمد",
+      "paid": "مدفوع"
+    },
+    "group": "المجموعة",
+    "groupsCount": "{count} مجموعات",
+    "subscriptions": "الاشتراكات",
+    "subscriptionsCount": "{count} اشتراكات",
+    "collected": "المحصّل",
+    "rule": "قاعدة الأجر",
+    "teacherCost": "تكلفة المعلم",
+    "shareOfCollected": "نسبة من المحصّل",
+    "bonusesTotal": "المكافآت",
+    "teacherTotal": "الإجمالي",
+    "breakdown": "التفصيل حسب المجموعة",
+    "showBreakdown": "عرض المجموعات",
+    "hideBreakdown": "إخفاء المجموعات",
+    "legacyStatement": "ملف أجر واحد (قديم)",
+    "unknownTeacher": "معلم غير معروف",
+    "rulesTitle": "قواعد الأجر حسب المجموعة",
+    "rulesSubtitle": "لكل مجموعة قاعدة واحدة لمعلمها. أجر المعلم الشهري هو مجموع مجموعاته.",
+    "addRule": "تحديد قاعدة أجر",
+    "editRule": "تعديل قاعدة الأجر",
+    "removeRule": "إزالة",
+    "ruleRemoved": "تمت إزالة قاعدة الأجر",
+    "noRules": "لا توجد قواعد أجر بعد. حدد قاعدة لكل مجموعة ليمكن إنشاء الكشوف.",
+    "selectGroup": "اختر مجموعة",
+    "groupTeacher": "معلم المجموعة",
+    "noGroupsWithTeacher": "لا توجد مجموعات لها معلم معيّن",
+    "ruleValue": {
+      "FIXED_PER_GROUP": "{amount} شهريًا",
+      "FIXED_PER_SUBSCRIPTION": "{amount} لكل اشتراك",
+      "PERCENT_OF_SUBSCRIPTIONS": "{rate}% من المحصّل"
+    },
+    "groupModels": {
+      "FIXED_PER_GROUP": "مبلغ ثابت لكل مجموعة",
+      "PERCENT_OF_SUBSCRIPTIONS": "نسبة من اشتراكات المجموعة",
+      "FIXED_PER_SUBSCRIPTION": "مبلغ ثابت لكل اشتراك"
+    },
+    "groupModelHints": {
+      "FIXED_PER_GROUP": "المبلغ نفسه كل شهر لهذه المجموعة.",
+      "PERCENT_OF_SUBSCRIPTIONS": "نسبة من أموال الاشتراكات المحصّلة فعليًا للمجموعة في ذلك الشهر.",
+      "FIXED_PER_SUBSCRIPTION": "مبلغ عن كل اشتراك نشط في المجموعة خلال ذلك الشهر."
+    },
+    "ratePercent": "النسبة (%)",
+    "rateAmount": "المبلغ",
     "teacher": "المعلم",
     "teachers": "المعلمون",
     "month": "الشهر",
@@ -7702,9 +7973,21 @@
       "namePlaceholder": "مثال: تذكير بالحضور",
       "context": "السياق",
       "body": "نص القالب",
-      "bodyPlaceholder": "اكتب نص القالب مع المتغيرات مثل {{studentName}}...",
+      "bodyPlaceholder": "اكتب نص القالب مع المتغيرات مثل '{{'اسم_الطالب'}}'...",
       "variableHint": "انقر فوق أحد المتغيرات أدناه لإدراجه في نص الرسالة.",
       "availableVariables": "المتغيرات المتاحة"
+    },
+    "variables": {
+      "groupName": "اسم المجموعة",
+      "courseName": "اسم الدورة",
+      "levelName": "اسم المستوى",
+      "teacherName": "اسم المدرس",
+      "startDate": "تاريخ البدء",
+      "schedule": "الجدول",
+      "meetingLink": "رابط الاجتماع",
+      "whatsappGroupLink": "رابط مجموعة واتساب",
+      "studentName": "اسم الطالب",
+      "parentName": "اسم ولي الأمر"
     },
     "sendDialog": {
       "title": "إرسال رسالة واتساب",
@@ -7715,7 +7998,11 @@
       "preview": "معاينة",
       "missingVariables": "قيم مفقودة",
       "openWhatsApp": "فتح في واتساب",
-      "rendering": "جاري التجهيز..."
+      "rendering": "جاري التجهيز...",
+      "recipient": {
+        "STUDENT": "سيتم الإرسال إلى هاتف الطالب",
+        "PARENT": "سيتم الإرسال إلى هاتف ولي الأمر"
+      }
     }
   },
   "TeacherDashboard": {

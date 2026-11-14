@@ -13,7 +13,6 @@ import {
   ROUTE_COURSE_DETAILS,
   ROUTE_INSTRUCTOR_DETAIL,
 } from '@/lib/data/constants/routes.constants';
-import { normalizeCourseSchoolTypes } from '@/lib/utils/course/normalize-course-school-types';
 
 /** A course is "trending" once it has real volume behind a strong rating. */
 function getIsTrending(course: ICourse) {
@@ -30,10 +29,7 @@ export default function CourseCard({ course }: { course: ICourse }) {
   const isArabic = locale === 'ar';
   const ArrowIcon = isArabic ? ArrowLeft : ArrowRight;
 
-  const gradeName = course.grade ? (isArabic ? course.grade.nameAr : course.grade.nameEn) : null;
-  const schoolTypeNames = normalizeCourseSchoolTypes(course).schoolTypes.map((schoolType) =>
-    isArabic ? schoolType.nameAr : schoolType.nameEn
-  );
+  const ageRangeNames = (course.ageRanges ?? []).map((ageRange) => (isArabic ? ageRange.nameAr : ageRange.nameEn));
   const primaryCategory = course.categories?.[0]?.name;
 
   const instructorId = course.instructor?._id ?? course.instructorId;
@@ -50,8 +46,7 @@ export default function CourseCard({ course }: { course: ICourse }) {
 
   // The quiet line above the title: who it's for, and how much of it there is.
   const metaParts = [
-    gradeName,
-    ...schoolTypeNames,
+    ...ageRangeNames,
     course.modulesIds?.length ? `${course.modulesIds.length} ${t('lessons')}` : null,
   ].filter(Boolean);
 

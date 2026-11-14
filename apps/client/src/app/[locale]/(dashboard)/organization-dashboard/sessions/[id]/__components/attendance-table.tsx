@@ -1,11 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { useTranslations } from 'next-intl';
-import { AttendanceStatus } from '@darnozom/shared-types';
+import { useLocale, useTranslations } from 'next-intl';
+import { AttendanceSource, AttendanceStatus } from '@darnozom/shared-types';
 import { Button } from '@/components/atoms/button';
 import { Input } from '@/components/atoms/input';
-import type { AttendanceEntry, ISessionAttendance } from '@/lib/types/academics/academics';
+import type { AttendanceEntry, ISessionAttendance, ISessionPresence } from '@/lib/types/academics/academics';
 
 const STATUSES = [
   AttendanceStatus.PRESENT,
@@ -31,6 +31,7 @@ export function AttendanceTable({
   roster,
   people,
   attendance,
+  presence = [],
   disabled,
   pending,
   onSave,
@@ -38,11 +39,14 @@ export function AttendanceTable({
   roster: string[];
   people: Record<string, string>;
   attendance: ISessionAttendance[];
+  /** Who joined through the platform (staff only); shows join time and minutes in the call. */
+  presence?: ISessionPresence[];
   disabled: boolean;
   pending: boolean;
   onSave: (entries: AttendanceEntry[]) => void;
 }) {
   const t = useTranslations('Academics');
+  const locale = useLocale();
   const [rows, setRows] = useState<Map<string, Row>>(() => buildInitial(roster, attendance));
 
   const setStatus = (id: string, status: AttendanceStatus) =>
@@ -81,6 +85,8 @@ export function AttendanceTable({
         {roster.map((id) => {
           const name = people[id] ?? id;
           const row = rows.get(id)!;
+          const isAuto = attendance.find((a) => a.studentId === id)?.source === AttendanceSource.AUTO;
+          const joined = presence.find((p) => p.userId === id);
           return (
             <li key={id}>
               <fieldset className="space-y-2 rounded-md border p-3">
@@ -98,6 +104,25 @@ export function AttendanceTable({
                     </button>
                   ))}
                 </div>
+                {isAuto || joined ? (
+                  <p className="text-muted-foreground flex flex-wrap items-center gap-2 text-xs">
+                    {isAuto ? (
+                      <span className="bg-muted rounded px-1.5 py-0.5">{t('sessions.attendance.auto')}</span>
+                    ) : null}
+                    {joined ? (
+                      <>
+                        <span>
+                          {t('sessions.presence.joinedAt', {
+                            time: new Date(joined.firstJoinedAt).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' }),
+                          })}
+                        </span>
+                        {joined.totalSeconds >= 60 ? (
+                          <span>{t('sessions.presence.minutes', { count: Math.round(joined.totalSeconds / 60) })}</span>
+                        ) : null}
+                      </>
+                    ) : null}
+                  </p>
+                ) : null}
                 <Input
                   aria-label={t('sessions.attendance.note')}
                   value={row.note}

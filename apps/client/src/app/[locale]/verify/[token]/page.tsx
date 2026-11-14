@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/components/atoms/loading-state';
 import { use } from 'react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
@@ -20,7 +21,7 @@ export default function VerifyCertificatePage({ params }: VerifyPageProps) {
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-slate-50 p-4 dark:bg-slate-950">
-        <p className="text-muted-foreground">{t('common.loading')}</p>
+        <LoadingState fullPage />
       </div>
     );
   }

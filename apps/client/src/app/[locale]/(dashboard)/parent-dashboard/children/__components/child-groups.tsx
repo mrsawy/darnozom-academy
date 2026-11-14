@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/components/atoms/loading-state';
 import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/card';
 import { GroupSummaryList } from '@/components/organs/academics/group-summary-list';
@@ -14,7 +15,7 @@ export function ChildGroups({ childId, childName }: { childId: string; childName
         <CardTitle>{`${childName} — ${t('childGroups.title')}`}</CardTitle>
       </CardHeader>
       <CardContent>
-        {isLoading ? <p>{t('loading')}</p> : <GroupSummaryList groups={groups} />}
+        {isLoading ? <LoadingState /> : <GroupSummaryList groups={groups} />}
       </CardContent>
     </Card>
   );

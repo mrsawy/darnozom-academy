@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { ALLOWED_VARIABLES, TemplateContext } from './message-template.types';
+import {
+  ALLOWED_VARIABLES,
+  TemplateContext,
+  VARIABLE_AR_NAMES,
+  canonicalVariableName,
+  variableTokenName,
+} from './message-template.types';
 import { MessageTemplateErrors } from '../../messages/message-template-errors.enum';
 import { Subjects } from '../role/subject/subjects.enum';
 
@@ -21,6 +27,24 @@ describe('ALLOWED_VARIABLES', () => {
     for (const v of ALLOWED_VARIABLES.GROUP) {
       expect(ALLOWED_VARIABLES.STUDENT).toContain(v);
     }
+  });
+});
+
+describe('Arabic variable names', () => {
+  it('has an Arabic name for every allowed variable, all distinct', () => {
+    const all = new Set([...ALLOWED_VARIABLES.GROUP, ...ALLOWED_VARIABLES.STUDENT]);
+    const arabic = [...all].map((k) => VARIABLE_AR_NAMES[k]);
+    expect(arabic.every(Boolean)).toBe(true);
+    expect(new Set(arabic).size).toBe(all.size);
+  });
+  it('canonicalVariableName maps Arabic back to the key and leaves others alone', () => {
+    expect(canonicalVariableName('اسم_الطالب')).toBe('studentName');
+    expect(canonicalVariableName('studentName')).toBe('studentName');
+    expect(canonicalVariableName('unknown')).toBe('unknown');
+  });
+  it('variableTokenName picks the spelling for the locale', () => {
+    expect(variableTokenName('groupName', 'ar')).toBe('اسم_المجموعة');
+    expect(variableTokenName('groupName', 'en')).toBe('groupName');
   });
 });
 

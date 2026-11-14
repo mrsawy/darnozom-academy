@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/components/atoms/loading-state';
 import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/atoms/button';
@@ -70,7 +71,7 @@ export function NotificationDropdown() {
         </div>
         <div className="max-h-[320px] overflow-y-auto">
           {isLoading ? (
-            <div className="text-muted-foreground p-4 text-center text-sm">{t('loading')}</div>
+            <LoadingState className="p-4" spinnerClassName="size-8" />
           ) : notifications.length === 0 ? (
             <div className="text-muted-foreground p-4 text-center text-sm">{t('empty')}</div>
           ) : (

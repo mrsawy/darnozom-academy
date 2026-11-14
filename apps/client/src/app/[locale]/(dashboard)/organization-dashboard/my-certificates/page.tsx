@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/components/atoms/loading-state';
 import { useTranslations } from 'next-intl';
 import { useCertificates } from '@/lib/hooks/certificate/use-certificate.hook';
 import { CertificateCard } from '@/components/organs/certificate/certificate-card';
@@ -16,7 +17,7 @@ export default function MyCertificatesPage() {
       </div>
 
       {isLoading ? (
-        <p className="text-muted-foreground text-sm">{t('common.loading')}</p>
+        <LoadingState />
       ) : certificates.length === 0 ? (
         <div className="flex min-h-[300px] flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
           <h3 className="font-semibold text-lg">{t('myCertificates.emptyTitle')}</h3>

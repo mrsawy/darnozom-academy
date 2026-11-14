@@ -82,10 +82,8 @@ function buildDefaultValues(
         : undefined,
     categoriesIds: 'categoriesIds' in initialUser ? (initialUser.categoriesIds ?? []) : [],
     categories: 'categories' in initialUser ? (initialUser.categories ?? []) : [],
-    gradesIds: 'gradesIds' in initialUser ? (initialUser.gradesIds ?? []) : [],
-    grades: 'grades' in initialUser ? (initialUser.grades ?? []) : [],
-    schoolTypesIds: 'schoolTypesIds' in initialUser ? (initialUser.schoolTypesIds ?? []) : [],
-    schoolTypes: 'schoolTypes' in initialUser ? (initialUser.schoolTypes ?? []) : [],
+    ageRangesIds: 'ageRangesIds' in initialUser ? (initialUser.ageRangesIds ?? []) : [],
+    ageRanges: 'ageRanges' in initialUser ? (initialUser.ageRanges ?? []) : [],
     profile: {
       bio: initialUser.profile?.bio ?? '',
       shortBio: initialUser.profile?.shortBio ?? '',

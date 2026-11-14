@@ -4,6 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { BillingErrors, Currency, LedgerEntryType } from '@darnozom/shared-types';
 import { Allocation } from '../entities/allocation.entity';
+import { FamilyPayment } from '../entities/payment.entity';
 import { LedgerEntry } from '../entities/ledger-entry.entity';
 import { LedgerBalance, LedgerEntryLean } from '../billing.types';
 import { allocateFifo, OpenCharge } from '../domain/allocation';
@@ -33,7 +34,8 @@ export class LedgerService {
   constructor(
     @InjectModel(LedgerEntry.name) private readonly entryModel: Model<LedgerEntry>,
     @InjectModel(Allocation.name) private readonly allocationModel: Model<Allocation>,
-    private readonly events: EventEmitter2
+    private readonly events: EventEmitter2,
+    @InjectModel(FamilyPayment.name) private readonly paymentModel: Model<FamilyPayment>
   ) {}
 
   async postCharges(input: PostChargesInput): Promise<LedgerEntryLean[]> {
@@ -70,8 +72,66 @@ export class LedgerService {
       }
     }
 
+    // Money the family already paid ahead (or overpaid) must settle the charge that just arrived;
+    // otherwise a prepaid month would show unpaid and trigger reminders the moment it is billed.
+    if (written.length > 0) await this.applyAvailableCredit(input.organizationId, input.familyId, input.currency);
+
     this.announce(input.organizationId, input.familyId, written);
     return written;
+  }
+
+  /**
+   * Settles open charges with payment money that has not been allocated yet, oldest payment first.
+   * A payment raised against a specific subscription only ever covers that subscription's charges,
+   * exactly as when it was first allocated; an unscoped payment covers any of the family's charges.
+   */
+  private async applyAvailableCredit(organizationId: string, familyId: string, currency: Currency): Promise<void> {
+    const payments = await this.entryModel
+      .find({ familyId: oid(familyId), type: LedgerEntryType.PAYMENT, currency })
+      // eslint-disable-next-line unicorn/no-array-sort -- Mongoose Query.prototype.sort, not Array#sort
+      .sort({ createdAt: 1 })
+      .lean<{ _id: Types.ObjectId; paymentId: Types.ObjectId | null; amountMinor: number }[]>()
+      .exec();
+    if (payments.length === 0) return;
+
+    const allocated = await this.allocationModel.aggregate<{ _id: Types.ObjectId; total: number }>([
+      { $match: { paymentLedgerEntryId: { $in: payments.map((payment) => payment._id) } } },
+      { $group: { _id: '$paymentLedgerEntryId', total: { $sum: '$amountMinor' } } },
+    ]);
+    const usedByPayment = new Map(allocated.map((row) => [String(row._id), row.total]));
+    const withCredit = payments
+      .map((payment) => ({ ...payment, remainingMinor: payment.amountMinor - (usedByPayment.get(String(payment._id)) ?? 0) }))
+      .filter((payment) => payment.remainingMinor > 0);
+    if (withCredit.length === 0) return;
+
+    const scopes = await this.paymentModel
+      .find({ _id: { $in: withCredit.map((payment) => payment.paymentId).filter((id): id is Types.ObjectId => id != null) } })
+      .select('subscriptionId')
+      .lean<{ _id: Types.ObjectId; subscriptionId: Types.ObjectId | null }[]>()
+      .exec();
+    const subscriptionOf = new Map(scopes.map((row) => [String(row._id), row.subscriptionId ? String(row.subscriptionId) : null]));
+
+    const open = await this.openCharges(familyId);
+    for (const payment of withCredit) {
+      const scope = payment.paymentId ? (subscriptionOf.get(String(payment.paymentId)) ?? null) : null;
+      const eligible = scope ? open.filter((charge) => charge.subscriptionId === scope) : open;
+      const plan = allocateFifo(payment.remainingMinor, currency, eligible);
+      if (plan.allocations.length === 0) continue;
+
+      await this.allocationModel.insertMany(
+        plan.allocations.map((allocation) => ({
+          organizationId: oid(organizationId),
+          paymentLedgerEntryId: payment._id,
+          chargeLedgerEntryId: oid(allocation.chargeLedgerEntryId),
+          amountMinor: allocation.amountMinor,
+        }))
+      );
+      // Keep the in-memory view current so the next payment does not re-spend the same charge.
+      for (const allocation of plan.allocations) {
+        const charge = open.find((candidate) => candidate.chargeLedgerEntryId === allocation.chargeLedgerEntryId);
+        if (charge) charge.alreadyAllocatedMinor += allocation.amountMinor;
+      }
+    }
   }
 
   async postPaymentAndAllocate(input: {

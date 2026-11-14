@@ -1,8 +1,9 @@
 'use client';
 
+import { LoadingState } from '@/components/atoms/loading-state';
 import { useState } from 'react';
-import { useTranslations } from 'next-intl';
-import type { IMessageTemplate } from '@darnozom/shared-types';
+import { useLocale, useTranslations } from 'next-intl';
+import type { IMessageTemplate, TemplateLocale } from '@darnozom/shared-types';
 import {
   Dialog,
   DialogContent,
@@ -30,6 +31,7 @@ interface SendTemplateDialogProps {
 
 export function SendTemplateDialog({ open, onOpenChange, groupId, students }: SendTemplateDialogProps) {
   const t = useTranslations('MessageTemplates');
+  const templateLocale: TemplateLocale = useLocale() === 'ar' ? 'ar' : 'en';
   const { data: templates = [], isLoading } = useMessageTemplates(open);
   const render = useRenderTemplate();
 
@@ -46,6 +48,7 @@ export function SendTemplateDialog({ open, onOpenChange, groupId, students }: Se
       data: {
         groupId,
         studentId: needsStudent ? selectedStudentId || undefined : undefined,
+        locale: templateLocale,
       },
     });
   }
@@ -63,7 +66,7 @@ export function SendTemplateDialog({ open, onOpenChange, groupId, students }: Se
           <div className="space-y-1.5">
             <Label>{t('sendDialog.template')}</Label>
             {isLoading ? (
-              <p className="text-muted-foreground text-sm">{t('loading')}</p>
+              <LoadingState />
             ) : (
               <Select
                 value={selectedTemplateId}
@@ -78,7 +81,7 @@ export function SendTemplateDialog({ open, onOpenChange, groupId, students }: Se
                   {templates.map((tpl) => (
                     <SelectItem key={tpl._id} value={tpl._id}>
                       {tpl.name}
-                      <span className="text-muted-foreground ml-2 text-xs">({tpl.context})</span>
+                      <span className="text-muted-foreground ms-2 text-xs">({t(`context.${tpl.context}`)})</span>
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -112,22 +115,30 @@ export function SendTemplateDialog({ open, onOpenChange, groupId, students }: Se
           {result && (
             <div className="space-y-2">
               <Label>{t('sendDialog.preview')}</Label>
-              <pre className="bg-muted rounded-md p-3 whitespace-pre-wrap text-sm font-mono">
+              <pre dir="auto" className="bg-muted rounded-md p-3 whitespace-pre-wrap text-sm font-mono">
                 {result.text}
               </pre>
               {result.missingVariables.length > 0 && (
                 <p className="text-destructive text-xs">
-                  {t('sendDialog.missingVariables')}: {result.missingVariables.join(', ')}
+                  {t('sendDialog.missingVariables')}:{' '}
+                  {result.missingVariables.map((v) => t(`variables.${v}`)).join(templateLocale === 'ar' ? '، ' : ', ')}
                 </p>
               )}
               {result.waLink && (
-                <a
-                  href={result.waLink}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-sm text-emerald-600 underline">
-                  {t('sendDialog.openWhatsApp')}
-                </a>
+                <div className="space-y-1">
+                  {result.recipient && (
+                    <p className="text-muted-foreground text-xs">
+                      {t(`sendDialog.recipient.${result.recipient}`)}
+                    </p>
+                  )}
+                  <a
+                    href={result.waLink}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-sm text-emerald-600 underline">
+                    {t('sendDialog.openWhatsApp')}
+                  </a>
+                </div>
               )}
             </div>
           )}

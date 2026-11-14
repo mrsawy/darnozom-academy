@@ -33,7 +33,7 @@ export class Notification extends Document {
   @Prop({ type: Types.ObjectId, refPath: 'relatedModel', required: false })
   relatedId: Types.ObjectId;
 
-  @Prop({ type: String, enum: ['Course', 'Enrollment', 'CourseContent', 'PrivateSession', 'SessionBooking'], required: false })
+  @Prop({ type: String, enum: ['Course', 'Enrollment', 'CourseContent', 'PrivateSession', 'SessionBooking', 'Group'], required: false })
   relatedModel: string;
 
   @Prop({ type: Date, default: Date.now })

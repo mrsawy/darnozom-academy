@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/components/atoms/loading-state';
 import { useLocale, useTranslations } from 'next-intl';
 import { SessionStatus } from '@darnozom/shared-types';
 import { Button } from '@/components/atoms/button';
@@ -59,7 +60,7 @@ export function GroupSessionsCard({
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <p>{t('loading')}</p>
+          <LoadingState />
         ) : sessions.length === 0 ? (
           <p className="text-muted-foreground">{t('sessions.empty')}</p>
         ) : (

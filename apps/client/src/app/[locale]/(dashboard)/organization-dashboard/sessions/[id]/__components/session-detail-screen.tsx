@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/components/atoms/loading-state';
 import { useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import {
@@ -13,6 +14,7 @@ import {
 import { Badge } from '@/components/atoms/badge';
 import { Button } from '@/components/atoms/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/card';
+import { SessionJoinButton } from '@/components/organs/academics/session-join-button';
 import { SessionStatusBadge } from '@/components/organs/academics/session-status-badge';
 import { SessionDisputeModal } from '@/components/organs/payroll/session-dispute-modal';
 import {
@@ -23,12 +25,15 @@ import {
   useSession,
   useSubmitReport,
 } from '@/lib/hooks/academics/use-academics.hook';
+import { useNow } from '@/lib/hooks/use-now';
 import { useAuthUser } from '@/lib/hooks/user/use-user.hook';
 import { formatSessionTime } from '@/lib/utils/academics/session-time';
+import { CancelSessionDialog } from '../../../academics/groups/[id]/__components/cancel-session-dialog';
 import { RescheduleSessionDialog } from '../../../academics/groups/[id]/__components/reschedule-session-dialog';
 import { useRouter } from '@/i18n/navigation';
 import { useDeleteSession, useRescheduleSession } from '@/lib/hooks/academics/use-academics.hook';
-import { ROUTE_ORG_ACADEMICS_GROUP } from '@/lib/data/constants/routes.constants';
+import { ROUTE_ORG_ACADEMICS_GROUP, ROUTE_ORG_SESSION_CALL } from '@/lib/data/constants/routes.constants';
+import { isJoinable } from '@/lib/utils/academics/join-window';
 import { AttendanceTable } from './attendance-table';
 import { ReportForm } from './report-form';
 import { ReportView } from './report-view';
@@ -41,6 +46,7 @@ export function SessionDetailScreen({ sessionId }: { sessionId: string }) {
   const locale = useLocale();
   const { data: session, isLoading } = useSession(sessionId);
   const { data: user } = useAuthUser();
+  const tick = useNow();
   const [disputeModalOpen, setDisputeModalOpen] = useState(false);
   const markAttendance = useMarkAttendance();
   const markTeacher = useMarkTeacherAttendance();
@@ -51,7 +57,7 @@ export function SessionDetailScreen({ sessionId }: { sessionId: string }) {
   const deleteSession = useDeleteSession();
   const router = useRouter();
 
-  if (isLoading || !session) return <p className="p-4">{t('loading')}</p>;
+  if (isLoading || !session) return <LoadingState fullPage />;
 
   const now = Date.now();
   const isTeacher = !!user && session.teacherId === user._id;
@@ -71,6 +77,7 @@ export function SessionDetailScreen({ sessionId }: { sessionId: string }) {
     session.attendance.some((entry) => entry.studentId === studentId)
   );
   const report = session.report;
+  const teacherPresence = session.presence?.find((entry) => entry.userId === session.teacherId);
   const editable =
     !!report &&
     isTeacher &&
@@ -90,6 +97,13 @@ export function SessionDetailScreen({ sessionId }: { sessionId: string }) {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          {isTeacher && isJoinable(session, tick) ? (
+            <SessionJoinButton
+              sessionId={session._id}
+              provider={session.meetingProvider}
+              callHref={ROUTE_ORG_SESSION_CALL(session._id)}
+            />
+          ) : null}
           <SessionStatusBadge status={session.status} />
           {session.disputed ? (
             <Badge
@@ -145,7 +159,17 @@ export function SessionDetailScreen({ sessionId }: { sessionId: string }) {
           <CardHeader>
             <CardTitle>{t('sessions.attendance.teacher')}</CardTitle>
           </CardHeader>
-          <CardContent className="flex flex-wrap gap-1">
+          <CardContent className="flex flex-wrap items-center gap-1">
+            {teacherPresence ? (
+              <span className="text-muted-foreground me-3 text-xs">
+                {t('sessions.presence.joinedAt', {
+                  time: new Date(teacherPresence.firstJoinedAt).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' }),
+                })}
+                {teacherPresence.totalSeconds >= 60
+                  ? ` · ${t('sessions.presence.minutes', { count: Math.round(teacherPresence.totalSeconds / 60) })}`
+                  : null}
+              </span>
+            ) : null}
             {Object.values(AttendanceStatus).map((status) => (
               <Button
                 key={status}
@@ -176,6 +200,7 @@ export function SessionDetailScreen({ sessionId }: { sessionId: string }) {
             attendance={session.attendance}
             disabled={closed || !(isTeacher || canManage)}
             pending={markAttendance.isPending}
+            presence={session.presence}
             onSave={(entries) => markAttendance.mutate({ id: session._id, entries })}
           />
         </CardContent>

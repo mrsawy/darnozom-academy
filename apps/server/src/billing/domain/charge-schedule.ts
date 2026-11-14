@@ -4,7 +4,6 @@ import { SubscriptionType } from '@darnozom/shared-types';
 export interface PlannedCharge {
   amountMinor: number;
   dueAt: Date;
-  /** Null on a FAMILY charge: no single child owns it. */
   studentId: string | null;
   groupId: string | null;
   idempotencyKey: string | null;
@@ -28,9 +27,6 @@ export interface ScheduleInput {
 
 export const monthlyIdempotencyKey = (subscriptionId: string, dueAt: Date): string => `monthly:${subscriptionId}:${dueAt.toISOString()}`;
 
-export const perSessionIdempotencyKey = (subscriptionId: string, sessionId: string, studentId: string): string =>
-  `session:${subscriptionId}:${sessionId}:${studentId}`;
-
 const earliest = (items: ScheduleItem[]): ScheduleItem => {
   let best = items[0];
   for (let i = 1; i < items.length; i++) {
@@ -44,33 +40,13 @@ const earliest = (items: ScheduleItem[]): ScheduleItem => {
 /**
  * The charges a subscription posts the moment it is created.
  *
- * A zero amount posts nothing at all. A full scholarship owes nothing, and a zero-amount row would
- * be a charge nobody can pay that every coverage test then has to special-case.
+ * A zero amount posts nothing at all: a zero-amount row would be a charge nobody can pay that every
+ * coverage test then has to special-case.
  */
 export function initialCharges(input: ScheduleInput): PlannedCharge[] {
   if (input.amountMinor <= 0 || input.items.length === 0) return [];
 
   switch (input.type) {
-    case SubscriptionType.PER_SESSION: {
-      // Nothing up front; a charge arrives each time a session completes.
-      return [];
-    }
-
-    case SubscriptionType.FAMILY: {
-      const first = earliest(input.items);
-      return [
-        {
-          amountMinor: input.amountMinor,
-          dueAt: first.startDate,
-          studentId: null,
-          // The earliest-starting group, so sub-project 7 can trace the money (plan decision D5).
-          groupId: first.groupId,
-          idempotencyKey: `family:${input.subscriptionId}`,
-          descriptionKey: 'billing.charge.family',
-        },
-      ];
-    }
-
     case SubscriptionType.MONTHLY: {
       const item = input.items[0];
       return [
@@ -81,20 +57,6 @@ export function initialCharges(input: ScheduleInput): PlannedCharge[] {
           groupId: item.groupId,
           idempotencyKey: monthlyIdempotencyKey(input.subscriptionId, item.startDate),
           descriptionKey: 'billing.charge.monthly',
-        },
-      ];
-    }
-
-    case SubscriptionType.SCHOLARSHIP: {
-      const item = input.items[0];
-      return [
-        {
-          amountMinor: input.amountMinor,
-          dueAt: item.startDate,
-          studentId: item.studentId,
-          groupId: item.groupId,
-          idempotencyKey: `initial:${input.subscriptionId}`,
-          descriptionKey: 'billing.charge.scholarship',
         },
       ];
     }

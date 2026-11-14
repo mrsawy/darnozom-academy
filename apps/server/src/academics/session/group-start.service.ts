@@ -32,10 +32,15 @@ export class GroupStartService {
     if (group.status !== GroupStatus.READY_TO_START || !group.teacherId) throw new ConflictException(AcademicsErrors.GROUP_NOT_READY);
     if (!group.totalSessions) throw new ConflictException(AcademicsErrors.GROUP_TOTAL_SESSIONS_REQUIRED);
 
-    const cohort = await this.cohortModel.findOne({ _id: group.cohortId }).select('startDate').lean<{ startDate: Date }>().exec();
-    if (!cohort) throw new NotFoundException(AcademicsErrors.COHORT_NOT_FOUND);
+    // The group's own start date wins; otherwise it follows its batch.
+    let startDate = group.startDate ?? null;
+    if (!startDate) {
+      const cohort = await this.cohortModel.findOne({ _id: group.cohortId }).select('startDate').lean<{ startDate: Date }>().exec();
+      if (!cohort) throw new NotFoundException(AcademicsErrors.COHORT_NOT_FOUND);
+      startDate = cohort.startDate;
+    }
 
-    const generated = generateSessions(group.schedule, group.timezone, cohort.startDate, group.totalSessions);
+    const generated = generateSessions(group.schedule, group.timezone, startDate, group.totalSessions);
     const now = new Date();
     const dbSession = await this.connection.startSession();
     try {

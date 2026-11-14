@@ -4,6 +4,7 @@ import { createAuthorizedNatsRequest } from '@/lib/utils/createNatsRequest';
 import type {
   GroupFormValues,
   GroupQuery,
+  IAttendanceMatrix,
   IGroup,
   IGroupDetail,
   IStudentCandidate,
@@ -63,4 +64,7 @@ export async function getTeacherCandidates(id: string) {
   return createAuthorizedNatsRequest<ITeacherCandidate[]>('academics.groups.teacherCandidates', {
     id,
   });
+}
+export async function getGroupAttendanceMatrix(id: string) {
+  return createAuthorizedNatsRequest<IAttendanceMatrix>('academics.groups.attendanceMatrix', { id });
 }

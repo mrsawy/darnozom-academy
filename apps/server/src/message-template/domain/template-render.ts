@@ -1,6 +1,7 @@
-import { ALLOWED_VARIABLES, TemplateContext } from '@darnozom/shared-types';
+import { ALLOWED_VARIABLES, canonicalVariableName, TemplateContext } from '@darnozom/shared-types';
 
-const VARIABLE_RE = /\{\{([a-zA-Z][a-zA-Z0-9]*)\}\}/g;
+// Letters include Arabic, so `{{اسم_الطالب}}` is a variable just like `{{studentName}}`.
+const VARIABLE_RE = /\{\{(\p{L}[\p{L}\p{N}_]*)\}\}/gu;
 
 export function extractVariables(body: string): string[] {
   const found: string[] = [];
@@ -16,7 +17,12 @@ export function extractVariables(body: string): string[] {
 
 export function validateVariables(context: TemplateContext, body: string): string[] {
   const allowed = new Set(ALLOWED_VARIABLES[context]);
-  return extractVariables(body).filter((v) => !allowed.has(v));
+  return extractVariables(body).filter((v) => !allowed.has(canonicalVariableName(v)));
+}
+
+/** Canonical (English) keys of the variables a body uses, whichever spelling it was written in. */
+export function canonicalVariables(body: string): string[] {
+  return [...new Set(extractVariables(body).map(canonicalVariableName))];
 }
 
 export function renderTemplate(
@@ -24,10 +30,11 @@ export function renderTemplate(
   values: Record<string, string | undefined>,
 ): { text: string; missingVariables: string[] } {
   const missingVariables: string[] = [];
-  const text = body.replace(VARIABLE_RE, (_, name: string) => {
+  const text = body.replace(VARIABLE_RE, (_, rawName: string) => {
+    const name = canonicalVariableName(rawName);
     const val = values[name];
     if (val === undefined || val === null || val === '') {
-      missingVariables.push(name);
+      if (!missingVariables.includes(name)) missingVariables.push(name);
       return '';
     }
     return val;

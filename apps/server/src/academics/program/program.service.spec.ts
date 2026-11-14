@@ -11,7 +11,7 @@ const courseId = '64b0000000000000000000dd';
 function setup() {
   const programModel = { find: jest.fn(), findOne: jest.fn(), findOneAndUpdate: jest.fn(), create: jest.fn(), updateOne: jest.fn() };
   const courseModel = { find: jest.fn(), findOne: jest.fn(), countDocuments: jest.fn(), updateOne: jest.fn() };
-  const service = new ProgramService(programModel as never, courseModel as never);
+  const service = new ProgramService(programModel as never, courseModel as never, { countDocuments: jest.fn() } as never);
   return { service, programModel, courseModel };
 }
 

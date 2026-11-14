@@ -25,7 +25,7 @@ import {
   CourseTrailerSection,
   CourseInstructorSection,
   CourseCategoriesSection,
-  CourseGradeSchoolTypeSection,
+  CourseAgeRangeSection,
   CoursePricingSection,
   CourseSettingsSection,
   CourseAttendanceSection,
@@ -36,7 +36,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from '@/i18n/navigation';
 import { ROUTE_ORG_COURSE_DETAILS } from '@/lib/data/constants/routes.constants';
 import { getFirstErrorMessage } from '@/lib/utils/errors/getFirstErrorMessage';
-import { normalizeCourseSchoolTypes } from '@/lib/utils/course/normalize-course-school-types';
 import { courseKeys } from '@/lib/hooks/course/useCourses';
 
 export type { CourseFormProps } from './course';
@@ -75,11 +74,8 @@ function CourseForm({ mode, setOpen, course, courseId }: CourseFormProps) {
   const [initialCategoryLabels] = useState<Record<string, string>>(() =>
     Object.fromEntries((course?.categories ?? []).map((c) => [c._id, c.name]))
   );
-  const [selectedGradeId, setSelectedGradeId] = useState<string | null>(
-    course?.gradeId ?? course?.grade?._id ?? null
-  );
-  const [selectedSchoolTypeIds, setSelectedSchoolTypeIds] = useState<string[]>(
-    () => normalizeCourseSchoolTypes(course ?? {}).schoolTypeIds
+  const [selectedAgeRangeIds, setSelectedAgeRangeIds] = useState<string[]>(
+    () => course?.ageRangeIds ?? course?.ageRanges?.map((a) => a._id) ?? []
   );
   const [selectedCoInstructors, setSelectedCoInstructors] = useState<Option[]>(
     course?.coInstructors?.map((instructor) => ({
@@ -136,8 +132,7 @@ function CourseForm({ mode, setOpen, course, courseId }: CourseFormProps) {
                 ) ?? {})
               : {},
             categoriesIds: course.categoriesIds ?? [],
-            gradeId: course.gradeId ?? course.grade?._id ?? null,
-            schoolTypeIds: normalizeCourseSchoolTypes(course).schoolTypeIds,
+            ageRangeIds: course.ageRangeIds ?? course.ageRanges?.map((a) => a._id) ?? [],
             attendanceSettings: course.attendanceSettings ?? {
               requireAttendance: false,
               offlineSchedule: [],
@@ -156,8 +151,7 @@ function CourseForm({ mode, setOpen, course, courseId }: CourseFormProps) {
             description: '',
             shortDescription: '',
             categoriesIds: [],
-            gradeId: null,
-            schoolTypeIds: [],
+            ageRangeIds: [],
           },
   });
 
@@ -169,18 +163,10 @@ function CourseForm({ mode, setOpen, course, courseId }: CourseFormProps) {
     [setValue]
   );
 
-  const updateCourseGrade = useCallback(
-    (id: string | null) => {
-      setSelectedGradeId(id);
-      setValue('gradeId', id as PathValue<CreateCourseSchema, 'gradeId'>);
-    },
-    [setValue]
-  );
-
-  const updateCourseSchoolTypeIds = useCallback(
+  const updateCourseAgeRangeIds = useCallback(
     (ids: string[]) => {
-      setSelectedSchoolTypeIds(ids);
-      setValue('schoolTypeIds', ids as PathValue<CreateCourseSchema, 'schoolTypeIds'>);
+      setSelectedAgeRangeIds(ids);
+      setValue('ageRangeIds', ids as PathValue<CreateCourseSchema, 'ageRangeIds'>);
     },
     [setValue]
   );
@@ -276,10 +262,9 @@ function CourseForm({ mode, setOpen, course, courseId }: CourseFormProps) {
         }
       }
 
-      // Always send Grade / School Type (including empty array) so clearing a selection
-      // on edit is persisted. Each is independent and optional.
-      formData.set('gradeId', JSON.stringify(data.gradeId ?? null));
-      formData.set('schoolTypeIds', JSON.stringify(data.schoolTypeIds ?? []));
+      // Always send age ranges (including empty array) so clearing a selection
+      // on edit is persisted.
+      formData.set('ageRangeIds', JSON.stringify(data.ageRangeIds ?? []));
       formData.set('instructorId', JSON.stringify(data.instructorId ?? null));
       formData.set('coInstructorsIds', JSON.stringify(data.coInstructorsIds ?? []));
 
@@ -484,12 +469,7 @@ function CourseForm({ mode, setOpen, course, courseId }: CourseFormProps) {
             onCategoriesChange={updateCourseCategories}
           />
 
-          <CourseGradeSchoolTypeSection
-            gradeId={selectedGradeId}
-            schoolTypeIds={selectedSchoolTypeIds}
-            onGradeChange={updateCourseGrade}
-            onSchoolTypeIdsChange={updateCourseSchoolTypeIds}
-          />
+          <CourseAgeRangeSection ageRangeIds={selectedAgeRangeIds} onAgeRangeIdsChange={updateCourseAgeRangeIds} />
         </div>
 
         <CoursePricingSection

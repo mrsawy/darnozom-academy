@@ -36,12 +36,12 @@ describe('OpenTasksCard', () => {
 
   it('lists the missing item and the level it reached', () => {
     render(<OpenTasksCard tasks={[task]} isLoading={false} />);
-    expect(screen.getByText('readiness.CONTENT_SENT')).toBeInTheDocument();
+    expect(screen.getByText('readiness.items.CONTENT_SENT')).toBeInTheDocument();
     expect(screen.getByText('tasks.level.2')).toBeInTheDocument();
   });
 
   it('shows the loading state while fetching', () => {
     render(<OpenTasksCard tasks={[]} isLoading />);
-    expect(screen.getByText('loading')).toBeInTheDocument();
+    expect(screen.getByRole('status')).toBeInTheDocument();
   });
 });

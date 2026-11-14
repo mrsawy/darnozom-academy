@@ -22,7 +22,7 @@ interface TeacherLean {
   additionalRoles?: Roles[];
 }
 
-type FitGroup = Pick<GroupLean, 'schedule' | 'timezone' | 'cohortId'> & { _id?: Types.ObjectId };
+type FitGroup = Pick<GroupLean, 'schedule' | 'timezone' | 'cohortId'> & { _id?: Types.ObjectId; startDate?: Date | null };
 
 @Injectable()
 export class GroupTeacherService {
@@ -47,7 +47,7 @@ export class GroupTeacherService {
         .select('_id name schedule timezone')
         .lean<{ _id: Types.ObjectId; name: string; schedule: ScheduleSlot[]; timezone: string }[]>()
         .exec(),
-      referenceDate ? Promise.resolve(referenceDate) : this.referenceDateFor(group.cohortId),
+      referenceDate ? Promise.resolve(referenceDate) : group.startDate ? Promise.resolve(group.startDate) : this.referenceDateFor(group.cohortId),
     ]);
     return checkTeacherFit({
       isInstructor: hasRole(teacher, Roles.INSTRUCTOR),
@@ -94,7 +94,7 @@ export class GroupTeacherService {
         .select(TEACHER_FIELDS)
         .lean<TeacherLean[]>()
         .exec(),
-      this.referenceDateFor(group.cohortId),
+      group.startDate ? Promise.resolve(group.startDate) : this.referenceDateFor(group.cohortId),
     ]);
     return Promise.all(
       teachers.map(async (teacher) => {
@@ -104,17 +104,20 @@ export class GroupTeacherService {
     );
   }
 
-  async assertScheduleChangeFits(actor: AcademicsActor, group: GroupLean, next: { schedule: ScheduleSlot[]; timezone: string }): Promise<void> {
+  async assertScheduleChangeFits(actor: AcademicsActor, group: GroupLean, next: { schedule: ScheduleSlot[]; timezone: string; startDate?: Date | null }): Promise<void> {
     if (!group.teacherId) return;
     const teacher = await this.userModel.findOne({ _id: group.teacherId }).select(TEACHER_FIELDS).lean<TeacherLean>().exec();
     if (!teacher) return;
-    const fit = await this.evaluateFit({ ...group, ...next }, teacher);
+    // next.startDate null = back to the batch's date; undefined = unchanged.
+    const startDate = next.startDate === undefined ? group.startDate : next.startDate;
+    const fit = await this.evaluateFit({ ...group, schedule: next.schedule, timezone: next.timezone, startDate }, teacher);
     if (!fit.ok) throw new ConflictException(AcademicsErrors.TEACHER_NOT_ASSIGNABLE);
   }
 
   async assertCohortStartDateFits(actor: AcademicsActor, cohortId: Types.ObjectId, startDate: Date): Promise<void> {
     const groups = await this.groupModel
-      .find({ cohortId, teacherId: { $ne: null }, status: { $ne: GroupStatus.CANCELLED }, deletedAt: null })
+      // Groups with their own start date no longer follow the batch's.
+      .find({ cohortId, teacherId: { $ne: null }, startDate: null, status: { $ne: GroupStatus.CANCELLED }, deletedAt: null })
       .select('_id cohortId schedule timezone teacherId')
       .lean<GroupLean[]>()
       .exec();

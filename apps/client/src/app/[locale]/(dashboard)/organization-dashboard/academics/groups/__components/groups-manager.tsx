@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/components/atoms/loading-state';
 import { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
@@ -61,7 +62,7 @@ export function GroupsManager() {
           </SelectContent>
         </Select>
       </div>
-      {isLoading ? <p>{t('loading')}</p> : null}
+      {isLoading ? <LoadingState /> : null}
       {!isLoading && groups.length === 0 ? (
         <p className="text-muted-foreground">{t('empty')}</p>
       ) : null}

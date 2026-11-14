@@ -16,7 +16,7 @@ export class Certificate extends Document<Types.ObjectId> {
   @Prop({ type: Types.ObjectId, ref: 'Level', required: true, index: true })
   levelId: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId, ref: 'Course', required: true, index: true })
+  @Prop({ type: Types.ObjectId, ref: 'TrainingCourse', required: true, index: true })
   courseId: Types.ObjectId;
 
   @Prop({ type: Types.ObjectId, ref: 'User', required: true, index: true })

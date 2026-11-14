@@ -1,4 +1,5 @@
 'use client';
+import { LoadingState } from '@/components/atoms/loading-state';
 import * as React from 'react';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -88,11 +89,13 @@ export function Combobox({
           />
           <CommandList>
             <CommandEmpty>
-              {isLoading
-                ? t('loading')
-                : searched
-                  ? t('noDataFound')
-                  : (customTitleBeforeSearch ?? t('noDataFound'))}
+              {isLoading ? (
+                <LoadingState className="py-2" spinnerClassName="size-4" />
+              ) : searched ? (
+                t('noDataFound')
+              ) : (
+                (customTitleBeforeSearch ?? t('noDataFound'))
+              )}
             </CommandEmpty>
             <CommandGroup>
               {data.map((d) => (

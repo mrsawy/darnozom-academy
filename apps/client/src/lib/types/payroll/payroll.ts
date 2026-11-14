@@ -1,4 +1,4 @@
-import { Currency, PayStatementStatus, TeacherPayModel } from '@darnozom/shared-types';
+import { Currency, GroupPayModel, PayStatementStatus, TeacherPayModel } from '@darnozom/shared-types';
 
 export interface ITeacherPayProfile {
   _id: string;
@@ -10,6 +10,45 @@ export interface ITeacherPayProfile {
   effectiveFrom: string;
   createdAt?: string;
   updatedAt?: string;
+}
+
+export interface IGroupPayRule {
+  _id: string;
+  organizationId: string;
+  teacherId: string;
+  groupId: string;
+  model: GroupPayModel;
+  /** A percentage (0-100) for PERCENT_OF_SUBSCRIPTIONS, a money amount otherwise. */
+  rate: number;
+  currency: Currency;
+  effectiveFrom: string;
+  endedAt?: string | null;
+}
+
+export interface IPayStatementLine {
+  groupId: string;
+  groupName: string;
+  model: GroupPayModel;
+  rate: number;
+  currency: Currency;
+  subscriptions: number;
+  collected: number;
+  sessions: number;
+  amount: number;
+}
+
+export interface IPayrollLookup {
+  groups: { id: string; name: string; teacherId: string }[];
+  teachers: { id: string; name: string }[];
+}
+
+export interface UpsertGroupPayRuleInput {
+  teacherId: string;
+  groupId: string;
+  model: GroupPayModel;
+  rate: number;
+  currency: Currency;
+  effectiveFrom?: string;
 }
 
 export interface IBonusItem {
@@ -37,7 +76,10 @@ export interface IPayStatement {
   organizationId: string;
   teacherId: string;
   month: string; // "YYYY-MM"
-  profileSnapshot: IProfileSnapshot;
+  /** Legacy single-profile statements only; per-group statements use `lines`. */
+  profileSnapshot?: IProfileSnapshot;
+  currency?: Currency;
+  lines?: IPayStatementLine[];
   countedSessionIds: string[];
   basis: IStatementBasis;
   baseAmount: number;

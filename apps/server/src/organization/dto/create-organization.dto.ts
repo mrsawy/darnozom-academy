@@ -101,6 +101,10 @@ export class BrandingDto {
 
   @IsString()
   secondaryColor: string;
+
+  @IsOptional()
+  @IsString()
+  themeId?: string;
 }
 
 // export class FeaturesDto {

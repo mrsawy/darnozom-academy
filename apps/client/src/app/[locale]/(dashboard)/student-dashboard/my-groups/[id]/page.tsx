@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/components/atoms/loading-state';
 import { useParams } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { AttendanceStatus, GroupStatus, SessionStatus } from '@darnozom/shared-types';
@@ -14,9 +15,12 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/atoms/table';
+import { SessionJoinButton } from '@/components/organs/academics/session-join-button';
 import { SessionStatusBadge } from '@/components/organs/academics/session-status-badge';
-import { ROUTE_STUDENT_MY_GROUPS } from '@/lib/data/constants/routes.constants';
+import { ROUTE_STUDENT_MY_GROUPS, ROUTE_STUDENT_SESSION_CALL } from '@/lib/data/constants/routes.constants';
+import { isJoinable } from '@/lib/utils/academics/join-window';
 import { useGroup, useSessions } from '@/lib/hooks/academics/use-academics.hook';
+import { useNow } from '@/lib/hooks/use-now';
 import { useAuthUser } from '@/lib/hooks/user/use-user.hook';
 import { safeHref } from '@/lib/utils/academics/safe-href';
 import { formatSessionTime } from '@/lib/utils/academics/session-time';
@@ -42,6 +46,7 @@ export default function StudentGroupDetailPage() {
   const locale = useLocale();
 
   const { data: user } = useAuthUser();
+  const now = useNow();
   const { data: group, isLoading: groupLoading } = useGroup(id);
   const { data: sessions = [], isLoading: sessionsLoading } = useSessions(
     { groupId: id },
@@ -49,14 +54,13 @@ export default function StudentGroupDetailPage() {
   );
 
   if (groupLoading || !group) {
-    return <p className="p-6">{t('loading')}</p>;
+    return <LoadingState fullPage />;
   }
 
   const teacherName = group.teacherId ? group.people[group.teacherId] : null;
   const scheduleText = group.schedule
     .map((slot) => `${t(`days.${slot.dayOfWeek}`)} ${slot.startTime} (${slot.durationMinutes}′)`)
     .join(' · ');
-  const meetingHref = safeHref(group.meetingLink);
   const whatsappHref = safeHref(group.whatsappGroupLink);
   const completedCount = sessions.filter((s) => s.status === SessionStatus.COMPLETED).length;
 
@@ -136,26 +140,16 @@ export default function StudentGroupDetailPage() {
       </div>
 
       {/* Links */}
-      {(meetingHref || whatsappHref) ? (
+      {/* The meeting link is only reachable through each session's Join button, so attendance is recorded. */}
+      {whatsappHref ? (
         <div className="flex flex-wrap gap-4">
-          {meetingHref ? (
-            <a
-              href={meetingHref}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-md border px-4 py-2 text-sm font-medium transition-colors hover:bg-muted">
-              {t('form.meetingLink')} ↗
-            </a>
-          ) : null}
-          {whatsappHref ? (
-            <a
-              href={whatsappHref}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-md border px-4 py-2 text-sm font-medium transition-colors hover:bg-muted">
-              {t('form.whatsappGroupLink')} ↗
-            </a>
-          ) : null}
+          <a
+            href={whatsappHref}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-md border px-4 py-2 text-sm font-medium transition-colors hover:bg-muted">
+            {t('form.whatsappGroupLink')} ↗
+          </a>
         </div>
       ) : null}
 
@@ -166,7 +160,7 @@ export default function StudentGroupDetailPage() {
         </CardHeader>
         <CardContent>
           {sessionsLoading ? (
-            <p className="text-muted-foreground text-sm">{t('loading')}</p>
+            <LoadingState />
           ) : sessions.length === 0 ? (
             <p className="text-muted-foreground text-sm">{t('sessions.empty')}</p>
           ) : (
@@ -178,6 +172,7 @@ export default function StudentGroupDetailPage() {
                     <TableHead>{t('sessions.when')}</TableHead>
                     <TableHead>{t('sessions.status')}</TableHead>
                     <TableHead>{t('sessions.myAttendance')}</TableHead>
+                    <TableHead />
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -204,6 +199,15 @@ export default function StudentGroupDetailPage() {
                               {t('sessions.notRecorded')}
                             </span>
                           )}
+                        </TableCell>
+                        <TableCell className="text-end">
+                          {isJoinable(session, now) ? (
+                            <SessionJoinButton
+                              sessionId={session._id}
+                              provider={group.meetingProvider}
+                              callHref={ROUTE_STUDENT_SESSION_CALL(session._id)}
+                            />
+                          ) : null}
                         </TableCell>
                       </TableRow>
                     );

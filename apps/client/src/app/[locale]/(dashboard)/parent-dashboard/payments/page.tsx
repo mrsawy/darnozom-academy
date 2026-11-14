@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
+import { formatMoney } from '@/lib/utils/billing/format-money';
 import { toast } from 'react-toastify';
 import useUserStore from '@/lib/store/userStore';
 import { useChildren } from '@/lib/hooks/parent/useParent.hook';
@@ -24,6 +25,7 @@ import { Currency, FamilyPaymentState } from '@darnozom/shared-types';
 
 export default function ParentPaymentsPage() {
   const t = useTranslations('Billing');
+  const locale = useLocale();
   const user = useUserStore((s) => s.user);
   const myFamilyId = user?._id ?? '';
 
@@ -123,12 +125,35 @@ export default function ParentPaymentsPage() {
           <h3 className="text-muted-foreground text-sm font-semibold tracking-wider uppercase">
             {t('paymentsUnderReview')}
           </h3>
-          {underReviewPayments.map((payment) => (
-            <div key={payment._id} className="flex items-center justify-between gap-4 rounded-md border p-3 text-sm">
-              <span className="font-medium">{payment.methodSnapshot?.label ?? t(`method.${payment.method}`)}</span>
-              <PaymentStatusBadge status="UNDER_REVIEW" />
-            </div>
-          ))}
+          {underReviewPayments.map((payment) => {
+            const subscription = subscriptions.find((s) => s._id === payment.subscriptionId);
+            const studentNames = (subscription?.items ?? [])
+              .map((item) => children.find((c) => c._id === item.studentId)?.firstName)
+              .filter((name): name is string => Boolean(name));
+            return (
+              <div key={payment._id} className="flex items-center justify-between gap-4 rounded-md border p-3 text-sm">
+                <div className="space-y-1">
+                  <p className="font-medium">{payment.methodSnapshot?.label ?? t(`method.${payment.method}`)}</p>
+                  {studentNames.length > 0 || subscription ? (
+                    <p className="text-muted-foreground text-xs">
+                      {studentNames.join(', ')}
+                      {studentNames.length > 0 && subscription ? ' · ' : ''}
+                      {subscription ? t(`type.${subscription.type}`) : ''}
+                    </p>
+                  ) : null}
+                  <p className="text-muted-foreground text-xs">
+                    {t('date')}: {new Date(payment.createdAt).toLocaleString(locale)}
+                  </p>
+                </div>
+                <div className="flex flex-col items-end gap-1">
+                  <span className="font-mono font-semibold">
+                    {formatMoney(payment.amountMinor, payment.currency, locale)}
+                  </span>
+                  <PaymentStatusBadge status="UNDER_REVIEW" />
+                </div>
+              </div>
+            );
+          })}
         </div>
       ) : null}
 

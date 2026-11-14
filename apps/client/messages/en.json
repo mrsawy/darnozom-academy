@@ -206,21 +206,37 @@
     "startFreeTrial": "Start your free trial",
     "dashboardPreview": {
       "courseProgress": {
-        "title": "Course progress",
-        "0": { "label": "Algebra II" },
-        "1": { "label": "Physics" },
-        "2": { "label": "Chemistry" }
+        "0": {
+          "label": "Algebra II"
+        },
+        "1": {
+          "label": "Physics"
+        },
+        "2": {
+          "label": "Chemistry"
+        },
+        "title": "Course progress"
       },
       "quizScores": {
         "title": "Quiz scores"
       },
       "activity": {
-        "title": "Activity by type",
-        "0": { "label": "Video" },
-        "1": { "label": "Article" },
-        "2": { "label": "Project" },
-        "3": { "label": "Assignment" },
-        "4": { "label": "Live session" }
+        "0": {
+          "label": "Video"
+        },
+        "1": {
+          "label": "Article"
+        },
+        "2": {
+          "label": "Project"
+        },
+        "3": {
+          "label": "Assignment"
+        },
+        "4": {
+          "label": "Live session"
+        },
+        "title": "Activity by type"
       },
       "attendance": {
         "title": "Attendance recorded",
@@ -659,10 +675,8 @@
     "typeToSearchCategories": "Type to search categories",
     "noCategoriesFound": "No categories found",
     "subject": "Subject",
-    "grade": "Grade",
-    "schoolType": "School Type",
-    "selectGrades": "Select grades",
-    "selectSchoolTypes": "Select school types",
+    "ageRange": "Age Range",
+    "selectAgeRanges": "Select age ranges",
     "messageInstructor": "Message"
   },
   "Courses": {
@@ -677,10 +691,8 @@
     "priceRange": "Price Range",
     "billingCycle": "Billing Cycle",
     "category": "Category",
-    "grade": "Grade",
-    "schoolType": "School Type",
-    "allGrades": "All Grades",
-    "allSchoolTypes": "All School Types",
+    "ageRange": "Age Range",
+    "allAgeRanges": "All Age Ranges",
     "searchCategoryPlaceholder": "Search For Category",
     "filterByCategory": "Filter By Category",
     "typeToSearchCategories": "Type to search categories",
@@ -974,10 +986,8 @@
     "description": "Discover our most popular courses designed by industry experts to advance your skills and accelerate your career growth.",
     "viewAllButton": "View All Courses",
     "all": "All",
-    "grade": "Grade",
-    "schoolType": "School Type",
-    "allGrades": "All Grades",
-    "allSchoolTypes": "All School Types",
+    "ageRange": "Age Range",
+    "allAgeRanges": "All Age Ranges",
     "noCoursesFound": "No courses found in this category"
   },
   "footer": {
@@ -1752,10 +1762,8 @@
       "selectCountryPlaceholder": "Select Country",
       "categories": "Categories",
       "subjects": "Subjects",
-      "grades": "Grades",
-      "selectGrades": "Select grades...",
-      "schoolTypes": "School Types",
-      "selectSchoolTypes": "Select school types...",
+      "ageRanges": "Age Ranges",
+      "selectAgeRanges": "Select age ranges...",
       "selectCategories": "Select Categories...",
       "noCategoriesFound": "No categories found.",
       "childUsers": "Child Users",
@@ -2310,7 +2318,8 @@
     "loadingCalendar": "Loading calendar"
   },
   "AppSidebar": {
-    "appName": "Darnozom LMS"
+    "appName": "Darnozom LMS",
+    "academyFallbackName": "Academy"
   },
   "DateTimePicker": {
     "placeholder": "Select date and time",
@@ -2382,6 +2391,9 @@
   "OrgSidebar": {
     "navMain": {
       "courses": "Courses",
+      "coursesAll": "All courses",
+      "coursesRecorded": "Recorded courses",
+      "coursesTraining": "Training courses",
       "content": "Content",
       "contentTypes": {
         "article": "Articles",
@@ -2393,11 +2405,32 @@
         "attachment": "Attachments"
       },
       "users": "Users",
+      "usersAll": "All users",
+      "usersRoles": {
+        "INSTRUCTOR": "Teachers",
+        "STUDENT": "Students",
+        "PARENT": "Parents",
+        "OWNER": "Owners",
+        "SUPER_ADMIN": "Super admins",
+        "ADMIN": "Admins",
+        "MANAGER": "Managers",
+        "COORDINATOR": "Coordinators",
+        "SUPERVISOR": "Supervisors",
+        "SECRETARY": "Secretaries",
+        "CONTENT_OFFICER": "Content officers",
+        "SHARIA_REVIEWER": "Sharia reviewers",
+        "HR": "HR",
+        "ACCOUNTANT": "Accountants",
+        "GUEST": "Guests"
+      },
       "enrollments": "Enrollments",
       "gallery": "Gallery",
       "home_page": "My Pages",
+      "allPages": "All pages",
       "attendance": "Attendance",
       "wallet": "Wallet",
+      "attendanceOffline": "Offline attendance",
+      "attendanceSessions": "Sessions attendance",
       "privateSessions": "Private Sessions",
       "chat": "Messages",
       "booksStore": "Books Store",
@@ -2413,6 +2446,9 @@
       "billing": "Billing",
       "billingReceipts": "Receipts",
       "billingCoursePayments": "Course payments",
+      "accounting": "Accounting",
+      "accountingSubscriptions": "Subscriptions",
+      "salaries": "Salaries",
       "payroll": "Teacher Payroll",
       "myPayStatements": "My Pay Statements",
       "myCertificates": "My Certificates",
@@ -2433,6 +2469,7 @@
       },
       "settings": {
         "settings": "Settings",
+        "academy": "Academy",
         "plan": "Plan",
         "payments": "Payment Settings",
         "usage": "Usage",
@@ -3590,30 +3627,38 @@
     "create": "Create",
     "creating": "Creating..."
   },
-  "AdminGrades": {
-    "title": "Grades",
-    "description": "Manage the platform-wide grade levels available to courses.",
-    "createGrade": "Add Grade",
-    "loadError": "Failed to load grades.",
+  "AdminAgeRanges": {
+    "title": "Age Ranges",
+    "description": "Manage the platform-wide age ranges available to courses and instructors.",
+    "createAgeRange": "Add Age Range",
+    "loadError": "Failed to load age ranges.",
     "retry": "Retry",
-    "empty": "No grades yet. Add your first grade to get started.",
+    "empty": "No age ranges yet. Add your first age range to get started.",
     "toasts": {
-      "created": "Grade created successfully.",
-      "updated": "Grade updated successfully.",
-      "deleted": "Grade deleted successfully."
+      "created": "Age range created successfully.",
+      "updated": "Age range updated successfully.",
+      "deleted": "Age range deleted successfully."
     },
     "validation": {
       "nameEnRequired": "English name is required.",
-      "nameArRequired": "Arabic name is required."
+      "nameArRequired": "Arabic name is required.",
+      "minAgeRequired": "Minimum age is required.",
+      "ageInteger": "Age must be a whole number.",
+      "ageMin": "Age cannot be negative.",
+      "ageMax": "Age cannot exceed 120.",
+      "maxAgeBelowMin": "Maximum age cannot be lower than the minimum age."
     },
     "form": {
-      "createTitle": "Add Grade",
-      "editTitle": "Edit Grade",
-      "description": "Provide the grade name in both English and Arabic.",
+      "createTitle": "Add Age Range",
+      "editTitle": "Edit Age Range",
+      "description": "Provide the name in both English and Arabic, and the age limits.",
       "nameEn": "English Name",
-      "nameEnPlaceholder": "e.g. 1st Preparatory",
+      "nameEnPlaceholder": "e.g. 6-8 years",
       "nameAr": "Arabic Name",
-      "nameArPlaceholder": "مثال: الصف الأول الإعدادي",
+      "nameArPlaceholder": "مثال: ٦-٨ سنوات",
+      "minAge": "Minimum age",
+      "maxAge": "Maximum age",
+      "maxAgePlaceholder": "No limit",
       "cancel": "Cancel",
       "save": "Save",
       "create": "Create"
@@ -3621,52 +3666,15 @@
     "table": {
       "nameEn": "English Name",
       "nameAr": "Arabic Name",
+      "ages": "Ages",
+      "range": "{min} to {max} years",
+      "openEnded": "{min}+ years",
       "actions": "Actions",
-      "editAria": "Edit grade",
-      "deleteAria": "Delete grade"
+      "editAria": "Edit age range",
+      "deleteAria": "Delete age range"
     },
     "deleteConfirm": {
-      "title": "Delete Grade",
-      "description": "Are you sure you want to delete \"{name}\"? This action cannot be undone."
-    }
-  },
-  "AdminSchoolTypes": {
-    "title": "School Types",
-    "description": "Manage the platform-wide school types available to courses.",
-    "createSchoolType": "Add School Type",
-    "loadError": "Failed to load school types.",
-    "retry": "Retry",
-    "empty": "No school types yet. Add your first school type to get started.",
-    "toasts": {
-      "created": "School type created successfully.",
-      "updated": "School type updated successfully.",
-      "deleted": "School type deleted successfully."
-    },
-    "validation": {
-      "nameEnRequired": "English name is required.",
-      "nameArRequired": "Arabic name is required."
-    },
-    "form": {
-      "createTitle": "Add School Type",
-      "editTitle": "Edit School Type",
-      "description": "Provide the school type name in both English and Arabic.",
-      "nameEn": "English Name",
-      "nameEnPlaceholder": "e.g. International",
-      "nameAr": "Arabic Name",
-      "nameArPlaceholder": "مثال: دولي",
-      "cancel": "Cancel",
-      "save": "Save",
-      "create": "Create"
-    },
-    "table": {
-      "nameEn": "English Name",
-      "nameAr": "Arabic Name",
-      "actions": "Actions",
-      "editAria": "Edit school type",
-      "deleteAria": "Delete school type"
-    },
-    "deleteConfirm": {
-      "title": "Delete School Type",
+      "title": "Delete Age Range",
       "description": "Are you sure you want to delete \"{name}\"? This action cannot be undone."
     }
   },
@@ -3746,12 +3754,9 @@
     "categoriesHelp": "Help students discover this course by topic.",
     "selectCourseCategories": "Select Course Categories...",
     "noCategoriesFound": "No Categories were found.",
-    "gradeAndSchoolType": "Grade & School Type",
-    "gradeAndSchoolTypeHelp": "Optional targeting for grade level and school type.",
-    "grade": "Grade",
-    "schoolType": "School Type",
-    "gradeNone": "None",
-    "schoolTypeNone": "None",
+    "ageRangeSection": "Age Range",
+    "ageRangeSectionHelp": "Optional targeting for the ages this course is intended for.",
+    "ageRange": "Age Range",
     "searchPlaceholder": "Search...",
     "pricing": "Pricing",
     "pricingHelp": "Choose whether this course is free or paid.",
@@ -4333,6 +4338,18 @@
     "dark": "Dark",
     "light": "Light"
   },
+  "SessionsAttendance": {
+    "title": "Sessions attendance",
+    "description": "Attendance recorded for group sessions, by teachers or automatically when people join.",
+    "group": "Group",
+    "allGroups": "All groups",
+    "from": "From",
+    "to": "To",
+    "sessions": "Sessions",
+    "session": "Session",
+    "rate": "Attendance rate",
+    "empty": "No sessions in this period."
+  },
   "AttendancePage": {
     "title": "Attendance Management",
     "description": "Manage and track attendance for your courses.",
@@ -4623,12 +4640,10 @@
     "accountLoggedOutFromAnotherDevice": "You have been signed out from another device",
     "sessionReplacedByAnotherDevice": "Another device has logged in",
     "sessionReplacedRedirectIn": "Redirecting to login in {seconds} seconds…",
-    "gradeNotFound": "Grade not found.",
-    "gradeNameAlreadyExists": "A grade with this name already exists.",
-    "gradeInUseCannotDelete": "This grade is used by one or more courses and cannot be deleted.",
-    "schoolTypeNotFound": "School type not found.",
-    "schoolTypeNameAlreadyExists": "A school type with this name already exists.",
-    "schoolTypeInUseCannotDelete": "This school type is used by one or more courses and cannot be deleted.",
+    "ageRangeNotFound": "Age range not found.",
+    "ageRangeNameAlreadyExists": "An age range with this name already exists.",
+    "ageRangeInvalid": "Maximum age cannot be lower than the minimum age.",
+    "ageRangeInUseCannotDelete": "This age range is used by one or more courses and cannot be deleted.",
     "planNotFound": "Plan not found.",
     "planNotActive": "This plan is not active.",
     "subscriptionNotFound": "Subscription not found for this organization.",
@@ -4837,12 +4852,15 @@
     "academicsDeletedSuccessfully": "Deleted successfully.",
     "groupCompleted": "This group has completed and can no longer be changed.",
     "groupTotalSessionsRequired": "Set the number of sessions for this group before starting it.",
-    "groupRunningScheduleLocked": "While the group is running, its schedule, time zone and number of sessions can't be changed.",
+    "groupRunningScheduleLocked": "While the group is running, its number of sessions and start date can't be changed.",
     "groupRunningTeacherLocked": "While the group is running, its teacher can't be changed.",
     "sessionNotFound": "Session not found.",
     "sessionCancelNotAllowed": "Only a session that has not ended yet can be cancelled.",
     "notSessionTeacher": "Only this session's teacher can do that.",
     "attendanceNotOpen": "Attendance opens 15 minutes before the session starts.",
+    "notSessionParticipant": "You are not a participant in this session.",
+    "joinWindowClosed": "Joining this session is not open right now.",
+    "teacherAccessDenied": "You do not have access to this teacher’s page.",
     "attendanceClosed": "Attendance is closed for this session.",
     "attendanceStudentInvalid": "Attendance can only be recorded once for each active student of this group.",
     "attendanceIncomplete": "Record attendance for every active student before submitting the report.",
@@ -5135,8 +5153,7 @@
       "platformOptions": "Platform Options",
       "withdrawalRequests": "Withdrawal Requests",
       "roles": "Roles & permissions",
-      "grades": "Grades",
-      "schoolTypes": "School Types",
+      "ageRanges": "Age Ranges",
       "chat": "Messages"
     }
   },
@@ -5357,7 +5374,7 @@
       "tier": "Tier",
       "billingCycle": "Billing cycle",
       "dates": "Period",
-      "startsAt": "Starts",
+      "startsAt": "Starts",
       "endsAt": "Ends",
       "nextBillingAt": "Next billing",
       "noSubscription": "No subscription",
@@ -5424,8 +5441,7 @@
       "detailsColumn": "Details",
       "shortDescription": "Short Description",
       "categories": "Categories",
-      "grade": "Grade",
-      "schoolType": "School Type",
+      "ageRange": "Age Range",
       "pricing": "Pricing",
       "approvalComment": "Approval Comment",
       "reviewedAt": "Reviewed At",
@@ -5457,6 +5473,25 @@
     },
     "reviews": {
       "selectAll": "Select all"
+    },
+    "overview": {
+      "programs": "Programmes",
+      "groups": "Groups",
+      "runningGroups": "Running groups",
+      "activeStudents": "Active students",
+      "teachers": "Teachers",
+      "attendance": "Attendance",
+      "needsAttention": "Needs attention:",
+      "programsTitle": "Programmes",
+      "noPrograms": "No programmes yet.",
+      "teachersTitle": "Teachers",
+      "teachersHint": "Based on student report scores (1–5) and attendance in completed sessions.",
+      "studentsTitle": "Students",
+      "studentsHint": "Average of participation, understanding, behaviour and homework.",
+      "best": "Best performing",
+      "needsSupport": "Needs support",
+      "noData": "Not enough data yet.",
+      "teacherMeta": "{groups} groups · {students} students"
     }
   },
   "PublishStatus": {
@@ -6208,6 +6243,8 @@
   "AgoraCall": {
     "liveSessionTitle": "Live Session",
     "privateSessionTitle": "Private Session",
+    "groupSessionTitle": "Group Session",
+    "notInPlatform": "This group does not meet inside the platform.",
     "you": "You",
     "participant": "Participant",
     "participants": "participants",
@@ -7046,10 +7083,12 @@
     "delete": "Delete",
     "create": "Create",
     "add": "Add",
+      "edit": "Edit",
     "remove": "Remove",
     "name": "Name",
     "description": "Description",
     "order": "Order",
+    "ageRange": "Age range",
     "startDate": "Start date",
     "confirmDelete": "Delete this item?",
     "sendTemplate": "Send Message",
@@ -7078,7 +7117,24 @@
       "new": "New program",
       "courses": "Courses",
       "linkCourse": "Link course",
-      "selectCourse": "Select a course",
+      "trainingCourse": "Training course",
+      "createNew": "Create new",
+      "trainingCoursesTitle": "Training courses",
+      "trainingCoursesEmpty": "No training courses yet. Create the first one.",
+      "connectedPrograms": "Connected programs",
+      "noConnectedPrograms": "Not connected to any program.",
+      "editName": "Edit name",
+      "save": "Save",
+      "disconnect": "Disconnect",
+      "confirmDisconnectTitle": "Disconnect from this program?",
+      "confirmDisconnectHint": "The training course stays, but it will no longer be part of the program.",
+      "deleteTrainingCourse": "Delete training course",
+      "deleteBlocked": "Disconnect it from its programs first. It can only be deleted when no program is connected.",
+      "confirmDeleteTrainingCourseHint": "This training course will be permanently removed.",
+      "newTrainingCourse": "New training course",
+      "trainingCourseHint": "Just a name for now. You can link it to this program right away.",
+      "trainingCourseNamePlaceholder": "e.g. Tajweed Foundations",
+      "selectCourse": "Select a training course",
       "unlink": "Unlink",
       "levels": "Levels",
       "newLevel": "New level",
@@ -7087,7 +7143,7 @@
       "newGroup": "New group",
       "viewGroups": "View groups",
       "hierarchyDisclaimerTitle": "How does the academic structure work?",
-      "hierarchyStep1": "Link academy courses to this program.",
+      "hierarchyStep1": "Link training courses to this program.",
       "hierarchyStep2": "Define the sequential levels inside each course.",
       "hierarchyStep3": "Create cohorts and set each one a start date.",
       "hierarchyStep4": "Form groups, then assign students and teachers.",
@@ -7099,8 +7155,8 @@
       "emptyHint": "Create a program first, then link courses, levels, and cohorts to it.",
       "confirmDeleteHint": "The program will be deleted and unlinked from its courses.",
       "coursesHint": "The courses this program is made of.",
-      "courseBadge": "Course",
-      "noLinkableCourses": "No courses available to link.",
+      "courseBadge": "Training course",
+      "noLinkableCourses": "No training courses available to link.",
       "emptyCoursesTitle": "No course linked yet",
       "emptyCoursesHint": "Pick a course above and link it to start adding levels.",
       "confirmUnlinkTitle": "Unlink this course?",
@@ -7108,12 +7164,20 @@
       "levelsHint": "Sequential stages inside the course, each with its own certificate rules.",
       "levelNamePlaceholder": "e.g. Level 1",
       "orderHint": "Order decides where the level sits in the course sequence.",
+      "ageRangeHint": "Age range of this level; its groups inherit it.",
+      "ageRangeAddNew": "+ Add new age range…",
+      "ageRangeNone": "No age range",
       "emptyLevelsHint": "Add the first level to this course so you can create cohorts.",
       "confirmDeleteLevelHint": "The level and all its cohorts will be deleted.",
       "cohortsHint": "Each cohort is an intake that starts on a specific date.",
       "cohortNamePlaceholder": "e.g. January intake",
       "emptyCohortsHint": "Add a cohort so you can create groups.",
       "confirmDeleteCohortHint": "The cohort and its groups will be deleted.",
+      "editProgram": "Edit program",
+      "editCourse": "Edit course",
+      "editLevel": "Edit level",
+      "editCohort": "Edit batch",
+      "editCohortHint": "Changing the start date moves every group in this batch that has not set its own start date.",
       "emptyGroupsHint": "No groups in this cohort yet."
     },
     "groups": {
@@ -7145,9 +7209,31 @@
       "maxStudents": "Maximum students",
       "meetingLink": "Meeting link",
       "whatsappGroupLink": "WhatsApp group link",
+      "meetingProvider": "Where sessions are held",
+      "providerExternal": "External link (Zoom, Meet…)",
+      "providerAgora": "Inside the platform",
+      "providerAgoraHint": "Teachers and students join from the platform; attendance and time in the call are recorded automatically.",
       "missingCohort": "Open this page from a cohort to create a group.",
       "totalSessions": "Number of sessions",
-      "estimatedEndDate": "Estimated end date"
+      "estimatedEndDate": "Estimated end date",
+      "startDate": "Start date",
+      "startDateHint": "Defaults to the batch start date. Change it to start this group on its own date.",
+      "runningScheduleHint": "This group is running. Changing the weekly slots re-plans the sessions that have not started yet; completed, past and cancelled sessions stay as they are.",
+      "sectionBasics": "Group details",
+      "sectionBasicsHint": "Name the group and set how many students it can hold.",
+      "sectionSchedule": "Weekly schedule",
+      "sectionScheduleHint": "Pick the days and times the group meets every week.",
+      "sectionSessions": "Sessions",
+      "sectionSessionsHint": "How many sessions the group runs and when it should finish.",
+      "sectionMeeting": "Meeting & communication",
+      "sectionMeetingHint": "Where sessions are held and how the group stays in touch.",
+      "endsAt": "Ends",
+      "minutesShort": "min",
+      "noSlots": "No time slots yet. Add at least one to create the group.",
+      "slotLabel": "Slot {n}",
+      "removeSlot": "Remove time slot",
+      "slotsSummary": "{count} sessions a week",
+      "startsAt": "Starts"
     },
     "readiness": {
       "title": "Readiness checklist",
@@ -7242,6 +7328,40 @@
       "title": "Groups",
       "empty": "Not in any group yet."
     },
+    "teacherPage": {
+      "unavailable": "This page is not available.",
+      "from": "From",
+      "to": "To",
+      "groups": "Groups",
+      "noGroups": "No groups assigned.",
+      "students": "{count} students",
+      "group": "Group",
+      "joined": "Joined",
+      "recentSessions": "Recent sessions",
+      "reportDone": "Submitted",
+      "reportMissing": "Missing",
+      "minutes": "{count} min",
+      "hours": "{count} h",
+      "evaluations": "Supervision evaluations",
+      "noEvaluations": "No evaluations yet.",
+      "evaluationCount": "Average over {count} evaluations (1–5)",
+      "stats": {
+        "total": "Sessions",
+        "completed": "Completed",
+        "cancelled": "Cancelled",
+        "reportsMissing": "Reports missing",
+        "avgJoinDelay": "Average join delay",
+        "avgReportDelay": "Average time to report",
+        "unrecorded": "Not recorded"
+      },
+      "criteria": {
+        "commitment": "Commitment",
+        "teaching": "Teaching",
+        "pedagogy": "Pedagogy",
+        "contentAdherence": "Content adherence",
+        "technicalQuality": "Technical quality"
+      }
+    },
     "sessions": {
       "title": "Sessions",
       "empty": "No sessions yet.",
@@ -7281,6 +7401,15 @@
         "save": "Save attendance",
         "teacher": "Teacher attendance",
         "locked": "Attendance is closed.",
+        "auto": "Auto",
+        "gridTitle": "Attendance overview",
+        "rate": "Rate",
+        "short": {
+          "PRESENT": "P",
+          "LATE": "L",
+          "EXCUSED": "E",
+          "ABSENT": "A"
+        },
         "statuses": {
           "PRESENT": "Present",
           "LATE": "Late",
@@ -7302,6 +7431,15 @@
         "pendingAttendance": "Record attendance for every student first.",
         "submittedAt": "Submitted",
         "empty": "No report yet."
+      },
+      "join": {
+        "button": "Join",
+        "noLink": "No meeting link is set for this group.",
+        "failed": "Could not join the session. Please try again."
+      },
+      "presence": {
+        "joinedAt": "Joined {time}",
+        "minutes": "{count} min in session"
       },
       "mySessions": {
         "title": "My sessions",
@@ -7387,6 +7525,35 @@
       "migrated": "Approved automatically when Sharia review was introduced"
     }
   },
+  "AcademySettings": {
+    "title": "Academy Settings",
+    "subtitle": "Manage your academy's name, logo, and color palette",
+    "generalSection": "General",
+    "name": "Academy name",
+    "description": "Description",
+    "logoSection": "Logo",
+    "logoHint": "Upload your academy logo (PNG, JPG, SVG — max 2 MB). It will appear across the dashboard.",
+    "logoUploading": "Uploading logo…",
+    "logoUploadError": "Failed to upload logo. Please try again.",
+    "primaryColor": "Primary color",
+    "secondaryColor": "Secondary color",
+    "save": "Save changes",
+    "saved": "Settings saved",
+    "slug": "Academy slug",
+    "slugHint": "The slug is set when the academy is created and cannot be changed.",
+    "themeSection": "Theme",
+    "themeHint": "Pick a ready-made theme, or choose Custom to set your own colors. Changes preview live and apply to your dashboard after you save.",
+    "themeDefault": "Platform default",
+    "themeCustom": "Custom",
+    "customThemeHint": "Set your main colors. Text contrast and dark mode are adjusted automatically.",
+    "resetColors": "Reset to platform colors",
+    "validation": {
+      "nameRequired": "Academy name is required",
+      "nameTooLong": "Name must be 120 characters or fewer",
+      "descriptionTooLong": "Description must be 1000 characters or fewer",
+      "invalidColor": "Enter a valid hex color like #9a5b2e"
+    }
+  },
   "Billing": {
     "title": "Billing",
     "subscriptions": "Subscriptions",
@@ -7412,6 +7579,19 @@
     "paymentsUnderReview": "Payments Under Review",
     "paymentSubmittedUnderReview": "Your payment was submitted and is now under review.",
     "reviewPayments": "Review Payments",
+    "paymentDetails": "Payment details",
+    "openPaymentsPage": "Go to payments page",
+    "noPendingDetails": "No payment under review for this subscription.",
+    "methodLabel": "Method",
+    "recordPayment": "Record payment",
+    "recordPaymentTitle": "Record a payment received in person",
+    "recordPaymentHint": "Use this only when the family paid you directly. It is added to the statement and settles the oldest unpaid charges of this subscription.",
+    "recordPaymentAmount": "Amount received",
+    "recordPaymentNote": "Note (optional)",
+    "recordPaymentOutstanding": "Outstanding",
+    "recordPaymentFull": "Pay full outstanding",
+    "recordPaymentInvalid": "Enter a valid amount",
+    "recordPaymentConfirm": "Record payment",
     "rejectReasonPlaceholder": "Reason for rejection",
     "approve": "Approve",
     "reject": "Reject",
@@ -7448,11 +7628,8 @@
       "instructions": "Instructions"
     },
     "type": {
-      "FULL_COURSE": "Full Course",
-      "MONTHLY": "Monthly",
-      "PER_SESSION": "Per Session",
-      "FAMILY": "Family",
-      "SCHOLARSHIP": "Scholarship"
+      "FULL_COURSE": "One-time payment",
+      "MONTHLY": "Monthly"
     },
     "entry": {
       "charge": "Charge",
@@ -7490,9 +7667,103 @@
     "createMethod": "Create Method",
     "remove": "Remove"
   },
+  "Accounting": {
+    "subscriptions": {
+      "title": "Subscriptions",
+      "subtitle": "Every student and parent subscription: who pays, how much, and what is still owed",
+      "searchPlaceholder": "Search payer, student or group",
+      "allStatuses": "All statuses",
+      "allTypes": "All types",
+      "allGroups": "All groups",
+      "payers": {
+        "ALL": "All payers",
+        "PARENT": "Parents",
+        "STUDENT": "Students (self-paying)"
+      },
+      "summary": {
+        "active": "Active subscriptions",
+        "billed": "Billed per cycle",
+        "outstanding": "Outstanding"
+      },
+      "columns": {
+        "payer": "Payer",
+        "students": "Students",
+        "groups": "Groups",
+        "type": "Type",
+        "amount": "Amount",
+        "paid": "Paid",
+        "outstanding": "Outstanding",
+        "status": "Status",
+        "started": "Started"
+      },
+      "payerParent": "Parent",
+      "payerStudent": "Student",
+      "settled": "Settled",
+      "empty": "No subscriptions match these filters",
+      "loading": "Loading subscriptions...",
+      "openFamily": "Open family ledger",
+      "scholarship": "Scholarship"
+    }
+  },
   "Payroll": {
     "title": "Teacher Payroll",
-    "subtitle": "Manage teacher pay profiles, monthly statements, bonuses, and payments",
+    "subtitle": "Pay each teacher per group, review the month by teacher or by group, then approve and pay",
+    "groups": "Groups",
+    "invalidRule": "Choose a group and enter a valid rate (a percentage cannot exceed 100).",
+    "tabs": { "payroll": "Monthly payroll", "rules": "Pay rules" },
+    "views": { "byTeacher": "By teacher", "byGroup": "By group" },
+    "allStatuses": "All",
+    "summary": {
+      "totalPayable": "Total payroll",
+      "teachers": "Teachers",
+      "groups": "Groups",
+      "collected": "Collected from subscriptions",
+      "draft": "Draft",
+      "approved": "Approved",
+      "paid": "Paid"
+    },
+    "group": "Group",
+    "groupsCount": "{count} groups",
+    "subscriptions": "Subscriptions",
+    "subscriptionsCount": "{count} subscriptions",
+    "collected": "Collected",
+    "rule": "Pay rule",
+    "teacherCost": "Teacher cost",
+    "shareOfCollected": "Share of collected",
+    "bonusesTotal": "Bonuses",
+    "teacherTotal": "Total",
+    "breakdown": "Breakdown by group",
+    "showBreakdown": "Show groups",
+    "hideBreakdown": "Hide groups",
+    "legacyStatement": "Single profile (legacy)",
+    "unknownTeacher": "Unknown teacher",
+    "rulesTitle": "Pay rules by group",
+    "rulesSubtitle": "Each group has one rule for its teacher. A teacher's monthly pay is the sum of their groups.",
+    "addRule": "Set pay rule",
+    "editRule": "Edit pay rule",
+    "removeRule": "Remove",
+    "ruleRemoved": "Pay rule removed",
+    "noRules": "No pay rules yet. Set one for each group so statements can be generated.",
+    "selectGroup": "Select a group",
+    "groupTeacher": "Teacher of the group",
+    "noGroupsWithTeacher": "No groups with an assigned teacher",
+    "ruleValue": {
+      "FIXED_PER_GROUP": "{amount} per month",
+      "FIXED_PER_SUBSCRIPTION": "{amount} per subscription",
+      "PERCENT_OF_SUBSCRIPTIONS": "{rate}% of collected"
+    },
+    "groupModels": {
+      "FIXED_PER_GROUP": "Fixed amount per group",
+      "PERCENT_OF_SUBSCRIPTIONS": "Percent of group subscriptions",
+      "FIXED_PER_SUBSCRIPTION": "Fixed amount per subscription"
+    },
+    "groupModelHints": {
+      "FIXED_PER_GROUP": "The same amount every month for this group.",
+      "PERCENT_OF_SUBSCRIPTIONS": "A percentage of the subscription money actually collected for the group that month.",
+      "FIXED_PER_SUBSCRIPTION": "An amount for every active subscription in the group that month."
+    },
+    "ratePercent": "Percentage (%)",
+    "rateAmount": "Amount",
     "teacher": "Teacher",
     "teachers": "Teachers",
     "month": "Month",
@@ -7702,9 +7973,21 @@
       "namePlaceholder": "e.g., Attendance reminder",
       "context": "Context",
       "body": "Template Body",
-      "bodyPlaceholder": "Write your template with variables like {{studentName}}...",
+      "bodyPlaceholder": "Write your template with variables like '{{'studentName'}}'...",
       "variableHint": "Click a variable below to insert it into the message.",
       "availableVariables": "Available variables"
+    },
+    "variables": {
+      "groupName": "Group name",
+      "courseName": "Course name",
+      "levelName": "Level name",
+      "teacherName": "Teacher name",
+      "startDate": "Start date",
+      "schedule": "Schedule",
+      "meetingLink": "Meeting link",
+      "whatsappGroupLink": "WhatsApp group link",
+      "studentName": "Student name",
+      "parentName": "Parent name"
     },
     "sendDialog": {
       "title": "Send WhatsApp Message",
@@ -7715,7 +7998,11 @@
       "preview": "Preview",
       "missingVariables": "Missing values",
       "openWhatsApp": "Open in WhatsApp",
-      "rendering": "Rendering..."
+      "rendering": "Rendering...",
+      "recipient": {
+        "STUDENT": "Will be sent to the student's phone",
+        "PARENT": "Will be sent to the parent's phone"
+      }
     }
   },
   "TeacherDashboard": {

@@ -41,9 +41,8 @@ import { AiSubscriptionModule } from './ai-subscription/ai-subscription.module';
 import { TranscriptionModule } from './transcription/transcription.module';
 import { ReportsModule } from './reports/reports.module';
 import { AgoraModule } from './agora/agora.module';
-import { GradeModule } from './grade/grade.module';
+import { AgeRangeModule } from './age-range/age-range.module';
 import { AcademicsModule } from './academics/academics.module';
-import { SchoolTypeModule } from './school-type/school-type.module';
 import { BillingModule } from './billing/billing.module';
 import { PayrollModule } from './payroll/payroll.module';
 import { CertificateModule } from './certificate/certificate.module';
@@ -118,9 +117,8 @@ import { getMongoUri, MONGO_CONNECTION_OPTIONS } from './config/mongo.config';
     TranscriptionModule,
     ReportsModule,
     AgoraModule,
-    GradeModule,
+    AgeRangeModule,
     AcademicsModule,
-    SchoolTypeModule,
     BillingModule,
     PayrollModule,
     CertificateModule,

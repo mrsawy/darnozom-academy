@@ -92,34 +92,7 @@ describe('SubscriptionService.create', () => {
     );
   });
 
-  it('posts nothing for a full scholarship', async () => {
-    const { service, ledger } = makeService();
-    await service.create(actor(), { ...fullCourse, type: SubscriptionType.SCHOLARSHIP, amountMinor: 0 });
-    expect(ledger.postCharges).toHaveBeenCalledWith(expect.objectContaining({ charges: [] }));
-  });
-
-  it('accepts a FAMILY subscription with two siblings', async () => {
-    const { service, created } = makeService();
-    await service.create(actor(), {
-      type: SubscriptionType.FAMILY,
-      amountMinor: 80_000,
-      currency: Currency.EGP,
-      items: [
-        { studentId: String(CHILD_A), groupId: String(GROUP_A) },
-        { studentId: String(CHILD_B), groupId: String(GROUP_B) },
-      ],
-    });
-    expect((created[0].items as unknown[]).length).toBe(2);
-  });
-
-  it('refuses a FAMILY subscription with only one child', async () => {
-    const { service } = makeService();
-    await expect(service.create(actor(), { ...fullCourse, type: SubscriptionType.FAMILY, amountMinor: 80_000 })).rejects.toThrow(
-      new BadRequestException(BillingErrors.FAMILY_SUBSCRIPTION_NEEDS_SIBLINGS)
-    );
-  });
-
-  it('refuses any non-FAMILY type with more than one item', async () => {
+  it('refuses a subscription with more than one item', async () => {
     const { service } = makeService();
     await expect(
       service.create(actor(), {
@@ -130,26 +103,6 @@ describe('SubscriptionService.create', () => {
         ],
       })
     ).rejects.toThrow(new BadRequestException(BillingErrors.SUBSCRIPTION_ITEMS_INVALID));
-  });
-
-  it('refuses a FAMILY subscription spanning two different families', async () => {
-    // Ruling: Passed purpose-built families double into makeService instead of monkey-patching.
-    const twoFamilies = new Map([
-      [String(CHILD_A), String(PARENT)],
-      [String(CHILD_B), String(new Types.ObjectId())],
-    ]);
-    const { service } = makeService(false, async () => twoFamilies);
-    await expect(
-      service.create(actor(), {
-        type: SubscriptionType.FAMILY,
-        amountMinor: 80_000,
-        currency: Currency.EGP,
-        items: [
-          { studentId: String(CHILD_A), groupId: String(GROUP_A) },
-          { studentId: String(CHILD_B), groupId: String(GROUP_B) },
-        ],
-      })
-    ).rejects.toThrow(new BadRequestException(BillingErrors.FAMILY_SUBSCRIPTION_NEEDS_SIBLINGS));
   });
 
   it('refuses a negative or fractional amount', async () => {

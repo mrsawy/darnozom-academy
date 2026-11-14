@@ -19,6 +19,7 @@ import {
   UpdateGroupPayload,
   WhatsappPayload,
 } from './dto/group.dto';
+import { GroupAttendanceService } from './group-attendance.service';
 import { GroupStudentsService } from './group-students.service';
 import { GroupTeacherService } from './group-teacher.service';
 import { GroupService } from './group.service';
@@ -29,7 +30,8 @@ export class GroupControllerMessage {
   constructor(
     private readonly groupService: GroupService,
     private readonly groupStudents: GroupStudentsService,
-    private readonly groupTeacher: GroupTeacherService
+    private readonly groupTeacher: GroupTeacherService,
+    private readonly groupAttendance: GroupAttendanceService
   ) {}
 
   @RequirePermissionsGuard({ action: Actions.READ, subject: Subjects.GROUP })
@@ -42,6 +44,13 @@ export class GroupControllerMessage {
   @MessagePattern('academics.groups.findOne')
   findOne(@Payload(new RpcValidationPipe()) payload: IdPayload, @Ctx() context: IUserContext) {
     return this.groupService.findOne(actorFromContext(context), payload.id);
+  }
+
+  /** Attendance grid (students x sessions); the service limits it to organization staff and the group's own teacher. */
+  @RequirePermissionsGuard({ action: Actions.READ, subject: Subjects.GROUP })
+  @MessagePattern('academics.groups.attendanceMatrix')
+  attendanceMatrix(@Payload(new RpcValidationPipe()) payload: IdPayload, @Ctx() context: IUserContext) {
+    return this.groupAttendance.matrix(actorFromContext(context), payload.id);
   }
 
   @RequirePermissionsGuard({ action: Actions.CREATE, subject: Subjects.GROUP })

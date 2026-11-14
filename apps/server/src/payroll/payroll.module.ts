@@ -2,12 +2,17 @@ import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TeacherPayProfile, TeacherPayProfileSchema } from './entities/teacher-pay-profile.entity';
 import { PayStatement, PayStatementSchema } from './entities/pay-statement.entity';
+import { GroupPayRule, GroupPayRuleSchema } from './entities/group-pay-rule.entity';
+import { BillingSubscription, BillingSubscriptionSchema } from '../billing/entities/subscription.entity';
 import { Session, SessionSchema } from '../academics/session/entities/session.entity';
 import { Group, GroupSchema } from '../academics/group/entities/group.entity';
 import { LedgerEntry, LedgerEntrySchema } from '../billing/entities/ledger-entry.entity';
 import { Allocation, AllocationSchema } from '../billing/entities/allocation.entity';
 import { Organization, OrganizationSchema } from '../organization/entities/organization.entity';
 import { TeacherPayProfileService } from './services/teacher-pay-profile.service';
+import { User, UserSchema } from '../user/entities/user.entity';
+import { PayrollLookupService } from './services/payroll-lookup.service';
+import { GroupPayRuleService } from './services/group-pay-rule.service';
 import { PayrollService } from './services/payroll.service';
 import { SessionDisputeService } from './services/session-dispute.service';
 import { PayrollControllerMessage } from './payroll.controller.message';
@@ -19,6 +24,9 @@ import { RoleModule } from 'src/role/role.module';
     MongooseModule.forFeature([
       { name: TeacherPayProfile.name, schema: TeacherPayProfileSchema },
       { name: PayStatement.name, schema: PayStatementSchema },
+      { name: GroupPayRule.name, schema: GroupPayRuleSchema },
+      { name: User.name, schema: UserSchema },
+      { name: BillingSubscription.name, schema: BillingSubscriptionSchema },
       { name: Session.name, schema: SessionSchema },
       { name: Group.name, schema: GroupSchema },
       { name: LedgerEntry.name, schema: LedgerEntrySchema },
@@ -28,8 +36,8 @@ import { RoleModule } from 'src/role/role.module';
     forwardRef(() => AuthModule),
     RoleModule,
   ],
-  providers: [TeacherPayProfileService, PayrollService, SessionDisputeService],
+  providers: [PayrollLookupService, GroupPayRuleService, TeacherPayProfileService, PayrollService, SessionDisputeService],
   controllers: [PayrollControllerMessage],
-  exports: [MongooseModule, TeacherPayProfileService, PayrollService, SessionDisputeService],
+  exports: [MongooseModule, GroupPayRuleService, TeacherPayProfileService, PayrollService, SessionDisputeService],
 })
 export class PayrollModule {}

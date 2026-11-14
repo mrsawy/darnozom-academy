@@ -19,7 +19,10 @@ import {
   useCreateLevel,
   useDeleteLevel,
   useLevels,
+  useUpdateLevel,
 } from '@/lib/hooks/academics/use-academics.hook';
+import { EditFieldsDialog } from './edit-fields-dialog/edit-fields-dialog';
+import { AgeRangeSelect } from './age-range-select';
 import { LevelCohorts } from './level-cohorts';
 import { ConfirmButton } from './confirm-button';
 import { StepHeader } from './step-header';
@@ -32,9 +35,11 @@ export function CourseLevels({ courseId }: { courseId: string }) {
   const { data: levels = [] } = useLevels(courseId);
   const createLevel = useCreateLevel();
   const deleteLevel = useDeleteLevel();
+  const updateLevel = useUpdateLevel();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
   const [order, setOrder] = useState('');
+  const [ageRangeId, setAgeRangeId] = useState<string | null>(null);
   const [editingRulesLevel, setEditingRulesLevel] = useState<ILevel | null>(null);
 
   const nextOrder = String(levels.length + 1);
@@ -44,6 +49,7 @@ export function CourseLevels({ courseId }: { courseId: string }) {
     if (next) {
       setName('');
       setOrder(nextOrder);
+      setAgeRangeId(null);
     }
   };
 
@@ -68,7 +74,7 @@ export function CourseLevels({ courseId }: { courseId: string }) {
                 onSubmit={(event) => {
                   event.preventDefault();
                   createLevel.mutate(
-                    { courseId, name, order: Number(order) },
+                    { courseId, name, order: Number(order), ...(ageRangeId ? { ageRangeId } : {}) },
                     { onSuccess: () => setOpen(false) }
                   );
                 }}>
@@ -99,6 +105,11 @@ export function CourseLevels({ courseId }: { courseId: string }) {
                       required
                     />
                     <p className="text-muted-foreground text-xs">{t('programs.orderHint')}</p>
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="level-age-range">{t('ageRange')}</Label>
+                    <AgeRangeSelect id="level-age-range" value={ageRangeId} onChange={setAgeRangeId} />
+                    <p className="text-muted-foreground text-xs">{t('programs.ageRangeHint')}</p>
                   </div>
                 </div>
                 <DialogFooter>
@@ -131,7 +142,30 @@ export function CourseLevels({ courseId }: { courseId: string }) {
                 </span>
                 <span className="truncate font-medium">{level.name}</span>
               </div>
-              <div className="flex items-center gap-1">
+              <div className="flex flex-wrap items-center gap-1">
+                <AgeRangeSelect
+                  value={level.ageRangeId}
+                  disabled={updateLevel.isPending}
+                  className="h-8 w-40 text-xs"
+                  onChange={(next) => updateLevel.mutate({ id: level._id, data: { ageRangeId: next } })}
+                />
+                <EditFieldsDialog
+                  triggerLabel={t('programs.editLevel')}
+                  title={t('programs.editLevel')}
+                  description={t('programs.orderHint')}
+                  fields={[
+                    { name: 'name', label: t('name'), type: 'text', required: true },
+                    { name: 'order', label: t('order'), type: 'number', required: true, min: 1 },
+                  ]}
+                  values={{ name: level.name, order: String(level.order) }}
+                  pending={updateLevel.isPending}
+                  onSave={(v, close) =>
+                    updateLevel.mutate(
+                      { id: level._id, data: { name: v.name, order: Number(v.order) } },
+                      { onSuccess: close }
+                    )
+                  }
+                />
                 <Button variant="ghost" size="sm" onClick={() => setEditingRulesLevel(level)}>
                   <Award className="size-4" />
                   <span className="hidden sm:inline">{tCert('rules.button')}</span>

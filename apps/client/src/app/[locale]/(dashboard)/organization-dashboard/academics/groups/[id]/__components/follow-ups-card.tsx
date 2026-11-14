@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/components/atoms/loading-state';
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { FollowUpDecision } from '@darnozom/shared-types';
@@ -76,7 +77,7 @@ export function FollowUpsCard({ groupId }: { groupId: string }) {
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <p>{t('loading')}</p>
+          <LoadingState />
         ) : rows.length === 0 ? (
           <p className="text-muted-foreground">{t('followUps.empty')}</p>
         ) : (

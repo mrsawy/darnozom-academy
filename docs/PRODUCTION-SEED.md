@@ -7,7 +7,7 @@ confused.
 | | `pnpm seed` (dev) | `pnpm seed:prod` | `pnpm seed:prod:fresh` |
 |---|---|---|---|
 | Wipes every collection first | **Yes** | Never | **Yes** |
-| Roles, grades, school types, plans, AI plans | Yes | Yes | Yes |
+| Roles, age ranges, plans, AI plans | Yes | Yes | Yes |
 | Platform admin | faker-generated, password `password123` | from environment, created once | from environment (always created after wipe) |
 | Organizations, users, courses, enrollments, reviews, chat… | Yes (faker) | **No** | wiped, then not re-seeded |
 | Safe to re-run against live data | No | Yes — every write is an idempotent upsert | No — destroys all data first |
@@ -15,7 +15,7 @@ confused.
 ## What it seeds
 
 1. **Roles** — all 8 (`platform-admin`, `super-admin`, `admin`, `instructor`, `student`, `parent`, `secretary`, `guest`) with their CASL permission rules. Upserted by `name`.
-2. **Grades** — the 6 Egyptian grades (1st Preparatory → 3rd Secondary). Upserted by `nameEn`.
+2. **Age ranges** — 3-5, 6-8, 9-12, 13-17 and 18+ years. Upserted by `nameEn`.
 3. **School types** — Public, Private, Language, International, Azhar. Upserted by `nameEn`.
 4. **Subscription plans** — Free, Basic, Pro, Enterprise. Upserted by `tier`.
 5. **AI plans** — AI Free (20 messages/day) and AI Pro (unlimited). Upserted by `tier`.
@@ -70,7 +70,7 @@ All of these abort the run with a non-zero exit code (see `prod-preflight.ts`):
   "500 EGP" as "$500". The seed verifies a plausible USD→EGP rate (≥ 2; the real rate is ~48)
   before writing any plan.
 
-The rate check runs after roles, grades and school types are seeded, so a rate-API outage can
+The rate check runs after roles and age ranges are seeded, so a rate-API outage can
 leave those three written and the plans not. They are static reference data upserted by a natural
 key, so simply re-running once the network is healthy is safe and completes the job. After a
 failed `:fresh` run the wipe has already happened — re-run `seed:prod` (or `:fresh` again) to

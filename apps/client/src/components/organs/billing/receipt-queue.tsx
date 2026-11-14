@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/components/atoms/loading-state';
 import { useEffect, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { formatMoney } from '@/lib/utils/billing/format-money';
@@ -142,9 +143,7 @@ export function ReceiptQueue({
     return (
       <div className="space-y-3">
         {filter}
-        <div className="bg-card text-muted-foreground flex h-32 items-center justify-center rounded-lg border p-6">
-          {t('loading')}
-        </div>
+        <LoadingState className="bg-card h-32 rounded-lg border p-6" />
       </div>
     );
   }

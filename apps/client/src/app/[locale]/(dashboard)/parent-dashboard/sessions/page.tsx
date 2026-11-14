@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/components/atoms/loading-state';
 import { useTranslations } from 'next-intl';
 import { Card, CardContent } from '@/components/atoms/card';
 import { ChildSessions } from '../children/__components/child-sessions';
@@ -22,7 +23,7 @@ export default function ParentSessionsPage() {
       </div>
 
       {isLoading ? (
-        <p className="text-muted-foreground text-sm">{t('loading')}</p>
+        <LoadingState />
       ) : children.length === 0 ? (
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12 text-center">

@@ -1,6 +1,6 @@
 import { Types } from 'mongoose';
 import { BadRequestException, ConflictException, NotFoundException } from '@nestjs/common';
-import { Currency, GroupStudentStatus, PayStatementStatus, PayrollErrors, Roles, SessionStatus, TeacherPayModel } from '@darnozom/shared-types';
+import { Currency, GroupPayModel, GroupStudentStatus, PayStatementStatus, PayrollErrors, Roles } from '@darnozom/shared-types';
 import { PayrollService } from './payroll.service';
 import { DisputeActor } from './session-dispute.service';
 
@@ -29,14 +29,12 @@ describe('PayrollService', () => {
     findById: jest.Mock;
     create: jest.Mock;
   };
-  let profileService: {
-    getProfiles: jest.Mock;
-    findEffectiveProfile: jest.Mock;
-  };
+  let ruleService: { effectiveForMonth: jest.Mock };
+  let subscriptionModel: { countDocuments: jest.Mock };
   let sessionModel: { find: jest.Mock };
   let groupModel: { find: jest.Mock };
   let ledgerEntryModel: { find: jest.Mock };
-  let allocationModel: { find: jest.Mock };
+  let allocationModel: { aggregate: jest.Mock };
   let organizationModel: { findById: jest.Mock };
 
   const orgId = new Types.ObjectId();
@@ -65,21 +63,20 @@ describe('PayrollService', () => {
       findById: jest.fn(),
       create: jest.fn(),
     };
-    profileService = {
-      getProfiles: jest.fn(),
-      findEffectiveProfile: jest.fn(),
-    };
+    ruleService = { effectiveForMonth: jest.fn() };
+    subscriptionModel = { countDocuments: jest.fn().mockResolvedValue(0) };
     sessionModel = { find: jest.fn() };
     groupModel = { find: jest.fn() };
-    ledgerEntryModel = { find: jest.fn().mockResolvedValue([]) };
-    allocationModel = { find: jest.fn().mockResolvedValue([]) };
+    ledgerEntryModel = { find: jest.fn().mockReturnValue({ select: () => ({ lean: () => Promise.resolve([]) }) }) };
+    allocationModel = { aggregate: jest.fn().mockResolvedValue([]) };
     organizationModel = {
       findById: jest.fn().mockResolvedValue({ timezone: 'UTC' }),
     };
 
     service = new PayrollService(
       payStatementModel as never,
-      profileService as never,
+      ruleService as never,
+      subscriptionModel as never,
       sessionModel as never,
       groupModel as never,
       ledgerEntryModel as never,
@@ -89,103 +86,96 @@ describe('PayrollService', () => {
   });
 
   describe('generateStatements', () => {
-    it('generates a draft statement for teacher with countable sessions', async () => {
-      profileService.getProfiles.mockResolvedValue([
-        {
-          teacherId,
-          model: TeacherPayModel.PER_SESSION,
-          rate: 50,
-          currency: Currency.USD,
-        },
-      ]);
+    const groupId = new Types.ObjectId();
+    const rule = (over: Record<string, unknown> = {}) => ({
+      teacherId,
+      groupId,
+      model: GroupPayModel.FIXED_PER_GROUP,
+      rate: 300,
+      currency: Currency.USD,
+      ...over,
+    });
+    const group = { _id: groupId, name: 'Tajweed A', students: [{ studentId: new Types.ObjectId(), status: GroupStudentStatus.ACTIVE }] };
 
+    beforeEach(() => {
       payStatementModel.findOne.mockResolvedValue(null);
-      profileService.findEffectiveProfile.mockResolvedValue({
-        model: TeacherPayModel.PER_SESSION,
-        rate: 50,
-        currency: Currency.USD,
-      });
+      sessionModel.find.mockResolvedValue([]);
+      groupModel.find.mockResolvedValue([group]);
+      payStatementModel.create.mockImplementation((doc: unknown) => Promise.resolve(doc));
+    });
 
-      const groupId = new Types.ObjectId();
-      const sessionStarts = new Date('2026-10-10T10:00:00.000Z');
-      const sessionEnds = new Date('2026-10-10T11:00:00.000Z');
-
-      sessionModel.find.mockResolvedValue([
-        {
-          _id: new Types.ObjectId(),
-          organizationId: orgId,
-          teacherId,
-          groupId,
-          status: SessionStatus.COMPLETED,
-          disputed: false,
-          startsAt: sessionStarts,
-          endsAt: sessionEnds,
-        },
-      ]);
-
-      const student1 = new Types.ObjectId();
-      groupModel.find.mockResolvedValue([
-        {
-          _id: groupId,
-          students: [{ studentId: student1, status: GroupStudentStatus.ACTIVE }],
-        },
-      ]);
-
-      const createdStatement: MockDoc = {
-        _id: statementId,
-        organizationId: orgId,
-        teacherId,
-        month: '2026-10',
-        status: PayStatementStatus.DRAFT,
-        baseAmount: 50,
-        total: 50,
-        save: jest.fn().mockResolvedValue(true),
-      };
-      payStatementModel.create.mockResolvedValue(createdStatement);
+    it('pays a fixed amount per group', async () => {
+      ruleService.effectiveForMonth.mockResolvedValue([rule()]);
 
       const result = await service.generateStatements(orgId.toString(), '2026-10');
 
       expect(result).toHaveLength(1);
       expect(payStatementModel.create).toHaveBeenCalledWith(
         expect.objectContaining({
-          organizationId: orgId,
           teacherId,
           month: '2026-10',
-          baseAmount: 50,
-          total: 50,
+          baseAmount: 300,
+          total: 300,
+          currency: Currency.USD,
           status: PayStatementStatus.DRAFT,
-          basis: expect.objectContaining({
-            sessions: 1,
-            minutes: 60,
-            students: 1,
-          }),
+          lines: [expect.objectContaining({ groupName: 'Tajweed A', model: GroupPayModel.FIXED_PER_GROUP, amount: 300 })],
         })
       );
     });
 
+    it('pays a fixed amount per active subscription', async () => {
+      ruleService.effectiveForMonth.mockResolvedValue([rule({ model: GroupPayModel.FIXED_PER_SUBSCRIPTION, rate: 40 })]);
+      subscriptionModel.countDocuments.mockResolvedValue(5);
+
+      await service.generateStatements(orgId.toString(), '2026-10');
+
+      expect(payStatementModel.create).toHaveBeenCalledWith(
+        expect.objectContaining({ baseAmount: 200, lines: [expect.objectContaining({ subscriptions: 5, amount: 200 })] })
+      );
+    });
+
+    it('pays a percentage of the subscription money collected in the month', async () => {
+      ruleService.effectiveForMonth.mockResolvedValue([rule({ model: GroupPayModel.PERCENT_OF_SUBSCRIPTIONS, rate: 25 })]);
+      const chargeId = new Types.ObjectId();
+      ledgerEntryModel.find.mockReturnValue({ select: () => ({ lean: () => Promise.resolve([{ _id: chargeId }]) }) });
+      allocationModel.aggregate.mockResolvedValue([{ total: 80_000 }]); // 800.00 collected
+
+      await service.generateStatements(orgId.toString(), '2026-10');
+
+      expect(payStatementModel.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          baseAmount: 200,
+          basis: expect.objectContaining({ revenue: 800 }),
+          lines: [expect.objectContaining({ collected: 800, amount: 200 })],
+        })
+      );
+    });
+
+    it('sums one line per group into a single statement for the teacher', async () => {
+      const otherGroupId = new Types.ObjectId();
+      groupModel.find.mockResolvedValue([group, { _id: otherGroupId, name: 'Hifz B', students: [] }]);
+      ruleService.effectiveForMonth.mockResolvedValue([rule(), rule({ groupId: otherGroupId, model: GroupPayModel.FIXED_PER_SUBSCRIPTION, rate: 10 })]);
+      subscriptionModel.countDocuments.mockResolvedValue(3);
+
+      await service.generateStatements(orgId.toString(), '2026-10');
+
+      expect(payStatementModel.create).toHaveBeenCalledTimes(1);
+      expect(payStatementModel.create).toHaveBeenCalledWith(expect.objectContaining({ baseAmount: 330, total: 330 }));
+    });
+
     it('skips statement if already APPROVED or PAID', async () => {
-      profileService.getProfiles.mockResolvedValue([{ teacherId, model: TeacherPayModel.FIXED, rate: 1000, currency: Currency.USD }]);
-      payStatementModel.findOne.mockResolvedValue({
-        status: PayStatementStatus.APPROVED,
-      });
+      ruleService.effectiveForMonth.mockResolvedValue([rule()]);
+      payStatementModel.findOne.mockResolvedValue({ status: PayStatementStatus.APPROVED });
 
       const result = await service.generateStatements(orgId.toString(), '2026-10');
+
       expect(result).toHaveLength(0);
       expect(payStatementModel.create).not.toHaveBeenCalled();
     });
 
     it('recalculates existing DRAFT statement preserving bonuses', async () => {
-      profileService.getProfiles.mockResolvedValue([{ teacherId, model: TeacherPayModel.FIXED, rate: 1000, currency: Currency.USD }]);
-
-      const existingBonuses = [
-        {
-          amount: 200,
-          reason: 'Hard work',
-          addedBy: new Types.ObjectId(),
-          addedAt: new Date(),
-        },
-      ];
-
+      ruleService.effectiveForMonth.mockResolvedValue([rule({ rate: 1000 })]);
+      const existingBonuses = [{ amount: 200, reason: 'Hard work', addedBy: new Types.ObjectId(), addedAt: new Date() }];
       const existingDraft: MockDoc = {
         _id: statementId,
         organizationId: orgId,
@@ -199,14 +189,7 @@ describe('PayrollService', () => {
           return Promise.resolve(this);
         }),
       };
-
       payStatementModel.findOne.mockResolvedValue(existingDraft);
-      profileService.findEffectiveProfile.mockResolvedValue({
-        model: TeacherPayModel.FIXED,
-        rate: 1000,
-        currency: Currency.USD,
-      });
-      sessionModel.find.mockResolvedValue([]);
 
       const result = await service.generateStatements(orgId.toString(), '2026-10');
 

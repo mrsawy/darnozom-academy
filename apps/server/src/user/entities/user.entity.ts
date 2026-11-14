@@ -232,41 +232,22 @@ export class User extends Document<mongoose.Types.ObjectId> {
 
   @Prop({
     type: [mongoose.Types.ObjectId],
-    ref: 'Grade',
+    ref: 'AgeRange',
     default: [],
     validate: {
       validator: function (this: User, value: Types.ObjectId[]) {
-        // If gradesIds is empty or undefined, it's valid
+        // If ageRangesIds is empty or undefined, it's valid
         if (!value || value.length === 0) {
           return true;
         }
-        // If gradesIds is provided, roleName must be INSTRUCTOR
+        // If ageRangesIds is provided, roleName must be INSTRUCTOR
         const roleName = this.roleName;
         return roleName !== undefined && String(roleName).toLowerCase() === Roles.INSTRUCTOR.toLowerCase();
       },
-      message: 'gradesIds is only acceptable for INSTRUCTOR role',
+      message: 'ageRangesIds is only acceptable for INSTRUCTOR role',
     },
   })
-  gradesIds: Types.ObjectId[];
-
-  @Prop({
-    type: [mongoose.Types.ObjectId],
-    ref: 'SchoolType',
-    default: [],
-    validate: {
-      validator: function (this: User, value: Types.ObjectId[]) {
-        // If schoolTypesIds is empty or undefined, it's valid
-        if (!value || value.length === 0) {
-          return true;
-        }
-        // If schoolTypesIds is provided, roleName must be INSTRUCTOR
-        const roleName = this.roleName;
-        return roleName !== undefined && String(roleName).toLowerCase() === Roles.INSTRUCTOR.toLowerCase();
-      },
-      message: 'schoolTypesIds is only acceptable for INSTRUCTOR role',
-    },
-  })
-  schoolTypesIds: Types.ObjectId[];
+  ageRangesIds: Types.ObjectId[];
 
   @Prop({
     type: Types.ObjectId,
@@ -376,8 +357,7 @@ UserSchema.pre('save', function (next) {
     this.totalCoursesReviews = undefined;
     this.totalStudents = undefined;
     this.totalCourses = undefined;
-    this.gradesIds = [];
-    this.schoolTypesIds = [];
+    this.ageRangesIds = [];
   }
 
   if (!isStudent) {
@@ -436,15 +416,9 @@ UserSchema.virtual('categories', {
   foreignField: '_id',
   justOne: false,
 });
-UserSchema.virtual('grades', {
-  ref: 'Grade',
-  localField: 'gradesIds',
-  foreignField: '_id',
-  justOne: false,
-});
-UserSchema.virtual('schoolTypes', {
-  ref: 'SchoolType',
-  localField: 'schoolTypesIds',
+UserSchema.virtual('ageRanges', {
+  ref: 'AgeRange',
+  localField: 'ageRangesIds',
   foreignField: '_id',
   justOne: false,
 });

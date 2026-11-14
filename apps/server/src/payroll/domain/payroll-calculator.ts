@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import { PayrollErrors, SessionStatus, TeacherPayModel } from '@darnozom/shared-types';
+import { GroupPayModel, PayrollErrors, SessionStatus, TeacherPayModel } from '@darnozom/shared-types';
 
 export function getMonthInterval(month: string, timezone = 'UTC'): { start: Date; end: Date } {
   const match = /^(\d{4})-(\d{2})$/.exec(month);
@@ -89,6 +89,38 @@ export function calculateBaseAmount(model: TeacherPayModel, rate: number, basis:
         throw new Error(PayrollErrors.INVALID_PAY_RATE);
       }
       return roundToTwo((rate / 100) * basis.revenue);
+    }
+    default: {
+      throw new Error(PayrollErrors.INVALID_PAY_MODEL);
+    }
+  }
+}
+
+export interface IGroupPayBasis {
+  /** Active subscriptions touching the group during the month. */
+  subscriptions: number;
+  /** Subscription money collected for the group in the month, in major units. */
+  collected: number;
+}
+
+/** Pay for one group for one month. `rate` is a percentage for PERCENT_OF_SUBSCRIPTIONS, an amount otherwise. */
+export function calculateGroupAmount(model: GroupPayModel, rate: number, basis: IGroupPayBasis): number {
+  if (rate < 0) {
+    throw new Error(PayrollErrors.INVALID_PAY_RATE);
+  }
+
+  switch (model) {
+    case GroupPayModel.FIXED_PER_GROUP: {
+      return roundToTwo(rate);
+    }
+    case GroupPayModel.FIXED_PER_SUBSCRIPTION: {
+      return roundToTwo(rate * basis.subscriptions);
+    }
+    case GroupPayModel.PERCENT_OF_SUBSCRIPTIONS: {
+      if (rate > 100) {
+        throw new Error(PayrollErrors.INVALID_PAY_RATE);
+      }
+      return roundToTwo((rate / 100) * basis.collected);
     }
     default: {
       throw new Error(PayrollErrors.INVALID_PAY_MODEL);

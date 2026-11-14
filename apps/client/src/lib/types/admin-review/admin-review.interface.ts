@@ -67,10 +67,7 @@ export interface IReviewableCourse extends IReviewableItem {
   instructor?: IReviewablePerson;
   coInstructors?: IReviewablePerson[];
   categories?: { _id: string; name: string }[];
-  grade?: { _id: string; nameEn: string; nameAr: string } | null;
-  schoolTypes?: { _id: string; nameEn: string; nameAr: string }[];
-  /** @deprecated legacy read compat */
-  schoolType?: { _id: string; nameEn: string; nameAr: string } | null;
+  ageRanges?: { _id: string; nameEn: string; nameAr: string }[];
 }
 
 export interface IReviewableModule extends IReviewableItem {

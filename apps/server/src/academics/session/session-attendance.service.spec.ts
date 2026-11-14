@@ -1,6 +1,6 @@
 import { BadRequestException, ConflictException, ForbiddenException } from '@nestjs/common';
 import { Types } from 'mongoose';
-import { AcademicsErrors, AttendanceStatus, Roles, SessionStatus } from '@darnozom/shared-types';
+import { AcademicsErrors, AttendanceSource, AttendanceStatus, Roles, SessionStatus } from '@darnozom/shared-types';
 import { mockQuery } from '__test__/academics/mock-query';
 import { AcademicsActor } from '../common/actor';
 import { SessionAttendanceService } from './session-attendance.service';
@@ -52,8 +52,8 @@ describe('SessionAttendanceService.markStudents', () => {
     expect(filter).toEqual({ _id: SESSION, status: { $in: [SessionStatus.SCHEDULED, SessionStatus.REPORT_PENDING] } });
     expect(update.$set.teacherAttendance).toBe(AttendanceStatus.PRESENT);
     expect(update.$set.attendance).toEqual([
-      { studentId: A, status: AttendanceStatus.PRESENT, markedBy: TEACHER, markedAt: during },
-      { studentId: B, status: AttendanceStatus.LATE, note: 'bus', markedBy: TEACHER, markedAt: during },
+      { studentId: A, status: AttendanceStatus.PRESENT, markedBy: TEACHER, markedAt: during, source: AttendanceSource.MANUAL },
+      { studentId: B, status: AttendanceStatus.LATE, note: 'bus', markedBy: TEACHER, markedAt: during, source: AttendanceSource.MANUAL },
     ]);
   });
 

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 import { Button } from '@/components/atoms/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/card';
 import {
@@ -11,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/atoms/select';
+import { ROUTE_ORG_TEACHER } from '@/lib/data/constants/routes.constants';
 import type { IGroupDetail } from '@/lib/types/academics/academics';
 import {
   useAssignTeacher,
@@ -33,7 +35,9 @@ export function TeacherCard({ group, disabled }: { group: IGroupDetail; disabled
       <CardContent className="space-y-3">
         {group.teacherId ? (
           <div className="flex items-center justify-between">
-            <span className="font-medium">{group.people[group.teacherId] ?? group.teacherId}</span>
+            <Link href={ROUTE_ORG_TEACHER(group.teacherId)} className="font-medium hover:underline">
+              {group.people[group.teacherId] ?? group.teacherId}
+            </Link>
             <Button
               variant="outline"
               size="sm"

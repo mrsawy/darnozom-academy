@@ -1,7 +1,7 @@
 import { IsArray, IsInt, IsMongoId, IsNumber, IsOptional, IsString, Max, Min } from 'class-validator';
 import { Type, Transform } from 'class-transformer';
 
-/** Splits CSV query params (`?gradeIds=a,b`) into arrays; leaves arrays untouched. */
+/** Splits CSV query params (`?ageRangeIds=a,b`) into arrays; leaves arrays untouched. */
 const toStringArray = ({ value }: { value: unknown }): string[] | undefined => {
   if (value === undefined || value === null) {
     return undefined;
@@ -37,13 +37,7 @@ export class FindInstructorsDto {
   @Transform(toStringArray)
   @IsArray()
   @IsMongoId({ each: true })
-  gradeIds?: string[];
-
-  @IsOptional()
-  @Transform(toStringArray)
-  @IsArray()
-  @IsMongoId({ each: true })
-  schoolTypeIds?: string[];
+  ageRangeIds?: string[];
 
   @IsOptional()
   @Type(() => Number)

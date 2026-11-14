@@ -48,7 +48,7 @@ const APPROVED_STATEMENT: IPayStatement = {
 describe('PayStatementsTable', () => {
   it('renders loading state when isLoading is true', () => {
     render(<PayStatementsTable statements={[]} isLoading />);
-    expect(screen.getByText('loading')).toBeInTheDocument();
+    expect(screen.getByRole('status')).toBeInTheDocument();
   });
 
   it('renders empty state when statements array is empty', () => {

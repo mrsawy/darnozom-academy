@@ -13,10 +13,7 @@ export interface ICourseFilters extends PaginateOptions {
   selectedCategory?: string;
   /** Multi-select subject filter (comma-separated string or array of category ids). */
   categoryIds?: string | string[];
-  gradeId?: string;
-  /** Preferred multi filter (CSV string or array). OR match via $in. */
-  schoolTypeIds?: string | string[];
-  /** @deprecated Prefer schoolTypeIds; mapped to $in for old URLs. */
-  schoolTypeId?: string;
+  /** Multi filter (CSV string or array). OR match via $in. */
+  ageRangeIds?: string | string[];
   instructorId?: string;
 }

@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/components/atoms/loading-state';
 import { useState } from 'react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
@@ -80,7 +81,7 @@ export function GroupCertificatesCard({
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <p className="text-muted-foreground text-sm">{t('common.loading')}</p>
+          <LoadingState />
         ) : certificates.length === 0 ? (
           <div className="py-8 text-center">
             <p className="text-muted-foreground text-sm">{t('groupTab.empty')}</p>

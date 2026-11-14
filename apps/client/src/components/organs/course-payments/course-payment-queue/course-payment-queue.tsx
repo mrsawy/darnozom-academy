@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/components/atoms/loading-state';
 import { useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { Button } from '@/components/atoms/button';
@@ -129,9 +130,13 @@ export function CoursePaymentQueue({
       </div>
 
       {isLoading || payments.length === 0 ? (
-        <div className="bg-card text-muted-foreground flex h-32 items-center justify-center rounded-lg border p-6">
-          {isLoading ? t('loading') : t('empty')}
-        </div>
+        isLoading ? (
+          <LoadingState className="bg-card h-32 rounded-lg border p-6" />
+        ) : (
+          <div className="bg-card text-muted-foreground flex h-32 items-center justify-center rounded-lg border p-6">
+            {t('empty')}
+          </div>
+        )
       ) : (
         payments.map((payment) => (
           <CoursePaymentRow key={payment._id} payment={payment} onApprove={onApprove} onReject={onReject} />

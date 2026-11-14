@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { AttendanceStatus, SessionStatus } from '@darnozom/shared-types';
+import { AttendanceSource, AttendanceStatus, SessionStatus } from '@darnozom/shared-types';
 
 @Schema({ _id: false })
 export class SessionAttendance {
@@ -18,6 +18,10 @@ export class SessionAttendance {
 
   @Prop({ type: Date, required: true })
   markedAt: Date;
+
+  /** AUTO rows come from joining the session or the end-of-session sweep; a manual mark always replaces them. */
+  @Prop({ type: String, enum: Object.values(AttendanceSource), default: AttendanceSource.MANUAL })
+  source: AttendanceSource;
 }
 export const SessionAttendanceSchema = SchemaFactory.createForClass(SessionAttendance);
 
@@ -97,6 +101,10 @@ export class Session extends Document<Types.ObjectId> {
 
   @Prop({ type: Types.ObjectId, ref: 'User', required: false })
   cancelledBy?: Types.ObjectId;
+
+  /** Set once the end-of-session sweep has added AUTO absences, so it never runs twice for a session. */
+  @Prop({ type: Date, required: false, default: null })
+  autoAbsentAppliedAt?: Date | null;
 
   @Prop({ type: Boolean, default: false, index: true })
   disputed: boolean;

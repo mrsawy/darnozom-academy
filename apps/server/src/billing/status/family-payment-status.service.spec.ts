@@ -109,66 +109,6 @@ describe('FamilyPaymentStatusService.forGroup', () => {
     expect(result.get(String(STUDENT_1))).toBe(FamilyPaymentStatus.UNPAID);
   });
 
-  it('returns PAID for a student on a zero-amount scholarship with no charges', async () => {
-    const subs = [
-      {
-        _id: new Types.ObjectId(),
-        type: SubscriptionType.SCHOLARSHIP,
-        amountMinor: 0,
-        status: BillingSubscriptionStatus.ACTIVE,
-        items: [{ studentId: STUDENT_1, groupId: GROUP }],
-      },
-    ];
-
-    const { service } = makeService(subs, []);
-    const result = await service.forGroup(GROUP, [String(STUDENT_1)], COHORT_START, NOW);
-
-    expect(result.get(String(STUDENT_1))).toBe(FamilyPaymentStatus.PAID);
-  });
-
-  it('returns PAID for both siblings when a FAMILY subscription charge is covered, and UNPAID when short', async () => {
-    // Ruling: FAMILY charges carry subscriptionId (with studentId: null).
-    // The status service maps the charge to every sibling in the subscription for that group.
-    const subId = new Types.ObjectId();
-    const chargeId = new Types.ObjectId();
-    const subs = [
-      {
-        _id: subId,
-        type: SubscriptionType.FAMILY,
-        amountMinor: 20_000,
-        status: BillingSubscriptionStatus.ACTIVE,
-        items: [
-          { studentId: SIBLING_1, groupId: GROUP },
-          { studentId: SIBLING_2, groupId: GROUP },
-        ],
-      },
-    ];
-    const charges = [
-      {
-        _id: chargeId,
-        studentId: null,
-        subscriptionId: subId,
-        groupId: GROUP,
-        type: LedgerEntryType.CHARGE,
-        amountMinor: 20_000,
-        dueAt: DUE_PAST,
-        currency: Currency.EGP,
-      },
-    ];
-
-    // Fully covered
-    const { service: paidService } = makeService(subs, charges, [{ _id: chargeId, total: 20_000 }]);
-    const paidResult = await paidService.forGroup(GROUP, [String(SIBLING_1), String(SIBLING_2)], COHORT_START, NOW);
-    expect(paidResult.get(String(SIBLING_1))).toBe(FamilyPaymentStatus.PAID);
-    expect(paidResult.get(String(SIBLING_2))).toBe(FamilyPaymentStatus.PAID);
-
-    // Partly covered
-    const { service: shortService } = makeService(subs, charges, [{ _id: chargeId, total: 10_000 }]);
-    const shortResult = await shortService.forGroup(GROUP, [String(SIBLING_1), String(SIBLING_2)], COHORT_START, NOW);
-    expect(shortResult.get(String(SIBLING_1))).toBe(FamilyPaymentStatus.UNPAID);
-    expect(shortResult.get(String(SIBLING_2))).toBe(FamilyPaymentStatus.UNPAID);
-  });
-
   it('returns an entry in the map for every studentId requested, even with no rows anywhere', async () => {
     const { service } = makeService([], []);
     const result = await service.forGroup(GROUP, [String(STUDENT_1), String(STUDENT_2)], COHORT_START, NOW);

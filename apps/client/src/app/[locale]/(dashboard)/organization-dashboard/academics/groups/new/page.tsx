@@ -1,10 +1,12 @@
 'use client';
 
+import { LoadingState } from '@/components/atoms/loading-state';
+import { MeetingProvider } from '@darnozom/shared-types';
 import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/navigation';
 import { ROUTE_ORG_ACADEMICS_GROUP } from '@/lib/data/constants/routes.constants';
-import { useCreateGroup } from '@/lib/hooks/academics/use-academics.hook';
+import { useCohort, useCreateGroup } from '@/lib/hooks/academics/use-academics.hook';
 import { GroupForm } from '../__components/group-form';
 
 export default function NewGroupPage() {
@@ -12,13 +14,17 @@ export default function NewGroupPage() {
   const router = useRouter();
   const cohortId = useSearchParams().get('cohortId');
   const createGroup = useCreateGroup();
+  const { data: cohort } = useCohort(cohortId);
 
   if (!cohortId) return <p className="p-4">{t('form.missingCohort')}</p>;
+  // Wait for the batch so the start date field opens already defaulted to the batch's date.
+  if (!cohort) return <LoadingState fullPage />;
 
   return (
-    <div className="space-y-4 p-4">
-      <h1 className="text-2xl font-semibold">{t('groups.new')}</h1>
+    <div className="space-y-6 p-4 md:p-6">
+      <h1 className="mx-auto max-w-3xl text-2xl font-semibold tracking-tight">{t('groups.new')}</h1>
       <GroupForm
+        key={cohort._id}
         initial={{
           name: '',
           schedule: [{ dayOfWeek: 0, startTime: '17:00', durationMinutes: 60 }],
@@ -26,7 +32,9 @@ export default function NewGroupPage() {
           minStudents: 1,
           maxStudents: 10,
           totalSessions: 12,
+          startDate: new Date(cohort.startDate).toISOString().slice(0, 10),
           estimatedEndDate: null,
+          meetingProvider: MeetingProvider.EXTERNAL_URL,
           meetingLink: null,
           whatsappGroupLink: null,
         }}

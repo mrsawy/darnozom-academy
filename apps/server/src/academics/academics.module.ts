@@ -4,11 +4,13 @@ import { BullModule } from '@nestjs/bullmq';
 import { AuthModule } from 'src/auth/auth.module';
 import { RoleModule } from 'src/role/role.module';
 import { Course, CourseSchema } from 'src/course/entities/course.entity';
+import { TrainingCourse, TrainingCourseSchema } from 'src/academics/training-course/entities/training-course.entity';
 import { User, UserSchema } from 'src/user/entities/user.entity';
 import { UserModule } from 'src/user/user.module';
 import { Program, ProgramSchema } from './program/entities/program.entity';
 import { ProgramService } from './program/program.service';
 import { ProgramControllerMessage } from './program/program.controller.message';
+import { AgeRange, AgeRangeSchema } from 'src/age-range/entities/age-range.entity';
 import { Level, LevelSchema } from './level/entities/level.entity';
 import { LevelService } from './level/level.service';
 import { LevelControllerMessage } from './level/level.controller.message';
@@ -19,6 +21,7 @@ import { Group, GroupSchema } from './group/entities/group.entity';
 import { GroupStateService } from './group/group-state.service';
 import { GroupService } from './group/group.service';
 import { GroupTeacherService } from './group/group-teacher.service';
+import { GroupAttendanceService } from './group/group-attendance.service';
 import { GroupStudentsService } from './group/group-students.service';
 import { GroupControllerMessage } from './group/group.controller.message';
 import { TeacherAvailability, TeacherAvailabilitySchema } from './teacher-availability/entities/teacher-availability.entity';
@@ -36,8 +39,11 @@ import { TaskService } from './task/task.service';
 import { TaskUserService } from './task/task-user.service';
 import { FollowUpService } from './follow-up/follow-up.service';
 import { Session, SessionSchema } from './session/entities/session.entity';
+import { SessionPresence, SessionPresenceSchema } from './session/entities/session-presence.entity';
+import { SessionScheduleService } from './session/session-schedule.service';
 import { GroupStartService } from './session/group-start.service';
 import { SessionAttendanceService } from './session/session-attendance.service';
+import { SessionPresenceService } from './session/session-presence.service';
 import { SessionCompletionService } from './session/session-completion.service';
 import { SessionQueryService } from './session/session-query.service';
 import { SessionReportService } from './session/session-report.service';
@@ -50,8 +56,11 @@ import { PreStartTaskProcessor } from './task/task.processor';
 import { PreStartTaskScheduler } from './task/task.scheduler';
 import { PRE_START_TASK_QUEUE } from './task/task.queue';
 import { NotificationModule } from 'src/notification/notification.module';
+import { AgoraModule } from 'src/agora/agora.module';
 import { SupervisionEvaluation, SupervisionEvaluationSchema } from './supervision/entities/supervision-evaluation.entity';
 import { SupervisionService } from './supervision/supervision.service';
+import { TeacherControllerMessage } from './teacher/teacher.controller.message';
+import { TeacherOverviewService } from './teacher/teacher-overview.service';
 import { SupervisionControllerMessage } from './supervision/supervision.controller.message';
 import { BillingModule } from 'src/billing/billing.module';
 import { BillingLedgerListener } from './events/billing-ledger.listener';
@@ -61,12 +70,15 @@ import { BillingLedgerListener } from './events/billing-ledger.listener';
     MongooseModule.forFeature([
       { name: Program.name, schema: ProgramSchema },
       { name: Course.name, schema: CourseSchema },
+      { name: TrainingCourse.name, schema: TrainingCourseSchema },
       { name: Level.name, schema: LevelSchema },
+      { name: AgeRange.name, schema: AgeRangeSchema },
       { name: Cohort.name, schema: CohortSchema },
       { name: Group.name, schema: GroupSchema },
       { name: TeacherAvailability.name, schema: TeacherAvailabilitySchema },
       { name: User.name, schema: UserSchema },
       { name: Session.name, schema: SessionSchema },
+      { name: SessionPresence.name, schema: SessionPresenceSchema },
       { name: FollowUp.name, schema: FollowUpSchema },
       { name: Task.name, schema: TaskSchema },
       { name: SupervisionEvaluation.name, schema: SupervisionEvaluationSchema },
@@ -74,6 +86,7 @@ import { BillingLedgerListener } from './events/billing-ledger.listener';
     BullModule.registerQueue({ name: SESSION_STATUS_QUEUE }),
     BullModule.registerQueue({ name: PRE_START_TASK_QUEUE }),
     NotificationModule,
+    AgoraModule,
     forwardRef(() => AuthModule),
     forwardRef(() => UserModule),
     RoleModule,
@@ -88,6 +101,7 @@ import { BillingLedgerListener } from './events/billing-ledger.listener';
     SessionControllerMessage,
     TaskControllerMessage,
     SupervisionControllerMessage,
+    TeacherControllerMessage,
   ],
   providers: [
     ProgramService,
@@ -98,10 +112,13 @@ import { BillingLedgerListener } from './events/billing-ledger.listener';
     GroupService,
     GroupTeacherService,
     GroupStudentsService,
+    GroupAttendanceService,
     SessionStateService,
     GroupStartService,
+    SessionScheduleService,
     SessionQueryService,
     SessionAttendanceService,
+    SessionPresenceService,
     SessionCompletionService,
     SessionReportService,
     FollowUpService,
@@ -117,6 +134,7 @@ import { BillingLedgerListener } from './events/billing-ledger.listener';
     PreStartTaskScheduler,
     TaskService,
     SupervisionService,
+    TeacherOverviewService,
     BillingLedgerListener,
   ],
 })

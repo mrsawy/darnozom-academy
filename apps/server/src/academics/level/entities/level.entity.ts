@@ -23,7 +23,7 @@ export class Level extends Document<Types.ObjectId> {
   @Prop({ type: Types.ObjectId, ref: 'Organization', required: true, index: true })
   organizationId: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId, ref: 'Course', required: true, index: true })
+  @Prop({ type: Types.ObjectId, ref: 'TrainingCourse', required: true, index: true })
   courseId: Types.ObjectId;
 
   @Prop({ type: String, required: true, trim: true })
@@ -31,6 +31,10 @@ export class Level extends Document<Types.ObjectId> {
 
   @Prop({ type: Number, required: true, min: 1 })
   order: number;
+
+  /** Intended age range for this level; every group of the level inherits it. */
+  @Prop({ type: Types.ObjectId, ref: 'AgeRange', required: false, default: null })
+  ageRangeId?: Types.ObjectId | null;
 
   @Prop({ type: LevelCertificateRulesSchema, required: false, default: null })
   certificateRules?: LevelCertificateRules | null;

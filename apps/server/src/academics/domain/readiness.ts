@@ -1,4 +1,4 @@
-import { GroupPaymentStatus, GroupStudentStatus, Readiness, ReadinessKey } from '@darnozom/shared-types';
+import { GroupPaymentStatus, GroupStudentStatus, MeetingProvider, Readiness, ReadinessKey } from '@darnozom/shared-types';
 
 export interface ReadinessInput {
   teacherId?: unknown;
@@ -6,6 +6,7 @@ export interface ReadinessInput {
   students?: { paymentStatus: string; status?: string }[];
   contentSent?: { done?: boolean } | null;
   meetingLink?: string | null;
+  meetingProvider?: MeetingProvider | null;
 }
 
 /** The concept's five mandatory readiness items, computed from the group's ACTIVE students. */
@@ -16,7 +17,11 @@ export function computeReadiness(group: ReadinessInput): Readiness {
     { key: ReadinessKey.MINIMUM_STUDENTS, done: students.length >= group.minStudents },
     { key: ReadinessKey.PAYMENTS_MADE, done: students.length > 0 && students.every((s) => s.paymentStatus === GroupPaymentStatus.PAID) },
     { key: ReadinessKey.CONTENT_SENT, done: group.contentSent?.done === true },
-    { key: ReadinessKey.MEETING_LINK, done: typeof group.meetingLink === 'string' && group.meetingLink.trim().length > 0 },
+    {
+      key: ReadinessKey.MEETING_LINK,
+      // An in-platform (Agora) room needs no link.
+      done: group.meetingProvider === MeetingProvider.AGORA || (typeof group.meetingLink === 'string' && group.meetingLink.trim().length > 0),
+    },
   ];
   return { ready: items.every((item) => item.done), items };
 }

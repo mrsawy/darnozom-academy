@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/components/atoms/loading-state';
 import type { Dispatch, SetStateAction } from 'react';
 import { useState } from 'react';
 import type { FieldError } from 'react-hook-form';
@@ -252,7 +253,7 @@ export function OfflineScheduleSlotCard({
             isSearchLoading={instructorsLoading}
             placeholder={t('selectInstructorsForSlot')}
             loadingIndicator={
-              <p className="text-muted-foreground py-4 text-center text-sm">{t('loading')}</p>
+              <LoadingState className="py-4" spinnerClassName="size-8" />
             }
             emptyIndicator={
               <p className="text-center text-sm text-gray-600 dark:text-gray-400">
@@ -280,7 +281,7 @@ export function OfflineScheduleSlotCard({
             isSearchLoading={coInstructorsLoading}
             placeholder={t('selectCoInstructorsForSlot')}
             loadingIndicator={
-              <p className="text-muted-foreground py-4 text-center text-sm">{t('loading')}</p>
+              <LoadingState className="py-4" spinnerClassName="size-8" />
             }
             emptyIndicator={
               <p className="text-center text-sm text-gray-600 dark:text-gray-400">
@@ -310,7 +311,7 @@ export function OfflineScheduleSlotCard({
                 isSearchLoading={studentsLoading}
                 placeholder={t('selectStudentsForSlot')}
                 loadingIndicator={
-                  <p className="text-muted-foreground py-4 text-center text-sm">{t('loading')}</p>
+                  <LoadingState className="py-4" spinnerClassName="size-8" />
                 }
                 emptyIndicator={
                   <p className="text-center text-sm text-gray-600 dark:text-gray-400">

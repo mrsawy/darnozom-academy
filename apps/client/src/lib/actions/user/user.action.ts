@@ -96,12 +96,11 @@ export async function updateSelfUserAction(userData: Partial<EditUserFormData>) 
     const payload: Partial<EditUserFormData> = { ...userData };
     // roleName is kept in the self form only to decide whether to show instructor
     // fields — never let a self-update change the account's role. Populated display
-    // arrays (categories/grades/schoolTypes) are not part of the update contract.
+    // arrays (categories/ageRanges) are not part of the update contract.
     const cleanup = payload as Record<string, unknown>;
     delete cleanup.roleName;
     delete cleanup.categories;
-    delete cleanup.grades;
-    delete cleanup.schoolTypes;
+    delete cleanup.ageRanges;
     if (payload.profile?.avatarFile instanceof File) {
       const fileExtension = payload.profile.avatarFile.name.split('.').pop() ?? 'jpg';
       const name =

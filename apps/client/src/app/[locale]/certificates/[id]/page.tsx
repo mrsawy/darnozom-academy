@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/components/atoms/loading-state';
 import { use, useEffect } from 'react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
@@ -33,7 +34,7 @@ export default function CertificatePage({ params }: CertificatePageProps) {
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-muted/20">
-        <p className="text-muted-foreground">{t('common.loading')}</p>
+        <LoadingState fullPage />
       </div>
     );
   }

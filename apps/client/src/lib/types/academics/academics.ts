@@ -1,5 +1,6 @@
 import type {
   AtRiskReason,
+  AttendanceSource,
   AttendanceStatus,
   AvailabilitySlot,
   FinalResult,
@@ -8,6 +9,8 @@ import type {
   GroupPaymentStatus,
   GroupStatus,
   GroupStudentStatus,
+  MeetingProvider,
+  PresenceRole,
   Readiness,
   ReadinessKey,
   ScheduleSlot,
@@ -30,11 +33,28 @@ export interface ICourseOption {
   programId?: string | null;
 }
 
+export interface ITrainingCourse {
+  _id: string;
+  name: string;
+  programId: string | null;
+  programs: { _id: string; name: string }[];
+}
+
+export interface IAgeRangeSummary {
+  _id: string;
+  nameEn: string;
+  nameAr: string;
+  minAge: number;
+  maxAge?: number | null;
+}
+
 export interface ILevel {
   _id: string;
   courseId: string;
   name: string;
   order: number;
+  ageRangeId?: string | null;
+  ageRange?: IAgeRangeSummary | null;
   certificateRules?: ICertificateRules;
 }
 
@@ -70,13 +90,18 @@ export interface IGroup {
   minStudents: number;
   maxStudents: number;
   totalSessions?: number | null;
+  /** Effective start date: the group's own, else its batch's. */
+  startDate?: string | null;
   estimatedEndDate?: string | null;
+  meetingProvider?: MeetingProvider;
   meetingLink?: string | null;
   whatsappGroupLink?: string | null;
   contentSent: { done: boolean };
   students: IGroupStudent[];
   status: GroupStatus;
   readiness: Readiness;
+  /** Inherited from the group's level. */
+  ageRange?: IAgeRangeSummary | null;
   atRisk: boolean;
   atRiskSince: string | null;
   atRiskReason: AtRiskReason | null;
@@ -125,7 +150,10 @@ export interface GroupFormValues {
   minStudents: number;
   maxStudents: number;
   totalSessions: number;
+  /** ISO date (yyyy-mm-dd). Defaults to the batch's start date. */
+  startDate?: string | null;
   estimatedEndDate?: string | null;
+  meetingProvider: MeetingProvider;
   meetingLink: string | null;
   whatsappGroupLink: string | null;
 }
@@ -156,6 +184,8 @@ export interface ISessionAttendance {
   status: AttendanceStatus;
   note?: string;
   markedAt: string;
+  /** AUTO = recorded by joining the session / end-of-session sweep; MANUAL = set by a person. */
+  source?: AttendanceSource;
 }
 
 export interface ISessionEvaluation {
@@ -194,10 +224,26 @@ export interface ISession {
   disputeResolvedAt?: string;
 }
 
+export interface JoinSessionResult {
+  provider: MeetingProvider;
+  meetingLink?: string;
+  agora?: { appId: string; channelName: string; uid: number; token: string; expiresAt: number };
+}
+
+export interface ISessionPresence {
+  userId: string;
+  role: PresenceRole;
+  firstJoinedAt: string;
+  totalSeconds: number;
+}
+
 export interface ISessionDetail extends ISession {
   /** ACTIVE students visible to the caller. */
   roster: string[];
   people: Record<string, string>;
+  /** Who joined through the platform; only filled for staff and the session's teacher. */
+  presence?: ISessionPresence[];
+  meetingProvider?: MeetingProvider;
 }
 
 export interface SessionQuery {
@@ -269,6 +315,70 @@ export interface ISupervisionEvaluation extends SupervisionScores {
 export interface EvaluationQuery {
   groupId?: string;
   teacherId?: string;
+  from?: string;
+  to?: string;
+}
+
+export interface IAttendanceMatrix {
+  sessions: {
+    id: string;
+    sequence: number;
+    startsAt: string;
+    status: SessionStatus;
+    teacherAttendance: AttendanceStatus | null;
+  }[];
+  students: {
+    studentId: string;
+    name: string;
+    cells: Record<string, AttendanceStatus | null>;
+    /** attended (present or late) / held sessions; null before any session was held. */
+    attendedRate: number | null;
+  }[];
+  teacherAttendedRate: number | null;
+}
+
+export const EVALUATION_CRITERIA = [
+  'commitment',
+  'teaching',
+  'pedagogy',
+  'contentAdherence',
+  'technicalQuality',
+] as const;
+export type EvaluationCriterion = (typeof EVALUATION_CRITERIA)[number];
+
+export interface ITeacherOverview {
+  teacher: { id: string; name: string; email?: string; phone?: string; avatar?: string };
+  groups: { id: string; name: string; status: GroupStatus; activeStudents: number }[];
+  stats: {
+    total: number;
+    completed: number;
+    cancelled: number;
+    reportsMissing: number;
+    attendance: Record<AttendanceStatus | 'UNRECORDED', number>;
+    avgJoinDelayMinutes: number | null;
+    avgReportDelayHours: number | null;
+  };
+  evaluations: {
+    count: number;
+    averages: Record<EvaluationCriterion, number> | null;
+    recent: ({ id: string; sessionId: string; createdAt: string } & Record<EvaluationCriterion, number>)[];
+  };
+  recentSessions: {
+    id: string;
+    groupId: string;
+    groupName?: string;
+    sequence: number;
+    startsAt: string;
+    status: SessionStatus;
+    teacherAttendance: AttendanceStatus | null;
+    reportSubmitted: boolean;
+    joinedAt: string | null;
+    joinedMinutes: number | null;
+  }[];
+}
+
+export interface TeacherOverviewQuery {
+  id: string;
   from?: string;
   to?: string;
 }

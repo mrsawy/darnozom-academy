@@ -25,7 +25,7 @@ import { MultipartUploadAccessService } from './multipart-upload-access.service'
     }),
     forwardRef(() => AuthModule),
     RoleModule,
-    SubscriptionModule,
+    forwardRef(() => SubscriptionModule),
   ],
   providers: [FileService, MultipartUploadAccessService],
   controllers: [FileHttpController, FileMessageController],

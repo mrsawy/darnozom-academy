@@ -21,12 +21,10 @@ import { hasArgFlag, resolveMigrationMongoUri } from './migration-mongo.util';
 const MIGRATION_FILES = [
   'approve-existing-organizations.ts',
   'set-organization-onboarded-existing-super-admins.ts',
-  // Partial uniques before seed so soft-deleted grade name collisions cannot block upserts.
+  // Partial uniques before seed so soft-deleted age range name collisions cannot block upserts.
   'migrate-user-unique-if-not-deleted.ts',
   'migrate-enrollment-unique-if-not-deleted.ts',
-  'migrate-grade-schooltype-unique-if-not-deleted.ts',
-  'seed-grades.ts',
-  'migrate-course-school-type-ids.ts',
+  'seed-age-ranges.ts',
   'migrate-private-session-instants.ts',
   'migrate-private-session-soft-delete.ts',
   'migrate-content-sharia-approved.ts',

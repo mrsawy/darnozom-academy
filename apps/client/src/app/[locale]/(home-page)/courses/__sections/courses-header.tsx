@@ -14,8 +14,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { useDebounce } from '@/lib/hooks/use-debounce';
 import { ROUTE_COURSES } from '@/lib/data/constants/routes.constants';
 import { useApprovedCategoryById } from '@/lib/hooks/category/use-category.hook';
-import { usePublicGrades } from '@/lib/hooks/grade/use-grades.hook';
-import { usePublicSchoolTypes } from '@/lib/hooks/school-type/use-school-types.hook';
+import { usePublicAgeRanges } from '@/lib/hooks/age-range/use-age-ranges.hook';
 import { BillingCycle } from '@/lib/types/course/enum/BillingCycle.enum';
 import { useRouter } from '@/i18n/navigation';
 import FiltersDrawer from '@/components/organs/filters-drawer/filters-drawer';
@@ -24,8 +23,7 @@ import {
   ModulesFilterField,
   PriceRangeFilterField,
   RatingFilterField,
-  GradeFilterField,
-  SchoolTypeMultiFilterField,
+  AgeRangeMultiFilterField,
 } from '@/components/organs/filters-drawer/filter-fields';
 
 // ---------------------------------------------------------------------------
@@ -73,16 +71,12 @@ function parseFiltersFromParams(searchParams: ReturnType<typeof useSearchParams>
     billingCycle === BillingCycle.YEARLY ||
     billingCycle === BillingCycle.ONE_TIME;
 
-  const schoolTypeIds =
-    parseCsv(searchParams.get('schoolTypeIds')) ?? parseCsv(searchParams.get('schoolTypeId'));
-
   return {
     page: 1,
     limit: 12,
     search: searchParams.get('search') ?? undefined,
     selectedCategory: searchParams.get('selectedCategory') ?? undefined,
-    gradeId: searchParams.get('gradeId') ?? undefined,
-    schoolTypeIds,
+    ageRangeIds: parseCsv(searchParams.get('ageRangeIds')),
     minRating: parseNumber(searchParams.get('minRating')),
     minPrice: parseNumber(searchParams.get('minPrice')),
     maxPrice: parseNumber(searchParams.get('maxPrice')),
@@ -230,11 +224,11 @@ function CoursesHeaderSection() {
     navigateWithFilters(updated);
   };
 
-  const handleRemoveSchoolType = (id: string) => {
-    const remaining = (activeFilters.schoolTypeIds ?? []).filter((value) => value !== id);
+  const handleRemoveAgeRange = (id: string) => {
+    const remaining = (activeFilters.ageRangeIds ?? []).filter((value) => value !== id);
     const updated = {
       ...activeFilters,
-      schoolTypeIds: remaining.length > 0 ? remaining : undefined,
+      ageRangeIds: remaining.length > 0 ? remaining : undefined,
     };
     setDraftFilters(updated);
     navigateWithFilters(updated);
@@ -249,13 +243,7 @@ function CoursesHeaderSection() {
     !!activeFilters.selectedCategory
   );
 
-  const { data: grades } = usePublicGrades();
-  const { data: schoolTypes } = usePublicSchoolTypes();
-
-  const selectedGradeName = useMemo(() => {
-    const grade = grades?.find((g) => g._id === activeFilters.gradeId);
-    return grade ? (isArabic ? grade.nameAr : grade.nameEn) : undefined;
-  }, [grades, activeFilters.gradeId, isArabic]);
+  const { data: ageRanges } = usePublicAgeRanges();
 
   const activeFilterChips = useMemo<ActiveFilterChip[]>(() => {
     const chips: ActiveFilterChip[] = [];
@@ -276,21 +264,13 @@ function CoursesHeaderSection() {
         onRemove: () => handleRemoveFilter('selectedCategory'),
       });
     }
-    if (activeFilters.gradeId && selectedGradeName) {
+    for (const id of activeFilters.ageRangeIds ?? []) {
+      const ageRange = ageRanges?.find((a) => a._id === id);
       chips.push({
-        id: 'gradeId',
-        label: t('grade'),
-        value: selectedGradeName,
-        onRemove: () => handleRemoveFilter('gradeId'),
-      });
-    }
-    for (const id of activeFilters.schoolTypeIds ?? []) {
-      const schoolType = schoolTypes?.find((s) => s._id === id);
-      chips.push({
-        id: `schoolType-${id}`,
-        label: t('schoolType'),
-        value: schoolType ? (isArabic ? schoolType.nameAr : schoolType.nameEn) : id,
-        onRemove: () => handleRemoveSchoolType(id),
+        id: `ageRange-${id}`,
+        label: t('ageRange'),
+        value: ageRange ? (isArabic ? ageRange.nameAr : ageRange.nameEn) : id,
+        onRemove: () => handleRemoveAgeRange(id),
       });
     }
     if (activeFilters.minRating && activeFilters.minRating > 0) {
@@ -330,7 +310,7 @@ function CoursesHeaderSection() {
       });
     }
     return chips;
-  }, [activeFilters, selectedCategoryData, selectedGradeName, schoolTypes, isArabic, t]);
+  }, [activeFilters, selectedCategoryData, ageRanges, isArabic, t]);
 
   // ---------------------------------------------------------------------------
   // Render
@@ -408,23 +388,15 @@ function CoursesHeaderSection() {
               label={t('category')}
             />
 
-            <GradeFilterField
-              value={draftFilters.gradeId}
-              onChange={(value) => setDraftFilters((prev) => ({ ...prev, gradeId: value }))}
-              label={t('grade')}
-              allLabel={t('allGrades')}
-              placeholder={t('searchPlaceholder')}
-            />
-
-            <SchoolTypeMultiFilterField
-              value={draftFilters.schoolTypeIds}
+            <AgeRangeMultiFilterField
+              value={draftFilters.ageRangeIds}
               onChange={(value) =>
                 setDraftFilters((prev) => ({
                   ...prev,
-                  schoolTypeIds: value.length > 0 ? value : undefined,
+                  ageRangeIds: value.length > 0 ? value : undefined,
                 }))
               }
-              label={t('schoolType')}
+              label={t('ageRange')}
               placeholder={t('searchPlaceholder')}
             />
 

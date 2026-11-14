@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/components/atoms/loading-state';
 import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/card';
 import { SessionSummaryList } from '@/components/organs/academics/session-summary-list';
@@ -15,7 +16,7 @@ export function ChildSessions({ childId, childName }: { childId: string; childNa
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <p>{t('loading')}</p>
+          <LoadingState />
         ) : (
           <SessionSummaryList sessions={sessions} studentId={childId} />
         )}

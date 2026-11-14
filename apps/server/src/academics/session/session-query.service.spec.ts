@@ -1,6 +1,6 @@
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { Types } from 'mongoose';
-import { AcademicsErrors, AttendanceStatus, GroupStudentStatus, ParentErrors, Roles, SessionStatus } from '@darnozom/shared-types';
+import { AcademicsErrors, AttendanceStatus, GroupStudentStatus, MeetingProvider, ParentErrors, PresenceRole, Roles, SessionStatus } from '@darnozom/shared-types';
 import { mockQuery } from '__test__/academics/mock-query';
 import { AcademicsActor } from '../common/actor';
 import { SessionQueryService } from './session-query.service';
@@ -45,11 +45,12 @@ function setup() {
   const sessionModel = { find: jest.fn(), findOne: jest.fn() };
   const groupModel = { find: jest.fn(), findOne: jest.fn() };
   const userModel = { find: jest.fn(), findOne: jest.fn() };
+  const presenceModel = { find: jest.fn().mockReturnValue(mockQuery([])) };
   const parentService = { validateParentChildLink: jest.fn().mockResolvedValue(undefined) };
   groupModel.find.mockReturnValue(mockQuery([{ _id: GROUP, name: 'Group A' }]));
   userModel.find.mockReturnValue(mockQuery([]));
-  const service = new SessionQueryService(sessionModel as never, groupModel as never, userModel as never, parentService as never);
-  return { service, sessionModel, groupModel, userModel, parentService };
+  const service = new SessionQueryService(sessionModel as never, groupModel as never, userModel as never, presenceModel as never, parentService as never);
+  return { service, sessionModel, groupModel, userModel, presenceModel, parentService };
 }
 
 describe('SessionQueryService.findAll', () => {
@@ -170,5 +171,51 @@ describe('SessionQueryService.findOne', () => {
     userModel.find.mockReturnValue(mockQuery([]));
     const view = await service.findOne(actorOf(Roles.STUDENT, String(CHILD_A)), String(SESSION));
     expect(view.roster).toEqual([String(CHILD_A)]);
+  });
+});
+
+describe('SessionQueryService.findOne presence and meeting provider', () => {
+  const presenceRows = [
+    {
+      userId: CHILD_A,
+      role: PresenceRole.STUDENT,
+      firstJoinedAt: new Date('2026-10-12T10:03:00Z'),
+      lastSeenAt: new Date('2026-10-12T10:33:00Z'),
+      segments: [{ joinedAt: new Date('2026-10-12T10:03:00Z'), leftAt: null }],
+    },
+  ];
+
+  function withPresence() {
+    const ctx = setup();
+    ctx.sessionModel.findOne.mockReturnValue(mockQuery(lean()));
+    ctx.groupModel.findOne.mockReturnValue(mockQuery({ name: 'Group A', meetingProvider: MeetingProvider.AGORA, students: [{ studentId: CHILD_A }] }));
+    ctx.presenceModel.find.mockReturnValue(mockQuery(presenceRows));
+    return ctx;
+  }
+
+  it('gives staff each participant first join and minutes in the call, counted to the last heartbeat', async () => {
+    const { service } = withPresence();
+    const view = await service.findOne(actorOf(Roles.COORDINATOR), String(SESSION));
+    expect(view.meetingProvider).toBe(MeetingProvider.AGORA);
+    expect(view.presence).toEqual([
+      { userId: String(CHILD_A), role: PresenceRole.STUDENT, firstJoinedAt: new Date('2026-10-12T10:03:00Z'), totalSeconds: 1800 },
+    ]);
+  });
+
+  it("the session's own teacher sees the presence rows too", async () => {
+    const { service } = withPresence();
+    const view = await service.findOne(actorOf(Roles.INSTRUCTOR, String(TEACHER)), String(SESSION));
+    expect(view.presence).toHaveLength(1);
+  });
+
+  it('accountants and families get no presence rows, and the presence query is not even made', async () => {
+    const accountant = withPresence();
+    expect((await accountant.service.findOne(actorOf(Roles.ACCOUNTANT), String(SESSION))).presence).toEqual([]);
+    expect(accountant.presenceModel.find).not.toHaveBeenCalled();
+
+    const family = withPresence();
+    family.groupModel.find.mockReturnValue(mockQuery([{ _id: GROUP }]));
+    expect((await family.service.findOne(actorOf(Roles.STUDENT, String(CHILD_A)), String(SESSION))).presence).toEqual([]);
+    expect(family.presenceModel.find).not.toHaveBeenCalled();
   });
 });

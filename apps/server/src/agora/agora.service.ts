@@ -128,6 +128,11 @@ export class AgoraService {
     return this.issueRtcToken(booking.agoraChannelName, userIdToAgoraUid(userId), 'publisher');
   }
 
+  /** Group sessions: one channel per session (`grp_<sessionId>`); the caller must already be verified as a participant. */
+  issueGroupSessionToken(userId: string, sessionId: string): AgoraTokenResult {
+    return this.issueRtcToken(`grp_${sessionId}`, userIdToAgoraUid(userId), 'publisher');
+  }
+
   issueRtcToken(channelName: string, uid: number, role: AgoraRtcRole): AgoraTokenResult {
     const agoraRole = role === 'publisher' ? RtcRole.PUBLISHER : RtcRole.SUBSCRIBER;
     const expiresAt = Math.floor(Date.now() / 1000) + TOKEN_TTL_SECONDS;

@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/components/atoms/loading-state';
 import { use } from 'react';
 import { useTranslations } from 'next-intl';
 import { usePrivateSessionById } from '@/lib/hooks/private-sessions/private-sessions.hook';
@@ -14,7 +15,7 @@ export default function EditPrivateSessionPage({ params }: Props) {
   const { id } = use(params);
   const { data: session, isLoading } = usePrivateSessionById(id);
 
-  if (isLoading) return <div className="animate-pulse p-6">{t('loading')}</div>;
+  if (isLoading) return <LoadingState fullPage />;
   if (!session)
     return <div className="text-muted-foreground p-6 text-center">{t('sessionNotFound')}</div>;
 

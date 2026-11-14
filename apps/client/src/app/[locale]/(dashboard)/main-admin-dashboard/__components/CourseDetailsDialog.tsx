@@ -7,7 +7,6 @@ import { ApprovalStatusBadge } from './ApprovalStatusBadge';
 import { BillingCycle } from '@/lib/types/course/enum/BillingCycle.enum';
 import type { PricingDetails } from '@/lib/types/course/course.interface';
 import type { IReviewableCourse } from '@/lib/types/admin-review/admin-review.interface';
-import { normalizeCourseSchoolTypes } from '@/lib/utils/course/normalize-course-school-types';
 
 interface CourseDetailsDialogProps {
   course: IReviewableCourse | null;
@@ -87,9 +86,8 @@ export function CourseDetailsDialog({ course, onClose }: CourseDetailsDialogProp
   const t = useTranslations('AdminDashboard');
   const locale = useLocale();
   const isArabic = locale === 'ar';
-  const gradeName = course?.grade ? (isArabic ? course.grade.nameAr : course.grade.nameEn) : null;
-  const schoolTypeNames = course
-    ? normalizeCourseSchoolTypes(course).schoolTypes.map((st) => (isArabic ? st.nameAr : st.nameEn))
+  const ageRangeNames = course
+    ? (course.ageRanges ?? []).map((a) => (isArabic ? a.nameAr : a.nameEn))
     : [];
 
   return (
@@ -163,18 +161,10 @@ export function CourseDetailsDialog({ course, onClose }: CourseDetailsDialogProp
               )}
             </DetailRow>
 
-            <DetailRow label={t('courseDetails.grade')}>
-              {gradeName ? (
-                <Badge variant="outline">{gradeName}</Badge>
-              ) : (
-                <span className="text-muted-foreground italic">{t('courseDetails.none')}</span>
-              )}
-            </DetailRow>
-
-            <DetailRow label={t('courseDetails.schoolType')}>
-              {schoolTypeNames.length > 0 ? (
+            <DetailRow label={t('courseDetails.ageRange')}>
+              {ageRangeNames.length > 0 ? (
                 <div className="flex flex-wrap gap-1">
-                  {schoolTypeNames.map((name) => (
+                  {ageRangeNames.map((name) => (
                     <Badge key={name} variant="outline">
                       {name}
                     </Badge>

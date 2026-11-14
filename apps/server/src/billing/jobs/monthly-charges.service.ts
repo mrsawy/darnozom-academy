@@ -14,6 +14,7 @@ interface GroupForMonthlyBilling {
   cohortId: Types.ObjectId;
   status: GroupStatus;
   timezone: string;
+  startDate?: Date | null;
   students: {
     studentId: Types.ObjectId;
     status?: GroupStudentStatus;
@@ -86,10 +87,15 @@ export class MonthlyChargesService {
             continue;
           }
 
-          const cohort = await this.cohortModel.findOne({ _id: group.cohortId }).lean<CohortForMonthlyBilling | null>().exec();
-          if (!cohort?.startDate) continue;
+          // The group's own start date wins; otherwise it follows its cohort.
+          let startDate = group.startDate ?? null;
+          if (!startDate) {
+            const cohort = await this.cohortModel.findOne({ _id: group.cohortId }).lean<CohortForMonthlyBilling | null>().exec();
+            startDate = cohort?.startDate ?? null;
+          }
+          if (!startDate) continue;
 
-          const dueDates = monthlyChargeDueDates(cohort.startDate, group.timezone, now);
+          const dueDates = monthlyChargeDueDates(startDate, group.timezone, now);
           if (dueDates.length === 0) continue;
 
           const written = await this.ledger.postCharges({

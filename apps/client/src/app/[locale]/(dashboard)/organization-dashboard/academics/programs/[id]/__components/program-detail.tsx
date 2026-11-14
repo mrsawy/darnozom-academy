@@ -1,8 +1,10 @@
 'use client';
 
+import { Skeleton } from '@/components/atoms/skeleton';
+import { LoadingState } from '@/components/atoms/loading-state';
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Book, Info, Link2, Unlink } from 'lucide-react';
+import { Book, Info, Link2, Plus, Unlink } from 'lucide-react';
 import { Link } from '@/i18n/navigation';
 import { Alert, AlertDescription, AlertTitle } from '@/components/atoms/alert';
 import { Badge } from '@/components/atoms/badge';
@@ -12,6 +14,7 @@ import {
   Select,
   SelectContent,
   SelectItem,
+  SelectSeparator,
   SelectTrigger,
   SelectValue,
 } from '@/components/atoms/select';
@@ -23,10 +26,16 @@ import {
   useProgram,
   useProgramCourses,
   useUnlinkCourse,
+  useUpdateProgram,
+  useUpdateTrainingCourse,
 } from '@/lib/hooks/academics/use-academics.hook';
+import { EditFieldsDialog } from './edit-fields-dialog/edit-fields-dialog';
+import { CreateTrainingCourseDialog } from './create-training-course-dialog/create-training-course-dialog';
 import { CourseLevels } from './course-levels';
 import { ConfirmButton } from './confirm-button';
 import { StepHeader } from './step-header';
+
+const CREATE_NEW_VALUE = '__create_new__';
 
 const STEP_KEYS = ['hierarchyStep1', 'hierarchyStep2', 'hierarchyStep3', 'hierarchyStep4'] as const;
 
@@ -37,7 +46,10 @@ export function ProgramDetail({ programId }: { programId: string }) {
   const { data: options = [] } = useCourseOptions();
   const linkCourse = useLinkCourse();
   const unlinkCourse = useUnlinkCourse();
+  const updateProgram = useUpdateProgram();
+  const updateCourse = useUpdateTrainingCourse();
   const [courseId, setCourseId] = useState('');
+  const [createOpen, setCreateOpen] = useState(false);
   const linkable = options.filter((option) => option.programId !== programId);
 
   return (
@@ -48,10 +60,35 @@ export function ProgramDetail({ programId }: { programId: string }) {
           className="text-muted-foreground hover:text-foreground inline-block text-sm transition-colors">
           {`← ${t('programs.title')}`}
         </Link>
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">{program?.name ?? t('loading')}</h1>
-          {program?.description ? (
-            <p className="text-muted-foreground mt-1 text-sm">{program.description}</p>
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            {program ? (
+              <h1 className="text-2xl font-semibold tracking-tight">{program.name}</h1>
+            ) : (
+              <Skeleton className="h-8 w-56" />
+            )}
+            {program?.description ? (
+              <p className="text-muted-foreground mt-1 text-sm">{program.description}</p>
+            ) : null}
+          </div>
+          {program ? (
+            <EditFieldsDialog
+              showLabel
+              triggerLabel={t('programs.editProgram')}
+              title={t('programs.editProgram')}
+              fields={[
+                { name: 'name', label: t('name'), type: 'text', required: true },
+                { name: 'description', label: t('description'), type: 'textarea' },
+              ]}
+              values={{ name: program.name, description: program.description ?? '' }}
+              pending={updateProgram.isPending}
+              onSave={(v, close) =>
+                updateProgram.mutate(
+                  { id: programId, data: { name: v.name, description: v.description } },
+                  { onSuccess: close }
+                )
+              }
+            />
           ) : null}
         </div>
       </header>
@@ -84,7 +121,11 @@ export function ProgramDetail({ programId }: { programId: string }) {
 
         <Card>
           <CardContent className="flex flex-col gap-3 sm:flex-row">
-            <Select value={courseId} onValueChange={setCourseId}>
+            <Select
+              value={courseId}
+              onValueChange={(value) =>
+                value === CREATE_NEW_VALUE ? setCreateOpen(true) : setCourseId(value)
+              }>
               <SelectTrigger className="w-full sm:w-80">
                 <SelectValue placeholder={t('programs.selectCourse')} />
               </SelectTrigger>
@@ -100,6 +141,13 @@ export function ProgramDetail({ programId }: { programId: string }) {
                     </SelectItem>
                   ))
                 )}
+                <SelectSeparator />
+                <SelectItem
+                  value={CREATE_NEW_VALUE}
+                  className="text-primary focus:text-primary font-medium">
+                  <Plus className="size-4" />
+                  {t('programs.createNew')}
+                </SelectItem>
               </SelectContent>
             </Select>
             <Button
@@ -110,10 +158,20 @@ export function ProgramDetail({ programId }: { programId: string }) {
               <Link2 className="size-4" />
               {t('programs.linkCourse')}
             </Button>
+            <Button variant="outline" onClick={() => setCreateOpen(true)}>
+              <Plus className="size-4" />
+              {t('programs.trainingCourse')}
+            </Button>
           </CardContent>
         </Card>
 
-        {isLoading ? <p className="text-muted-foreground text-sm">{t('loading')}</p> : null}
+        <CreateTrainingCourseDialog
+          open={createOpen}
+          onOpenChange={setCreateOpen}
+          onCreated={setCourseId}
+        />
+
+        {isLoading ? <LoadingState /> : null}
 
         {!isLoading && courses.length === 0 ? (
           <Card className="border-dashed">
@@ -140,6 +198,17 @@ export function ProgramDetail({ programId }: { programId: string }) {
                     {t('programs.courseBadge')}
                   </Badge>
                 </div>
+                <div className="flex shrink-0 items-center gap-1">
+                <EditFieldsDialog
+                  triggerLabel={t('programs.editCourse')}
+                  title={t('programs.editCourse')}
+                  fields={[{ name: 'name', label: t('name'), type: 'text', required: true }]}
+                  values={{ name: course.name }}
+                  pending={updateCourse.isPending}
+                  onSave={(v, close) =>
+                    updateCourse.mutate({ id: course._id, name: v.name }, { onSuccess: close })
+                  }
+                />
                 <ConfirmButton
                   variant="ghost"
                   size="sm"
@@ -150,6 +219,7 @@ export function ProgramDetail({ programId }: { programId: string }) {
                   <Unlink className="size-4" />
                   {t('programs.unlink')}
                 </ConfirmButton>
+                </div>
               </CardHeader>
               <Separator />
               <CardContent className="py-5">

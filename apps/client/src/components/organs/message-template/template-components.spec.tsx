@@ -5,10 +5,12 @@ import { MessageTemplatesScreen } from './message-templates-screen';
 import { TemplateEditorDialog } from './template-editor-dialog';
 import { SendTemplateDialog } from './send-template-dialog';
 
+let mockLocale = 'en';
+
 vi.mock('next-intl', () => ({
   useTranslations: () => (key: string, values?: Record<string, unknown>) =>
     values ? `${key}:${JSON.stringify(values)}` : key,
-  useLocale: () => 'en',
+  useLocale: () => mockLocale,
 }));
 
 const mockDelete = vi.fn();
@@ -112,6 +114,18 @@ describe('TemplateEditorDialog', () => {
     const textarea = screen.getByPlaceholderText('form.bodyPlaceholder');
     expect(textarea).toHaveValue('{{studentName}}');
   });
+
+  it('shows and inserts Arabic variable names in the Arabic view', () => {
+    mockLocale = 'ar';
+    try {
+      render(<TemplateEditorDialog open={true} onOpenChange={vi.fn()} />);
+      expect(screen.queryByText('{{studentName}}')).not.toBeInTheDocument();
+      fireEvent.click(screen.getByText('{{اسم_الطالب}}'));
+      expect(screen.getByPlaceholderText('form.bodyPlaceholder')).toHaveValue('{{اسم_الطالب}}');
+    } finally {
+      mockLocale = 'en';
+    }
+  });
 });
 
 describe('SendTemplateDialog', () => {
@@ -151,5 +165,27 @@ describe('SendTemplateDialog', () => {
 
     expect(screen.getByText('Hello Zaid, welcome to Quran 101!')).toBeInTheDocument();
     expect(screen.getByText('sendDialog.openWhatsApp')).toBeInTheDocument();
+  });
+
+  it('shows who the WhatsApp message will go to and translates missing variables', () => {
+    mockRenderData = {
+      text: 'Dear ',
+      missingVariables: ['parentName'],
+      phone: '+202222222222',
+      waLink: 'https://wa.me/202222222222?text=Dear',
+      recipient: 'PARENT',
+    };
+
+    render(
+      <SendTemplateDialog
+        open={true}
+        onOpenChange={vi.fn()}
+        groupId="group-1"
+        students={[{ _id: 's-1', name: 'Zaid' }]}
+      />
+    );
+
+    expect(screen.getByText('sendDialog.recipient.PARENT')).toBeInTheDocument();
+    expect(screen.getByText(/variables\.parentName/)).toBeInTheDocument();
   });
 });

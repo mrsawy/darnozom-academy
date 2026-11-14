@@ -13,8 +13,7 @@ import { Wallet, WalletSchema } from '../../wallet/entities/wallet.entity';
 import { Organization, OrganizationSchema } from '../../organization/entities/organization.entity';
 import { Category, CategorySchema } from '../../category/entities/category.entity';
 import { Course, CourseSchema } from '../../course/entities/course.entity';
-import { Grade, GradeSchema } from '../../grade/entities/grade.entity';
-import { SchoolType, SchoolTypeSchema } from '../../school-type/entities/school-type.entity';
+import { AgeRange, AgeRangeSchema } from '../../age-range/entities/age-range.entity';
 import { CourseModuleEntity, CourseModuleSchema } from '../../course/entities/course-module.entity';
 import { CourseContent, CourseContentSchema } from '../../course/entities/course-content.entity';
 import { ContentType } from '../../course/enum/contentType.enum';
@@ -69,8 +68,7 @@ import { WithdrawalRequestSeeder } from '../../withdrawal-request/seeds/withdraw
 import { NotificationSeeder } from '../../notification/seeds/notification.seeder';
 import { AiThreadSeeder } from '../../ai/seeds/ai-thread.seeder';
 import { ChatSeeder } from '../../chat/seeds/chat.seeder';
-import { GradeSeeder } from '../../grade/seeds/grade.seeder';
-import { SchoolTypeSeeder } from '../../school-type/seeds/school-type.seeder';
+import { AgeRangeSeeder } from '../../age-range/seeds/age-range.seeder';
 import { fakerAR as faker } from '@faker-js/faker';
 import { Connection, Types, Model, ConnectionStates } from 'mongoose';
 import { configDotenv } from 'dotenv';
@@ -114,8 +112,7 @@ function billingCycleForTier(tier: PlanTier): BillingCycle {
       { name: Wallet.name, schema: WalletSchema },
       { name: Organization.name, schema: OrganizationSchema },
       { name: Category.name, schema: CategorySchema },
-      { name: Grade.name, schema: GradeSchema },
-      { name: SchoolType.name, schema: SchoolTypeSchema },
+      { name: AgeRange.name, schema: AgeRangeSchema },
       { name: Course.name, schema: CourseSchema },
       { name: 'CourseModule', schema: CourseModuleSchema },
       {
@@ -197,8 +194,7 @@ async function bootstrap() {
   const walletModel = app.get<Model<Wallet>>(getModelToken(Wallet.name));
   const organizationModel = app.get<Model<Organization>>(getModelToken(Organization.name));
   const categoryModel = app.get<Model<Category>>(getModelToken(Category.name));
-  const gradeModel = app.get<Model<Grade>>(getModelToken(Grade.name));
-  const schoolTypeModel = app.get<Model<SchoolType>>(getModelToken(SchoolType.name));
+  const ageRangeModel = app.get<Model<AgeRange>>(getModelToken(AgeRange.name));
   const courseModel = app.get<Model<Course>>(getModelToken(Course.name));
   const moduleModel = app.get<Model<CourseModuleEntity>>(getModelToken('CourseModule'));
   const contentModel = app.get<Model<CourseContent>>(getModelToken(CourseContent.name));
@@ -222,8 +218,7 @@ async function bootstrap() {
 
   // ─── Instantiate seeders ────────────────────────────────────────
   const roleSeeder = new RoleSeeder(roleModel);
-  const gradeSeeder = new GradeSeeder(gradeModel);
-  const schoolTypeSeeder = new SchoolTypeSeeder(schoolTypeModel);
+  const ageRangeSeeder = new AgeRangeSeeder(ageRangeModel);
   const planSeeder = new PlanSeeder(planModel, currencyService);
   const aiPlanSeeder = new AiPlanSeeder(aiPlanModel);
   const aiSubscriptionSeeder = new AiSubscriptionSeeder(aiSubscriptionModel, aiPlanModel);
@@ -254,23 +249,19 @@ async function bootstrap() {
     lastName: 'Admin',
   });
 
-  log('Seeding Grades...');
-  await gradeSeeder.seed();
+  log('Seeding Age Ranges...');
+  await ageRangeSeeder.seed();
 
-  log('Seeding School Types...');
-  await schoolTypeSeeder.seed();
-
-  log('Seeding Plans...');
+log('Seeding Plans...');
   await planSeeder.seed();
 
   log('Seeding AI Plans...');
   await aiPlanSeeder.seed();
   await aiSubscriptionSeeder.loadPlans();
 
-  // Grade / SchoolType id pools — assigned randomly to each seeded course so the
+  // AgeRange id pool — assigned randomly to each seeded course so the
   // public catalog has data to filter on. Loaded once and reused across orgs.
-  const gradeIds = (await gradeModel.find().select('_id').lean()).map((g) => g._id);
-  const schoolTypeIds = (await schoolTypeModel.find().select('_id').lean()).map((s) => s._id);
+  const ageRangeIds = (await ageRangeModel.find().select('_id').lean()).map((a) => a._id);
 
   // ─── Phase 2: Per-organization data ────────────────────────────
   log('Seeding Organizations and their data...');
@@ -436,10 +427,9 @@ async function bootstrap() {
           approvalStatus: courseConfig.approvalStatus,
           publishStatus: courseConfig.publishStatus,
           entityStatus: courseConfig.entityStatus,
-          gradeId: gradeIds.length > 0 ? faker.helpers.arrayElement(gradeIds) : undefined,
-          schoolTypeIds:
-            schoolTypeIds.length > 0
-              ? faker.helpers.arrayElements(schoolTypeIds, faker.number.int({ min: 0, max: Math.min(2, schoolTypeIds.length) }))
+          ageRangeIds:
+            ageRangeIds.length > 0
+              ? faker.helpers.arrayElements(ageRangeIds, faker.number.int({ min: 1, max: Math.min(2, ageRangeIds.length) }))
               : [],
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           pricing: courseConfig.pricing as any,
@@ -450,11 +440,10 @@ async function bootstrap() {
       courses.push(course);
     }
 
-    // ── 2f. Assign categories, grades & school types to instructors ──
-    // Subjects (categories) come from the courses the instructor teaches; grades and
-    // school types are the levels/tracks the instructor covers — assigned as random
-    // multi-value subsets so the public catalog has instructor data to filter on.
-    log(`  Assigning Categories / Grades / School Types to Instructors for ${organizationConfig.name}...`);
+    // ── 2f. Assign categories & age ranges to instructors ──
+    // Subjects (categories) come from the courses the instructor teaches; age ranges
+    // are the audiences the instructor covers — assigned as random subsets so the public catalog has instructor data to filter on.
+    log(`  Assigning Categories / Age Ranges to Instructors for ${organizationConfig.name}...`);
     for (const instructor of instructors) {
       const update: Record<string, Types.ObjectId[]> = {};
 
@@ -464,14 +453,9 @@ async function bootstrap() {
         if (categoryIds.length > 0) update.categoriesIds = categoryIds;
       }
 
-      if (gradeIds.length > 0) {
-        const count = faker.number.int({ min: 1, max: Math.min(3, gradeIds.length) });
-        update.gradesIds = faker.helpers.arrayElements(gradeIds, count);
-      }
-
-      if (schoolTypeIds.length > 0) {
-        const count = faker.number.int({ min: 1, max: Math.min(2, schoolTypeIds.length) });
-        update.schoolTypesIds = faker.helpers.arrayElements(schoolTypeIds, count);
+      if (ageRangeIds.length > 0) {
+        const count = faker.number.int({ min: 1, max: Math.min(3, ageRangeIds.length) });
+        update.ageRangesIds = faker.helpers.arrayElements(ageRangeIds, count);
       }
 
       if (Object.keys(update).length > 0) {

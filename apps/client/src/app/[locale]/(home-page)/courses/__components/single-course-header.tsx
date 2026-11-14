@@ -2,7 +2,6 @@ import { Badge } from '@/components/atoms/badge';
 import { ICourseWithModules } from '@/lib/types/course/course.interface';
 import { BookOpen, Clock, Star, Users } from 'lucide-react';
 import { useFormatter, useLocale, useTranslations } from 'next-intl';
-import { normalizeCourseSchoolTypes } from '@/lib/utils/course/normalize-course-school-types';
 
 interface Props {
   course: ICourseWithModules;
@@ -13,10 +12,7 @@ function SingleCourseHeader({ course }: Props) {
   const format = useFormatter();
   const locale = useLocale();
   const isArabic = locale === 'ar';
-  const gradeName = course.grade ? (isArabic ? course.grade.nameAr : course.grade.nameEn) : null;
-  const schoolTypeNames = normalizeCourseSchoolTypes(course).schoolTypes.map((st) =>
-    isArabic ? st.nameAr : st.nameEn
-  );
+  const ageRangeNames = (course.ageRanges ?? []).map((a) => (isArabic ? a.nameAr : a.nameEn));
 
   const updatedDateLabel = (() => {
     if (!course.updatedAt) return '';
@@ -44,8 +40,7 @@ function SingleCourseHeader({ course }: Props) {
             {t('free')}
           </Badge>
         )}
-        {gradeName ? <Badge variant="secondary">{gradeName}</Badge> : null}
-        {schoolTypeNames.map((name) => (
+        {ageRangeNames.map((name) => (
           <Badge key={name} variant="secondary">
             {name}
           </Badge>

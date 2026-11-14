@@ -21,6 +21,7 @@ import { assertStaffAssignable } from './group-staff';
 import { GroupTeacherService } from './group-teacher.service';
 import { GroupDetailView, GroupLean, GroupView } from './group.types';
 import { TaskClosingService } from '../task/task-closing.service';
+import { SessionScheduleService } from '../session/session-schedule.service';
 
 const oid = (id: string | Types.ObjectId) => new Types.ObjectId(String(id));
 
@@ -34,7 +35,8 @@ export class GroupService {
     private readonly state: GroupStateService,
     private readonly parentService: ParentService,
     private readonly groupTeacher: GroupTeacherService,
-    private readonly taskClosing: TaskClosingService
+    private readonly taskClosing: TaskClosingService,
+    private readonly sessionSchedule: SessionScheduleService
   ) {}
 
   /** Null means the actor may not read any group. visibleStudentIds limits which student entries are returned (null = all). */
@@ -125,7 +127,7 @@ export class GroupService {
   async create(actor: AcademicsActor, dto: CreateGroupDto): Promise<GroupView> {
     const cohort = await this.cohortModel
       .findOne(withNotDeletedFilter({ _id: oid(dto.cohortId), organizationId: oid(actor.organizationId) }))
-      .lean<{ _id: Types.ObjectId; levelId: Types.ObjectId }>()
+      .lean<{ _id: Types.ObjectId; levelId: Types.ObjectId; startDate: Date }>()
       .exec();
     if (!cohort) throw new NotFoundException(AcademicsErrors.COHORT_NOT_FOUND);
     const level = await this.levelModel
@@ -148,7 +150,10 @@ export class GroupService {
       minStudents: dto.minStudents,
       maxStudents: dto.maxStudents,
       totalSessions: dto.totalSessions,
+      // Defaults to the batch's start date but is the group's own from here on.
+      startDate: dto.startDate ? new Date(dto.startDate) : cohort.startDate,
       estimatedEndDate: dto.estimatedEndDate ? new Date(dto.estimatedEndDate) : null,
+      ...(dto.meetingProvider ? { meetingProvider: dto.meetingProvider } : {}),
       meetingLink: dto.meetingLink ?? null,
       whatsappGroupLink: dto.whatsappGroupLink ?? null,
     });
@@ -160,17 +165,21 @@ export class GroupService {
     if (dto.schedule !== undefined && !isValidSchedule(dto.schedule)) throw new BadRequestException(AcademicsErrors.INVALID_SCHEDULE);
     const scheduleChanged = isScheduleChange(group, dto);
     const totalChanged = dto.totalSessions !== undefined && dto.totalSessions !== group.totalSessions;
-    if (group.status === GroupStatus.RUNNING && (scheduleChanged || totalChanged)) {
+    const startDateChanged = dto.startDate !== undefined && (await this.state.startDateChanged(group, dto.startDate));
+    // A running group's weekly slots and time zone may change (upcoming sessions are re-planned below);
+    // how many sessions it has and when it began may not.
+    if (group.status === GroupStatus.RUNNING && (totalChanged || startDateChanged)) {
       throw new ConflictException(AcademicsErrors.GROUP_RUNNING_SCHEDULE_LOCKED);
     }
     const minStudents = dto.minStudents ?? group.minStudents;
     const maxStudents = dto.maxStudents ?? group.maxStudents;
     const activeCount = group.students.filter((s) => s.status !== GroupStudentStatus.WITHDRAWN).length;
     if (maxStudents < minStudents || maxStudents < activeCount) throw new BadRequestException(AcademicsErrors.INVALID_STUDENT_LIMITS);
-    if (scheduleChanged) {
+    if (scheduleChanged || startDateChanged) {
       await this.groupTeacher.assertScheduleChangeFits(actor, group, {
         schedule: dto.schedule ?? group.schedule,
         timezone: dto.timezone ?? group.timezone,
+        ...(startDateChanged ? { startDate: dto.startDate ? new Date(dto.startDate) : null } : {}),
       });
     }
     if (dto.coordinatorId !== undefined && dto.coordinatorId !== null) {
@@ -183,14 +192,24 @@ export class GroupService {
     if (dto.supervisorId !== undefined && dto.supervisorId !== null) {
       assertStaffAssignable(await this.findOrgUser(actor, dto.supervisorId), Roles.SUPERVISOR, AcademicsErrors.SUPERVISOR_NOT_FOUND_IN_ORGANIZATION);
     }
+    // A start date that resolves to what the group already has is a no-op, so an older group that
+    // still follows its batch is not silently pinned just because the edit form echoed the date back.
+    const { startDate: _startDate, ...rest } = dto;
     const changes: Record<string, unknown> = {
-      ...dto,
+      ...rest,
       ...(dto.name === undefined ? {} : { name: dto.name.trim() }),
+      ...(startDateChanged ? { startDate: dto.startDate ? new Date(dto.startDate) : null } : {}),
       ...(dto.estimatedEndDate !== undefined
         ? { estimatedEndDate: dto.estimatedEndDate ? new Date(dto.estimatedEndDate) : null }
         : {}),
     };
     await this.groupModel.updateOne({ _id: group._id }, { $set: changes }).exec();
+    if (group.status === GroupStatus.RUNNING && scheduleChanged) {
+      await this.sessionSchedule.regenerateUpcoming(group, {
+        schedule: dto.schedule ?? group.schedule,
+        timezone: dto.timezone ?? group.timezone,
+      });
+    }
     return this.state.syncReadiness(group._id);
   }
 

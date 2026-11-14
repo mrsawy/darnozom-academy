@@ -2,7 +2,7 @@ import { Injectable, InternalServerErrorException, NotFoundException, BadRequest
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import mongoose, { ClientSession, Connection, FilterQuery, PaginateModel } from 'mongoose';
-import { ActiveStatus, ApprovalStatus, PublishStatus, Currency, CourseErrors, GradeErrors, SchoolTypeErrors } from '@darnozom/shared-types';
+import { ActiveStatus, ApprovalStatus, PublishStatus, Currency, CourseErrors, AgeRangeErrors } from '@darnozom/shared-types';
 import { BillingCycle } from 'src/utils/enums/billingCycle.enum';
 import { CurrencyService } from 'src/currency/currency.service';
 import { FileService } from 'src/file/file.service';
@@ -11,8 +11,7 @@ import { APPROVED_STATUSES, buildApprovedFilter, applyUpdateWithApproval, escape
 import { COURSE_CATEGORY_CHANGED_EVENT, CourseCategoryChangedEvent } from 'src/category/events/category-count.events';
 import { assertOrgApproved, isOrgApproved } from 'src/utils/verification.utils';
 import { Category } from 'src/category/entities/category.entity';
-import { Grade } from 'src/grade/entities/grade.entity';
-import { SchoolType } from 'src/school-type/entities/school-type.entity';
+import { AgeRange } from 'src/age-range/entities/age-range.entity';
 import { Course, SettingsSchema } from '../../entities/course.entity';
 import { CourseModulesService } from '../module/course-modules.service';
 import { CreateCourseDto } from '../../dto/create-course.dto';
@@ -55,10 +54,8 @@ export class CourseService {
     private readonly organizationModel: PaginateModel<Organization>,
     @InjectModel(Category.name)
     private readonly categoryModel: PaginateModel<Category>,
-    @InjectModel(Grade.name)
-    private readonly gradeModel: mongoose.Model<Grade>,
-    @InjectModel(SchoolType.name)
-    private readonly schoolTypeModel: mongoose.Model<SchoolType>,
+    @InjectModel(AgeRange.name)
+    private readonly ageRangeModel: mongoose.Model<AgeRange>,
     @InjectModel(Enrollment.name)
     private readonly enrollmentModel: PaginateModel<Enrollment>,
     private readonly currencyService: CurrencyService,
@@ -69,19 +66,12 @@ export class CourseService {
     private readonly eventEmitter: EventEmitter2
   ) {}
 
-  /**
-   * Validates that the optional gradeId / schoolTypeIds reference existing records.
-   * Grade and SchoolType are fully independent; neither requires the other.
-   */
-  private async assertGradeAndSchoolTypeExist(gradeId?: string | null, schoolTypeIds?: string[] | null) {
-    if (gradeId) {
-      const grade = await this.gradeModel.exists({ _id: gradeId });
-      if (!grade) throw new BadRequestException(GradeErrors.GRADE_NOT_FOUND);
-    }
-    if (schoolTypeIds && schoolTypeIds.length > 0) {
-      for (const id of schoolTypeIds) {
-        const schoolType = await this.schoolTypeModel.exists({ _id: id });
-        if (!schoolType) throw new BadRequestException(SchoolTypeErrors.SCHOOL_TYPE_NOT_FOUND);
+  /** Validates that the optional ageRangeIds reference existing records. */
+  private async assertAgeRangesExist(ageRangeIds?: string[] | null) {
+    if (ageRangeIds && ageRangeIds.length > 0) {
+      for (const id of ageRangeIds) {
+        const ageRange = await this.ageRangeModel.exists({ _id: id });
+        if (!ageRange) throw new BadRequestException(AgeRangeErrors.AGE_RANGE_NOT_FOUND);
       }
     }
   }
@@ -97,7 +87,7 @@ export class CourseService {
       name: createCourseDto.name,
     });
     if (foundedCourse) throw new BadRequestException('Course With the same name already exist for this organization .');
-    await this.assertGradeAndSchoolTypeExist(createCourseDto.gradeId, createCourseDto.schoolTypeIds);
+    await this.assertAgeRangesExist(createCourseDto.ageRangeIds);
     if (createCourseDto.isPaid) {
       createCourseDto.pricing = Object.fromEntries(
         Object.entries(createCourseDto.pricing).map(([key, value]) => {
@@ -161,15 +151,11 @@ export class CourseService {
       minModules,
       selectedCategory,
       categoryIds,
-      gradeId,
-      schoolTypeIds,
+      ageRangeIds,
       search,
       approvedOnly,
       ...paginateOptions
     } = mergedOptions;
-
-    // eslint-disable-next-line @typescript-eslint/no-deprecated -- mapped to $in for old URLs
-    const legacySchoolTypeId = mergedOptions.schoolTypeId;
 
     const query = Object.assign({}, filters) as mongoose.RootFilterQuery<Course> & Record<string, unknown>;
 
@@ -277,20 +263,13 @@ export class CourseService {
       query.categoriesIds = { $in: resolvedCategoryIds };
     }
 
-    // Grade / SchoolType filters are fully independent optional lookups.
-    if (gradeId) {
-      query.gradeId = new mongoose.Types.ObjectId(gradeId);
-    }
-    const rawSchoolTypeIds = [
-      ...(Array.isArray(schoolTypeIds) ? schoolTypeIds : typeof schoolTypeIds === 'string' ? schoolTypeIds.split(',') : []),
-      ...(legacySchoolTypeId ? [legacySchoolTypeId] : []),
-    ]
+    const rawAgeRangeIds = (Array.isArray(ageRangeIds) ? ageRangeIds : typeof ageRangeIds === 'string' ? ageRangeIds.split(',') : [])
       .map((id) => (typeof id === 'string' ? id.trim() : id))
       .filter((id): id is string => typeof id === 'string' && mongoose.isValidObjectId(id));
 
-    if (rawSchoolTypeIds.length > 0) {
-      query.schoolTypeIds = {
-        $in: rawSchoolTypeIds.map((id) => new mongoose.Types.ObjectId(id)),
+    if (rawAgeRangeIds.length > 0) {
+      query.ageRangeIds = {
+        $in: rawAgeRangeIds.map((id) => new mongoose.Types.ObjectId(id)),
       };
     }
 
@@ -310,12 +289,8 @@ export class CourseService {
           select: 'name',
         },
         {
-          path: 'grade',
-          select: 'nameEn nameAr',
-        },
-        {
-          path: 'schoolTypes',
-          select: 'nameEn nameAr',
+          path: 'ageRanges',
+          select: 'nameEn nameAr minAge maxAge',
         },
       ],
       sort: paginateOptions.sort ?? { createdAt: -1 },
@@ -413,8 +388,7 @@ export class CourseService {
       .populate('creator')
       .populate('modules')
       .populate('categories')
-      .populate('grade')
-      .populate('schoolTypes');
+      .populate('ageRanges');
     if (session) query.session(session);
     const foundedCourse = await query.exec();
     if (!foundedCourse) throw new NotFoundException('Course Not Found');
@@ -427,8 +401,7 @@ export class CourseService {
       .populate('creator')
       .populate('modules')
       .populate('categories')
-      .populate('grade')
-      .populate('schoolTypes');
+      .populate('ageRanges');
     if (session) query.session(session);
     const foundedCourse = await query.exec();
     if (!foundedCourse) throw new NotFoundException('Course Not Found');
@@ -444,7 +417,7 @@ export class CourseService {
         throw new NotFoundException('Course not found');
       }
 
-      await this.assertGradeAndSchoolTypeExist(updateCourseDto.gradeId, updateCourseDto.schoolTypeIds);
+      await this.assertAgeRangesExist(updateCourseDto.ageRangeIds);
 
       // Snapshot for category event emission
       const oldCategoryIds = (existingCourse.categoriesIds ?? []).map((id) => id.toString());
@@ -617,8 +590,7 @@ export class CourseService {
       .populate('categories')
       .populate('instructor')
       .populate('coInstructors')
-      .populate('grade')
-      .populate('schoolTypes')
+      .populate('ageRanges')
       .populate('reviews')
       .populate(populateConfig);
 

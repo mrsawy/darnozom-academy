@@ -7,6 +7,8 @@ import { SidebarInset, SidebarProvider } from '@/components/atoms/sidebar';
 import { OrgSidebar } from './__components/OrgSidebar';
 import { VerificationSuccessAlert } from './__components/verification-success-alert/verification-success-alert';
 import { OrganizationDashboardOnboardingHost } from './__components/organization-dashboard-onboarding-host';
+import { AcademyThemeStyle } from '@/components/molecules/academy-theme-style';
+import { getOrganizationSettings } from '@/lib/actions/organization/organization.action';
 import { getAuthUser } from '@/lib/actions/user/user.action';
 import { getVerificationStatus } from '@/lib/actions/verification/verification.action';
 import { ROUTE_ORGANIZATION_VERIFICATION } from '@/lib/data/constants/routes.constants';
@@ -36,8 +38,13 @@ export default async function OrgDashboardLayout({ children }: { children: React
     redirect(ROUTE_ORGANIZATION_VERIFICATION);
   }
 
+  // Fail open: a missing/unreadable theme just means the platform default look.
+  const settings = await getOrganizationSettings();
+  const theme = 'err' in settings ? null : settings;
+
   return (
     <div>
+      <AcademyThemeStyle theme={theme} />
       <SidebarProvider
         style={
           {

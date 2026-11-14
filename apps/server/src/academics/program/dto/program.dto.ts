@@ -48,3 +48,20 @@ export class CourseIdPayload {
   @IsMongoId()
   courseId!: string;
 }
+
+export class UpdateTrainingCoursePayload {
+  @IsMongoId()
+  id!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(120)
+  name!: string;
+}
+
+export class CreateTrainingCourseDto {
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(120)
+  name!: string;
+}

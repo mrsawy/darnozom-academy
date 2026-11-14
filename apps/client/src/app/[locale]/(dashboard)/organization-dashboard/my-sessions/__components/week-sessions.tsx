@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/components/atoms/loading-state';
 import { useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { Button } from '@/components/atoms/button';
@@ -26,7 +27,7 @@ function TeacherUpcomingSection() {
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <p className="text-muted-foreground text-sm">{t('loading')}</p>
+          <LoadingState />
         ) : sessions.length === 0 ? (
           <p className="text-muted-foreground text-sm">{t('empty')}</p>
         ) : (
@@ -120,7 +121,7 @@ export function WeekSessions() {
           </Button>
         </div>
       </div>
-      {isLoading ? <p>{t('loading')}</p> : null}
+      {isLoading ? <LoadingState /> : null}
       {!isLoading && sessions.length === 0 ? (
         <p className="text-muted-foreground">{t('sessions.mySessions.noSessions')}</p>
       ) : null}

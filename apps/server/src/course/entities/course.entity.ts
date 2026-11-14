@@ -175,11 +175,8 @@ export class Course extends Document<Types.ObjectId> {
   @Prop({ type: [MongooseSchema.Types.ObjectId], ref: 'User' })
   coInstructorsIds!: Types.ObjectId[];
 
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Grade', required: false, default: null })
-  gradeId?: Types.ObjectId | null;
-
-  @Prop({ type: [MongooseSchema.Types.ObjectId], ref: 'SchoolType', required: false, default: [] })
-  schoolTypeIds?: Types.ObjectId[];
+  @Prop({ type: [MongooseSchema.Types.ObjectId], ref: 'AgeRange', required: false, default: [] })
+  ageRangeIds?: Types.ObjectId[];
 
   @Prop({ type: String })
   description!: string;
@@ -367,16 +364,9 @@ CourseSchema.virtual('categories', {
   justOne: false,
 });
 
-CourseSchema.virtual('grade', {
-  ref: 'Grade',
-  localField: 'gradeId',
-  foreignField: '_id',
-  justOne: true,
-});
-
-CourseSchema.virtual('schoolTypes', {
-  ref: 'SchoolType',
-  localField: 'schoolTypeIds',
+CourseSchema.virtual('ageRanges', {
+  ref: 'AgeRange',
+  localField: 'ageRangeIds',
   foreignField: '_id',
   justOne: false,
 });

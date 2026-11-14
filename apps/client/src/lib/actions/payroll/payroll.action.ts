@@ -5,10 +5,13 @@ import type {
   AddBonusInput,
   DisputeSessionInput,
   FindStatementsQuery,
+  IGroupPayRule,
+  IPayrollLookup,
   IPayStatement,
   ISessionDisputeResult,
   ITeacherPayProfile,
   MarkPaidInput,
+  UpsertGroupPayRuleInput,
   UpsertTeacherPayProfileInput,
 } from '@/lib/types/payroll/payroll';
 
@@ -54,4 +57,20 @@ export async function disputeSession(data: DisputeSessionInput) {
 
 export async function resolveDispute(sessionId: string) {
   return createAuthorizedNatsRequest<ISessionDisputeResult>('academics.sessions.resolveDispute', { sessionId });
+}
+
+export async function getPayrollLookup() {
+  return createAuthorizedNatsRequest<IPayrollLookup>('payroll.lookup', {});
+}
+
+export async function listGroupPayRules() {
+  return createAuthorizedNatsRequest<IGroupPayRule[]>('payroll.groupRules.list', {});
+}
+
+export async function upsertGroupPayRule(data: UpsertGroupPayRuleInput) {
+  return createAuthorizedNatsRequest<IGroupPayRule>('payroll.groupRules.upsert', data);
+}
+
+export async function removeGroupPayRule(id: string) {
+  return createAuthorizedNatsRequest<IGroupPayRule>('payroll.groupRules.remove', { id });
 }

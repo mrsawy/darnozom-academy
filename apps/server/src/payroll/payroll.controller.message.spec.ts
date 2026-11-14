@@ -14,6 +14,10 @@ const expected: [string, string, Actions, Subjects][] = [
   ['getProfile', 'payroll.profiles.get', Actions.READ, Subjects.PAYROLL],
   ['listProfiles', 'payroll.profiles.list', Actions.READ, Subjects.PAYROLL],
   ['upsertProfile', 'payroll.profiles.upsert', Actions.MANAGE, Subjects.PAYROLL],
+  ['listGroupRules', 'payroll.groupRules.list', Actions.MANAGE, Subjects.PAYROLL],
+  ['lookup', 'payroll.lookup', Actions.MANAGE, Subjects.PAYROLL],
+  ['upsertGroupRule', 'payroll.groupRules.upsert', Actions.MANAGE, Subjects.PAYROLL],
+  ['removeGroupRule', 'payroll.groupRules.remove', Actions.MANAGE, Subjects.PAYROLL],
   ['generateStatements', 'payroll.statements.generate', Actions.MANAGE, Subjects.PAYROLL],
   ['findStatements', 'payroll.statements.find', Actions.READ, Subjects.PAYROLL],
   ['getStatementById', 'payroll.statements.getById', Actions.READ, Subjects.PAYROLL],
@@ -30,7 +34,7 @@ describe('PayrollControllerMessage', () => {
     expect(Reflect.getMetadata(PERMISSIONS_KEY, proto[method])).toEqual([{ action, subject }]);
   });
 
-  it('exposes exactly the 11 documented handlers', () => {
+  it('exposes exactly the 15 documented handlers', () => {
     const handlers = Object.getOwnPropertyNames(PayrollControllerMessage.prototype).filter((name) => name !== 'constructor');
     // eslint-disable-next-line unicorn/no-array-sort -- Test assertion comparing sorted arrays
     expect(handlers.sort()).toEqual(expected.map(([method]) => method).sort());
@@ -74,6 +78,8 @@ describe('PayrollControllerMessage', () => {
 
       controller = new PayrollControllerMessage(
         mockProfileService as unknown as TeacherPayProfileService,
+        {} as never,
+        {} as never,
         mockPayrollService as unknown as PayrollService,
         mockDisputeService as unknown as SessionDisputeService
       );

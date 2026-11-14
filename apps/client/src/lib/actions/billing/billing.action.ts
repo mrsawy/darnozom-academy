@@ -7,6 +7,8 @@ import type {
   IBillingSubscription,
   IFamilyPayment,
   IFamilyStatement,
+  ISubscriptionOverview,
+  ListSubscriptionsQuery,
   InitiatePaymentFormValues,
   IPaymentMethodOption,
 } from '@/lib/types/billing/billing';
@@ -83,6 +85,14 @@ export async function approvePayment(paymentId: string) {
   return createAuthorizedNatsRequest<void>('billing.payments.approve', { paymentId });
 }
 
+export async function recordOfflinePayment(data: {
+  subscriptionId: string;
+  amountMinor: number;
+  note?: string;
+}) {
+  return createAuthorizedNatsRequest<{ paymentId: string }>('billing.payments.recordOffline', data);
+}
+
 export async function rejectPayment(paymentId: string, reason: string) {
   return createAuthorizedNatsRequest<void>('billing.payments.reject', { paymentId, reason });
 }
@@ -127,4 +137,8 @@ export async function createCustomPaymentMethodConfig(label: string, fields: IPa
     label,
     fields,
   });
+}
+
+export async function listAllSubscriptions(query: ListSubscriptionsQuery = {}) {
+  return createAuthorizedNatsRequest<ISubscriptionOverview>('billing.subscriptions.listAll', query);
 }

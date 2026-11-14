@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/components/atoms/loading-state';
 import { useTranslations } from 'next-intl';
 import { AlertTriangle, ChevronLeft, UserRound, Users } from 'lucide-react';
 import { GroupStudentStatus } from '@darnozom/shared-types';
@@ -19,7 +20,7 @@ export function CohortGroups({ cohortId }: { cohortId: string }) {
   const { data: groups = [], isLoading } = useGroups({ cohortId });
 
   if (isLoading) {
-    return <p className="text-muted-foreground px-1 text-xs">{t('loading')}</p>;
+    return <LoadingState className="py-3" spinnerClassName="size-7" />;
   }
 
   if (groups.length === 0) {

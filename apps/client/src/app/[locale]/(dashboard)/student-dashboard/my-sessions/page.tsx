@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/components/atoms/loading-state';
 import { useTranslations } from 'next-intl';
 import { SessionSummaryList } from '@/components/organs/academics/session-summary-list';
 import { useSessions } from '@/lib/hooks/academics/use-academics.hook';
@@ -13,7 +14,7 @@ export default function StudentMySessionsPage() {
     <div className="space-y-4 p-4">
       <h1 className="text-2xl font-semibold">{t('sessions.family.title')}</h1>
       {isLoading || !user ? (
-        <p>{t('loading')}</p>
+        <LoadingState />
       ) : (
         <SessionSummaryList sessions={sessions} studentId={user._id} />
       )}

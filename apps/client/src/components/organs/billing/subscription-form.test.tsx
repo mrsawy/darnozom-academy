@@ -15,26 +15,18 @@ const STUDENTS = [
 ];
 
 describe('SubscriptionForm', () => {
-  it('offers every one of the five subscription types', () => {
+  it('offers exactly the one-time and monthly subscription types', () => {
     render(<SubscriptionForm students={STUDENTS} onSubmit={vi.fn()} isSubmitting={false} />);
+    expect(Object.values(SubscriptionType)).toEqual([SubscriptionType.FULL_COURSE, SubscriptionType.MONTHLY]);
     for (const type of Object.values(SubscriptionType)) {
       expect(screen.getByRole('option', { name: `type.${type}` })).toBeInTheDocument();
     }
   });
 
-  it('lets exactly one student be selected for non-family types', () => {
+  it('lets exactly one student be selected', () => {
     render(<SubscriptionForm students={STUDENTS} onSubmit={vi.fn()} isSubmitting={false} />);
     const studentSelect = screen.getByLabelText('student');
     expect(studentSelect).not.toHaveAttribute('multiple');
-  });
-
-  it('switches the student control to multi-select when FAMILY is chosen', () => {
-    render(<SubscriptionForm students={STUDENTS} onSubmit={vi.fn()} isSubmitting={false} />);
-    fireEvent.change(screen.getByLabelText('type'), {
-      target: { value: SubscriptionType.FAMILY },
-    });
-    const studentSelect = screen.getByLabelText('students');
-    expect(studentSelect).toHaveAttribute('multiple');
   });
 
   it('submits a typed amount in minor units', () => {
@@ -79,31 +71,6 @@ describe('SubscriptionForm', () => {
 
     expect(onSubmit).not.toHaveBeenCalled();
     expect(screen.getByText('amountInvalid')).toBeInTheDocument();
-  });
-
-  it('accepts zero for a full scholarship', () => {
-    const onSubmit = vi.fn();
-    render(
-      <SubscriptionForm
-        students={STUDENTS}
-        onSubmit={onSubmit}
-        isSubmitting={false}
-        defaultGroupId="g1"
-      />
-    );
-    fireEvent.change(screen.getByLabelText('type'), {
-      target: { value: SubscriptionType.SCHOLARSHIP },
-    });
-    fireEvent.change(screen.getByLabelText('student'), { target: { value: 's1' } });
-    fireEvent.change(screen.getByLabelText('amount'), { target: { value: '0' } });
-    fireEvent.click(screen.getByRole('button', { name: 'save' }));
-
-    expect(onSubmit).toHaveBeenCalledWith(
-      expect.objectContaining({
-        type: SubscriptionType.SCHOLARSHIP,
-        amountMinor: 0,
-      })
-    );
   });
 
   it('disables the submit button while in flight', () => {

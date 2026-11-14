@@ -1,7 +1,7 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { BillingErrors, BillingSubscriptionStatus, SubscriptionType } from '@darnozom/shared-types';
+import { BillingErrors, BillingSubscriptionStatus } from '@darnozom/shared-types';
 import { Cohort } from '../../academics/cohort/entities/cohort.entity';
 import { Group } from '../../academics/group/entities/group.entity';
 import { BillingActor, BillingSubscriptionLean } from '../billing.types';
@@ -20,6 +20,8 @@ export interface GroupForBilling {
   _id: Types.ObjectId;
   organizationId: Types.ObjectId;
   cohortId?: Types.ObjectId | string | null;
+  /** The group's own start date; when unset the cohort's date applies. */
+  startDate?: Date | null;
   students: { studentId: Types.ObjectId | string }[];
 }
 
@@ -39,12 +41,9 @@ export class SubscriptionService {
       throw new BadRequestException(BillingErrors.AMOUNT_INVALID);
     }
 
-    const expectedItems = dto.type === SubscriptionType.FAMILY ? 'many' : 'one';
-    if (expectedItems === 'one' && dto.items.length !== 1) {
+    // A subscription covers exactly one student in one group.
+    if (dto.items.length !== 1) {
       throw new BadRequestException(BillingErrors.SUBSCRIPTION_ITEMS_INVALID);
-    }
-    if (expectedItems === 'many' && dto.items.length < 2) {
-      throw new BadRequestException(BillingErrors.FAMILY_SUBSCRIPTION_NEEDS_SIBLINGS);
     }
 
     const groups = await this.groupModel
@@ -68,12 +67,7 @@ export class SubscriptionService {
     }
 
     const familyByStudent = await this.families.resolve(dto.items.map((item) => item.studentId));
-    const familyIds = new Set(dto.items.map((item) => familyByStudent.get(item.studentId) ?? item.studentId));
-    // One family per subscription: a shared charge across two families could never be settled.
-    if (familyIds.size !== 1) {
-      throw new BadRequestException(BillingErrors.FAMILY_SUBSCRIPTION_NEEDS_SIBLINGS);
-    }
-    const familyId = [...familyIds][0];
+    const familyId = familyByStudent.get(dto.items[0].studentId) ?? dto.items[0].studentId;
 
     let subscription: BillingSubscriptionLean;
     try {
@@ -188,16 +182,22 @@ export class SubscriptionService {
   }
 
   private async startDatesFor(groups: GroupForBilling[]): Promise<Map<string, Date>> {
-    const cohortIds = groups.map((g) => g.cohortId).filter((id): id is Types.ObjectId | string => id != null);
-    if (cohortIds.length === 0) return new Map();
+    const result = new Map<string, Date>();
+    for (const group of groups) {
+      if (group.startDate) result.set(String(group._id), group.startDate);
+    }
+    const cohortIds = groups
+      .filter((g) => !g.startDate)
+      .map((g) => g.cohortId)
+      .filter((id): id is Types.ObjectId | string => id != null);
+    if (cohortIds.length === 0) return result;
     const cohorts = await this.cohortModel
       .find({ _id: { $in: cohortIds.map(oid) } })
       .lean<{ _id: Types.ObjectId | string; startDate: Date }[]>()
       .exec();
     const cohortMap = new Map(cohorts.map((c) => [String(c._id), c.startDate]));
-    const result = new Map<string, Date>();
     for (const group of groups) {
-      if (group.cohortId && cohortMap.has(String(group.cohortId))) {
+      if (!group.startDate && group.cohortId && cohortMap.has(String(group.cohortId))) {
         result.set(String(group._id), cohortMap.get(String(group.cohortId))!);
       }
     }

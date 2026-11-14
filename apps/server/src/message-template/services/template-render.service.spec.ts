@@ -31,7 +31,15 @@ const makeStudent = (phone?: string) => ({
   childUsersIds: [],
 });
 
-const makeService = (template: any, group: any, student: any, level: any, course: any, teacher: any) => {
+const makeService = (
+  template: any,
+  group: any,
+  student: any,
+  level: any,
+  course: any,
+  teacher: any,
+  parent: any = null,
+) => {
   const templateService = { findOne: jest.fn(async () => template) };
   const groupModel = {
     findOne: jest.fn(async () => group),
@@ -41,6 +49,7 @@ const makeService = (template: any, group: any, student: any, level: any, course
       const result = String(id) === String(STUDENT_ID) ? student : String(id) === String(TEACHER_ID) ? teacher : null;
       return { lean: () => ({ exec: async () => result }) };
     }),
+    findOne: jest.fn(() => ({ lean: () => ({ exec: async () => parent }) })),
   };
   const levelModel = { findById: jest.fn(() => ({ lean: () => ({ exec: async () => level }) })) };
   const courseModel = { findById: jest.fn(() => ({ lean: () => ({ exec: async () => course }) })) };
@@ -104,5 +113,78 @@ describe('TemplateRenderService.render', () => {
     );
     expect(result.phone).toBeUndefined();
     expect(result.waLink).toBeUndefined();
+  });
+
+  const actor = { _id: String(ORG), organizationId: String(ORG), roleName: Roles.MANAGER, additionalRoles: [] };
+  const lvl = { name: 'Arabic' };
+  const crs = { name: 'Quran' };
+  const tch = { firstName: 'Sara', lastName: 'T' };
+  const parent = (phone?: string) => ({ firstName: 'Omar', lastName: 'Ali', phone });
+  const studentDto = { groupId: String(GROUP_ID), studentId: String(STUDENT_ID) };
+
+  it('fills {{parentName}} from the parent linked to the student', async () => {
+    const template = { context: 'STUDENT', body: 'Dear {{parentName}}' };
+    const service = makeService(template, makeGroup(), makeStudent('+201111111111'), lvl, crs, tch, parent('+202222222222'));
+    const result = await service.render(actor, 't1', studentDto);
+    expect(result.text).toBe('Dear Omar Ali');
+    expect(result.missingVariables).toEqual([]);
+  });
+
+  it('reports parentName as missing when the student has no linked parent', async () => {
+    const template = { context: 'STUDENT', body: 'Dear {{parentName}}' };
+    const service = makeService(template, makeGroup(), makeStudent('+201111111111'), lvl, crs, tch, null);
+    const result = await service.render(actor, 't1', studentDto);
+    expect(result.missingVariables).toEqual(['parentName']);
+  });
+
+  it('sends a parent-addressed template to the parent phone', async () => {
+    const template = { context: 'STUDENT', body: 'Dear {{parentName}}' };
+    const service = makeService(template, makeGroup(), makeStudent('+201111111111'), lvl, crs, tch, parent('+202222222222'));
+    const result = await service.render(actor, 't1', studentDto);
+    expect(result.recipient).toBe('PARENT');
+    expect(result.phone).toBe('+202222222222');
+  });
+
+  it('sends a student-addressed template to the student phone', async () => {
+    const template = { context: 'STUDENT', body: 'Hi {{studentName}}' };
+    const service = makeService(template, makeGroup(), makeStudent('+201111111111'), lvl, crs, tch, parent('+202222222222'));
+    const result = await service.render(actor, 't1', studentDto);
+    expect(result.recipient).toBe('STUDENT');
+    expect(result.phone).toBe('+201111111111');
+  });
+
+  it("falls back to the parent's phone when the student has none", async () => {
+    const template = { context: 'STUDENT', body: 'Hi {{studentName}}' };
+    const service = makeService(template, makeGroup(), makeStudent(undefined), lvl, crs, tch, parent('+202222222222'));
+    const result = await service.render(actor, 't1', studentDto);
+    expect(result.recipient).toBe('PARENT');
+    expect(result.phone).toBe('+202222222222');
+  });
+
+  it('renders the schedule with English day names by default', async () => {
+    const template = { context: 'GROUP', body: '{{schedule}}' };
+    const service = makeService(template, makeGroup(), null, lvl, crs, tch);
+    const result = await service.render(actor, 't1', { groupId: String(GROUP_ID) });
+    expect(result.text).toBe('Sat 17:00');
+  });
+
+  it('renders the schedule with Arabic day names for the ar locale', async () => {
+    const template = { context: 'GROUP', body: '{{schedule}}' };
+    const group = makeGroup({
+      schedule: [
+        { dayOfWeek: 6, startTime: '17:00', durationMinutes: 60 },
+        { dayOfWeek: 1, startTime: '18:00', durationMinutes: 60 },
+      ],
+    });
+    const service = makeService(template, group, null, lvl, crs, tch);
+    const result = await service.render(actor, 't1', { groupId: String(GROUP_ID), locale: 'ar' });
+    expect(result.text).toBe('السبت 17:00 و الاثنين 18:00');
+  });
+
+  it('resolves Arabic variable names in the body', async () => {
+    const template = { context: 'GROUP', body: 'انضم إلى {{اسم_المجموعة}} مع {{اسم_المدرس}}' };
+    const service = makeService(template, makeGroup(), null, lvl, crs, tch);
+    const result = await service.render(actor, 't1', { groupId: String(GROUP_ID), locale: 'ar' });
+    expect(result.text).toBe('انضم إلى Math Group مع Sara T');
   });
 });

@@ -11,6 +11,8 @@ import {
   ILatestEvaluation,
   IActionItem,
   IBalanceEntry,
+  IAdminOverview,
+  GroupStudentStatus,
   GroupStatus,
   SessionStatus,
   TaskStatus,
@@ -29,6 +31,9 @@ import { LedgerEntry } from '../billing/entities/ledger-entry.entity';
 import { PayStatement } from '../payroll/entities/pay-statement.entity';
 import { Certificate } from '../certificate/entities/certificate.entity';
 import { User } from '../user/entities/user.entity';
+import { Program } from '../academics/program/entities/program.entity';
+import { Course } from '../course/entities/course.entity';
+import { avg, rate, tallySessions, topAndBottom, OverviewSession } from './admin-overview.calc';
 
 @Injectable()
 export class DashboardService {
@@ -42,7 +47,152 @@ export class DashboardService {
     @InjectModel(PayStatement.name) private readonly payStatementModel: Model<PayStatement>,
     @InjectModel(Certificate.name) private readonly certificateModel: Model<Certificate>,
     @InjectModel(User.name) private readonly userModel: Model<User>,
+    @InjectModel(Program.name) private readonly programModel: Model<Program>,
+    @InjectModel(Course.name) private readonly courseModel: Model<Course>,
   ) {}
+
+  /** Programme / group / teacher / student picture for the academy home page. */
+  async getAdminOverview(orgId: string): Promise<IAdminOverview> {
+    const oid = new Types.ObjectId(orgId);
+    const [programs, courses, groups, sessionDocs] = await Promise.all([
+      this.programModel.find({ organizationId: oid, deletedAt: null }, { name: 1 }).lean(),
+      this.courseModel.find({ organizationId: oid, programId: { $ne: null } }, { programId: 1 }).lean(),
+      this.groupModel
+        .find({ organizationId: oid, deletedAt: null, status: { $ne: GroupStatus.CANCELLED } })
+        .select('courseId teacherId status atRisk students.studentId students.status')
+        .lean(),
+      this.sessionModel
+        .find({
+          organizationId: oid,
+          deletedAt: null,
+          status: { $in: [SessionStatus.COMPLETED, SessionStatus.REPORT_PENDING] },
+        })
+        .select('groupId teacherId attendance.studentId attendance.status report.evaluations')
+        .lean(),
+    ]);
+
+    const sessions: OverviewSession[] = sessionDocs.map((s) => ({
+      groupId: String(s.groupId),
+      teacherId: String(s.teacherId),
+      attendance: (s.attendance ?? []).map((a) => ({ studentId: String(a.studentId), status: a.status })),
+      evaluations: (s.report?.evaluations ?? []).map((e) => ({
+        studentId: String(e.studentId),
+        participation: e.participation,
+        understanding: e.understanding,
+        behavior: e.behavior,
+        homework: e.homework,
+      })),
+    }));
+    const { byTeacher, byStudent, byGroup } = tallySessions(sessions);
+
+    const programOfCourse = new Map(courses.map((c) => [String(c._id), String(c.programId)]));
+    const activeStudentIds = new Set<string>();
+    const teacherGroups = new Map<string, number>();
+    const teacherStudents = new Map<string, Set<string>>();
+    const perProgram = new Map<
+      string,
+      { groups: number; running: number; students: Set<string>; groupIds: string[] }
+    >();
+    let runningGroups = 0;
+    let atRiskGroups = 0;
+
+    for (const g of groups) {
+      const active = (g.students ?? [])
+        .filter((st) => st.status === GroupStudentStatus.ACTIVE)
+        .map((st) => String(st.studentId));
+      const isRunning = g.status === GroupStatus.RUNNING;
+      if (isRunning) runningGroups += 1;
+      if (g.atRisk) atRiskGroups += 1;
+      active.forEach((id) => activeStudentIds.add(id));
+      if (g.teacherId) {
+        const tid = String(g.teacherId);
+        teacherGroups.set(tid, (teacherGroups.get(tid) ?? 0) + 1);
+        const set = teacherStudents.get(tid) ?? new Set<string>();
+        active.forEach((id) => set.add(id));
+        teacherStudents.set(tid, set);
+      }
+      const pid = programOfCourse.get(String(g.courseId));
+      if (pid) {
+        const p = perProgram.get(pid) ?? { groups: 0, running: 0, students: new Set<string>(), groupIds: [] };
+        p.groups += 1;
+        if (isRunning) p.running += 1;
+        active.forEach((id) => p.students.add(id));
+        p.groupIds.push(String(g._id));
+        perProgram.set(pid, p);
+      }
+    }
+
+    const teacherIds = [...teacherGroups.keys()];
+    const studentRows = [...byStudent.entries()].filter(([, t]) => t.scoreCount > 0);
+    const nameIds = [...new Set([...teacherIds, ...studentRows.map(([id]) => id)])];
+    const users = nameIds.length
+      ? await this.userModel
+          .find(
+            { _id: { $in: nameIds.map((id) => new Types.ObjectId(id)) } },
+            { firstName: 1, lastName: 1, username: 1 },
+          )
+          .lean()
+      : [];
+    const nameOf = new Map(
+      users.map((u) => [String(u._id), `${u.firstName ?? ''} ${u.lastName ?? ''}`.trim() || u.username]),
+    );
+
+    const teacherStats = teacherIds.map((id) => {
+      const t = byTeacher.get(id);
+      return {
+        teacherId: id,
+        name: nameOf.get(id) ?? id,
+        groups: teacherGroups.get(id) ?? 0,
+        students: teacherStudents.get(id)?.size ?? 0,
+        avgScore: t ? avg(t) : null,
+        attendanceRate: t ? rate(t) : null,
+      };
+    });
+    const studentStats = studentRows.map(([id, t]) => ({
+      studentId: id,
+      name: nameOf.get(id) ?? id,
+      avgScore: avg(t) as number,
+      attendanceRate: rate(t),
+    }));
+    const teachers = topAndBottom(teacherStats, 3);
+    const students = topAndBottom(studentStats, 5);
+
+    return {
+      totals: {
+        programs: programs.length,
+        runningGroups,
+        activeStudents: activeStudentIds.size,
+        teachers: teacherIds.length,
+        atRiskGroups,
+      },
+      programs: programs
+        .map((p) => {
+          const agg = perProgram.get(String(p._id));
+          let attended = 0;
+          let counted = 0;
+          for (const gid of agg?.groupIds ?? []) {
+            const t = byGroup.get(gid);
+            if (t) {
+              attended += t.attended;
+              counted += t.counted;
+            }
+          }
+          return {
+            programId: String(p._id),
+            name: p.name,
+            groups: agg?.groups ?? 0,
+            runningGroups: agg?.running ?? 0,
+            students: agg?.students.size ?? 0,
+            attendanceRate: counted === 0 ? null : Math.round((attended / counted) * 100),
+          };
+        })
+        .sort((a, b) => b.students - a.students),
+      topTeachers: teachers.top,
+      bottomTeachers: teachers.bottom,
+      topStudents: students.top,
+      bottomStudents: students.bottom,
+    };
+  }
 
   async getAdminCounts(
     _userId: string,
@@ -133,7 +283,8 @@ export class DashboardService {
   }
 
   async getParentDashboard(parentId: string, orgId: string): Promise<IParentDashboardData> {
-    const oid = new Types.ObjectId(orgId);
+    // A parent isn't tied to one organization, so an empty orgId means "across all of their children's orgs".
+    const orgFilter = orgId ? { organizationId: new Types.ObjectId(orgId) } : {};
     const pid = new Types.ObjectId(parentId);
     const parentUser = await this.userModel.findById(pid).lean();
     const childIds = (parentUser?.childUsersIds ?? []).map((id) => new Types.ObjectId(String(id)));
@@ -161,7 +312,7 @@ export class DashboardService {
         // 1. Groups enrolled in this organization
         const groups = await this.groupModel
           .find({
-            organizationId: oid,
+            ...orgFilter,
             'students.studentId': studentOid,
             deletedAt: null,
           })
@@ -198,7 +349,7 @@ export class DashboardService {
         // 2. Latest session report evaluation
         const latestSessionWithReport = await this.sessionModel
           .findOne({
-            organizationId: oid,
+            ...orgFilter,
             'report.evaluations.studentId': studentOid,
             deletedAt: null,
           })
@@ -231,7 +382,7 @@ export class DashboardService {
         // Check for certificate name review
         const certNeedingReview = await this.certificateModel
           .findOne({
-            organizationId: oid,
+            ...orgFilter,
             studentId: studentOid,
             status: CertificateStatus.NAME_REVIEW,
           })
@@ -248,7 +399,7 @@ export class DashboardService {
         // Check for rejected payment receipts
         const rejectedPayment = await this.familyPaymentModel
           .findOne({
-            organizationId: oid,
+            ...orgFilter,
             familyId: pid,
             status: FamilyPaymentState.REJECTED,
           })

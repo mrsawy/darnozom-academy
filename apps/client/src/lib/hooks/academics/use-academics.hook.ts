@@ -19,6 +19,7 @@ import * as sessionsApi from '@/lib/actions/academics/sessions.action';
 import * as followUpsApi from '@/lib/actions/academics/follow-ups.action';
 import * as tasksApi from '@/lib/actions/academics/tasks.action';
 import * as supervisionApi from '@/lib/actions/academics/supervision.action';
+import * as teachersApi from '@/lib/actions/academics/teachers.action';
 import { setAdditionalRoles } from '@/lib/actions/academics/additional-roles.action';
 import type {
   AttendanceEntry,
@@ -31,10 +32,16 @@ import type {
   SessionQuery,
   SupervisionScores,
   TaskQuery,
+  TeacherOverviewQuery,
 } from '@/lib/types/academics/academics';
 
 const ROOT = 'academics';
 
+/**
+ * Academics data is edited from several screens (a teacher's availability, a group's roster...), and the app-wide
+ * default is `refetchOnMount: false`. Every query below therefore sets `refetchOnMount: true`, which still only
+ * refetches when the cache is stale (e.g. right after a mutation invalidated it) so pages open with fresh data.
+ */
 export const academicsKeys = {
   programs: [ROOT, 'programs'] as const,
   program: (id: string) => [ROOT, 'program', id] as const,
@@ -42,8 +49,11 @@ export const academicsKeys = {
   courseOptions: [ROOT, 'course-options'] as const,
   levels: (courseId: string) => [ROOT, 'levels', courseId] as const,
   cohorts: (levelId: string) => [ROOT, 'cohorts', levelId] as const,
+  cohort: (id: string) => [ROOT, 'cohort', id] as const,
   groups: (query: GroupQuery) => [ROOT, 'groups', query] as const,
   group: (id: string) => [ROOT, 'group', id] as const,
+  attendanceMatrix: (id: string) => [ROOT, 'attendance-matrix', id] as const,
+  teacherOverview: (query: TeacherOverviewQuery) => [ROOT, 'teacher-overview', query] as const,
   studentCandidates: (id: string, q: string) => [ROOT, 'student-candidates', id, q] as const,
   teacherCandidates: (id: string) => [ROOT, 'teacher-candidates', id] as const,
   myAvailability: [ROOT, 'my-availability'] as const,
@@ -57,72 +67,112 @@ export const academicsKeys = {
   sessionEvaluations: (sessionId: string) => [ROOT, 'session-evaluations', sessionId] as const,
 };
 
+export const useCohort = (id: string | null) =>
+  useQuery({
+    queryKey: academicsKeys.cohort(id ?? ''),
+    refetchOnMount: true,
+    queryFn: async () => unwrap(await structureApi.getCohort(id as string)),
+    enabled: !!id,
+  });
 export const usePrograms = () =>
   useQuery({
     queryKey: academicsKeys.programs,
+    refetchOnMount: true,
     queryFn: async () => unwrap(await programsApi.getPrograms()),
   });
 export const useProgram = (id: string) =>
   useQuery({
     queryKey: academicsKeys.program(id),
+    refetchOnMount: true,
     queryFn: async () => unwrap(await programsApi.getProgram(id)),
     enabled: !!id,
   });
 export const useProgramCourses = (id: string) =>
   useQuery({
     queryKey: academicsKeys.programCourses(id),
+    refetchOnMount: true,
     queryFn: async () => unwrap(await programsApi.getProgramCourses(id)),
     enabled: !!id,
   });
 export const useCourseOptions = () =>
   useQuery({
     queryKey: academicsKeys.courseOptions,
+    refetchOnMount: true,
     queryFn: async () => unwrap(await programsApi.getCourseOptions()),
+  });
+export const useTrainingCourse = (id: string) =>
+  useQuery({
+    queryKey: [ROOT, 'training-course', id] as const,
+    refetchOnMount: true,
+    queryFn: async () => unwrap(await programsApi.getTrainingCourse(id)),
+    enabled: !!id,
   });
 export const useLevels = (courseId: string) =>
   useQuery({
     queryKey: academicsKeys.levels(courseId),
+    refetchOnMount: true,
     queryFn: async () => unwrap(await structureApi.getLevels(courseId)),
     enabled: !!courseId,
   });
 export const useCohorts = (levelId: string) =>
   useQuery({
     queryKey: academicsKeys.cohorts(levelId),
+    refetchOnMount: true,
     queryFn: async () => unwrap(await structureApi.getCohorts(levelId)),
     enabled: !!levelId,
   });
 export const useGroups = (query: GroupQuery) =>
   useQuery({
     queryKey: academicsKeys.groups(query),
+    refetchOnMount: true,
     queryFn: async () => unwrap(await groupsApi.getGroups(query)),
   });
 export const useGroup = (id: string) =>
   useQuery({
     queryKey: academicsKeys.group(id),
+    refetchOnMount: true,
     queryFn: async () => unwrap(await groupsApi.getGroup(id)),
     enabled: !!id,
+  });
+export const useGroupAttendanceMatrix = (id: string, enabled = true) =>
+  useQuery({
+    queryKey: academicsKeys.attendanceMatrix(id),
+    refetchOnMount: true,
+    queryFn: async () => unwrap(await groupsApi.getGroupAttendanceMatrix(id)),
+    enabled: !!id && enabled,
+  });
+export const useTeacherOverview = (query: TeacherOverviewQuery) =>
+  useQuery({
+    queryKey: academicsKeys.teacherOverview(query),
+    refetchOnMount: true,
+    queryFn: async () => unwrap(await teachersApi.getTeacherOverview(query)),
+    enabled: !!query.id,
   });
 export const useStudentCandidates = (id: string, q: string) =>
   useQuery({
     queryKey: academicsKeys.studentCandidates(id, q),
+    refetchOnMount: true,
     queryFn: async () => unwrap(await groupsApi.getStudentCandidates(id, q)),
     enabled: !!id,
   });
 export const useTeacherCandidates = (id: string) =>
   useQuery({
     queryKey: academicsKeys.teacherCandidates(id),
+    refetchOnMount: true,
     queryFn: async () => unwrap(await groupsApi.getTeacherCandidates(id)),
     enabled: !!id,
   });
 export const useMyAvailability = () =>
   useQuery({
     queryKey: academicsKeys.myAvailability,
+    refetchOnMount: true,
     queryFn: async () => unwrap(await availabilityApi.getMyAvailability()),
   });
 
 export const useTeacherAvailability = (teacherId?: string) =>
   useQuery({
     queryKey: academicsKeys.teacherAvailability(teacherId ?? ''),
+    refetchOnMount: true,
     queryFn: async () => unwrap(await availabilityApi.getTeacherAvailability(teacherId as string)),
     enabled: !!teacherId,
   });
@@ -154,8 +204,20 @@ export const useCreateProgram = () =>
   useAcademicsMutation(async (v: { name: string; description?: string }) =>
     unwrap(await programsApi.createProgram(v))
   );
+export const useUpdateProgram = () =>
+  useAcademicsMutation(async (v: { id: string; data: { name?: string; description?: string } }) =>
+    unwrap(await programsApi.updateProgram(v.id, v.data))
+  );
 export const useDeleteProgram = () =>
   useAcademicsMutation(async (id: string) => unwrap(await programsApi.deleteProgram(id)));
+export const useCreateTrainingCourse = () =>
+  useAcademicsMutation(async (name: string) => unwrap(await programsApi.createTrainingCourse(name)));
+export const useUpdateTrainingCourse = () =>
+  useAcademicsMutation(async (v: { id: string; name: string }) =>
+    unwrap(await programsApi.updateTrainingCourse(v.id, v.name))
+  );
+export const useDeleteTrainingCourse = () =>
+  useAcademicsMutation(async (id: string) => unwrap(await programsApi.deleteTrainingCourse(id)));
 export const useLinkCourse = () =>
   useAcademicsMutation(async (v: { programId: string; courseId: string }) =>
     unwrap(await programsApi.linkCourse(v.programId, v.courseId))
@@ -165,7 +227,7 @@ export const useUnlinkCourse = () =>
     unwrap(await programsApi.unlinkCourse(courseId))
   );
 export const useCreateLevel = () =>
-  useAcademicsMutation(async (v: { courseId: string; name: string; order: number; certificateRules?: import('@darnozom/shared-types').ICertificateRules }) =>
+  useAcademicsMutation(async (v: { courseId: string; name: string; order: number; ageRangeId?: string; certificateRules?: import('@darnozom/shared-types').ICertificateRules }) =>
     unwrap(await structureApi.createLevel(v))
   );
 export const useUpdateLevel = () =>
@@ -175,6 +237,7 @@ export const useUpdateLevel = () =>
       data: {
         name?: string;
         order?: number;
+        ageRangeId?: string | null;
         certificateRules?: import('@darnozom/shared-types').ICertificateRules;
       };
     }) => unwrap(await structureApi.updateLevel(v.id, v.data))
@@ -184,6 +247,10 @@ export const useDeleteLevel = () =>
 export const useCreateCohort = () =>
   useAcademicsMutation(async (v: { levelId: string; name: string; startDate: string }) =>
     unwrap(await structureApi.createCohort(v))
+  );
+export const useUpdateCohort = () =>
+  useAcademicsMutation(async (v: { id: string; data: { name?: string; startDate?: string } }) =>
+    unwrap(await structureApi.updateCohort(v.id, v.data))
   );
 export const useDeleteCohort = () =>
   useAcademicsMutation(async (id: string) => unwrap(await structureApi.deleteCohort(id)));
@@ -241,18 +308,21 @@ export const useSetAdditionalRoles = () =>
 export const useSessions = (query: SessionQuery, enabled = true) =>
   useQuery({
     queryKey: academicsKeys.sessions(query),
+    refetchOnMount: true,
     queryFn: async () => unwrap(await sessionsApi.getSessions(query)),
     enabled,
   });
 export const useSession = (id: string) =>
   useQuery({
     queryKey: academicsKeys.session(id),
+    refetchOnMount: true,
     queryFn: async () => unwrap(await sessionsApi.getSession(id)),
     enabled: !!id,
   });
 export const useFollowUps = (groupId: string, enabled = true) =>
   useQuery({
     queryKey: academicsKeys.followUps(groupId),
+    refetchOnMount: true,
     queryFn: async () => unwrap(await followUpsApi.getFollowUps(groupId)),
     enabled: enabled && !!groupId,
   });
@@ -296,12 +366,14 @@ export const useUpdateFollowUp = () =>
 export const useMyTasks = (query: TaskQuery, enabled = true) =>
   useQuery({
     queryKey: academicsKeys.myTasks(query),
+    refetchOnMount: true,
     queryFn: async (): Promise<ITasks> => unwrap(await tasksApi.getMyTasks(query)),
     enabled,
   });
 export const useGroupTasks = (groupId: string, enabled = true) =>
   useQuery({
     queryKey: academicsKeys.groupTasks(groupId),
+    refetchOnMount: true,
     queryFn: async (): Promise<ITasks> => unwrap(await tasksApi.getGroupTasks(groupId)),
     enabled: enabled && Boolean(groupId),
   });
@@ -313,6 +385,7 @@ export const useMarkTaskDone = () =>
 export const useEvaluations = (query: EvaluationQuery, enabled = true) =>
   useQuery({
     queryKey: academicsKeys.evaluations(query),
+    refetchOnMount: true,
     queryFn: async () => unwrap(await supervisionApi.getEvaluations(query)),
     enabled,
   });
@@ -320,6 +393,7 @@ export const useEvaluations = (query: EvaluationQuery, enabled = true) =>
 export const useSessionEvaluations = (sessionId: string, enabled = true) =>
   useQuery({
     queryKey: academicsKeys.sessionEvaluations(sessionId),
+    refetchOnMount: true,
     queryFn: async () => unwrap(await supervisionApi.getSessionEvaluations(sessionId)),
     enabled: enabled && Boolean(sessionId),
   });

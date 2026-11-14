@@ -21,6 +21,7 @@ import {
 import { GroupStartService } from './group-start.service';
 import { SessionAttendanceService } from './session-attendance.service';
 import { SessionCompletionService } from './session-completion.service';
+import { SessionPresenceService } from './session-presence.service';
 import { SessionQueryService } from './session-query.service';
 import { SessionReportService } from './session-report.service';
 
@@ -31,6 +32,7 @@ export class SessionControllerMessage {
     private readonly groupStart: GroupStartService,
     private readonly queries: SessionQueryService,
     private readonly attendance: SessionAttendanceService,
+    private readonly presence: SessionPresenceService,
     private readonly completion: SessionCompletionService,
     private readonly reports: SessionReportService,
     private readonly followUps: FollowUpService
@@ -100,6 +102,25 @@ export class SessionControllerMessage {
   @MessagePattern('academics.sessions.editReport')
   editReport(@Payload(new RpcValidationPipe()) payload: ReportPayload, @Ctx() context: IUserContext) {
     return this.reports.edit(actorFromContext(context), payload.id, payload.data);
+  }
+
+  /** Any participant (session teacher or active student); the service rejects everyone else. */
+  @RequirePermissionsGuard({ action: Actions.READ, subject: Subjects.SESSION })
+  @MessagePattern('academics.sessions.join')
+  join(@Payload(new RpcValidationPipe()) payload: IdPayload, @Ctx() context: IUserContext) {
+    return this.presence.join(actorFromContext(context), payload.id);
+  }
+
+  @RequirePermissionsGuard({ action: Actions.READ, subject: Subjects.SESSION })
+  @MessagePattern('academics.sessions.heartbeat')
+  heartbeat(@Payload(new RpcValidationPipe()) payload: IdPayload, @Ctx() context: IUserContext) {
+    return this.presence.heartbeat(actorFromContext(context), payload.id);
+  }
+
+  @RequirePermissionsGuard({ action: Actions.READ, subject: Subjects.SESSION })
+  @MessagePattern('academics.sessions.leave')
+  leave(@Payload(new RpcValidationPipe()) payload: IdPayload, @Ctx() context: IUserContext) {
+    return this.presence.leave(actorFromContext(context), payload.id);
   }
 
   @RequirePermissionsGuard({ action: Actions.UPDATE, subject: Subjects.GROUP })

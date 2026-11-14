@@ -2,18 +2,26 @@ import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/commo
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { DateTime } from 'luxon';
-import { MessageTemplateErrors, RenderMessageTemplateDto, RenderTemplateResult } from '@darnozom/shared-types';
+import {
+  MessageTemplateErrors,
+  RenderMessageTemplateDto,
+  RenderTemplateResult,
+  TemplateLocale,
+} from '@darnozom/shared-types';
 import { Group } from 'src/academics/group/entities/group.entity';
 import { Level } from 'src/academics/level/entities/level.entity';
-import { Course } from 'src/course/entities/course.entity';
+import { TrainingCourse } from 'src/academics/training-course/entities/training-course.entity';
 import { User } from 'src/user/entities/user.entity';
 import { AcademicsActor } from 'src/academics/common/actor';
 import { MessageTemplateService } from './message-template.service';
-import { renderTemplate, normalizePhone } from '../domain/template-render';
+import { canonicalVariables, renderTemplate, normalizePhone } from '../domain/template-render';
 
 const oid = (id: string | Types.ObjectId) => new Types.ObjectId(String(id));
 
-const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const DAY_NAMES: Record<TemplateLocale, string[]> = {
+  en: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+  ar: ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'],
+};
 
 @Injectable()
 export class TemplateRenderService {
@@ -22,7 +30,7 @@ export class TemplateRenderService {
     @InjectModel(Group.name) private readonly groupModel: Model<Group>,
     @InjectModel(User.name) private readonly userModel: Model<User>,
     @InjectModel(Level.name) private readonly levelModel: Model<Level>,
-    @InjectModel(Course.name) private readonly courseModel: Model<Course>,
+    @InjectModel(TrainingCourse.name) private readonly courseModel: Model<TrainingCourse>,
   ) {}
 
   async render(actor: AcademicsActor, templateId: string, dto: RenderMessageTemplateDto): Promise<RenderTemplateResult> {
@@ -46,9 +54,11 @@ export class TemplateRenderService {
       this.userModel.findById(groupAny.teacherId).lean<{ firstName: string; lastName: string } | null>().exec(),
     ]);
 
+    const locale = dto.locale ?? 'en';
+    const dayNames = DAY_NAMES[locale];
     const scheduleText = group.schedule
-      .map((s) => `${DAY_NAMES[s.dayOfWeek]} ${s.startTime}`)
-      .join(' & ');
+      .map((s) => `${dayNames[s.dayOfWeek]} ${s.startTime}`)
+      .join(locale === 'ar' ? ' و ' : ' & ');
 
     const startDateText = groupAny.startDate
       ? DateTime.fromJSDate(groupAny.startDate as Date)
@@ -68,17 +78,33 @@ export class TemplateRenderService {
     };
 
     if (template.context === 'STUDENT' && dto.studentId) {
-      const student = await this.userModel
-        .findById(oid(dto.studentId))
-        .lean<{ firstName: string; lastName: string; phone?: string; childUsersIds?: Types.ObjectId[] }>()
-        .exec();
+      type NamedUser = { firstName: string; lastName: string; phone?: string };
+      const [student, parent] = await Promise.all([
+        this.userModel.findById(oid(dto.studentId)).lean<NamedUser | null>().exec(),
+        // A parent is the user whose childUsersIds contains this student.
+        this.userModel.findOne({ childUsersIds: oid(dto.studentId) }).lean<NamedUser | null>().exec(),
+      ]);
       values.studentName = student ? `${student.firstName} ${student.lastName}` : undefined;
+      values.parentName = parent ? `${parent.firstName} ${parent.lastName}` : undefined;
 
       const { text, missingVariables } = renderTemplate(template.body, values);
-      const rawPhone = student?.phone;
-      if (rawPhone) {
-        const phone = normalizePhone(rawPhone);
-        return { text, missingVariables, phone, waLink: `https://wa.me/${phone}?text=${encodeURIComponent(text)}` };
+
+      // A message that addresses the parent goes to the parent's phone when there is one;
+      // otherwise prefer the student's phone. Either way, fall back to the other contact.
+      const addressesParent = canonicalVariables(template.body).includes('parentName');
+      const candidates: { recipient: 'STUDENT' | 'PARENT'; phone?: string }[] = addressesParent
+        ? [{ recipient: 'PARENT', phone: parent?.phone }, { recipient: 'STUDENT', phone: student?.phone }]
+        : [{ recipient: 'STUDENT', phone: student?.phone }, { recipient: 'PARENT', phone: parent?.phone }];
+      const chosen = candidates.find((c) => c.phone);
+      if (chosen?.phone) {
+        const phone = normalizePhone(chosen.phone);
+        return {
+          text,
+          missingVariables,
+          phone,
+          recipient: chosen.recipient,
+          waLink: `https://wa.me/${phone}?text=${encodeURIComponent(text)}`,
+        };
       }
       return { text, missingVariables };
     }

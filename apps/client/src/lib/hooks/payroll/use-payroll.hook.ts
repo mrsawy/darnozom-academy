@@ -10,9 +10,12 @@ import type {
   AddBonusInput,
   DisputeSessionInput,
   FindStatementsQuery,
+  IGroupPayRule,
+  IPayrollLookup,
   IPayStatement,
   ITeacherPayProfile,
   MarkPaidInput,
+  UpsertGroupPayRuleInput,
   UpsertTeacherPayProfileInput,
 } from '@/lib/types/payroll/payroll';
 
@@ -21,6 +24,8 @@ const ROOT = 'payroll';
 export const payrollKeys = {
   profiles: [ROOT, 'profiles'] as const,
   profile: (teacherId: string) => [ROOT, 'profiles', teacherId] as const,
+  lookup: [ROOT, 'lookup'] as const,
+  groupRules: [ROOT, 'group-rules'] as const,
   statements: (query?: FindStatementsQuery) => [ROOT, 'statements', query] as const,
   statement: (id: string) => [ROOT, 'statement', id] as const,
 };
@@ -140,3 +145,28 @@ export function useResolveDisputeMutation() {
     },
   });
 }
+
+export const usePayrollLookup = (enabled = true) =>
+  useQuery({
+    queryKey: payrollKeys.lookup,
+    queryFn: async (): Promise<IPayrollLookup> => unwrap(await payrollApi.getPayrollLookup()),
+    enabled,
+  });
+
+export const useGroupPayRules = (enabled = true) =>
+  useQuery({
+    queryKey: payrollKeys.groupRules,
+    queryFn: async (): Promise<IGroupPayRule[]> => unwrap(await payrollApi.listGroupPayRules()),
+    enabled,
+  });
+
+export const useUpsertGroupPayRule = () =>
+  usePayrollMutation(async (data: UpsertGroupPayRuleInput) =>
+    unwrap(await payrollApi.upsertGroupPayRule(data))
+  );
+
+export const useRemoveGroupPayRule = () =>
+  usePayrollMutation(
+    async (id: string) => unwrap(await payrollApi.removeGroupPayRule(id)),
+    'ruleRemoved'
+  );

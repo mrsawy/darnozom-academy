@@ -1,10 +1,7 @@
-/** The concept's five subscription types. */
+/** Tuition is either paid once for the whole course (FULL_COURSE) or monthly. */
 export enum SubscriptionType {
   FULL_COURSE = 'FULL_COURSE',
   MONTHLY = 'MONTHLY',
-  PER_SESSION = 'PER_SESSION',
-  FAMILY = 'FAMILY',
-  SCHOLARSHIP = 'SCHOLARSHIP',
 }
 
 /**
@@ -46,6 +43,8 @@ export enum FamilyPaymentState {
 export const PAYMENT_METHOD_RECEIPT_UPLOAD = 'RECEIPT_UPLOAD';
 export const PAYMENT_METHOD_ONLINE_GATEWAY = 'ONLINE_GATEWAY';
 export const PAYMENT_METHOD_MANUAL_TRANSFER = 'MANUAL_TRANSFER';
+/** Money received in person and recorded by staff. Never offered to parents, so it is not in the method registry. */
+export const PAYMENT_METHOD_OFFLINE = 'OFFLINE';
 
 /** The kind of value an admin-configured manual-transfer method field holds. */
 export enum PaymentMethodFieldType {

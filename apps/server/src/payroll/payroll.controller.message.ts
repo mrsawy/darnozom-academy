@@ -7,6 +7,8 @@ import { ApplyRpcErrorHandling } from '../utils/docerators/error-handeling/class
 import { IUserContext } from '../utils/types/IUserContext.interface';
 import { actorFromContext } from '../academics/common/actor';
 import { TeacherPayProfileService } from './services/teacher-pay-profile.service';
+import { PayrollLookupService } from './services/payroll-lookup.service';
+import { GroupPayRuleService } from './services/group-pay-rule.service';
 import { PayrollService } from './services/payroll.service';
 import { SessionDisputeService } from './services/session-dispute.service';
 import {
@@ -14,6 +16,9 @@ import {
   DisputeSessionPayload,
   FindStatementsPayload,
   GenerateStatementsPayload,
+  GroupPayRuleIdPayload,
+  ListGroupPayRulesPayload,
+  UpsertGroupPayRulePayload,
   MarkPaidPayload,
   ResolveDisputePayload,
   StatementIdPayload,
@@ -26,6 +31,8 @@ import {
 export class PayrollControllerMessage {
   constructor(
     private readonly profileService: TeacherPayProfileService,
+    private readonly ruleService: GroupPayRuleService,
+    private readonly lookupService: PayrollLookupService,
     private readonly payrollService: PayrollService,
     private readonly disputeService: SessionDisputeService
   ) {}
@@ -49,6 +56,33 @@ export class PayrollControllerMessage {
   upsertProfile(@Payload(new RpcValidationPipe()) payload: UpsertProfilePayload, @Ctx() context: IUserContext) {
     const actor = actorFromContext(context);
     return this.profileService.upsertProfile(actor.organizationId, payload.teacherId, payload);
+  }
+
+  @RequirePermissionsGuard({ action: Actions.MANAGE, subject: Subjects.PAYROLL })
+  @MessagePattern('payroll.groupRules.list')
+  listGroupRules(@Payload(new RpcValidationPipe()) payload: ListGroupPayRulesPayload, @Ctx() context: IUserContext) {
+    const actor = actorFromContext(context);
+    return this.ruleService.current(actor.organizationId, payload);
+  }
+
+  @RequirePermissionsGuard({ action: Actions.MANAGE, subject: Subjects.PAYROLL })
+  @MessagePattern('payroll.lookup')
+  lookup(@Ctx() context: IUserContext) {
+    return this.lookupService.lookup(actorFromContext(context).organizationId);
+  }
+
+  @RequirePermissionsGuard({ action: Actions.MANAGE, subject: Subjects.PAYROLL })
+  @MessagePattern('payroll.groupRules.upsert')
+  upsertGroupRule(@Payload(new RpcValidationPipe()) payload: UpsertGroupPayRulePayload, @Ctx() context: IUserContext) {
+    const actor = actorFromContext(context);
+    return this.ruleService.upsert(actor.organizationId, payload);
+  }
+
+  @RequirePermissionsGuard({ action: Actions.MANAGE, subject: Subjects.PAYROLL })
+  @MessagePattern('payroll.groupRules.remove')
+  removeGroupRule(@Payload(new RpcValidationPipe()) payload: GroupPayRuleIdPayload, @Ctx() context: IUserContext) {
+    const actor = actorFromContext(context);
+    return this.ruleService.remove(actor.organizationId, payload.id);
   }
 
   @RequirePermissionsGuard({ action: Actions.MANAGE, subject: Subjects.PAYROLL })

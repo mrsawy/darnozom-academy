@@ -65,3 +65,48 @@ export interface IAdminDashboardCounts {
   payStatementsAwaitingApproval: number;
   certificatesAwaitingReview: number;
 }
+
+export interface IOverviewProgramStat {
+  programId: string;
+  name: string;
+  groups: number;
+  runningGroups: number;
+  students: number;
+  /** 0–100, null when no attendance has been recorded yet. */
+  attendanceRate: number | null;
+}
+
+export interface IOverviewTeacherStat {
+  teacherId: string;
+  name: string;
+  groups: number;
+  students: number;
+  /** Mean of the four report criteria (1–5) given to this teacher's students; null if none. */
+  avgScore: number | null;
+  /** 0–100 share of present/late among non-excused marks; null if none. */
+  attendanceRate: number | null;
+}
+
+export interface IOverviewStudentStat {
+  studentId: string;
+  name: string;
+  /** Mean of the four report criteria (1–5). */
+  avgScore: number;
+  /** 0–100, null if none recorded. */
+  attendanceRate: number | null;
+}
+
+export interface IAdminOverview {
+  totals: {
+    programs: number;
+    runningGroups: number;
+    activeStudents: number;
+    teachers: number;
+    atRiskGroups: number;
+  };
+  programs: IOverviewProgramStat[];
+  topTeachers: IOverviewTeacherStat[];
+  bottomTeachers: IOverviewTeacherStat[];
+  topStudents: IOverviewStudentStat[];
+  bottomStudents: IOverviewStudentStat[];
+}

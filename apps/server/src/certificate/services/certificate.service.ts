@@ -27,7 +27,7 @@ import {
 import { AcademicsActor } from 'src/academics/common/actor';
 import { Group } from 'src/academics/group/entities/group.entity';
 import { Level } from 'src/academics/level/entities/level.entity';
-import { Course } from 'src/course/entities/course.entity';
+import { TrainingCourse } from 'src/academics/training-course/entities/training-course.entity';
 import { User } from 'src/user/entities/user.entity';
 import { Session } from 'src/academics/session/entities/session.entity';
 import { Organization } from 'src/organization/entities/organization.entity';
@@ -54,8 +54,8 @@ export class CertificateService {
     private readonly groupModel: Model<Group>,
     @InjectModel(Level.name)
     private readonly levelModel: Model<Level>,
-    @InjectModel(Course.name)
-    private readonly courseModel: Model<Course>,
+    @InjectModel(TrainingCourse.name)
+    private readonly courseModel: Model<TrainingCourse>,
     @InjectModel(User.name)
     private readonly userModel: Model<User>,
     @InjectModel(Session.name)

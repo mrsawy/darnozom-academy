@@ -19,8 +19,7 @@ import MultipleSelector, { Option } from '@/components/molecules/multi-select/mu
 import { UserMultiSelect } from '@/components/molecules/multi-select/user-multi-select';
 import CategoryCombobox from '@/components/molecules/category-combobox';
 import { CreateUserFormData } from '@/lib/schema/user.schema';
-import { useGrades } from '@/lib/hooks/grade/use-grades.hook';
-import { useSchoolTypes } from '@/lib/hooks/school-type/use-school-types.hook';
+import { useAgeRanges } from '@/lib/hooks/age-range/use-age-ranges.hook';
 import type { UserFormMode } from '../user-form';
 import { TeacherAvailabilityFields } from './teacher-availability-fields';
 
@@ -42,7 +41,7 @@ export default function BasicTab({ errors, register, setValue, watch, mode }: Ba
 
   const isParentRole = !isSelf && roleName?.toLowerCase() === Roles.PARENT.toLowerCase();
   const isStudentRole = !isSelf && roleName?.toLowerCase() === Roles.STUDENT.toLowerCase();
-  // Instructor fields (subject/grade/school-type) show for admins managing an
+  // Instructor fields (subject/age-range) show for admins managing an
   // instructor AND for instructors editing their own account (self mode).
   const showInstructorFields = roleName?.toLowerCase() === Roles.INSTRUCTOR.toLowerCase();
 
@@ -58,26 +57,17 @@ export default function BasicTab({ errors, register, setValue, watch, mode }: Ba
   const childUsersIds = watch('childUsersIds');
 
   const locale = useLocale();
-  const { data: grades } = useGrades();
-  const { data: schoolTypes } = useSchoolTypes();
+  const { data: ageRanges } = useAgeRanges();
 
-  const gradeIds = watch('gradesIds');
-  const schoolTypeIds = watch('schoolTypesIds');
+  const ageRangeIds = watch('ageRangesIds');
 
-  const gradeOptions: Option[] = (grades ?? []).map((grade) => ({
-    value: grade._id,
-    label: locale === 'ar' ? grade.nameAr : grade.nameEn,
-  }));
-  const schoolTypeOptions: Option[] = (schoolTypes ?? []).map((schoolType) => ({
-    value: schoolType._id,
-    label: locale === 'ar' ? schoolType.nameAr : schoolType.nameEn,
+  const ageRangeOptions: Option[] = (ageRanges ?? []).map((ageRange) => ({
+    value: ageRange._id,
+    label: locale === 'ar' ? ageRange.nameAr : ageRange.nameEn,
   }));
 
-  const selectedGradeOptions = gradeOptions.filter((option) =>
-    (gradeIds ?? []).includes(option.value)
-  );
-  const selectedSchoolTypeOptions = schoolTypeOptions.filter((option) =>
-    (schoolTypeIds ?? []).includes(option.value)
+  const selectedAgeRangeOptions = ageRangeOptions.filter((option) =>
+    (ageRangeIds ?? []).includes(option.value)
   );
 
   const updateUserCategories = useCallback(
@@ -146,10 +136,9 @@ export default function BasicTab({ errors, register, setValue, watch, mode }: Ba
       setValue('categoriesIds', []);
     }
     if (!showInstructorFields) {
-      if ((gradeIds ?? []).length > 0) setValue('gradesIds', []);
-      if ((schoolTypeIds ?? []).length > 0) setValue('schoolTypesIds', []);
+      if ((ageRangeIds ?? []).length > 0) setValue('ageRangesIds', []);
     }
-  }, [showInstructorFields, setValue, hasSelectedCategories, gradeIds, schoolTypeIds]);
+  }, [showInstructorFields, setValue, hasSelectedCategories, ageRangeIds]);
 
   // Clear child users when role changes away from Parent
   useEffect(() => {
@@ -378,7 +367,7 @@ export default function BasicTab({ errors, register, setValue, watch, mode }: Ba
           </div>
         )}
 
-        {/* Subject / Grade / School type — instructor role only (admin + self) */}
+        {/* Subject / Age range — instructor role only (admin + self) */}
         {showInstructorFields ? (
           <div className="space-y-6">
             <div className="space-y-2">
@@ -395,38 +384,20 @@ export default function BasicTab({ errors, register, setValue, watch, mode }: Ba
             </div>
 
             <div className="space-y-2">
-              <span className="text-sm font-medium">{t('basic.grades')}</span>
+              <span className="text-sm font-medium">{t('basic.ageRanges')}</span>
               <MultipleSelector
-                options={gradeOptions}
-                value={selectedGradeOptions}
-                placeholder={t('basic.selectGrades')}
+                options={ageRangeOptions}
+                value={selectedAgeRangeOptions}
+                placeholder={t('basic.selectAgeRanges')}
                 onChange={(opts) =>
                   setValue(
-                    'gradesIds',
+                    'ageRangesIds',
                     opts.map((o) => o.value)
                   )
                 }
               />
-              {errors.gradesIds ? (
-                <p className="text-sm text-red-600">{errors.gradesIds.message}</p>
-              ) : null}
-            </div>
-
-            <div className="space-y-2">
-              <span className="text-sm font-medium">{t('basic.schoolTypes')}</span>
-              <MultipleSelector
-                options={schoolTypeOptions}
-                value={selectedSchoolTypeOptions}
-                placeholder={t('basic.selectSchoolTypes')}
-                onChange={(opts) =>
-                  setValue(
-                    'schoolTypesIds',
-                    opts.map((o) => o.value)
-                  )
-                }
-              />
-              {errors.schoolTypesIds ? (
-                <p className="text-sm text-red-600">{errors.schoolTypesIds.message}</p>
+              {errors.ageRangesIds ? (
+                <p className="text-sm text-red-600">{errors.ageRangesIds.message}</p>
               ) : null}
             </div>
 

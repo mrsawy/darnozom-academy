@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/components/atoms/loading-state';
 import { use } from 'react';
 import Link from 'next/link';
 import { useTranslations, useLocale } from 'next-intl';
@@ -27,7 +28,7 @@ export default function PrivateSessionDetailPage({ params }: Props) {
   const { data: session, isLoading } = usePrivateSessionById(id);
 
   if (isLoading) {
-    return <div className="animate-pulse p-6">{t('loading')}</div>;
+    return <LoadingState fullPage />;
   }
 
   if (!session) {

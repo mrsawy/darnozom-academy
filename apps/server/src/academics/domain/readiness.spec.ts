@@ -1,4 +1,4 @@
-import { GroupPaymentStatus, ReadinessKey } from '@darnozom/shared-types';
+import { GroupPaymentStatus, MeetingProvider, ReadinessKey } from '@darnozom/shared-types';
 import { computeReadiness } from './readiness';
 
 const complete = {
@@ -54,5 +54,15 @@ describe('computeReadiness with withdrawn students', () => {
     };
     expect(computeReadiness(group).ready).toBe(true);
     expect(doneOf({ ...group, minStudents: 3 }, ReadinessKey.MINIMUM_STUDENTS)).toBe(false);
+  });
+});
+
+describe('computeReadiness meeting item for in-platform (Agora) groups', () => {
+  it('is done without a link when the group meets on Agora', () => {
+    expect(doneOf({ ...complete, meetingLink: null, meetingProvider: MeetingProvider.AGORA }, ReadinessKey.MEETING_LINK)).toBe(true);
+  });
+  it('still needs a link for external-link groups', () => {
+    expect(doneOf({ ...complete, meetingLink: null, meetingProvider: MeetingProvider.EXTERNAL_URL }, ReadinessKey.MEETING_LINK)).toBe(false);
+    expect(doneOf({ ...complete, meetingLink: null }, ReadinessKey.MEETING_LINK)).toBe(false);
   });
 });

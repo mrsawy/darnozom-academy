@@ -43,11 +43,13 @@ export interface FeaturedCourseCategory {
   parentId?: Types.ObjectId;
 }
 
-/** Localized lookup snippet for the optional Grade / SchoolType relations */
+/** Localized lookup snippet for the AgeRange relation */
 export interface FeaturedCourseLocalizedLookup {
   _id: Types.ObjectId;
   nameEn: string;
   nameAr: string;
+  minAge: number;
+  maxAge?: number | null;
 }
 
 /**
@@ -83,6 +85,5 @@ export interface FeaturedCourse {
   instructorStats: FeaturedCourseInstructorStats;
   instructor: FeaturedCourseInstructor | null;
   categories: FeaturedCourseCategory[];
-  grade?: FeaturedCourseLocalizedLookup | null;
-  schoolTypes?: FeaturedCourseLocalizedLookup[];
+  ageRanges?: FeaturedCourseLocalizedLookup[];
 }

@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { Currency, PayStatementStatus, TeacherPayModel } from '@darnozom/shared-types';
+import { Currency, GroupPayModel, PayStatementStatus, TeacherPayModel } from '@darnozom/shared-types';
 
 @Schema({ _id: false })
 export class PayProfileSnapshot {
@@ -47,6 +47,38 @@ export class PayBonus {
 }
 export const PayBonusSchema = SchemaFactory.createForClass(PayBonus);
 
+/** One group's contribution to the statement; frozen at generation so later rule edits never rewrite it. */
+@Schema({ _id: false })
+export class PayStatementLine {
+  @Prop({ type: Types.ObjectId, ref: 'Group', required: true })
+  groupId: Types.ObjectId;
+
+  @Prop({ type: String, required: true })
+  groupName: string;
+
+  @Prop({ type: String, enum: Object.values(GroupPayModel), required: true })
+  model: GroupPayModel;
+
+  @Prop({ type: Number, required: true })
+  rate: number;
+
+  @Prop({ type: String, enum: Object.values(Currency), required: true })
+  currency: Currency;
+
+  @Prop({ type: Number, required: true, default: 0 })
+  subscriptions: number;
+
+  @Prop({ type: Number, required: true, default: 0 })
+  collected: number;
+
+  @Prop({ type: Number, required: true, default: 0 })
+  sessions: number;
+
+  @Prop({ type: Number, required: true })
+  amount: number;
+}
+export const PayStatementLineSchema = SchemaFactory.createForClass(PayStatementLine);
+
 @Schema({ timestamps: true })
 export class PayStatement extends Document<Types.ObjectId> {
   @Prop({ type: Types.ObjectId, ref: 'Organization', required: true, index: true })
@@ -58,8 +90,15 @@ export class PayStatement extends Document<Types.ObjectId> {
   @Prop({ type: String, required: true })
   month: string; // "YYYY-MM"
 
-  @Prop({ type: PayProfileSnapshotSchema, required: true })
-  profileSnapshot: PayProfileSnapshot;
+  /** Legacy single-profile statements only. Per-group statements carry `lines` instead. */
+  @Prop({ type: PayProfileSnapshotSchema, required: false })
+  profileSnapshot?: PayProfileSnapshot;
+
+  @Prop({ type: String, enum: Object.values(Currency), required: false })
+  currency?: Currency;
+
+  @Prop({ type: [PayStatementLineSchema], default: [] })
+  lines: PayStatementLine[];
 
   @Prop({ type: [{ type: Types.ObjectId, ref: 'Session' }], default: [] })
   countedSessionIds: Types.ObjectId[];

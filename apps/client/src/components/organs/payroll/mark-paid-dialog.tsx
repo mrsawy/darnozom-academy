@@ -69,7 +69,7 @@ export function MarkPaidDialog({
                 <span className="font-bold text-primary">
                   {formatPayrollAmount(
                     statement.total,
-                    statement.profileSnapshot.currency,
+                    statement.currency ?? statement.profileSnapshot?.currency,
                     locale
                   )}
                 </span>

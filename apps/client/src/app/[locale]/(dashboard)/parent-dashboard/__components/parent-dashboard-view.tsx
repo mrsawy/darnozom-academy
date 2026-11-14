@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/components/atoms/loading-state';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/card';
@@ -10,7 +11,7 @@ import {
   ROUTE_PARENT_PAYMENTS,
   ROUTE_PARENT_MY_CERTIFICATES,
 } from '@/lib/data/constants/routes.constants';
-import { Calendar, User, Loader2, Award, Clock } from 'lucide-react';
+import { Calendar, User, Award, Clock } from 'lucide-react';
 import type { IRelatedStudentProgress } from '@/lib/types/parent/parent-progress.interface';
 
 interface ParentDashboardViewProps {
@@ -156,10 +157,7 @@ export function ParentDashboardView({ initialChildrenProgress: _initial }: Paren
       </div>
 
       {isLoading ? (
-        <div className="flex items-center justify-center py-16">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-          <span className="ms-2 text-sm text-muted-foreground">{t('loading')}</span>
-        </div>
+        <LoadingState className="py-16" />
       ) : !dashboardData?.children || dashboardData.children.length === 0 ? (
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-16">

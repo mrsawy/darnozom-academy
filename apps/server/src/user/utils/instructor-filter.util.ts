@@ -9,8 +9,7 @@ export interface InstructorFilterInput {
   search?: string;
   minRating?: number;
   categoryIds?: string | string[];
-  gradeIds?: string | string[];
-  schoolTypeIds?: string | string[];
+  ageRangeIds?: string | string[];
 }
 
 /** Normalizes a scalar/array/CSV id param into a clean string[] (no empties). */
@@ -52,14 +51,9 @@ export function buildInstructorMatch(input: InstructorFilterInput): Record<strin
     match.categoriesIds = { $in: categoryIds };
   }
 
-  const gradeIds = normalizeIds(input.gradeIds);
-  if (gradeIds.length > 0) {
-    match.gradesIds = { $in: gradeIds };
-  }
-
-  const schoolTypeIds = normalizeIds(input.schoolTypeIds);
-  if (schoolTypeIds.length > 0) {
-    match.schoolTypesIds = { $in: schoolTypeIds };
+  const ageRangeIds = normalizeIds(input.ageRangeIds);
+  if (ageRangeIds.length > 0) {
+    match.ageRangesIds = { $in: ageRangeIds };
   }
 
   return match;

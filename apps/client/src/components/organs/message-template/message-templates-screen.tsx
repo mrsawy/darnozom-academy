@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/components/atoms/loading-state';
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import type { IMessageTemplate } from '@darnozom/shared-types';
@@ -51,7 +52,7 @@ export function MessageTemplatesScreen() {
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <p className="text-muted-foreground text-sm">{t('loading')}</p>
+            <LoadingState />
           ) : templates.length === 0 ? (
             <div className="py-10 text-center">
               <p className="text-muted-foreground text-sm">{t('empty')}</p>

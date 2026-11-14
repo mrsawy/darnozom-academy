@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/components/atoms/loading-state';
 import { useLocale, useTranslations } from 'next-intl';
 import { Badge } from '@/components/atoms/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/card';
@@ -16,7 +17,7 @@ export function OpenTasksCard({ tasks, isLoading }: { tasks: ITask[]; isLoading:
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <p>{t('loading')}</p>
+          <LoadingState />
         ) : tasks.length === 0 ? (
           <p className="text-muted-foreground">{t('tasks.empty')}</p>
         ) : (
@@ -27,7 +28,7 @@ export function OpenTasksCard({ tasks, isLoading }: { tasks: ITask[]; isLoading:
                 className="flex flex-wrap items-center justify-between gap-2 rounded-md border p-2">
                 <div>
                   <p className="text-sm font-medium">
-                    {t(`readiness.${task.readinessKey}` as 'readiness.CONTENT_SENT')}
+                    {t(`readiness.items.${task.readinessKey}` as 'readiness.items.CONTENT_SENT')}
                   </p>
                   <p className="text-muted-foreground text-sm">
                     {t('tasks.due', { date: new Date(task.dueAt).toLocaleString(locale) })}

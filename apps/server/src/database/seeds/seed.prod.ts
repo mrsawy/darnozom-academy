@@ -2,7 +2,7 @@
  * Production seed — platform bootstrap data only.
  *
  * Seeds the reference data a live deployment cannot function without: roles and their
- * permissions, subscription plans, AI plans, grades, school types, and the platform admin
+ * permissions, subscription plans, AI plans, age ranges, and the platform admin
  * account. It deliberately seeds no organizations, users, courses or any other tenant data —
  * that is the dev seed's job (`pnpm seed`).
  *
@@ -30,21 +30,18 @@ import { getMongoUri, getCliEnvFlag, MONGO_CONNECTION_OPTIONS } from '../../conf
 import { Role, RoleSchema } from '../../role/entities/role.entity';
 import { Plan, PlanSchema } from '../../plan/entities/plan.entity';
 import { AiPlan, AiPlanSchema } from '../../ai-plan/entities/ai-plan.entity';
-import { Grade, GradeSchema } from '../../grade/entities/grade.entity';
-import { SchoolType, SchoolTypeSchema } from '../../school-type/entities/school-type.entity';
+import { AgeRange, AgeRangeSchema } from '../../age-range/entities/age-range.entity';
 import { User, UserSchema } from '../../user/entities/user.entity';
 import { Wallet, WalletSchema } from '../../wallet/entities/wallet.entity';
 
 import { CurrencyService } from '../../currency/currency.service';
 import { RoleSeeder } from '../../role/seeds/role.seeder';
-import { GradeSeeder } from '../../grade/seeds/grade.seeder';
-import { SchoolTypeSeeder } from '../../school-type/seeds/school-type.seeder';
+import { AgeRangeSeeder } from '../../age-range/seeds/age-range.seeder';
 import { PlanSeeder } from '../../plan/seeds/plan.seeder';
 import { AiPlanSeeder } from '../../ai-plan/seeds/ai-plan.seeder';
 import { PlatformAdminSeeder } from '../../user/seeds/platform-admin.seeder';
 import { ROLE_SEED_DEFINITIONS } from '../../role/seeds/roles.config';
-import { GRADE_SEED_DEFINITIONS } from '../../grade/seeds/grade.config';
-import { SCHOOL_TYPE_SEED_DEFINITIONS } from '../../school-type/seeds/school-type.config';
+import { AGE_RANGE_SEED_DEFINITIONS } from '../../age-range/seeds/age-range.config';
 
 import { assertExchangeRatesLoaded, extractDatabaseName, readPlatformAdminCredentials, redactUri } from './prod-preflight';
 
@@ -72,8 +69,7 @@ const isFresh = process.argv.includes('--fresh');
       { name: Role.name, schema: RoleSchema },
       { name: Plan.name, schema: PlanSchema },
       { name: AiPlan.name, schema: AiPlanSchema },
-      { name: Grade.name, schema: GradeSchema },
-      { name: SchoolType.name, schema: SchoolTypeSchema },
+      { name: AgeRange.name, schema: AgeRangeSchema },
       { name: User.name, schema: UserSchema },
       { name: Wallet.name, schema: WalletSchema },
     ]),
@@ -129,21 +125,18 @@ async function bootstrap() {
   const roleModel = app.get<Model<Role>>(getModelToken(Role.name));
   const planModel = app.get<Model<Plan>>(getModelToken(Plan.name));
   const aiPlanModel = app.get<Model<AiPlan>>(getModelToken(AiPlan.name));
-  const gradeModel = app.get<Model<Grade>>(getModelToken(Grade.name));
-  const schoolTypeModel = app.get<Model<SchoolType>>(getModelToken(SchoolType.name));
+  const ageRangeModel = app.get<Model<AgeRange>>(getModelToken(AgeRange.name));
   const userModel = app.get<Model<User>>(getModelToken(User.name));
   const walletModel = app.get<Model<Wallet>>(getModelToken(Wallet.name));
   const currencyService = app.get(CurrencyService);
 
-  // ─── Roles, grades, school types ────────────────────────────────
+  // ─── Roles, age ranges ────────────────────────────────
   log(`Seeding Roles (${ROLE_SEED_DEFINITIONS.length})...`);
   await new RoleSeeder(roleModel).seed();
 
-  log(`Seeding Grades (${GRADE_SEED_DEFINITIONS.length})...`);
-  await new GradeSeeder(gradeModel).seed();
+  log(`Seeding Age Ranges (${AGE_RANGE_SEED_DEFINITIONS.length})...`);
+  await new AgeRangeSeeder(ageRangeModel).seed();
 
-  log(`Seeding School Types (${SCHOOL_TYPE_SEED_DEFINITIONS.length})...`);
-  await new SchoolTypeSeeder(schoolTypeModel).seed();
 
   // ─── Plans (guarded: prices are converted from EGP at seed time) ─
   log('Verifying exchange rates before writing plan prices...');

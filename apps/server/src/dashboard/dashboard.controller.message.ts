@@ -1,11 +1,13 @@
-import { Controller } from '@nestjs/common';
+import { Controller, UseGuards } from '@nestjs/common';
 import { Ctx, MessagePattern } from '@nestjs/microservices';
 import { ApplyRpcErrorHandling } from 'src/utils/docerators/error-handeling/class/ApplyRpcErrorHandling.decorator';
 import { IUserContext } from 'src/utils/types/IUserContext.interface';
 import { actorFromContext } from 'src/academics/common/actor';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { DashboardService } from './dashboard.service';
 
 @Controller()
+@UseGuards(AuthGuard)
 @ApplyRpcErrorHandling
 export class DashboardController {
   constructor(private readonly dashboardService: DashboardService) {}
@@ -16,6 +18,12 @@ export class DashboardController {
     const userPermissions: string[] =
       (ctx?.userPayload as unknown as { permissions?: { subject: string }[] })?.permissions?.map((p) => p.subject) ?? [];
     return this.dashboardService.getAdminCounts(actor._id, actor.organizationId, userPermissions);
+  }
+
+  @MessagePattern('dashboard.admin.overview')
+  async getAdminOverview(@Ctx() ctx: IUserContext) {
+    const actor = actorFromContext(ctx);
+    return this.dashboardService.getAdminOverview(actor.organizationId);
   }
 
   @MessagePattern('dashboard.teacher')

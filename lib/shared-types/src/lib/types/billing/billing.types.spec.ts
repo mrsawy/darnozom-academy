@@ -11,13 +11,10 @@ import {
 } from './billing.types';
 
 describe('billing shared types', () => {
-  it('has exactly the concept’s five subscription types', () => {
+  it('has exactly the two subscription types: one-time and monthly', () => {
     expect(Object.values(SubscriptionType)).toEqual([
       'FULL_COURSE',
       'MONTHLY',
-      'PER_SESSION',
-      'FAMILY',
-      'SCHOLARSHIP',
     ]);
   });
 

@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { AttendanceStatus, FollowUpDecision, SessionStatus } from '@darnozom/shared-types';
+import { AttendanceSource, AttendanceStatus, FollowUpDecision, MeetingProvider, PresenceRole, SessionStatus } from '@darnozom/shared-types';
 
 export interface SessionAttendanceLean {
   studentId: Types.ObjectId;
@@ -7,6 +7,7 @@ export interface SessionAttendanceLean {
   note?: string;
   markedBy: Types.ObjectId;
   markedAt: Date;
+  source?: AttendanceSource;
 }
 
 export interface SessionEvaluationLean {
@@ -44,8 +45,21 @@ export interface SessionLean {
 /** What the API returns: `status` is the effective (derived) status. */
 export type SessionView = SessionLean & { groupName?: string };
 
-/** findOne adds the roster (ACTIVE students visible to the caller) and display names (id → "First Last"). */
-export type SessionDetailView = SessionView & { people: Record<string, string>; roster: string[] };
+export interface SessionPresenceView {
+  userId: string;
+  role: PresenceRole;
+  firstJoinedAt: Date;
+  totalSeconds: number;
+}
+
+/** findOne adds the roster (ACTIVE students visible to the caller), display names (id → "First Last"), presence and the group's meeting provider. */
+export type SessionDetailView = SessionView & {
+  people: Record<string, string>;
+  roster: string[];
+  /** Who joined through the platform (staff and the session's teacher only; empty for everyone else). */
+  presence: SessionPresenceView[];
+  meetingProvider?: MeetingProvider;
+};
 
 export interface FollowUpLean {
   _id: Types.ObjectId;

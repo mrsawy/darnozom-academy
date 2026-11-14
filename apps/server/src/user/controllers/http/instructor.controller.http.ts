@@ -13,7 +13,7 @@ export class InstructorControllerHttp {
     try {
       const { page, limit, ...filters } = query;
       // The service builds the Mongo query from these flat filters (search escaping,
-      // rating $gte, subject/grade/school-type $in) — no query construction here.
+      // rating $gte, subject/age-range $in) — no query construction here.
       return await this.instructorService.findAll({ page, limit }, filters);
     } catch (error: unknown) {
       if (error instanceof Error) {

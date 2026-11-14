@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from 'src/auth/auth.module';
 import { RoleModule } from 'src/role/role.module';
@@ -7,7 +7,7 @@ import { AiPlanService } from './services/ai-plan.service';
 import { AiPlanControllerMessage } from './controllers/message/ai-plan.controller.message';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: AiPlan.name, schema: AiPlanSchema }]), AuthModule, RoleModule],
+  imports: [MongooseModule.forFeature([{ name: AiPlan.name, schema: AiPlanSchema }]), forwardRef(() => AuthModule), RoleModule],
   controllers: [AiPlanControllerMessage],
   providers: [AiPlanService],
   exports: [AiPlanService, MongooseModule],

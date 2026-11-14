@@ -28,12 +28,16 @@ function setup() {
   const groupModel = { findOne: jest.fn(), updateOne: jest.fn() };
   const cohortModel = { findOne: jest.fn().mockReturnValue(mockQuery(null)) };
   const paymentStatus = { forGroup: jest.fn().mockResolvedValue(new Map()), hasPendingReview: jest.fn().mockResolvedValue(new Set()) };
+  const levelModel = { findOne: jest.fn().mockReturnValue(mockQuery(null)) };
+  const ageRangeModel = { findOne: jest.fn().mockReturnValue(mockQuery(null)) };
   const taskClosing = { closeDoneItems: jest.fn(async () => 0), closeAll: jest.fn(async () => 0) };
   return {
-    service: new GroupStateService(groupModel as never, cohortModel as never, paymentStatus as never, taskClosing as never),
+    service: new GroupStateService(groupModel as never, cohortModel as never, paymentStatus as never, taskClosing as never, levelModel as never, ageRangeModel as never),
     groupModel,
     cohortModel,
     paymentStatus,
+    levelModel,
+    ageRangeModel,
   };
 }
 
@@ -129,5 +133,23 @@ describe('GroupStateService.withDerivedPaymentStatus', () => {
     const result = await service.withDerivedPaymentStatus(group({ students: [{ studentId, paymentStatus: GroupPaymentStatus.UNPAID }] }) as never);
 
     expect(result.students[0].paymentStatus).toBe(GroupPaymentStatus.UNPAID);
+  });
+
+  it('inherits the age range from the group level', async () => {
+    const { service, levelModel, ageRangeModel } = setup();
+    const ageRangeId = new Types.ObjectId('64b0000000000000000000cc');
+    const range = { _id: ageRangeId, nameEn: '6-8 years', nameAr: '٦-٨ سنوات', minAge: 6, maxAge: 8 };
+    levelModel.findOne.mockReturnValue(mockQuery({ ageRangeId }));
+    ageRangeModel.findOne.mockReturnValue(mockQuery(range));
+
+    const view = await service.toView(group({ levelId: new Types.ObjectId('64b0000000000000000000dd') }) as never);
+
+    expect(view.ageRange).toEqual(range);
+  });
+
+  it('has no age range when the level has none', async () => {
+    const { service } = setup();
+    const view = await service.toView(group({ levelId: new Types.ObjectId('64b0000000000000000000dd') }) as never);
+    expect(view.ageRange).toBeNull();
   });
 });
